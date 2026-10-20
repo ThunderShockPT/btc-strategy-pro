@@ -24,6 +24,7 @@ function enter(mode){
  if(mode==='demo'){
    remember('demo');hide();
    if(document.getElementById('accountView')?.hidden===false)workspace?.leave('Início');
+   window.dispatchEvent(new CustomEvent('btc-demo-entered'));
    return true;
  }
  if(mode==='login'||mode==='signup'||mode==='recover'){
