@@ -1,7 +1,7 @@
 {
-  "version": "18.0.0-beta-auth-qa",
+  "version": "19.0.0-beta-onboarding",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "verified-auth-guards-and-account-switch-hardening; real SMTP, links and two-account E2E pending"
+  "stage": "first-use-consent-wallet-sizing-protection-stress-guide; real cloud auth pending SMTP and two-account QA"
 }
