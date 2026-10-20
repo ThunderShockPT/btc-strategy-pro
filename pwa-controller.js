@@ -1,6 +1,6 @@
 /* BTC Strategy Pro · Bloco 10: manual backup and safe PWA updates */
 (()=>{'use strict';
-const VERSION='17.0.0-beta-entrada',$=id=>document.getElementById(id);
+const VERSION='17.1.0-beta-entrada',$=id=>document.getElementById(id);
 const css=document.createElement('style');
 css.textContent='#b10BackupQuick,#b10AccountActions button,#b10Actions button{border:1px solid #376175;background:#173548;color:#c4efff;border-radius:9px;padding:9px 10px;font-size:12px;font-weight:750;cursor:pointer}#b10BackupQuick{white-space:nowrap}#b10AccountActions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px;align-items:center}#b10AccountActions small{color:#94a3b8}#b10Prompt{position:fixed;bottom:calc(75px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:9900;width:min(430px,94vw);border:1px solid #41798b;border-radius:13px;background:#112330;padding:15px;box-shadow:0 12px 48px #000a}#b10Prompt[hidden]{display:none!important}#b10Prompt h3{font-size:14px;color:#e5faff;margin:0 0 9px}#b10Prompt p{font-size:11px;line-height:1.5;color:#b3c7d4}#b10Actions{display:flex;flex-wrap:wrap;gap:7px}#b10Actions button:first-child{background:#18b8e6;color:#051722}@media(max-width:410px){#b10BackupQuick{padding:6px;font-size:10px}}';
 document.head.append(css);
