@@ -59,6 +59,10 @@ async function run(){
    assert.equal(await page.locator('#btcLanding [data-entry-action="login"]').count()>=1,true);
    await page.locator('#btcLanding .landing-ctas [data-entry-action="demo"]').click();
    assert.equal(await page.locator('#btcLanding').isHidden(),true,w+'x'+h+': Demo action should reveal dashboard');
+   await page.locator('#boTitle').waitFor({state:'visible',timeout:4500});
+   const wiz=await page.locator('#btcOnboarding .bo-card').boundingBox();
+   assert.ok(wiz&&wiz.x>=-2&&wiz.x+wiz.width<=w+2,w+'x'+h+': onboarding must fit screen '+JSON.stringify(wiz));
+   await page.locator('#boDismiss').click();
    await metrics(page,w+'x'+h+' home',w,h);n++;
    const nav=await page.evaluate(()=>{
     const a=[...document.querySelectorAll('[data-nav="Estratégias"]')];
@@ -79,6 +83,52 @@ async function run(){
    await context.close();
    console.log(w+'x'+h+': PASS (home, strategies, projects, modal)');
   }
+  // First-use education and wallet setup, all fictitious and local.
+  const wizardContext=await browser.newContext({viewport:{width:390,height:850},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  const wizardPage=await wizardContext.newPage();
+  await wizardPage.goto(url,{waitUntil:'domcontentloaded'});
+  await wizardPage.waitForFunction(()=>!!window.BTCBlock7&&!!window.BTCOnboarding);
+  await wizardPage.locator('#btcLanding .landing-ctas [data-entry-action="demo"]').click();
+  await wizardPage.locator('#boTitle').waitFor({state:'visible',timeout:4500});
+  assert.equal(await wizardPage.locator('#boNext').isDisabled(),true,'Terms acceptance required');
+  await wizardPage.locator('#boAccept').check();
+  assert.equal(await wizardPage.locator('#boNext').isEnabled(),true);
+  await wizardPage.locator('#boNext').click();
+  await wizardPage.locator('#boPreview .bo-alloc').first().waitFor();
+  const before=await wizardPage.evaluate(()=>window.BTCWalletPlanner.estimate({capital:2000,protectPrice:57400}).nominalTotal);
+  await wizardPage.locator('#boCapital').fill('3000');
+  await wizardPage.locator('#boProtect').fill('40000');
+  await wizardPage.locator('#boFinish').waitFor({state:'visible'});
+  assert.equal(await wizardPage.locator('#boFinish').isEnabled(),true);
+  const after=await wizardPage.evaluate(()=>window.BTCWalletPlanner.estimate({capital:3000,protectPrice:40000}).nominalTotal);
+  assert.ok(after<before*1.6,'Lower floor reduces risk budget even with a higher capital');
+  await wizardPage.locator('#boFinish').click();
+  const saved=await wizardPage.evaluate(()=>({
+   p:window.BTCBlock7.active(),settings:window.BTCPro.settings(),risk:window.BTCBlock6.config(),
+   on:window.BTCOnboarding.isOpen
+  }));
+  assert.equal(saved.on,false,'Onboarding closes only after saving');
+  assert.equal(saved.p.capital,3000,'Capital saved');
+  assert.equal(saved.p.snapshot?.onboarding?.version,1,'Onboarding completion stored per project');
+  assert.equal(saved.p.snapshot.onboarding.protectPrice,40000,'Protection price saved');
+  assert.equal(saved.risk.mode,'isolated','Modeled isolated margin');
+  assert.equal(saved.risk.margin,2100,'70% of cash used as stress collateral');
+  assert.equal(saved.risk.target,40000,'Risk simulator protection scenario updated');
+  assert.ok(saved.settings.amounts[0]<saved.settings.amounts[1]&&saved.settings.amounts[1]<saved.settings.amounts[2],'Correct 20/30/50');
+  n+=7;
+  await wizardPage.reload({waitUntil:'domcontentloaded'});
+  await wizardPage.waitForFunction(()=>!!window.BTCBlock7&&!!window.BTCOnboarding);
+  assert.equal(await wizardPage.evaluate(()=>window.BTCBlock7.active()?.snapshot?.onboarding?.version),1,'Consent and plan survive reload');
+  assert.equal(await wizardPage.locator('#btcOnboarding').isHidden(),true,'Do not repeat guide for a configured project');
+  await wizardPage.evaluate(()=>window.BTCBlock7.open());
+  await wizardPage.locator('#b7PlanSetup').click();
+  await wizardPage.locator('#boCapital').fill('4000');
+  await wizardPage.locator('#boFinish').click();
+  assert.equal(await wizardPage.evaluate(()=>window.BTCBlock7.active().capital),4000,'Editable later via account settings');
+  await wizardContext.close();
+  n+=3;
+  console.log('Guided onboarding: terms, dynamic protected budget, 20/30/50, persistence and later editing PASS.');
+
   // Signup/Login routing must open real forms but remain gated until email QA.
   for(const [mode,tab] of [['signup','registar'],['login','entrar']]){
     const authCtx=await browser.newContext({viewport:{width:390,height:850}});
@@ -101,6 +151,7 @@ async function run(){
   await pg.goto(url,{waitUntil:'domcontentloaded'});
   await pg.waitForFunction(()=>!!window.BTCBlock7);
   await pg.locator('#btcLanding .landing-ctas [data-entry-action="demo"]').click();
+  await pg.locator('#boDismiss').click();
   await pg.evaluate(()=>window.BTCBlock7.open());
   assert.equal(await pg.locator('#b7DeleteLocalData').count(),1);
   assert.equal(await pg.locator('a[href="./privacidade.html"]').count()>0,true);
