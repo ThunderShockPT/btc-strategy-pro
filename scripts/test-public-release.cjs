@@ -17,6 +17,10 @@ check(html.includes('<script src="./auth-guard.js"></script>'),'Auth guards load
 check(sw.includes("'./auth-guard.js'"),'Auth guards cached offline');
 check(workflow.includes('auth-guard.js'),'Auth guards published');
 check(workflow.includes('node scripts/test-auth-guard.cjs'),'Auth safety tests run in CI');
+check(html.includes('onboarding.css')&&html.includes('onboarding.js')&&html.includes('wallet-planner.js'),'Onboarding resources linked');
+check(html.includes('completeOnboarding')&&html.includes('b7PlanSetup'),'Wallet setup editable and saved');
+check(sw.includes("'./wallet-planner.js'")&&sw.includes("'./onboarding.css'")&&sw.includes("'./onboarding.js'"),'First-run resources available offline');
+check(workflow.includes('onboarding.css onboarding.js')&&workflow.includes('node scripts/test-wallet-planner.cjs'),'CI ships and tests wallet wizard');
 check(version.cloud_auth===false,'Version metadata must not claim real login available');
 check(!/\bsb_secret_|\bservice_role\s*[:=]\s*['"]/i.test(html),'No secret Supabase keys in public HTML');
 check(html.includes('Sem ligação a corretoras'),'Explicit fictitious-trading warning required');
