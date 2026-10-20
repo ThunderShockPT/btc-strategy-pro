@@ -37,8 +37,10 @@ function estimate({capital,protectPrice,referencePrice=82000,entries=null,gap=80
  const feesIn=nominal*entryFeeRate;
  const valueAtFloor=qty*floor;
  const unreal=valueAtFloor-nominal;
+ // Do not credit profit from hypothetical legs whose entry prices sit below the stress floor.
+ const conservativeLoss=legs.reduce((sum,l)=>sum+amounts[l.stage]*Math.max(0,1-l.ratio),0);
  const maintenance=valueAtFloor*maintenanceRate,exitFee=valueAtFloor*exitFeeRate,funding=valueAtFloor*fundingRate;
- const buffer=margin+unreal-feesIn-maintenance-exitFee-funding;
+ const buffer=margin-conservativeLoss-feesIn-maintenance-exitFee-funding;
  const denominator=qty*(1-maintenanceRate-exitFeeRate-fundingRate);
  const liq=denominator>0?(nominal-margin+feesIn)/denominator:null;
  const estimatedLiq=liq!==null&&liq>0?round(liq):null;
