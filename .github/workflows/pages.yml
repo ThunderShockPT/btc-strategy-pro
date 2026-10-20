@@ -28,6 +28,13 @@ jobs:
           node scripts/test-public-release.cjs
           node --check adaptive-viewport.js
           node scripts/test-responsive.cjs
+      - name: Browser QA across responsive viewports
+        run: |
+          npm install --no-save --ignore-scripts playwright-core@1.56.1
+          if ! command -v google-chrome >/dev/null 2>&1 && ! command -v chromium >/dev/null 2>&1; then
+            npx playwright-core@1.56.1 install chromium
+          fi
+          node scripts/test-mobile-layout.cjs
       - name: Prepare static PWA
         run: |
           python scripts/generate_icons.py
