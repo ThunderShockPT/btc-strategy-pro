@@ -37,8 +37,9 @@ async function metrics(page,tag,w,h){
 async function run(){
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const address=server.address(),url='http://127.0.0.1:'+address.port+'/';
- const exe=process.env.CHROME_BIN||'/usr/bin/google-chrome';
- const browser=await chromium.launch({headless:true,executablePath:fs.existsSync(exe)?exe:chromium.executablePath(),args:['--no-sandbox','--disable-dev-shm-usage']});
+ const candidates=[process.env.CHROME_BIN,'/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser','/opt/google/chrome/chrome'].filter(Boolean);
+ const exe=candidates.find(f=>fs.existsSync(f))||chromium.executablePath();
+ const browser=await chromium.launch({headless:true,executablePath:exe,args:['--no-sandbox','--disable-dev-shm-usage']});
  let n=0;
  try{
   for(const [w,h] of cases){
@@ -56,7 +57,7 @@ async function run(){
     if(el){el.click();return true}return false;
    });
    if(nav){await page.waitForTimeout(70);await metrics(page,w+'x'+h+' strategies',w,h);n++}
-   page.evaluate(()=>window.BTCBlock7.open());await page.waitForTimeout(70);
+   await page.evaluate(()=>window.BTCBlock7.open());await page.waitForTimeout(70);
    await metrics(page,w+'x'+h+' projects',w,h);n++;
    const rename=page.locator('.b7project button[data-paction="rename"]').first();
    await rename.click();
