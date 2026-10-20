@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "kraken-eea-pf-xbtusd-2026-10-21.1",
+  "version": "kraken-eea-pf-xbtusd-2026-10-21.2",
   "status": "partial",
   "reviewedOn": "2026-10-21",
   "observedAt": "2026-10-20T23:31:04.66Z",
@@ -210,7 +210,7 @@
     "settlement": "hour-end-or-net-position-change",
     "absoluteRateUnit": "USD-per-BTC-per-hour",
     "settledIsolatedDebit": "general-wallet",
-    "accountingStatus": "needs-account-reconciliation",
+    "accountingStatus": "needs-public-example-validation",
     "sources": [
       "instrument-api",
       "eea-spec",
@@ -222,12 +222,12 @@
     "feeScheduleUid": "723888f7-0a8e-4183-8648-f920a22339e3",
     "exampleMakerRate": "0.0002",
     "exampleTakerRate": "0.0005",
-    "accountRateConfirmed": false,
     "sources": [
       "instrument-api",
       "fee-schedule",
       "eea-fees"
-    ]
+    ],
+    "manualFeeRateRequired": true
   },
   "collateral": {
     "USD": {
@@ -249,9 +249,9 @@
   },
   "limitations": [
     {
-      "code": "ACCOUNT_PLATFORM_UNCONFIRMED",
+      "code": "MANUAL_CONTEXT_REQUIRED",
       "blockingFor": "specific-risk-recommendations",
-      "detail": "Public schedules do not identify the user account platform or classification."
+      "detail": "Choose a documented EEA planning scenario manually; no private API or account link is required."
     },
     {
       "code": "MARGIN_RECONCILIATION_PENDING",
@@ -261,7 +261,7 @@
     {
       "code": "FUNDING_ACCOUNTING_RECONCILIATION_PENDING",
       "blockingFor": "specific-risk-recommendations",
-      "detail": "Reconcile unrealized accrual, settlement and general-wallet debits without duplication."
+      "detail": "Validate the model against public examples and manually recorded funding; no linked account is required."
     },
     {
       "code": "LIQUIDATION_EXECUTION_UNVALIDATED",
@@ -269,9 +269,9 @@
       "detail": "Partial/full liquidation thresholds, fees and fills require scenario implementation and independent validation."
     },
     {
-      "code": "ACCOUNT_FEES_UNCONFIRMED",
+      "code": "MANUAL_FEES_REQUIRED",
       "blockingFor": "specific-risk-recommendations",
-      "detail": "Published examples are not account-specific rates."
+      "detail": "Use manually declared fee rates or explicit public-fee scenarios; never imply account-specific verification."
     }
   ],
   "discrepancies": [
@@ -294,5 +294,6 @@
     "transfersEnabled": false,
     "reviewMaxAgeSeconds": 86400,
     "reviewPolicyNote": "Application review window, not a Kraken guarantee or rule validity period. Changes may happen sooner."
-  }
+  },
+  "planningContext": "user-declared; no exchange account integration"
 }
