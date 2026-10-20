@@ -1,7 +1,7 @@
 {
-  "version": "15.0.0-beta-responsive",
+  "version": "16.0.0-beta-privacidade",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "adaptive-mobile-tablet-landscape-safe-area; cloud auth SMTP QA pending"
+  "stage": "local-data-erasure-and-demo-privacy-notices; cloud Auth blocked pending SMTP, GDPR controller contact and real-user QA"
 }
