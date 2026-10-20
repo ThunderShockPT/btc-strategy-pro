@@ -103,7 +103,9 @@ async function run(){
     const resp=await pg.goto(url+path,{waitUntil:'domcontentloaded'});
     assert.equal(resp.status(),200,'Static policy should exist');
     assert.ok((await pg.locator('h1').innerText()).includes(text),'Policy title visible');
-    await metrics(pg,'390x850 '+path,390,850); n++;
+    const policyBox=await pg.evaluate(()=>({viewport:window.innerWidth,page:document.documentElement.scrollWidth,body:document.body.scrollWidth}));
+    if(policyBox.page>policyBox.viewport+2||policyBox.body>policyBox.viewport+2)throw Error(path+': policy page horizontal overflow '+JSON.stringify(policyBox));
+    n++;
   }
   await ctx.close();
   console.log('Privacy QA: backup-compatible project persistence, cancelled deletion, typed confirmation, reload and policy links PASS.');
