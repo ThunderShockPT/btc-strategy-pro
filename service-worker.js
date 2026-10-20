@@ -1,6 +1,6 @@
 /* BTC Strategy Pro v10: only static app shell, no API/credentials */
-const CACHE_NAME='btc-strategy-pro-demo-v15-20261020',PREFIX='btc-strategy-pro-demo-';
-const FILES=['./','./index.html','./manifest.webmanifest','./pwa-controller.js','./cloud-sync.js','./responsive.css','./adaptive-viewport.js','./icons/icon-192.png','./icons/icon-512.png'];
+const CACHE_NAME='btc-strategy-pro-demo-v16-20261020',PREFIX='btc-strategy-pro-demo-';
+const FILES=['./','./index.html','./manifest.webmanifest','./pwa-controller.js','./cloud-sync.js','./responsive.css','./adaptive-viewport.js','./privacidade.html','./termos-demo.html','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)))});
 self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
