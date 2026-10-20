@@ -1,6 +1,7 @@
-/* BTC Strategy Pro: static shell only; no API or account data cached. */
-const CACHE_NAME='btc-strategy-pro-demo-v9-20261020';
-const FILES=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('btc-strategy-pro-demo-')&&key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET')return;const url=new URL(req.url);if(url.origin!==self.location.origin)return;const scope=new URL(self.registration.scope);if(!url.pathname.startsWith(scope.pathname))return;if(req.mode==='navigate'){event.respondWith(fetch(req).then(response=>{if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.put('./index.html',copy)))}return response}).catch(()=>caches.match('./index.html')));return;}if(url.pathname.endsWith('/manifest.webmanifest')||/\/icons\/icon-(192|512)\.png$/.test(url.pathname)){event.respondWith(caches.match(req).then(cached=>cached||fetch(req)))}});
+/* BTC Strategy Pro v10: only static app shell, no API/credentials */
+const CACHE_NAME='btc-strategy-pro-demo-v10-20261020',PREFIX='btc-strategy-pro-demo-';
+const FILES=['./','./index.html','./manifest.webmanifest','./pwa-controller.js','./icons/icon-192.png','./icons/icon-512.png'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)))});
+self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith(PREFIX)&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',e=>{const req=e.request;if(req.method!=='GET')return;const url=new URL(req.url),scope=new URL(self.registration.scope);if(url.origin!==scope.origin||!url.pathname.startsWith(scope.pathname))return;if(req.mode==='navigate'){e.respondWith(fetch(req).then(res=>{if(res.ok){const copy=res.clone();e.waitUntil(caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy)))}return res}).catch(()=>caches.match('./index.html')));return}if(url.pathname.endsWith('/manifest.webmanifest')||url.pathname.endsWith('/pwa-controller.js')||/\/icons\/icon-(192|512)\.png$/.test(url.pathname)){e.respondWith(caches.match(req).then(c=>c||fetch(req)))}})
