@@ -61,8 +61,28 @@ function create(client,userId){
   });
   return {version:row.snapshot_version,updatedAt:row.meta_updated_at};
  }
+ async function deleteRemote(id){
+  const st=states.get(id);
+  if(!st)return {deleted:false,localOnly:true};
+  let result;
+  try{
+   result=await client.rpc('btcsp_delete_project_v1',{
+    p_id:id,p_expected_meta_updated_at:st.metaStamp,
+    p_expected_version:st.version
+   });
+  }catch(e){throw Error('Ligação à cloud falhou: '+String(e?.message||e));}
+  if(result?.error){
+   const e=result.error;
+   if(e.code==='P0001'||String(e.message).includes('BTCSP_VERSION_CONFLICT'))
+    throw new ConflictError('Projeto alterado noutro dispositivo. A eliminação foi cancelada.');
+   throw Error('Não foi possível eliminar o projeto privado: '+e.message);
+  }
+  if(result?.data!==true)throw Error('O servidor não confirmou a eliminação.');
+  states.delete(id);
+  return {deleted:true,localOnly:false};
+ }
  function forget(id){states.delete(id)}
- return {seed,pending,persist,forget,state:id=>states.has(id)?{...states.get(id)}:null,reset:()=>states.clear()};
+ return {seed,pending,persist,deleteRemote,forget,state:id=>states.has(id)?{...states.get(id)}:null,reset:()=>states.clear()};
 }
 root.BTCCloudSync={create,ConflictError,requireProject};
 })(typeof window!=='undefined'?window:globalThis);
