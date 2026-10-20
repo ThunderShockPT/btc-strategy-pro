@@ -1,0 +1,6 @@
+{
+  "version": "10.0.0-beta",
+  "build": "2026-10-20",
+  "mode": "demo",
+  "cloud_auth": false
+}
