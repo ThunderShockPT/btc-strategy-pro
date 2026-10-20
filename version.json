@@ -1,7 +1,7 @@
 {
-  "version": "19.0.0-beta-onboarding",
+  "version": "19.1.0-beta-onboarding",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "first-use-consent-wallet-sizing-protection-stress-guide; real cloud auth pending SMTP and two-account QA"
+  "stage": "verified-first-login-onboarding-and-demo-preview; real cloud auth still gated pending SMTP and integration QA"
 }
