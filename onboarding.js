@@ -36,7 +36,7 @@ function close(){
 function open({force=false,initialStep=1,source='settings'}={}){
  if(visible)return;
  if(!workspace()?.active?.()||!window.BTCWalletPlanner)return;
- if(!force&&(alreadyConfigured()||hasUserActivity()))return;
+ if(!force&&(alreadyConfigured()||(source==='demo'&&hasUserActivity())))return;
  if(source==='account'&&!workspace()?.accountSession?.().authenticated)return;
  origin=source;
  const configured=alreadyConfigured();
