@@ -13,6 +13,10 @@ check(html.includes('id="btcLanding"')&&html.includes('data-entry-action="signup
 check(html.includes('src="./landing.js"')&&html.includes('href="./landing.css"'),'Welcome assets linked');
 check(sw.includes("'./landing.css'")&&sw.includes("'./landing.js'"),'Welcome assets offline cached');
 check(workflow.includes('landing.css landing.js'),'Public deployment ships welcome assets');
+check(html.includes('<script src="./auth-guard.js"></script>'),'Auth guards loaded before login');
+check(sw.includes("'./auth-guard.js'"),'Auth guards cached offline');
+check(workflow.includes('auth-guard.js'),'Auth guards published');
+check(workflow.includes('node scripts/test-auth-guard.cjs'),'Auth safety tests run in CI');
 check(version.cloud_auth===false,'Version metadata must not claim real login available');
 check(!/\bsb_secret_|\bservice_role\s*[:=]\s*['"]/i.test(html),'No secret Supabase keys in public HTML');
 check(html.includes('Sem ligação a corretoras'),'Explicit fictitious-trading warning required');
