@@ -9,6 +9,10 @@ function check(condition,message){assert.ok(condition,message);count++}
 check(/window\.BTC_BETA_AUTH_ENABLED=false\b/.test(html),'Auth must stay gated during Demo QA');
 check(html.includes('b7DeleteLocalData'),'Local project erasure must be available in Demo');
 check(html.includes('href="./privacidade.html"')&&html.includes('href="./termos-demo.html"'),'Privacy and Demo terms links must be visible');
+check(html.includes('id="btcLanding"')&&html.includes('data-entry-action="signup"')&&html.includes('data-entry-action="login"')&&html.includes('data-entry-action="demo"'),'Welcome page must offer signup, login and Demo');
+check(html.includes('src="./landing.js"')&&html.includes('href="./landing.css"'),'Welcome assets linked');
+check(sw.includes("'./landing.css'")&&sw.includes("'./landing.js'"),'Welcome assets offline cached');
+check(workflow.includes('landing.css landing.js'),'Public deployment ships welcome assets');
 check(version.cloud_auth===false,'Version metadata must not claim real login available');
 check(!/\bsb_secret_|\bservice_role\s*[:=]\s*['"]/i.test(html),'No secret Supabase keys in public HTML');
 check(html.includes('Sem ligação a corretoras'),'Explicit fictitious-trading warning required');
