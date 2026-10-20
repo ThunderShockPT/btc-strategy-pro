@@ -50,6 +50,15 @@ async function run(){
    assert.equal(resp.status(),200);
    await page.waitForFunction(()=>!!window.BTCBlock7&&!!window.BTCBlock6,{timeout:12000});
    await page.waitForTimeout(120);
+   // Fresh sessions must show the welcome page before the dashboard.
+   assert.equal(await page.locator('#btcLanding').isVisible(),true,w+'x'+h+': initial welcome should display');
+   const landingMetrics=await page.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth,appHidden:getComputedStyle(document.querySelector('.shell')).display==='none'}));
+   assert.ok(landingMetrics.appHidden,w+'x'+h+': dashboard must be gated by landing');
+   assert.ok(landingMetrics.page<=w+2,w+'x'+h+': welcome has horizontal overflow '+JSON.stringify(landingMetrics));
+   assert.equal(await page.locator('#btcLanding [data-entry-action="signup"]').count()>=1,true);
+   assert.equal(await page.locator('#btcLanding [data-entry-action="login"]').count()>=1,true);
+   await page.locator('#btcLanding .landing-ctas [data-entry-action="demo"]').click();
+   assert.equal(await page.locator('#btcLanding').isHidden(),true,w+'x'+h+': Demo action should reveal dashboard');
    await metrics(page,w+'x'+h+' home',w,h);n++;
    const nav=await page.evaluate(()=>{
     const a=[...document.querySelectorAll('[data-nav="Estratégias"]')];
@@ -70,11 +79,28 @@ async function run(){
    await context.close();
    console.log(w+'x'+h+': PASS (home, strategies, projects, modal)');
   }
+  // Signup/Login routing must open real forms but remain gated until email QA.
+  for(const [mode,tab] of [['signup','registar'],['login','entrar']]){
+    const authCtx=await browser.newContext({viewport:{width:390,height:850}});
+    const authPage=await authCtx.newPage();
+    await authPage.goto(url,{waitUntil:'domcontentloaded'});
+    await authPage.waitForFunction(()=>!!window.BTCBlock7);
+    await authPage.locator('#btcLanding .landing-ctas [data-entry-action="'+mode+'"]').click();
+    assert.equal(await authPage.locator('#btcLanding').isHidden(),true,mode+': welcome closed');
+    assert.equal(await authPage.locator('#accountView').isVisible(),true,mode+': account view opened');
+    const selected=await authPage.locator('[data-auth-tab="'+tab+'"]').evaluate(el=>el.classList.contains('active'));
+    assert.equal(selected,true,mode+': correct auth tab');
+    assert.equal(await authPage.locator('#b7AuthForm input').first().isDisabled(),true,'Cloud auth must remain gated');
+    await authPage.locator('#btcReturnLanding').click();
+    assert.equal(await authPage.locator('#btcLanding').isVisible(),true,'Return to welcome');
+    await authCtx.close();n++;
+  }
   // Privacy flow: use an isolated test browser profile and fictitious local projects only.
   const ctx=await browser.newContext({viewport:{width:390,height:850},deviceScaleFactor:2});
   const pg=await ctx.newPage();
   await pg.goto(url,{waitUntil:'domcontentloaded'});
   await pg.waitForFunction(()=>!!window.BTCBlock7);
+  await pg.locator('#btcLanding .landing-ctas [data-entry-action="demo"]').click();
   await pg.evaluate(()=>window.BTCBlock7.open());
   assert.equal(await pg.locator('#b7DeleteLocalData').count(),1);
   assert.equal(await pg.locator('a[href="./privacidade.html"]').count()>0,true);
