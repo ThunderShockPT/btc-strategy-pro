@@ -1,5 +1,5 @@
 /* BTC Strategy Pro v10: only static app shell, no API/credentials */
-const CACHE_NAME='btc-strategy-pro-demo-v13-20261020',PREFIX='btc-strategy-pro-demo-';
+const CACHE_NAME='btc-strategy-pro-demo-v14-20261020',PREFIX='btc-strategy-pro-demo-';
 const FILES=['./','./index.html','./manifest.webmanifest','./pwa-controller.js','./cloud-sync.js','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)))});
 self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting()});
