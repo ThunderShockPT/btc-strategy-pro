@@ -1,7 +1,7 @@
 {
-  "version": "17.0.0-beta-entrada",
+  "version": "17.1.0-beta-entrada",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "welcome-and-auth-ui-ready; cloud auth blocked pending SMTP and real email validation"
+  "stage": "welcoming signup/login/demo entry with recovery-link-safe routing; cloud auth gated pending SMTP"
 }
