@@ -1,7 +1,7 @@
 {
-  "version": "16.0.0-beta-privacidade",
+  "version": "17.0.0-beta-entrada",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "local-data-erasure-and-demo-privacy-notices; cloud Auth blocked pending SMTP, GDPR controller contact and real-user QA"
+  "stage": "welcome-and-auth-ui-ready; cloud auth blocked pending SMTP and real email validation"
 }
