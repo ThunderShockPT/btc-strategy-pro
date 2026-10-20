@@ -7,6 +7,8 @@ const version=JSON.parse(read('version.json')),workflow=read('.github/workflows/
 let count=0;
 function check(condition,message){assert.ok(condition,message);count++}
 check(/window\.BTC_BETA_AUTH_ENABLED=false\b/.test(html),'Auth must stay gated during Demo QA');
+check(html.includes('b7DeleteLocalData'),'Local project erasure must be available in Demo');
+check(html.includes('href="./privacidade.html"')&&html.includes('href="./termos-demo.html"'),'Privacy and Demo terms links must be visible');
 check(version.cloud_auth===false,'Version metadata must not claim real login available');
 check(!/\bsb_secret_|\bservice_role\s*[:=]\s*['"]/i.test(html),'No secret Supabase keys in public HTML');
 check(html.includes('Sem ligação a corretoras'),'Explicit fictitious-trading warning required');
@@ -14,7 +16,7 @@ check(html.includes('Preços e resultados fictícios'),'Disclaimers visible to u
 check(html.includes('Preço BTC/USD hipotético'),'Scenario price must not imply a real quote');
 check(html.includes('cloud-sync.js')&&html.includes('pwa-controller.js'),'Cloud and PWA scripts linked');
 check(sw.includes("'/cloud-sync.js'")||sw.includes("'./cloud-sync.js'"),'Service Worker precaches cloud module');
-check(workflow.includes('cloud-sync.js')&&workflow.includes('version.json _site/'),'Workflow must ship cloud module and version');
+check(workflow.includes('cloud-sync.js')&&workflow.includes('version.json')&&workflow.includes('privacidade.html')&&workflow.includes('termos-demo.html')&&workflow.includes('_site/'),'Workflow must ship cloud module and version');
 check(workflow.includes('node scripts/test-cloud-sync.cjs'),'Workflow must gate on optimistic concurrency tests');
 check(manifest.start_url==='./'&&manifest.scope==='./'&&manifest.display==='standalone','Manifest must support installation under subpath');
 check(html.includes('BTC Strategy Pro')&&version.mode==='demo','App retains Demo identity');
