@@ -1,7 +1,7 @@
 {
-  "version": "14.1.0-beta-audit",
+  "version": "15.0.0-beta-responsive",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "atomic-cloud-save-safe-delete-tests-passed; SMTP/Auth and real-user E2E pending"
+  "stage": "adaptive-mobile-tablet-landscape-safe-area; cloud auth SMTP QA pending"
 }
