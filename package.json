@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.10"
+  },
+  "name": "btc-strategy-pro",
+  "private": true,
+  "scripts": {
+    "test:v20:rules": "node --test scripts/test-kraken-rules.cjs",
+    "test:v20:data": "node --test scripts/test-v20-data.cjs"
+  }
+}

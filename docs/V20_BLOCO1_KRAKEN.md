@@ -23,7 +23,7 @@ Os caminhos `marginSchedules.europa.retail`, `.europa.professional`, `.europa_cr
 
 A documentação API descreve os limiares como limites inferiores de unidades de cotação para contratos lineares. O módulo usa seleção inclusiva do novo nível na fronteira, com strings decimais comparadas exatamente. A função devolve o nível publicado, não uma margem calculada nem autorização para negociar.
 
-As tabelas globais desta resposta começam em IM 1% e MM 0,5%; não são as tabelas EEE acima. Isto explica a indicação 100× que aparece na linha BTC da página de especificações. A seleção agora exige plataforma e classificação explícitas e não tem fallback global. A resposta pública não identifica a plataforma da conta do proprietário: sem essa confirmação, um resultado personalizado continua bloqueado.
+As tabelas globais desta resposta começam em IM 1% e MM 0,5%; não são as tabelas EEE acima. Isto explica a indicação 100× que aparece na linha BTC da página de especificações. A seleção agora exige plataforma e classificação explícitas e não tem fallback global. A resposta pública não identifica contas. Por decisão posterior do proprietário, a aplicação não ligará contas: a tabela é um cenário EEE declarado manualmente, sem alegar confirmação pela corretora. Ver V20_PRODUCT_DECISIONS.md.
 
 Fonte: https://futures.kraken.com/derivatives/api/v3/instruments
 
@@ -120,6 +120,6 @@ Executar `node --test scripts/test-kraken-rules.cjs`. Os testes cobrem seleção
 
 Critérios cumpridos: instrumento identificado, regras EEE separadas das globais, funding e preços com unidades, fontes e instante conservados, regras versionadas, estados incompletos/desatualizados bloqueados e testes reais.
 
-Critérios ainda abertos antes de fechar completamente o Bloco 1: confirmar as regras efetivas de conta, aplicação de margem em alterações de posição, encargos e limiar de liquidação parcial/total e reconciliação temporal do funding. Parte exige exemplos ou leitura de conta autorizada, que não foi feita. A existência de metadados públicos não resolve esses pontos. O Bloco 1A fica entregue; o Bloco 1B de reconciliação continua pendente. Não se declara o motor validado nem se passa a uma migração de produção com estas questões por resolver.
+Atualização de âmbito: não haverá leitura de conta Kraken. A aplicação de margem em alterações de posição, encargos de liquidação e contabilização temporal do funding serão validadas nos blocos do motor com exemplos independentes públicos e registos manuais. Não é requisito ligar uma conta. As estimativas continuam explicitamente aproximadas; esta especificação não declara o motor validado. Nenhuma migração de produção será aplicada sem backup e testes próprios.
 
-O desenho seguinte mantém depósitos, margem e correções em eventos separados e preserva os projetos V1. Continuam pendentes 14 blocos principais (2–15), além do fecho do Bloco 1B. Não houve alteração de interface, pelo que não há um novo preview visual neste bloco.
+O desenho seguinte mantém depósitos, margem e correções em eventos separados e preserva os projetos V1. A sequência segue para os blocos principais 2–15, com validação matemática e reconciliação por exemplos públicos nos blocos previstos. Não houve alteração de interface, pelo que não há um novo preview visual neste bloco.
