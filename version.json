@@ -1,7 +1,7 @@
 {
-  "version": "12.0.0-beta",
+  "version": "13.0.0-beta",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "auth-ui-staged; smtp-email-redirect-QA-required"
+  "stage": "optimistic-sync-staged; auth still gated pending SMTP and two-account QA"
 }
