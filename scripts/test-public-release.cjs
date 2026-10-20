@@ -14,7 +14,7 @@ check(html.includes('Preços e resultados fictícios'),'Disclaimers visible to u
 check(html.includes('Preço BTC/USD hipotético'),'Scenario price must not imply a real quote');
 check(html.includes('cloud-sync.js')&&html.includes('pwa-controller.js'),'Cloud and PWA scripts linked');
 check(sw.includes("'/cloud-sync.js'")||sw.includes("'./cloud-sync.js'"),'Service Worker precaches cloud module');
-check(workflow.includes('cloud-sync.js version.json _site/'),'Workflow must ship cloud module and version');
+check(workflow.includes('cloud-sync.js')&&workflow.includes('version.json _site/'),'Workflow must ship cloud module and version');
 check(workflow.includes('node scripts/test-cloud-sync.cjs'),'Workflow must gate on optimistic concurrency tests');
 check(manifest.start_url==='./'&&manifest.scope==='./'&&manifest.display==='standalone','Manifest must support installation under subpath');
 check(html.includes('BTC Strategy Pro')&&version.mode==='demo','App retains Demo identity');
