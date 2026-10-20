@@ -70,6 +70,44 @@ async function run(){
    await context.close();
    console.log(w+'x'+h+': PASS (home, strategies, projects, modal)');
   }
+  // Privacy flow: use an isolated test browser profile and fictitious local projects only.
+  const ctx=await browser.newContext({viewport:{width:390,height:850},deviceScaleFactor:2});
+  const pg=await ctx.newPage();
+  await pg.goto(url,{waitUntil:'domcontentloaded'});
+  await pg.waitForFunction(()=>!!window.BTCBlock7);
+  await pg.evaluate(()=>window.BTCBlock7.open());
+  assert.equal(await pg.locator('#b7DeleteLocalData').count(),1);
+  assert.equal(await pg.locator('a[href="./privacidade.html"]').count()>0,true);
+  let count=await pg.evaluate(()=>window.BTCBlock7.projects().projects.length);
+  await pg.locator('#b7New').click();
+  await pg.locator('#b7ProjectName').fill('Temporário QA Privacidade');
+  await pg.locator('#b7Capital').fill('3000');
+  await pg.locator('#b7Create').click();
+  assert.equal(await pg.evaluate(()=>window.BTCBlock7.projects().projects.length),count+1);
+  await pg.reload({waitUntil:'domcontentloaded'});
+  await pg.waitForFunction(()=>!!window.BTCBlock7);
+  await pg.evaluate(()=>window.BTCBlock7.open());
+  assert.equal(await pg.evaluate(()=>window.BTCBlock7.projects().projects.length),count+1);
+  pg.once('dialog',d=>d.dismiss());
+  await pg.locator('#b7DeleteLocalData').click();
+  assert.equal(await pg.evaluate(()=>window.BTCBlock7.projects().projects.length),count+1,'Cancelled erasure must preserve data');
+  const handler=d=>d.type()==='confirm'?d.accept():d.type()==='prompt'?d.accept('APAGAR'):d.dismiss();
+  pg.on('dialog',handler);
+  await pg.locator('#b7DeleteLocalData').click();
+  pg.off('dialog',handler);
+  assert.equal(await pg.evaluate(()=>window.BTCBlock7.projects().projects.length),1,'Erase should reset to starter Demo');
+  await pg.reload({waitUntil:'domcontentloaded'});
+  await pg.waitForFunction(()=>!!window.BTCBlock7);
+  assert.equal(await pg.evaluate(()=>window.BTCBlock7.projects().projects.length),1,'Erase persists after reload');
+  for(const [path,text] of [['privacidade.html','Privacidade e dados guardados'],['termos-demo.html','Condições da Beta Demo']]){
+    const resp=await pg.goto(url+path,{waitUntil:'domcontentloaded'});
+    assert.equal(resp.status(),200,'Static policy should exist');
+    assert.ok((await pg.locator('h1').innerText()).includes(text),'Policy title visible');
+    await metrics(pg,'390x850 '+path,390,850); n++;
+  }
+  await ctx.close();
+  console.log('Privacy QA: backup-compatible project persistence, cancelled deletion, typed confirmation, reload and policy links PASS.');
+
   console.log('Responsive browser QA: '+n+' layout checks PASS across '+cases.length+' viewports.');
  }finally{await browser.close();server.close();}
 }
