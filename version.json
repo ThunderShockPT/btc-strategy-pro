@@ -1,6 +1,7 @@
 {
-  "version": "10.0.0-beta",
+  "version": "11.0.0-beta",
   "build": "2026-10-20",
   "mode": "demo",
-  "cloud_auth": false
+  "cloud_auth": false,
+  "stage": "cloud-migration-prepared; auth disabled pending email QA"
 }
