@@ -25,7 +25,7 @@ jobs:
         run: |
           python scripts/generate_icons.py
           mkdir -p _site/icons
-          cp index.html manifest.webmanifest service-worker.js _site/
+          cp index.html manifest.webmanifest service-worker.js pwa-controller.js version.json _site/
           cp icons/icon-192.png icons/icon-512.png _site/icons/
           touch _site/.nojekyll
       - name: Configure Pages
