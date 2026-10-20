@@ -51,10 +51,11 @@ function ensureReturn(){
 }
 function initialize(){
  if(!landing())return;
- const recover=location.hash.includes('type=recovery')||location.hash.includes('type=signup');
- const explicit=new URLSearchParams(location.search).get('inicio');
+ const query=new URLSearchParams(location.search);
+ const authCallback=query.has('code')||query.has('error')||location.hash.includes('access_token=')||location.hash.includes('type=recovery')||location.hash.includes('type=signup');
+ const explicit=query.get('inicio');
  const choice=read();
- if(recover){enter('login')}
+ if(authCallback){remember('auth');hide();window.BTCBlock7?.open()}
  else if(explicit==='1'){show()}
  else if(choice==='demo'){hide()}
  else if(choice==='auth'){hide();window.BTCBlock7?.open()}
