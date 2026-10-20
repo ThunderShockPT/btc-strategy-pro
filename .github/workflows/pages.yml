@@ -25,6 +25,7 @@ jobs:
         run: |
           node --check cloud-sync.js
           node scripts/test-cloud-sync.cjs
+          node scripts/test-public-release.cjs
       - name: Prepare static PWA
         run: |
           python scripts/generate_icons.py
