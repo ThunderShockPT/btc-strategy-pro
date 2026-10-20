@@ -1,0 +1,26 @@
+name: V20 Kraken rules checks
+on:
+  push:
+    branches: [feat/v20-kraken-rules]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Contract rules and regression checks
+        run: |
+          node --check kraken-rules.js
+          node --test scripts/test-kraken-rules.cjs
+          node scripts/test-auth-guard.cjs
+          node scripts/test-cloud-sync.cjs
+          node scripts/test-public-release.cjs
+          node scripts/test-responsive.cjs
+          node scripts/test-wallet-planner.cjs
