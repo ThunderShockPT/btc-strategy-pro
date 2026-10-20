@@ -1,7 +1,7 @@
 {
-  "version": "17.1.0-beta-entrada",
+  "version": "18.0.0-beta-auth-qa",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "welcoming signup/login/demo entry with recovery-link-safe routing; cloud auth gated pending SMTP"
+  "stage": "verified-auth-guards-and-account-switch-hardening; real SMTP, links and two-account E2E pending"
 }
