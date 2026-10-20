@@ -1,7 +1,7 @@
-name: V20 Kraken rules checks
+name: V20 rules and data checks
 on:
   push:
-    branches: [feat/v20-kraken-rules]
+    branches: [feat/v20-kraken-rules, feat/v20-data-model]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -17,8 +17,11 @@ jobs:
           node-version: '24'
       - name: Contract rules and regression checks
         run: |
+          npm ci --ignore-scripts
           node --check kraken-rules.js
+          node --check legacy-migration.js
           node --test scripts/test-kraken-rules.cjs
+          node --test scripts/test-v20-data.cjs
           node scripts/test-auth-guard.cjs
           node scripts/test-cloud-sync.cjs
           node scripts/test-public-release.cjs
