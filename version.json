@@ -1,7 +1,7 @@
 {
-  "version": "14.0.0-beta-audit",
+  "version": "14.1.0-beta-audit",
   "build": "2026-10-20",
   "mode": "demo",
   "cloud_auth": false,
-  "stage": "static-audit-passed; SMTP/Auth E2E and account-isolation real tests pending"
+  "stage": "atomic-cloud-save-safe-delete-tests-passed; SMTP/Auth and real-user E2E pending"
 }
