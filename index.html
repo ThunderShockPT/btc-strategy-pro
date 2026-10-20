@@ -695,7 +695,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 /* Supabase public client configuration. Publishable key only (not a service role credential). */
 window.BTC_SUPABASE_CONFIG={url:'https://oftzqqjbwonngubihrsd.supabase.co',publishableKey:'sb_publishable_7LJzBDZZWgXbkTi8QVD0Tw_c421lnyQ'}; window.BTC_BETA_AUTH_ENABLED=false; // Re-enable only after SMTP and redirect-URL QA.
 </script>
-<script src="./cloud-sync.js"></script>
+<script src="./auth-guard.js"></script><script src="./cloud-sync.js"></script>
 <script>
 (()=>{'use strict';
 /* BTC STRATEGY PRO Bloco 7 — Local DEMO Workspace Manager + cloud-ready Auth Adapter.
@@ -767,7 +767,7 @@ async function authenticate(){
  }
  busy=true;if(button)button.disabled=true;
  try{
-  const c=await makeClient(),redirect=location.origin+location.pathname;
+  const c=await makeClient(),redirect=window.BTCAuthGuard.redirect(location);
   let res;
   if(tab==='entrar')res=await c.auth.signInWithPassword({email,password});
   else if(tab==='registar')res=await c.auth.signUp({email,password,options:{emailRedirectTo:redirect}});
@@ -785,20 +785,20 @@ async function authenticate(){
    const out=await c.auth.signOut();if(out.error)throw out.error;
    authTab='entrar';render();status('Password alterada. Inicia sessão com a nova password.');
   }else{
-   if(!res?.data?.user?.email_confirmed_at){
-    await c.auth.signOut();authTab='reenviar';render();status('Confirma o email antes de iniciar sessão.');return;
+   if(!await restoreActiveSession(c)){
+    authTab='reenviar';render();status('Confirma o email antes de iniciar sessão.');return;
    }
-   user=res.data.user;try{await loadCloudProjects()}catch(e){user=null;cloudEngine=null;await c.auth.signOut();throw e;}render();status('Sessão iniciada.');
+   status('Sessão iniciada com o email confirmado.');
   }
  }catch(e){
   const code=String(e?.code||'').toLowerCase();
   if(code==='email_not_confirmed'){authTab='reenviar';render();status('Email ainda não confirmado. Utiliza Reenviar email.');}
   else if(code==='invalid_credentials')status('Email ou password incorretos.');
   else if(code.includes('rate_limit')||code.includes('over_email'))status('Demasiadas tentativas. Volta a tentar mais tarde.');
-  else status('Não foi possível concluir a operação: '+String(e?.message||'Erro desconhecido'));
+  else status(window.BTCAuthGuard.errorText(e));
  }finally{busy=false;if(button?.isConnected)button.disabled=false;}
 }
-async function logout(){if(!client)return;clearTimeout(syncHandle);const ok=await saveCloud();if(ok===false&&!confirm('A última sincronização falhou. Terminar sessão na mesma? Os dados remotos podem estar desatualizados.'))return;const {error}=await client.auth.signOut();if(error){status('Não foi possível terminar sessão: '+error.message);return;}user=null;cloudEngine=null;syncWarning='';model={version:1,projects:[],activeId:null};initLocal();render();updateHeader()}
+async function logout(){if(!client)return;clearTimeout(syncHandle);const ok=await saveCloud();if(ok===false&&!confirm('A última sincronização falhou. Terminar sessão na mesma? Os dados remotos podem estar desatualizados.'))return;const {error}=await client.auth.signOut();if(error){status('Não foi possível terminar sessão: '+error.message);return;}user=null;cloudEngine=null;syncWarning='';model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();window.BTCLanding?.open()}
 async function migrateLocalToCloud(){
  if(!user||!client){status('Inicia sessão antes de sincronizar os projetos locais.');return}
  let cached;try{cached=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')}catch(e){status('Não foi possível ler os projetos locais. Exporta um backup primeiro.');return}
@@ -879,24 +879,64 @@ async function refreshCloud(){
 }
 
 function saveActiveLocalOnly(){if(suspendSave)return;let p=active();if(p){p.snapshot=getSnapshot();saveLocal()}}
+async function restoreActiveSession(c){
+ // getUser() verifies the identity with Supabase Auth rather than trusting a
+ // potentially stale browser session/user object. PostgreSQL RLS remains authoritative.
+ const result=await c.auth.getUser();
+ if(result.error)throw result.error;
+ const verified=result.data?.user;
+ if(!window.BTCAuthGuard.verified(verified)){
+  await c.auth.signOut();
+  return false;
+ }
+ if(user?.id===verified.id)return true;
+ clearTimeout(syncHandle);
+ user=verified;cloudEngine=null;syncWarning='';
+ model={version:1,projects:[],activeId:null};
+ try{
+  await loadCloudProjects();
+  render();updateHeader();
+  window.dispatchEvent(new CustomEvent('btc-auth-session-changed',{detail:{authenticated:true}}));
+  return true;
+ }catch(e){
+  user=null;cloudEngine=null;syncWarning='';
+  model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();
+  await c.auth.signOut();
+  throw e;
+ }
+}
 async function initCloud(){
  if(!hasCloud)return;
  try{
   const c=await makeClient();
   c.auth.onAuthStateChange((event,session)=>{
-   if(event==='SIGNED_OUT'&&user){clearTimeout(syncHandle);user=null;cloudEngine=null;syncWarning='';model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();}
-   if(event==='PASSWORD_RECOVERY'){authTab='nova';open();status('Link de recuperação confirmado. Define uma nova password.');}
+   // Do not await Supabase Auth operations inside onAuthStateChange.
+   if(event==='SIGNED_OUT'&&user){
+    clearTimeout(syncHandle);user=null;cloudEngine=null;syncWarning='';
+    model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();
+    window.dispatchEvent(new CustomEvent('btc-auth-session-changed',{detail:{authenticated:false}}));
+   }
+   if(event==='PASSWORD_RECOVERY'){
+    authTab='nova';open();status('Link de recuperação confirmado. Define uma nova password.');
+   }
+   // Different-user sessions from other tabs must never retain the previous
+   // account's project list. Defer Auth calls to avoid lock re-entrancy.
+   if(event==='SIGNED_IN'&&!busy&&user&&session?.user?.id!==user.id){
+    clearTimeout(syncHandle);
+    user=null;cloudEngine=null;syncWarning='';
+    model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();
+    setTimeout(()=>restoreActiveSession(c).catch(e=>status(window.BTCAuthGuard.errorText(e))),0);
+   }
   });
   const ses=await c.auth.getSession();
   if(ses?.error)throw ses.error;
+  const cb=window.BTCAuthGuard.callback(location);
   if(ses.data.session&&authTab!=='nova'){
-   const account=ses.data.session.user;
-   if(account?.email_confirmed_at){user=account;try{await loadCloudProjects();render();updateHeader()}catch(e){user=null;cloudEngine=null;await c.auth.signOut();throw e}}
-   else {await c.auth.signOut();status('Confirma o email antes de iniciar sessão.');}
+   const ok=await restoreActiveSession(c);
+   if(!ok){authTab='reenviar';open();status('Confirma o teu email antes de entrar.');}
   }
-  const params=new URLSearchParams(location.hash.replace(/^#/,''));
-  if(params.has('error')){open();status('O link de autenticação expirou ou é inválido. Pede um novo email.');}
- }catch(e){console.warn('Backend de autenticação indisponível:',e);}
+  if(cb.error){open();status('O link de confirmação ou recuperação expirou. Solicita outro email.');}
+ }catch(e){console.warn('Serviço de autenticação indisponível.');if(pageOpen)status(window.BTCAuthGuard.errorText(e));}
 }
 function wire(){window.addEventListener('online',()=>{if(user&&cloudEngine&&model.projects.some(p=>cloudEngine.pending(p)))queueCloudSave()});window.addEventListener('beforeunload',event=>{if(user&&cloudEngine&&model.projects.some(p=>cloudEngine.pending(p))){event.preventDefault();event.returnValue=''}});document.querySelectorAll('[data-nav]').forEach(b=>{const to=b.dataset.nav;if(to==='Conta'||to==='Projetos')b.onclick=open;else if(['Início','Estratégias','Registos','Terminal','Risco'].includes(to))b.onclick=()=>leave(to);});$('profileBtn').onclick=open;$('projectBtn').onclick=open;window.addEventListener('btc-b7-changed',()=>{saveActive();updateHeader()});const oldSet=window.BTCPro.setSettings;window.BTCPro.setSettings=(v)=>{oldSet(v);saveActive()};const oldPrice=window.BTCPro.setDemoPrice;window.BTCPro.setDemoPrice=(v)=>{oldPrice(v);saveActive()};
  let pendingSave=null;const delayedSave=()=>{clearTimeout(pendingSave);pendingSave=setTimeout(()=>saveActive(),300)};new MutationObserver(delayedSave).observe($('btcPrice'),{childList:true,characterData:true,subtree:true});$('riskView').addEventListener('change',delayedSave,true);$('riskView').addEventListener('input',delayedSave,true);
