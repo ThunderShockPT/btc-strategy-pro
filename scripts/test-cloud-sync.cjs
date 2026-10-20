@@ -12,8 +12,14 @@ const db=new Map();let stamp=0;let failMidWrite=false,requests=0;
 function clientFor(uid,disconnected=false){
  return {async rpc(proc,p){
   requests++;
-  assert.equal(proc,'btcsp_save_project_v1');
+  assert.ok(['btcsp_save_project_v1','btcsp_delete_project_v1'].includes(proc));
   if(disconnected)return {data:null,error:{code:'NETWORK',message:'offline'}};
+  if(proc==='btcsp_delete_project_v1'){
+   const existing=db.get(p.p_id);
+   if(existing?.owner!==uid || !existing || existing.stamp!==p.p_expected_meta_updated_at || existing.version!==p.p_expected_version)
+    return {data:null,error:{code:'P0001',message:'BTCSP_VERSION_CONFLICT'}};
+   db.delete(p.p_id);return {data:true,error:null};
+  }
   const row=db.get(p.p_id);
   if(row&&row.owner!==uid)return {data:null,error:{code:'42501',message:'row level security denied'}};
   if((row?.stamp??null)!==p.p_expected_meta_updated_at||(row?.version??null)!==p.p_expected_version)
@@ -62,5 +68,19 @@ const sample=(val=1,name='Projeto A')=>({id:P,name,mode:'demo',capital:2000,arch
  assert.equal(c2.pending(sample(4,'Nome novo')),false);checked++;
  await c2.persist(sample(4,'Nome novo'));
  assert.equal(db.get(P).version,3,'idempotent repeated save');checked++;
- console.log('BTC Strategy Pro: '+checked+' isolated audit assertions PASS — atomicity, offline, isolation, concurrency.');
+ const extra={...sample(7),id:'78671a18-467e-4b4e-9aaf-94a55449b433'};
+ const deleter=create(clientFor(U1),U1);
+ assert.equal((await deleter.persist(extra)).version,1);checked++;
+ const stale=create(clientFor(U1),U1);
+ stale.seed(extra,{updated_at:db.get(extra.id).stamp,project_snapshots:{version:db.get(extra.id).version,payload:db.get(extra.id).payload}});
+ extra.snapshot.ledger.entries.push(8);
+ assert.equal((await deleter.persist(extra)).version,2);checked++;
+ await assert.rejects(()=>stale.deleteRemote(extra.id),e=>e.code==='CLOUD_VERSION_CONFLICT');checked++;
+ assert.equal(db.get(extra.id).version,2);checked++;
+ const result=await deleter.deleteRemote(extra.id);
+ assert.equal(result.deleted,true);checked++;
+ assert.equal(db.has(extra.id),false);checked++;
+ const freshOnly=await stale.deleteRemote('11111111-2222-4333-8444-555555555555');
+ assert.equal(freshOnly.localOnly,true);checked++;
+ console.log('BTC Strategy Pro: '+checked+' isolated audit assertions PASS — atomicity, offline, isolation, concurrency and safe deletion.');
 })().catch(e=>{console.error(e);process.exitCode=1});
