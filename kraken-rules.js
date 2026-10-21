@@ -8,6 +8,9 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
  'use strict';
  const SCALE=10n**16n;
+ // Only objects validated and deeply frozen by this module can take the fast path.
+ // Caller-owned objects, including externally frozen objects, are always revalidated.
+ const validatedRules=new WeakSet();
  class RulesError extends Error {
   constructor(code){super(code);this.name='RulesError';this.code=code;}
  }
@@ -28,6 +31,7 @@
   return value;
  }
  function load(input){
+  if(input&&typeof input==='object'&&validatedRules.has(input))return input;
   requireThat(input&&input.schemaVersion===1&&input.jurisdiction==='EEA'&&input.symbol==='PF_XBTUSD','UNSUPPORTED_RULESET');
   requireThat(input.base==='BTC'&&input.quote==='USD'&&input.product==='linear-multi-m-perpetual','UNSUPPORTED_RULESET');
   requireThat(typeof input.version==='string'&&input.version.length>0&&input.status==='partial','UNSUPPORTED_RULESET');
@@ -68,7 +72,7 @@
    }
   }
   requireThat(Array.isArray(input.limitations)&&input.limitations.length>0&&input.limitations.every(x=>typeof x.code==='string'&&x.blockingFor==='specific-risk-recommendations'),'MISSING_LIMITATIONS');
-  return freeze(JSON.parse(JSON.stringify(input)));
+  const loaded=freeze(JSON.parse(JSON.stringify(input)));validatedRules.add(loaded);return loaded;
  }
  function selectSchedule(input,platform,clientType){
   const rules=load(input);
