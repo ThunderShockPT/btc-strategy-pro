@@ -190,12 +190,12 @@
   return freeze({status:'prepared-for-persistence',nextInput:{...input,reservations:clone(fresh.proposedReservations)},nextPlan:clone(fresh.candidatePlan),basisRevision:lastRevision(input),
    planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false});
  }
- async function prepareProfileChange(input,plan,change){
+ async function profilePlanReview(input,plan,change,completedSearch){
   input=clone(input);plan=clone(plan);change=clone(change);validatePlan(plan,input);
   fields(change,['id','version','profile','floorMode','marginAdmission','market','baseCyclePolicy']);need(Profiles,'PROFILE_ENGINE_REQUIRED');
   need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
   need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');
-  const result=Profiles.preview(input,plan,change),candidatePlan={...result.candidatePlan,id:change.id.toLowerCase(),version:change.version};
+  const result=completedSearch?Profiles.completePreview(input,plan,change,completedSearch):Profiles.preview(input,plan,change),candidatePlan={...result.candidatePlan,id:change.id.toLowerCase(),version:change.version};
   candidatePlan.configuration={...(plan.configuration||{}),cyclePolicy:result.cyclePolicy,profilePolicyVersion:result.policyVersion,profileAdmission:change.marginAdmission,
    profileBaseCyclePolicy:clone(change.baseCyclePolicy),profileMarketContext:clone(change.market),profileValuation:clone(input.valuation),profileFloorMode:change.floorMode,
    cycleInventory:result.cycles.candidateInventory||clone(plan.configuration?.cycleInventory||[])};
@@ -203,6 +203,14 @@
   validatePlan(candidatePlan,input);
   return seal({workflowVersion:'v20-cash-7b.1',type:'profile-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,
    status:result.canApply?'awaiting-project-confirmation':result.status,canApply:result.canApply,planApplied:false,databaseWritten:false,krakenTransferPerformed:false});
+ }
+ async function prepareProfileChange(input,plan,change){return profilePlanReview(input,plan,change,null);}
+ async function prepareCompletedProfileChange(input,plan,change,completedSearch){need(change.marginAdmission===Profiles.definition().approvedAdmission,'PROFILE_ADMISSION_NOT_APPROVED');return profilePlanReview(input,plan,change,clone(completedSearch));}
+ async function confirmCompletedProfileChange(input,plan,proposal,confirmation,completedSearch){
+  input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);await verifyReview(input,plan,proposal,'profile-review',confirmation);
+  const fresh=await prepareCompletedProfileChange(input,plan,proposal.change,completedSearch);need(fresh.reviewHash===proposal.reviewHash,'MODIFIED_REVIEW');
+  need(fresh.canApply&&fresh.result.cycles.selected&&fresh.result.cycles.failedMarginSurvived===true&&!fresh.result.cycles.conditionalOnPlannedMargin,'PROFILE_PLAN_INFEASIBLE');
+  return freeze({status:'prepared-for-persistence',nextInput:{...input,reservations:clone(fresh.result.cycles.selected.reservations)},nextPlan:clone(fresh.candidatePlan),basisRevision:lastRevision(input),policyVersion:fresh.result.policyVersion,policyAdmission:'strict',planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false,limitations:['LOCAL_REVIEW_NOT_SERVER_AUTHORIZATION','ATOMIC_PERSISTENCE_BLOCK12','BETA_POLICY_NOT_PUBLIC_LAUNCH_APPROVAL']});
  }
  async function confirmProfileChange(input,plan,proposal,confirmation){
   input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);
@@ -214,5 +222,5 @@
    policyVersion:fresh.result.policyVersion,policyAdmission:'strict',planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false,
    limitations:['LOCAL_REVIEW_NOT_SERVER_AUTHORIZATION','ATOMIC_PERSISTENCE_BLOCK12','BETA_POLICY_NOT_PUBLIC_LAUNCH_APPROVAL']});
  }
- return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange,prepareCompletedCyclePlanChange,confirmCompletedCyclePlanChange,prepareProfileChange,confirmProfileChange});
+ return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange,prepareCompletedCyclePlanChange,confirmCompletedCyclePlanChange,prepareProfileChange,confirmProfileChange,prepareCompletedProfileChange,confirmCompletedProfileChange});
 });
