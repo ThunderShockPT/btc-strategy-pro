@@ -28,6 +28,7 @@
  function revision(v,zero=false){need(typeof v==='string'&&(zero?/^(0|[1-9]\d{0,18})$/:/^[1-9]\d{0,18}$/).test(v)&&BigInt(v)<=MAX,'INVALID_CASH_REVISION');return BigInt(v);}
  const lastRevision=input=>input.events.reduce((r,e)=>{const v=revision(e.revision);return v>r?v:r;},0n).toString();
  function validatePlan(p,input){
+  need(input.ruleScenario===undefined,'SYNTHETIC_RULE_SCENARIO_NOT_RECORDABLE');
   fields(p,['id','projectId','ownerId','scenarioKey','version','profile','referencePriceUSD','referenceAt','protectionFloorUSD'],['configuration']);
   need(typeof p.projectId==='string'&&typeof p.ownerId==='string'&&p.projectId.toLowerCase()===input.projectId.toLowerCase()&&p.ownerId.toLowerCase()===input.ownerId.toLowerCase()&&p.scenarioKey===input.scenarioKey,'PLAN_SCOPE_MISMATCH');
   need(typeof p.id==='string'&&UUID.test(p.id),'INVALID_PLAN_ID');revision(p.version);

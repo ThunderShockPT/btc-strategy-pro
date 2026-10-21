@@ -47,7 +47,13 @@
   insist(typeof valuation.source==='string'&&valuation.source.trim().length>0&&valuation.source.length<=200,'PRICE_SOURCE_REQUIRED');
   const mark=decimal(valuation.markPriceUSD,{positive:true}),asOf=time(valuation.asOf);
   const rules=Rules.load(input.rules);
-  const eligibility=Rules.assess(rules,{now:valuation.asOf,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
+  let assessmentAt=valuation.asOf;
+  if(input.ruleScenario!==undefined){
+   keys(input.ruleScenario,['mode','referenceAt']);
+   insist(input.ruleScenario.mode==='frozen-rules-synthetic'&&valuation.kind==='synthetic','INVALID_RULE_SCENARIO');
+   insist(time(input.ruleScenario.referenceAt)<=asOf,'RULE_SCENARIO_FROM_FUTURE');assessmentAt=input.ruleScenario.referenceAt;
+  }
+  const eligibility=Rules.assess(rules,{now:assessmentAt,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
   const blockingReasons=eligibility.reasons.slice(0,eligibility.reasons.length-rules.limitations.length);
   const staleBookkeeping=input.bookkeepingOnly===true&&blockingReasons.length===1&&blockingReasons[0]==='STALE_RULES';
   insist(eligibility.scopeReady||staleBookkeeping,'RULES_OUT_OF_SCOPE_OR_STALE');
@@ -115,7 +121,7 @@
       let buyRequirements=requirements(basis);
       if(input.buyRulesByEvent&&Object.hasOwn(input.buyRulesByEvent,e.id.toLowerCase())){
        const historical=input.buyRulesByEvent[e.id.toLowerCase()];
-       const valid=Rules.assess(historical,{now:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
+       const valid=Rules.assess(historical,{now:input.ruleScenario&&(time(e.effective_at)>time(assessmentAt)||time(historical.observedAt)>time(e.effective_at))?assessmentAt:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
        insist(valid.scopeReady,'HISTORICAL_RULES_INVALID',e.id);
        buyRequirements=calculateMargin(basis,Rules.selectSchedule(historical,input.platform,input.clientType));
       }
@@ -167,8 +173,8 @@
   const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
   const equity=wallet.add(margin).add(unrealized);
   insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
-  return freeze({engineVersion:'v20-core-8.1',ruleVersion:rules.version,status:eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
-   ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady},
+  return freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
+   ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady&&!input.ruleScenario,syntheticFrozenRules:!!input.ruleScenario,assessedAt:assessmentAt},
    journal:{sourceEventCount:input.events.length,correctionCount:projection.correctionCount,activeFactCount:projection.events.length,localAdjustmentsOnly:true},
    inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
    capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
@@ -185,7 +191,7 @@
     markExposureToIsolatedEquity:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(quantity.mul(mark).div(isolatedEquity)):null,
     unreturnedMarginUSD:quantity.eq(0)?fmt(margin):'0',estimatedLiquidationUSD:null},
    precision:{inputDecimals:18,calculationSignificantDigits:80,outputDecimals:24,rounding:'half-even'},
-   limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_BLOCK9','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
+   limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_REQUIRES_TEMPORAL_SCENARIO','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
    recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
  }
  function effectiveEvents(input){reconstruct(input);return Journal.project(input.events).events;}
