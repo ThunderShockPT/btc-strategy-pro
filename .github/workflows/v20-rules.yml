@@ -24,6 +24,8 @@ jobs:
           node --check correction-workflow.js
           node --check temporal-simulator.js
           node --check wallet-onboarding.js
+          node --check backend/backup-envelope.cjs
+          node --test scripts/test-backup-envelope.cjs
           node --check backend/supabase-auth.cjs
           node --check backend/http-api.cjs
           node --check cloud-client-v20.js
@@ -87,4 +89,5 @@ jobs:
       - name: Real PostgreSQL concurrent commands and rollback
         env:
           BTCSP_TEST_PG_URL: postgresql://postgres:btcsp_local_qa_only@127.0.0.1:5432/postgres
+          BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
         run: node --test scripts/test-atomic-postgres.cjs
