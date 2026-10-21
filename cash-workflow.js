@@ -1,9 +1,9 @@
 /* V20 Block 5: manual cash movement reviews, never exchange or database writes.
  * Review hashes detect stale local state; they are NOT authorization signatures. */
 (function(root,factory){
- if(typeof module==='object'&&module.exports)module.exports=factory(require('decimal.js'),require('./financial-engine.js'),require('./position-risk.js'),require('node:crypto').webcrypto,require('./cycle-planner.js'));
- else root.BTCCashWorkflow=factory(root.Decimal,root.BTCFinancialEngine,root.BTCPositionRisk,root.crypto,root.BTCCyclePlanner);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Decimal,Core,Risk,crypto,Cycles){
+ if(typeof module==='object'&&module.exports)module.exports=factory(require('decimal.js'),require('./financial-engine.js'),require('./position-risk.js'),require('node:crypto').webcrypto,require('./cycle-planner.js'),require('./risk-profiles.js'));
+ else root.BTCCashWorkflow=factory(root.Decimal,root.BTCFinancialEngine,root.BTCPositionRisk,root.crypto,root.BTCCyclePlanner,root.BTCRiskProfiles);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Decimal,Core,Risk,crypto,Cycles,Profiles){
  'use strict';
  const D=Decimal.clone({precision:80,rounding:Decimal.ROUND_HALF_EVEN,toExpNeg:-100,toExpPos:100});
  const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -169,5 +169,22 @@
   return freeze({status:'prepared-for-persistence',nextInput:{...input,reservations:clone(fresh.proposedReservations)},nextPlan:clone(fresh.candidatePlan),basisRevision:lastRevision(input),
    planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false});
  }
- return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange});
+ async function prepareProfileChange(input,plan,change){
+  input=clone(input);plan=clone(plan);change=clone(change);validatePlan(plan,input);
+  fields(change,['id','version','profile','floorMode','marginAdmission','market','baseCyclePolicy']);need(Profiles,'PROFILE_ENGINE_REQUIRED');
+  need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
+  need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');
+  const result=Profiles.preview(input,plan,change),candidatePlan={...result.candidatePlan,id:change.id.toLowerCase(),version:change.version};
+  candidatePlan.configuration={...(plan.configuration||{}),cyclePolicy:result.cyclePolicy,profilePolicyVersion:result.policyVersion,cycleInventory:result.cycles.candidateInventory||clone(plan.configuration?.cycleInventory||[])};
+  if(result.cycles.selected)candidatePlan.configuration.cycleReservationBasis={protectedCashUSD:result.cyclePolicy.protectedCashUSD,fundingReserveUSD:result.cyclePolicy.fundingReserveUSD,closingFeeReserveUSD:result.cycles.selected.closingFeeReserveUSD};
+  return seal({workflowVersion:'v20-cash-7a.1',type:'profile-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,
+   status:'awaiting-owner-policy-approval',canApply:false,planApplied:false,databaseWritten:false,krakenTransferPerformed:false});
+ }
+ async function confirmProfileChange(input,plan,proposal,confirmation){
+  input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);
+  await verifyReview(input,plan,proposal,'profile-review',confirmation);
+  // Product-policy approval is separate from confirming an individual project review.
+  throw new CashError('PROFILE_POLICY_APPROVAL_PENDING');
+ }
+ return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange,prepareProfileChange,confirmProfileChange});
 });
