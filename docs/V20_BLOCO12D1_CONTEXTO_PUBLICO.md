@@ -47,3 +47,5 @@ A etapa 12D continua aberta. Ver V20_BLOCO12_ETAPAS_RESTANTES.md para as seis et
 - 386/386 verificações V19 repetidas: Auth 19, cloud 26, release 38, responsividade 37, planeador 266.
 - Reconstrução do bundle fechado: 475 460 bytes; arranque local e gate fechado aprovados. Não equivale a execução financeira em Deno alojado.
 - Código de referência: 3ae91bbb3c6b5d3cf48959ee59bf2c317ff9d45f. CI associada: 39636474507. O estado final deve ser verificado no GitHub; estes resultados locais não são apresentados como resultado da CI.
+
+CI verificada após a conclusão: 39636474507 terminou com ambos os jobs aprovados no código 3ae91bbb3c6b5d3cf48959ee59bf2c317ff9d45f. O job PostgreSQL 119348236209 aprovou 13/13 testes, zero falhas. O conteúdo dos oito ficheiros de código/testes/configuração foi comparado com o remoto; os três ficheiros de documentação também foram confirmados. PR: https://github.com/ThunderShockPT/btc-strategy-pro/pull/20, sem merge ou publicação. A aprovação dos testes funcionais não elimina o bloqueio de desempenho medido.
