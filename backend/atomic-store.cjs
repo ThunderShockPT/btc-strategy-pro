@@ -91,6 +91,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
    need(Number.isFinite(quote)&&Number.isFinite(observed)&&Number.isFinite(age),'CURRENT_MANUAL_CONTEXT_REQUIRED');
    manualQuote=p.state.input.valuation.asOf;expiry=Math.min(expiry,quote+60000,observed+age*1000);
   }
+  if(p.review.change?.market?.validUntil!==undefined){const deadline=Date.parse(p.review.change.market.validUntil);need(Number.isFinite(deadline),'INVALID_PROFILE_CONTEXT_TIME');expiry=Math.min(expiry,deadline);}
   if(p.calculationSource)expiry=Math.min(expiry,Date.parse(p.calculationSource.expiresAt));
   const {reviewHash:unused,...result}=p.result;p.result={...result,reviewBuild:REVIEW_BUILD,reviewedAt:base.startedAt,expiresAt:new Date(expiry).toISOString()};p.result.reviewHash=hash(p.result);
   return db.transaction(async tx=>{

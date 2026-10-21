@@ -29,3 +29,8 @@ test('database clock rejects a genuinely expired stored review without appending
  await x.db.query('insert into btcsp_private.command_reviews(project_id,owner_id,scenario_key,review_hash,request_hash,basis_hash,payload,expires_at,recorded_at) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',[f.P,f.A,'demo_long',payload.result.reviewHash,row.request_hash,row.basis_hash,payload,deadline,new Date(Date.now()-59000).toISOString()]);
  await new Promise(r=>setTimeout(r,40));await assert.rejects(a.commit(f.TA,scope,f.movement(),cf(payload.result)),/COMMAND_REVIEW_EXPIRED/);assert.equal((await a.snapshot(f.TA,scope)).revision,'3');
 });
+
+test('profile review expiry is capped by the trusted public observation deadline',async t=>{
+ const x=await setup(t),of=require('./helpers/onboarding-fixture.cjs'),deadline=new Date(Date.now()+30000).toISOString(),context=of.context(),store=x.make({planContextProvider:async()=>({market:{...context.market,validUntil:deadline},baseCyclePolicy:{...context.baseCyclePolicy,maxCycles:1}})}),request={workflow:'plan-profile',command:{mode:'recorded',change:{id:f.uuid(1950),version:'2',profile:'balanced',floorMode:'preserve',marginAdmission:'strict'}}},p=await store.prepare(f.TA,scope,request);
+ assert.equal(p.expiresAt,deadline);assert.equal(p.review.change.market.validUntil,deadline);
+});
