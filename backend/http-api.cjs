@@ -2,10 +2,12 @@
 const {randomUUID}=require('node:crypto'),Store=require('./atomic-store.cjs'),Wallet=require('./wallet-store.cjs');
 const ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const JOB_ROUTES=Object.freeze({enqueue:"/api/v20/prepare",advance:"/api/v20/prepare",status:"/api/v20/state",result:"/api/v20/state",cancel:"/api/v20/commit"});
-const ERRORS={INSUFFICIENT_OBSERVATIONS:422,OBSERVATION_WINDOW_INSUFFICIENT_OR_STALE:422,STALE_OR_FUTURE_MARKET_CONTEXT:422,OBSERVED_DEPTH_TOO_LOW_FOR_MINIMUM_CYCLE:422,INVALID_CALCULATION_PROFILE_REQUEST:400,CALCULATION_JOB_IDEMPOTENCY_CONFLICT:409,COMPLETED_PROFILE_SEARCH_MISMATCH:409,PROFILE_CONTEXT_REQUIRED:503,CALCULATION_REVIEW_NOT_ENABLED:503,COMPLETED_SEARCH_BASIS_MISMATCH:409,CALCULATION_BUILD_CHANGED:409,COMMAND_REVIEW_EXPIRED:409,COMMAND_REVIEW_LIMIT_REACHED:429,CALCULATION_JOB_NOT_FOUND:404,INVALID_CALCULATION_JOB_REQUEST:400,INVALID_CALCULATION_JOB_ID:400,CALCULATION_JOB_LIMIT_REACHED:429,CALCULATION_EXPIRED:409,STALE_CALCULATION_BASIS:409,CALCULATION_LEASE_LOST:409,SEARCH_NOT_COMPLETED:409,CALCULATIONS_NOT_ENABLED:503,SESSION_NOT_VALID:401,VERIFIED_OWNER_SESSION_REQUIRED:401,STALE_PROJECT_REVIEW:409,CONCURRENT_PROJECT_CHANGE:409,REVIEW_CHANGED_OR_TAMPERED:409,COMMAND_IDEMPOTENCY_CONFLICT:409,PROJECT_NOT_INITIALIZED:404,SELL_EXCEEDS_AVAILABLE_BTC:422,INSUFFICIENT_WALLET_CASH:422,INVALID_COMMAND_FIELDS:400,UNSUPPORTED_WORKFLOW:400,ONLY_RECORDED_COMMANDS_ALLOWED:400,INVALID_COMMAND_IDEMPOTENCY_KEY:400,INVALID_WALLET_COMMAND:400,INVALID_WALLET_ID:400,INVALID_PROJECT_TITLE:400,WALLET_REVIEW_ID_CONFLICT:409,WALLET_REVIEW_EXPIRED:409,WALLET_PROJECT_ALREADY_EXISTS:409,WALLET_REVIEW_LIMIT_REACHED:429,PROJECT_LIMIT_REACHED:422,CURRENT_TUTORIAL_AND_TERMS_REQUIRED:422,ALL_TUTORIAL_TOPICS_REQUIRED:422,INVALID_ACKNOWLEDGMENT_TIME:422,PROFILE_ADMISSION_NOT_APPROVED:422,PROFILE_PLAN_INFEASIBLE:422,CYCLE_PLAN_INFEASIBLE:422,PLAN_NOT_FUNDED_OR_MAINTENANCE_REACHED:422,NEXT_PLAN_VERSION_REQUIRED:409,NEW_PLAN_ID_REQUIRED:409,SETUP_PLAN_INFEASIBLE:422,CURRENT_MANUAL_CONTEXT_REQUIRED:422,CURRENT_RULES_REQUIRED:422};
-function create({db,auth,contextProvider,planContextProvider=null,setupContextProvider=null,calculationJobs=null,now,admit,origins,enabled=false}){
+const ERRORS={CLOUD_CONFIGURATION_INCOMPLETE:503,INSUFFICIENT_OBSERVATIONS:422,OBSERVATION_WINDOW_INSUFFICIENT_OR_STALE:422,STALE_OR_FUTURE_MARKET_CONTEXT:422,OBSERVED_DEPTH_TOO_LOW_FOR_MINIMUM_CYCLE:422,INVALID_CALCULATION_PROFILE_REQUEST:400,CALCULATION_JOB_IDEMPOTENCY_CONFLICT:409,COMPLETED_PROFILE_SEARCH_MISMATCH:409,PROFILE_CONTEXT_REQUIRED:503,CALCULATION_REVIEW_NOT_ENABLED:503,COMPLETED_SEARCH_BASIS_MISMATCH:409,CALCULATION_BUILD_CHANGED:409,COMMAND_REVIEW_EXPIRED:409,COMMAND_REVIEW_LIMIT_REACHED:429,CALCULATION_JOB_NOT_FOUND:404,INVALID_CALCULATION_JOB_REQUEST:400,INVALID_CALCULATION_JOB_ID:400,CALCULATION_JOB_LIMIT_REACHED:429,CALCULATION_EXPIRED:409,STALE_CALCULATION_BASIS:409,CALCULATION_LEASE_LOST:409,SEARCH_NOT_COMPLETED:409,CALCULATIONS_NOT_ENABLED:503,SESSION_NOT_VALID:401,VERIFIED_OWNER_SESSION_REQUIRED:401,STALE_PROJECT_REVIEW:409,CONCURRENT_PROJECT_CHANGE:409,REVIEW_CHANGED_OR_TAMPERED:409,COMMAND_IDEMPOTENCY_CONFLICT:409,PROJECT_NOT_INITIALIZED:404,SELL_EXCEEDS_AVAILABLE_BTC:422,INSUFFICIENT_WALLET_CASH:422,INVALID_COMMAND_FIELDS:400,UNSUPPORTED_WORKFLOW:400,ONLY_RECORDED_COMMANDS_ALLOWED:400,INVALID_COMMAND_IDEMPOTENCY_KEY:400,INVALID_WALLET_COMMAND:400,INVALID_WALLET_ID:400,INVALID_PROJECT_TITLE:400,WALLET_REVIEW_ID_CONFLICT:409,WALLET_REVIEW_EXPIRED:409,WALLET_PROJECT_ALREADY_EXISTS:409,WALLET_REVIEW_LIMIT_REACHED:429,PROJECT_LIMIT_REACHED:422,CURRENT_TUTORIAL_AND_TERMS_REQUIRED:422,ALL_TUTORIAL_TOPICS_REQUIRED:422,INVALID_ACKNOWLEDGMENT_TIME:422,PROFILE_ADMISSION_NOT_APPROVED:422,PROFILE_PLAN_INFEASIBLE:422,CYCLE_PLAN_INFEASIBLE:422,PLAN_NOT_FUNDED_OR_MAINTENANCE_REACHED:422,NEXT_PLAN_VERSION_REQUIRED:409,NEW_PLAN_ID_REQUIRED:409,SETUP_PLAN_INFEASIBLE:422,CURRENT_MANUAL_CONTEXT_REQUIRED:422,CURRENT_RULES_REQUIRED:422};
+function create({db,auth,contextProvider,planContextProvider=null,setupContextProvider=null,calculationJobs=null,calculationJobsFactory=null,availability=()=>enabled===true,now,admit,origins,enabled=false}){
  if(!auth||typeof auth.authenticate!=='function'||typeof auth.assertSession!=='function'||typeof admit!=='function'||!Array.isArray(origins)||origins.length<1||origins.some(o=>{try{return new URL(o).origin!==o||new URL(o).protocol!=='https:';}catch{return true;}}))throw Error('HTTP_SERVER_DEPENDENCIES_REQUIRED');
  if(calculationJobs!==null&&['enqueue','runUnit','status','result','cancel'].some(k=>typeof calculationJobs[k]!=='function'))throw Error('HTTP_SERVER_DEPENDENCIES_REQUIRED');
+ if(calculationJobsFactory!==null&&typeof calculationJobsFactory!=='function')throw Error('HTTP_SERVER_DEPENDENCIES_REQUIRED');
+ if(typeof availability!=='function')throw Error('HTTP_SERVER_DEPENDENCIES_REQUIRED');
  if(!db||typeof db.transaction!=='function'||typeof contextProvider!=='function')throw Error('HTTP_SERVER_DEPENDENCIES_REQUIRED');
  return async function handle(request,{remoteAddress}={}){
   const requestId=randomUUID(),origin=request.headers.get('origin'),headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store, private','Pragma':'no-cache','X-Content-Type-Options':'nosniff','Vary':'Origin'};
@@ -14,7 +16,7 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
   try{
    const url=new URL(request.url);if(url.search||url.hash)return reply(400,{code:'INVALID_API_REQUEST'});
    if(origin&&!origins.includes(origin))return reply(403,{code:'ORIGIN_NOT_ALLOWED'});
-   if(request.method==='GET'&&url.pathname==='/api/v20/health')return reply(200,{cloudAvailable:enabled===true});
+   if(request.method==='GET'&&url.pathname==='/api/v20/health'){let available=false;if(enabled===true)try{available=await availability()===true;}catch{/* Configuration failure is public only as unavailable; never expose secrets. */}return reply(200,{cloudAvailable:available});}
    if(enabled!==true)return reply(503,{code:'CLOUD_NOT_ENABLED'});
    const jobAction=url.pathname.startsWith('/api/v20/calculations/')?url.pathname.slice('/api/v20/calculations/'.length):null;
    const jobRoute=jobAction!==null&&Object.hasOwn(JOB_ROUTES,jobAction);
@@ -37,14 +39,15 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
    if(jobRoute&&(jobAction==='enqueue'?(!body.request||Array.isArray(body.request)||Object.keys(body.request).some(k=>!['idempotencyKey','profileChange'].includes(k))||typeof body.request.idempotencyKey!=='string'||body.request.idempotencyKey.length<1||body.request.idempotencyKey.length>128):!ID.test(body.jobId)))return reply(400,{code:'INVALID_API_REQUEST'});
    // Owner is derived from a remotely validated identity, not from the JSON body.
    const user=await auth.authenticate(token),scope={ownerId:user.id,projectId:body.projectId,scenarioKey:body.scenarioKey};
+   // Request-local identity only; SQL checks the live session in every transaction.
+   const options={db,planContextProvider,setupContextProvider,now,authenticate:async candidate=>{if(candidate!==token)throw Error('SESSION_NOT_VALID');return user;},authorizeTransaction:auth.assertSession,contextProvider,enabled};
+   options.calculationJobs=calculationJobsFactory&&(jobRoute||body.request?.workflow==='plan-calculation')?calculationJobsFactory(options):calculationJobs;
    if(jobRoute){
-    if(!calculationJobs)return reply(503,{code:'CALCULATIONS_NOT_ENABLED'});
+    const jobs=options.calculationJobs;if(!jobs)return reply(503,{code:'CALCULATIONS_NOT_ENABLED'});
     const method=jobAction==='advance'?'runUnit':jobAction;
-    const result=await calculationJobs[method](token,scope,jobAction==='enqueue'?body.request:body.jobId);
+    const result=await jobs[method](token,scope,jobAction==='enqueue'?body.request:body.jobId);
     return reply(200,{result});
    }
-   // Request-local identity only; SQL checks the live session in every transaction.
-   const options={db,planContextProvider,setupContextProvider,calculationJobs,now,authenticate:async candidate=>{if(candidate!==token)throw Error('SESSION_NOT_VALID');return user;},authorizeTransaction:auth.assertSession,contextProvider,enabled};
    const api=body.request?.workflow==='wallet-create'?Wallet.create(options):Store.create(options);
    const result=url.pathname==='/api/v20/state'?await api.snapshot(token,scope):url.pathname==='/api/v20/prepare'?await api.prepare(token,scope,body.request):await api.commit(token,scope,body.request,body.confirmation);
    return reply(200,{result});
