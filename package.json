@@ -26,7 +26,8 @@
     "test:v20:persistence": "node --test scripts/test-persistence-contract.cjs",
     "test:v20:atomic": "node --test scripts/test-atomic-store.cjs",
     "test:v20:postgres": "node --test scripts/test-atomic-postgres.cjs",
-    "test:v20:api": "node --test scripts/test-authenticated-api.cjs"
+    "test:v20:api": "node --test scripts/test-authenticated-api.cjs",
+    "test:v20:backup": "node --test scripts/test-backup-envelope.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
