@@ -15,7 +15,9 @@
     "preview:v20:profiles": "node scripts/preview-profiles-exits.cjs",
     "test:v20:profile-approval": "node --test scripts/test-profile-approval.cjs",
     "test:v20:corrections": "node --test scripts/test-corrections.cjs",
-    "preview:v20:corrections": "node scripts/preview-corrections.cjs"
+    "preview:v20:corrections": "node scripts/preview-corrections.cjs",
+    "test:v20:temporal": "node --test scripts/test-temporal-simulator.cjs",
+    "preview:v20:temporal": "node scripts/preview-temporal.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
