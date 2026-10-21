@@ -31,7 +31,7 @@ Revisões antigas são invalidadas quando os campos mudam, incluindo respostas a
 
 ## Validação executada
 
-- 384/384 testes V20: 362 anteriores, 19 do fluxo de execuções e 3 novos protocolos do Worker.
+- 386/386 testes V20: 362 anteriores, 19 do fluxo de execuções, 3 novos protocolos do Worker e 2 testes de preservação de versões.
 - Inclui compras com comissão, vendas parciais, fecho total multi-ciclo, preenchimento parcial, saldo insuficiente/margem insuficiente, limite de precisão/data, reenvio, revisão alterada/obsoleta, correção, anulação coerente de compra+comissão, reversão e proteção de vendas posteriores.
 - Propriedade: 50 fechos completos comparados com um oráculo independente inteiro de PnL; quantidade, margem e caixa verificadas sem criação de dinheiro.
 - Worker com Web Crypto e mensagens clonadas no próprio realm: compra parcial confirmada, correção sem eliminar original e simulação de saída apenas hipotética.
@@ -44,3 +44,5 @@ Revisões antigas são invalidadas quando os campos mudam, incluindo respostas a
 É um diário Demo local e um conjunto de simulações. Não há importação Kraken, dados de conta oficiais, sincronização real, liquidação garantida, probabilidade de lucro ou política de risco alterada. A auditoria independente e reconciliação com exemplos oficiais continuam no Bloco 14. O protótipo não está aprovado para lançamento público nem para servir de recomendação financeira real.
 
 Faltam os blocos 12 (backend/cloud/isolamento/concorrência/restauro e ordens), 13 (alertas/ajuda contextual), 14 (auditoria financeira independente) e 15 (QA Beta/privacidade e decisão de publicação). Melhorias a avaliar nesses blocos: fluxo simplificado para leigos, dados históricos de mercado validados, streaming/reconexão, marcação manual da posição com proveniência, e testes físicos de teclado/PWA.
+
+Preservação adicional: o pacote Demo conserva as configurações anteriores quando o plano muda de ID. O histórico não é truncado automaticamente; o limite de gravação já existente bloqueia escritas excessivas e apresenta aviso, preservando o pacote anterior. A Conta permite consultar parâmetros de versões anteriores, sem alegar PnL histórico validado. O Bloco 12 deverá migrar também este histórico e tratar persistência transacional no servidor.
