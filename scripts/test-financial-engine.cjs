@@ -156,6 +156,6 @@ test('thousands of facts reconstruct deterministically without an artificial mon
  const a=run(d),b=run(d);assert.deepEqual(a,b);assert.equal(a.cash.walletUSD,'10000');assert.equal(a.capital.addedUSD,'12.5');assert.equal(a.capital.withdrawnUSD,'12.5');
 });
 test('browser module has no network or storage dependency',()=>{
- const sandbox={Decimal,BTCKrakenRules:require('../kraken-rules.js')};vm.runInNewContext(fs.readFileSync('financial-engine.js','utf8'),sandbox);
+ const sandbox={Decimal,BTCKrakenRules:require('../kraken-rules.js'),BTCJournalProjection:require('../journal-projection.js')};vm.runInNewContext(fs.readFileSync('financial-engine.js','utf8'),sandbox);
  assert.equal(typeof sandbox.BTCFinancialEngine.reconstruct,'function');assert.equal(sandbox.BTCFinancialEngine.reconstruct({projectId,ownerId,scenarioKey:'manual_long',platform:'europa',clientType:'retail',rules,valuation:{kind:'synthetic',source:'test',markPriceUSD:'100000',asOf:'2026-10-20T23:40:00Z'},events:basic().events}).cash.walletUSD,'1900');
 });

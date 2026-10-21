@@ -1,15 +1,15 @@
 /* V20 Block 3: pure USD LONG ledger reconstruction. No API, storage or orders.
  * Decimal input facts are strings; outputs are derived, never persisted as facts. */
 (function(root,factory){
- if(typeof module==='object'&&module.exports)module.exports=factory(require('decimal.js'),require('./kraken-rules.js'));
- else root.BTCFinancialEngine=factory(root.Decimal,root.BTCKrakenRules);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Decimal,Rules){
+ if(typeof module==='object'&&module.exports)module.exports=factory(require('decimal.js'),require('./kraken-rules.js'),require('./journal-projection.js'));
+ else root.BTCFinancialEngine=factory(root.Decimal,root.BTCKrakenRules,root.BTCJournalProjection);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Decimal,Rules,Journal){
  'use strict';
- if(!Decimal||!Rules)throw Error('Financial engine dependencies missing');
+ if(!Decimal||!Rules||!Journal)throw Error('Financial engine dependencies missing');
  const D=Decimal.clone({precision:80,rounding:Decimal.ROUND_HALF_EVEN,toExpNeg:-100,toExpPos:100});
  const ZERO=new D(0),EPSILON=new D('0.000000000000000000000000000000000000000000000000000000000001');
  const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- const TYPES=['opening_balance','capital_deposit','capital_withdrawal','margin_add','margin_remove','trade_buy','trade_sell','fee','funding'];
+ const TYPES=['opening_balance','capital_deposit','capital_withdrawal','margin_add','margin_remove','trade_buy','trade_sell','fee','funding','correction','void','reversal'];
  class FinancialError extends Error{
   constructor(code,eventId=null){super(code+(eventId?' ['+eventId+']':''));this.name='FinancialError';this.code=code;this.eventId=eventId;}
  }
@@ -57,7 +57,7 @@
   }
   const projectId=uuid(input.projectId),ownerId=uuid(input.ownerId);
   const ids=new Set(),revisions=new Set(),idempotency=new Set();
-  const sorted=input.events.map(event=>{
+  const validated=input.events.map(event=>{
    insist(event&&typeof event.id==='string'&&UUID.test(event.id)&&!ids.has(event.id.toLowerCase()),'DUPLICATE_OR_INVALID_EVENT_ID',event?.id);ids.add(event.id.toLowerCase());
    insist(uuid(event.project_id)===projectId&&uuid(event.owner_id)===ownerId&&event.scenario_key===input.scenarioKey,'EVENT_SCOPE_MISMATCH',event.id);
    insist(event.origin===(input.scenarioKey==='manual_long'?'manual':'demo'),'EVENT_ORIGIN_MISMATCH',event.id);
@@ -68,7 +68,9 @@
    const effective=time(event.effective_at);time(event.recorded_at);
    insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);
    return {event,effective,revision:BigInt(event.revision)};
-  }).sort((a,b)=>a.effective-b.effective||(a.revision<b.revision?-1:a.revision>b.revision?1:0));
+  });
+  const projection=Journal.project(validated.map(v=>v.event));
+  const sorted=projection.events.map(event=>{const effective=time(event.effective_at);insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);return {event,effective,revision:BigInt(event.revision)};}).sort((a,b)=>a.effective-b.effective||(a.revision<b.revision?-1:a.revision>b.revision?1:0));
   let opened=false,wallet=ZERO,margin=ZERO,quantity=ZERO,basis=ZERO,realized=ZERO,fees=ZERO,fundingNet=ZERO;
   let initialCapital=ZERO,deposits=ZERO,withdrawals=ZERO,marginAdded=ZERO,marginRemoved=ZERO,extraMargin=ZERO;
   let acquisition=ZERO,saleNotional=ZERO,allocatedBasis=ZERO;
@@ -165,8 +167,9 @@
   const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
   const equity=wallet.add(margin).add(unrealized);
   insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
-  return freeze({engineVersion:'v20-core-3.2',ruleVersion:rules.version,status:eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
+  return freeze({engineVersion:'v20-core-8.1',ruleVersion:rules.version,status:eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
    ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady},
+   journal:{sourceEventCount:input.events.length,correctionCount:projection.correctionCount,activeFactCount:projection.events.length,localAdjustmentsOnly:true},
    inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
    capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
    cash:{walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),bookCashTotalUSD:fmt(wallet.add(margin)),spendableUSD:fmt(D.max(0,free)),unfundedReservationsUSD:fmt(D.max(0,free.neg())),
@@ -185,5 +188,6 @@
    limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_BLOCK9','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
    recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
  }
- return Object.freeze({FinancialError,reconstruct,marginRequirements});
+ function effectiveEvents(input){reconstruct(input);return Journal.project(input.events).events;}
+ return Object.freeze({FinancialError,reconstruct,marginRequirements,effectiveEvents});
 });
