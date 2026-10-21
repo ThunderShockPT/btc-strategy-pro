@@ -17,7 +17,9 @@
     "test:v20:corrections": "node --test scripts/test-corrections.cjs",
     "preview:v20:corrections": "node scripts/preview-corrections.cjs",
     "test:v20:temporal": "node --test scripts/test-temporal-simulator.cjs",
-    "preview:v20:temporal": "node scripts/preview-temporal.cjs"
+    "preview:v20:temporal": "node scripts/preview-temporal.cjs",
+    "test:v20:onboarding": "node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs",
+    "build:v20:onboarding": "node scripts/build-onboarding-preview.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
