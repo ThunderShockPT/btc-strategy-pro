@@ -18,7 +18,7 @@
     "preview:v20:corrections": "node scripts/preview-corrections.cjs",
     "test:v20:temporal": "node --test scripts/test-temporal-simulator.cjs",
     "preview:v20:temporal": "node scripts/preview-temporal.cjs",
-    "test:v20:onboarding": "node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs",
+    "test:v20:onboarding": "node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs scripts/test-plan-view.cjs",
     "build:v20:onboarding": "node scripts/build-onboarding-preview.cjs"
   },
   "dependencies": {
