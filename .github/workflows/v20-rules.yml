@@ -28,6 +28,7 @@ jobs:
           node --check previews/plan-view.js
           node --check previews/app-views.js
           node --check previews/app-workflows.js
+          node --check previews/demo-storage.js
           node --check financial-engine.js
           node --check position-risk.js
           node --check cash-workflow.js
@@ -45,7 +46,7 @@ jobs:
           node --test scripts/test-corrections.cjs
           node --test scripts/test-temporal-simulator.cjs
           node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs
-          node --test scripts/test-plan-view.cjs scripts/test-app-workflows.cjs
+          node --test scripts/test-plan-view.cjs scripts/test-app-workflows.cjs scripts/test-demo-storage.cjs
           node scripts/build-onboarding-preview.cjs
           node scripts/test-auth-guard.cjs
           node scripts/test-cloud-sync.cjs
