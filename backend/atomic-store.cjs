@@ -2,7 +2,7 @@
 // Backend-only PostgreSQL adapter. No keys, HTTP endpoints, or cloud activation.
 const {createHash,randomUUID}=require('node:crypto'),P=require('./persistence-contract.cjs');
 const W=require('../execution-workflow.js'),Cash=require('../cash-workflow.js'),build=require('../policies/calculation-checkpoint-build-20261021.json');
-const VERSION='v20-atomic-store-12d5c.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+const VERSION='v20-atomic-store-12d5d.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const clone=v=>JSON.parse(P.canonical(v)),hash=v=>createHash('sha256').update(P.canonical(v)).digest('hex');
 function need(v,code){if(!v)throw Error(code);}
 function fields(v,required,optional=[]){need(v&&typeof v==='object'&&!Array.isArray(v)&&required.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>required.includes(k)||optional.includes(k)),'INVALID_COMMAND_FIELDS');}
@@ -56,10 +56,10 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
    need(typeof calculationJobs?.reviewSource==='function','CALCULATION_REVIEW_NOT_ENABLED');
    const source=await calculationJobs.reviewSource(token,s,request.command.jobId);need(source.headHash===base.head.state_hash,'STALE_CALCULATION_BASIS');need(source.engineBuild===REVIEW_BUILD,'CALCULATION_BUILD_CHANGED');
    const state=clone(base.state),search=clone(source.search),expectedInput={...state.input,rules:search.input.rules,valuation:search.input.valuation};
-   need(hash(search.input)===hash(expectedInput)&&hash(search.plan)===hash(state.plan)&&search.input.bookkeepingOnly!==true,'COMPLETED_SEARCH_BASIS_MISMATCH');state.input=search.input;P.stage(state,s);
-   const review=await Cash.prepareCompletedCyclePlanChange(state.input,state.plan,{...clone(request.command.change),policy:search.policy},search);
+   need(hash(search.input)===hash(expectedInput)&&(source.profileContext?hash(source.profileContext.plan)===hash(state.plan):hash(search.plan)===hash(state.plan))&&search.input.bookkeepingOnly!==true,'COMPLETED_SEARCH_BASIS_MISMATCH');state.input=search.input;P.stage(state,s);
+   const review=source.profileContext?await Cash.prepareCompletedProfileChange(state.input,state.plan,{...clone(source.profileContext.request),...clone(request.command.change)},search):await Cash.prepareCompletedCyclePlanChange(state.input,state.plan,{...clone(request.command.change),policy:search.policy},search);
    const calculationSource={jobId:request.command.jobId,createdAt:source.createdAt,expiresAt:source.expiresAt,engineBuild:source.engineBuild},result={version:VERSION,headHash:base.head.state_hash,basisRevision:base.head.revision,request:clone(request),review,calculationSource};
-   return {state,review,completedSearch:search,calculationSource,result:{...result,reviewHash:hash(result)}};
+   return {state,review,completedSearch:search,profileCalculation:!!source.profileContext,calculationSource,result:{...result,reviewHash:hash(result)}};
   }
   const state=clone(base.state),context=await contextProvider(s,clone(state.input));
   fields(context,['rules','valuation'],['bookkeepingOnly']);
@@ -115,7 +115,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
   const saved=base.prepared;need(saved&&saved.request_hash===hash(request)&&saved.basis_hash===base.head.state_hash,'REVIEW_CHANGED_OR_TAMPERED');need(saved.fresh,'COMMAND_REVIEW_EXPIRED');
   const p=clone(saved.payload),{reviewHash,...reviewedResult}=p.result;need(reviewHash===confirmation.reviewHash&&hash(reviewedResult)===reviewHash&&p.result.version===VERSION&&p.result.reviewBuild===REVIEW_BUILD&&hash(p.result.request)===hash(request),'REVIEW_CHANGED_OR_TAMPERED');
   const planWorkflow=request.workflow.startsWith('plan-'),handlers={'plan-reservations':Cash.confirmPlanChange,'plan-cycles':Cash.confirmCyclePlanChange,'plan-profile':Cash.confirmProfileChange};
-  const next=request.workflow==='plan-calculation'?await Cash.confirmCompletedCyclePlanChange(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash},p.completedSearch):request.workflow==='execution'?await W.confirm(p.state.input,p.state.plan,p.review,{confirmedReviewHash:p.review.reviewHash,acceptPlanLinkCleanup:confirmation.acceptPlanLinkCleanup===true}):planWorkflow?await handlers[request.workflow](p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash}):await Cash.confirmMovement(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash});
+  const next=request.workflow==='plan-calculation'?await (p.profileCalculation?Cash.confirmCompletedProfileChange:Cash.confirmCompletedCyclePlanChange)(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash},p.completedSearch):request.workflow==='execution'?await W.confirm(p.state.input,p.state.plan,p.review,{confirmedReviewHash:p.review.reviewHash,acceptPlanLinkCleanup:confirmation.acceptPlanLinkCleanup===true}):planWorkflow?await handlers[request.workflow](p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash}):await Cash.confirmMovement(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash});
   const nextPlan=next.nextPlan||next.activePlan;
   need(nextPlan.id!==base.state.plan.id?BigInt(nextPlan.version)===BigInt(base.state.plan.version)+1n:hash(nextPlan)===hash(base.state.plan),'PLAN_VERSION_REQUIRED');
   const history=[...base.state.planHistory];if(nextPlan.id!==base.state.plan.id)history.push(base.state.plan);

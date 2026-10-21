@@ -30,7 +30,7 @@
   return {kind:market.kind,source:market.source,observedAt:market.observedAt,spreadBps:str(ask.sub(bid).div(ask.add(bid).div(2)).mul(10000)),askDepthUSD:depth.toFixed(),observedMaximumDrawdownFraction:str(drawdown),
    observationWindow:{start:market.observations[0].at,end:market.observations.at(-1).at,count:market.observations.length},interpretation:'Observed peak-to-trough drawdown only; no future probability or volatility calibration.'};
  }
- function preview(input,plan,request){
+ function profilePreview(input,plan,request,completedSearch,prepareOnly){
   input=clone(input);plan=clone(plan);request=clone(request);const def=definition();
   need(request&&['safe','balanced','risky'].includes(request.profile)&&['preserve','from-profile-reference'].includes(request.floorMode),'PROFILE_AND_FLOOR_DECISION_REQUIRED');
   need(['strict','conditional'].includes(request.marginAdmission),'EXPLICIT_MARGIN_ADMISSION_REQUIRED');
@@ -55,7 +55,10 @@
   const proposedProtected=capital.mul(p.protectedFraction).toDecimalPlaces(2,D.ROUND_CEIL),protectedCash=D.max(proposedProtected,amount(savedBase));
   const policy={...request.baseCyclePolicy,nominalCycleBudgetUSD:budget.toFixed(),firstEntryPriceUSD:first.toFixed(),reinforcementSpacingUSD:spacing.toFixed(),cycleSpacingUSD:cycleSpacing.toFixed(),protectedCashUSD:protectedCash.toFixed(),
    minimumBufferUSD:D.max('0.01',capital.mul(p.marginBufferCapitalFraction)).toDecimalPlaces(2,D.ROUND_CEIL).toFixed(),marginPlacement:def.parameters.marginPlacement,requireFailedMarginSurvival:request.marginAdmission==='strict'};
-  const candidatePlan={...plan,profile:request.profile,protectionFloorUSD:floor.toFixed()},result=Cycles.generate(input,candidatePlan,policy);
+  const candidatePlan={...plan,profile:request.profile,protectionFloorUSD:floor.toFixed()};
+  if(prepareOnly)return freeze({input,plan:candidatePlan,policy});
+  let result;
+  if(completedSearch){need(same(completedSearch.input,input)&&same(completedSearch.plan,candidatePlan)&&same(completedSearch.policy,policy),'COMPLETED_PROFILE_SEARCH_MISMATCH');result=Cycles.searchResult(completedSearch);}else result=Cycles.generate(input,candidatePlan,policy);
   const depthLimit=new D(market.askDepthUSD).mul(p.maxDepthParticipationFraction);
   need(!result.selected||result.selected.orders.every(o=>new D(o.nominalUSD).lte(depthLimit)),'EXISTING_PENDING_ORDER_EXCEEDS_DRAFT_DEPTH_LIMIT');
   const canApply=request.marginAdmission===def.approvedAdmission&&result.selected!==null;
@@ -65,5 +68,11 @@
    proposedProtectedCashUSD:proposedProtected.toFixed(),preservedHigherExistingReserve:protectedCash.gt(proposedProtected),minimumExecutableCycleBudgetUSD:minimum.toFixed(),depthLimited:budget.lt(D.max(minimum,capital.mul(p.nominalCycleCapitalFraction))),
    market,cyclePolicy:policy,candidatePlan,cycles:result,historyChanged:false,planApplied:false,recommendationsAllowed:false,guaranteedProtection:false,limitations:clone(def.limitations)});
  }
- return Object.freeze({ProfileError,preview,definition:()=>freeze(clone(definition()))});
+ function canonical(v){if(Array.isArray(v))return '['+v.map(canonical).join(',')+']';if(v&&typeof v==='object')return '{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}';return JSON.stringify(v);}
+ const same=(a,b)=>canonical(a)===canonical(b);
+ function preview(input,plan,request){return profilePreview(input,plan,request,null,false);}
+ function prepareSearch(input,plan,request){return profilePreview(input,plan,request,null,true);}
+ // Completed searches are local data, not authorization; the server must verify its signed source.
+ function completePreview(input,plan,request,completedSearch){return profilePreview(input,plan,request,clone(completedSearch),false);}
+ return Object.freeze({ProfileError,preview,prepareSearch,completePreview,definition:()=>freeze(clone(definition()))});
 });
