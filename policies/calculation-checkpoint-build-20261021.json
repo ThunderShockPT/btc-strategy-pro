@@ -5,7 +5,13 @@
   },
   "files": {
     "backend/calculation-checkpoints.cjs": "db927a041bb495bc856909f0cc5d40615aa7e844b8a019a01bad021fb3998937",
+    "backend/atomic-store.cjs": "fa9e883b99b3cef27bfd693ac49327c0d82b058cc2fb2d94c098f0afe8df7258",
     "backend/persistence-contract.cjs": "a01cb3e0b74b653ad34db8ae979542e516b4bf97782a6d8dca62d7e43528ceab",
+    "cash-workflow.js": "e80107091080227e2edf5534d3f762adca4ab55d897bced528d6db93f64cc5e1",
+    "execution-workflow.js": "b1dd49b0b014394dfef2843a87ed8d846775dedbe945c886c53526813b927702",
+    "correction-workflow.js": "a2ce59a09bfd3acde5ddcb337af616b0c454040a17dab49cb8150b3e1377d5c8",
+    "risk-profiles.js": "f02347ea3cea00f40c1f4cdeac96960c5c99190e061a49108210f190f7b38215",
+    "exit-planner.js": "c3a5f6c771bf86ae97aeb7638ff96823acfb45f0a609eaae4fa43faa2ef71918",
     "cycle-planner.js": "e9415ca9ed3dfea7c542464ef95fb33b3eff97a1eba5385911171977757e8f45",
     "position-risk.js": "e86a1f1890be3b91b378002ea1a1468a1a35a049d2ae9282a4c8c33d50d4e888",
     "financial-engine.js": "973e732150715d9809682eef0a84dd38b2d35586f751fe23f273020eaa277477",
