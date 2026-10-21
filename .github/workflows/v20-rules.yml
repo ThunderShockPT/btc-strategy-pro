@@ -1,7 +1,7 @@
 name: V20 rules data financial engine and risk checks
 on:
   push:
-    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash]
+    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -23,11 +23,13 @@ jobs:
           node --check financial-engine.js
           node --check position-risk.js
           node --check cash-workflow.js
+          node --check cycle-planner.js
           node --test scripts/test-kraken-rules.cjs
           node --test scripts/test-v20-data.cjs
           node --test scripts/test-financial-engine.cjs
           node --test scripts/test-position-risk.cjs
           node --test scripts/test-cash-workflow.cjs
+          node --test scripts/test-cycle-planner.cjs
           node scripts/test-auth-guard.cjs
           node scripts/test-cloud-sync.cjs
           node scripts/test-public-release.cjs
