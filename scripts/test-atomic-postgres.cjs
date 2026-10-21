@@ -86,3 +86,10 @@ test('native encrypted pg_dump restores facts, balances, plans, RLS and append-o
   const c=await restoredPool.connect();try{await c.query('begin');await c.query('set local role authenticated');await c.query("select set_config('request.jwt.claim.sub',$1,true)",[uuid(90)]);assert.equal((await c.query('select * from public.btcsp_financial_events')).rows.length,0);await c.query('rollback');}finally{c.release();}
  }finally{if(restoredPool)await restoredPool.end();await admin.query('drop database if exists '+restoreName);key.fill(0);dump.fill(0);opened.dump.fill(0);}
 });
+test('native admission counter is shared atomically by concurrent API workers',async()=>{
+ const Admission=require('../backend/request-admission.cjs'),key=Buffer.alloc(32,9),limits={'/api/v20/state':3,'/api/v20/prepare':3,'/api/v20/commit':3};
+ const seconds=Number((await pool.query('select extract(second from clock_timestamp())::text as second')).rows[0].second);if(seconds>58)await new Promise(r=>setTimeout(r,Math.ceil((60-seconds)*1000)+20));
+ const a=Admission.create({db,key,limits}),b=Admission.create({db,key,limits}),context={remoteAddress:'203.0.113.17',route:'/api/v20/commit'};
+ const results=await Promise.all(Array.from({length:8},(_,n)=>(n%2?a:b)(context)));assert.equal(results.filter(Boolean).length,3);
+ const row=(await pool.query('select subject_hash,hits from btcsp_private.request_buckets')).rows[0];assert.equal(row.hits,4);assert.equal(row.subject_hash.length,64);assert(!JSON.stringify(row).includes(context.remoteAddress));
+});
