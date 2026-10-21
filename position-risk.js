@@ -33,7 +33,7 @@
  }
  function view(s){return {modelVersion:'v20-risk-4.1',ruleVersion:s.ledger.ruleVersion,...boundary(s),markPriceUSD:str(s.mark),maintenanceRequiredUSD:str(s.mm),initialRequiredUSD:str(s.im),
   marginUSD:str(s.margin),maintenanceBufferUSD:str(buffer(s,s.mark)),atOrBelowMaintenance:s.q.gt(0)&&buffer(s,s.mark).lte(0),
-  source:'local-model',officialKrakenPrice:false,guaranteedProtection:false,recommendationsAllowed:false,
+  source:'local-model',syntheticFrozenRules:s.ledger.ruleAssessment.syntheticFrozenRules,ruleAssessmentAt:s.ledger.ruleAssessment.assessedAt,officialKrakenPrice:false,guaranteedProtection:false,recommendationsAllowed:false,
   limitations:['USD_LONG_ONLY','MANUAL_FACTS','ENTRY_NOTIONAL_MARGIN','NO_EXECUTION_PRICE_GUARANTEE','NO_FUNDING_FORECAST']};}
  function estimate(input){return freeze(view(snapshot(input)));}
  function available(s,useReservedMargin){
@@ -88,7 +88,7 @@
    for(let j=0;j<events.length;j++){
     const e=events[j];need(e&&['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(e.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION');need(e&&e.effective_at===candidate.valuation.asOf&&typeof e.id==='string'&&!hypotheticalIds.has(e.id.toLowerCase()),'INVALID_HYPOTHETICAL_EVENT');
     need(e.revision===(startRevision+BigInt(j)+1n).toString(),'NON_SEQUENTIAL_HYPOTHETICAL_REVISION');
-    if(liquidation)need(['trade_sell','fee'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
+    if(liquidation)need(['trade_sell','fee','funding'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
     candidate.events.push(e);
     if(e.event_type==='trade_buy')candidate.buyRulesByEvent[e.id.toLowerCase()]=candidate.rules;
     let evaluated;
