@@ -6,6 +6,10 @@
   "private": true,
   "scripts": {
     "test:v20:rules": "node --test scripts/test-kraken-rules.cjs",
-    "test:v20:data": "node --test scripts/test-v20-data.cjs"
+    "test:v20:data": "node --test scripts/test-v20-data.cjs",
+    "test:v20:engine": "node --test scripts/test-financial-engine.cjs"
+  },
+  "dependencies": {
+    "decimal.js": "10.6.0"
   }
 }
