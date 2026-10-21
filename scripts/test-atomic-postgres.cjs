@@ -9,14 +9,14 @@ const uuid=n=>'00000000-0000-4000-a000-'+String(n).padStart(12,'0');
 const scope={ownerId:uuid(2),projectId:uuid(1),scenarioKey:'demo_long'};
 let admin,pool,db,api,gate=null;const pids=new Set();
 const authenticate=async token=>token==='owner'?{id:scope.ownerId,email_confirmed_at:'2026-10-20T00:00:00Z',is_anonymous:false}:null;
-const contextProvider=async(s,input)=>{if(gate)await gate();return {rules:input.rules,valuation:input.valuation};};
+const contextProvider=async(s,input)=>({rules:input.rules,valuation:input.valuation});
 function barrier(){let count=0,release;const ready=new Promise(r=>release=r);return async()=>{count++;if(count===2)release();await ready;};}
 const request=(n,revision)=>({workflow:'movement',command:{id:uuid(700+n),idempotencyKey:'native-deposit-'+n,expectedRevision:revision,kind:'capital_deposit',mode:'recorded',amountUSD:'100',currency:'USD',effectiveAt:f.existing().input.valuation.asOf,recordedAt:f.existing().input.valuation.asOf}});
 const confirmation=(r,key)=>({headHash:r.headHash,reviewHash:r.reviewHash,idempotencyKey:key});
 before(async()=>{
  admin=new Client({connectionString:endpoint});await admin.connect();await admin.query('create database '+database);
  url.pathname='/'+database;pool=new Pool({connectionString:url.toString(),max:4});
- db={transaction:async fn=>{const c=await pool.connect();try{pids.add(c.processID);await c.query('begin');await c.query("set local statement_timeout='10s'");const r=await fn(c);await c.query('commit');return r;}catch(e){await c.query('rollback');throw e;}finally{c.release();}}};
+ db={transaction:async fn=>{const c=await pool.connect();try{pids.add(c.processID);await c.query('begin');await c.query("set local statement_timeout='10s'");const r=await fn({query:async(sql,args)=>{const result=await c.query(sql,args);if(gate&&sql.startsWith('select *,expires_at>clock_timestamp() as fresh from btcsp_private.command_reviews'))await gate();return result;}});await c.query('commit');return r;}catch(e){await c.query('rollback');throw e;}finally{c.release();}}};
  await pool.query(`do $$ begin if not exists(select 1 from pg_roles where rolname='anon') then create role anon;end if;if not exists(select 1 from pg_roles where rolname='authenticated') then create role authenticated;end if;if not exists(select 1 from pg_roles where rolname='service_role') then create role service_role bypassrls;end if;end $$;
  create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
  grant usage on schema auth to authenticated;
@@ -65,7 +65,7 @@ test('native API rechecks a revoked Auth session before the financial transactio
  const handler=HTTP.create({db,auth,admit:async()=>true,origins:['https://btc.example.test'],enabled:true,contextProvider:async(s,input)=>{if(revoke)await pool.query('delete from auth.sessions where id=$1',[fixture.SA]);return {rules:input.rules,valuation:input.valuation};}});
  const body={projectId:scope.projectId,scenarioKey:scope.scenarioKey,request:request(4,'7')};
  const call=(route,data)=>handler(new Request('https://api.example.test/api/v20/'+route,{method:'POST',headers:{origin:'https://btc.example.test','Content-Type':'application/json',Authorization:'Bearer '+fixture.TA},body:JSON.stringify(data)}),{remoteAddress:'127.0.0.1'});
- const prepared=await call('prepare',body);assert.equal(prepared.status,200);const proposal=(await prepared.json()).result;revoke=true;
+ const prepared=await call('prepare',body);assert.equal(prepared.status,200);const proposal=(await prepared.json()).result;await pool.query('delete from auth.sessions where id=$1',[fixture.SA]);
  const result=await call('commit',{...body,confirmation:{headHash:proposal.headHash,reviewHash:proposal.reviewHash,idempotencyKey:'revoked-native-session'}});assert.equal(result.status,401);assert.equal((await read()).head.revision,'7');
 });
 test('native session guard holds a share lock against deletion during a transaction',async()=>{
@@ -149,4 +149,21 @@ test('native encrypted pg_dump restores facts, balances, plans, RLS and append-o
   await assert.rejects(restoredPool.query("update public.btcsp_financial_events set facts='{}'"),/APPEND_ONLY/);
   const c=await restoredPool.connect();try{await c.query('begin');await c.query('set local role authenticated');await c.query("select set_config('request.jwt.claim.sub',$1,true)",[uuid(90)]);assert.equal((await c.query('select * from public.btcsp_financial_events')).rows.length,0);await c.query('rollback');}finally{c.release();}
  }finally{if(restoredPool)await restoredPool.end();await admin.query('drop database if exists '+restoreName);key.fill(0);dump.fill(0);opened.dump.fill(0);}
+});
+
+test('native frozen review commits after a provider restart without fetching a new quote',async()=>{
+ const before=await read(),command=request(199,before.head.revision);
+ const p=await api.prepare('owner',scope,command),restarted=Store.create({db,authenticate,contextProvider:async()=>{throw Error('NEW_QUOTE_MUST_NOT_BE_FETCHED');},enabled:true});
+ await assert.rejects(pool.query("update btcsp_private.command_reviews set payload='{}'"),/APPEND_ONLY/);
+ await db.transaction(async tx=>{await tx.query('set local role authenticated');await assert.rejects(tx.query('select * from btcsp_private.command_reviews'),{code:'42501'});});
+ const result=await restarted.commit('owner',scope,command,confirmation(p,'native-frozen-review'));
+ assert.equal(BigInt(result.revision),BigInt(before.head.revision)+1n);assert.deepEqual((await read()).state.input.valuation,before.state.input.valuation);
+ await pool.query('delete from btcsp_private.command_reviews where project_id=$1 and owner_id=$2 and review_hash=$3',[scope.projectId,scope.ownerId,p.reviewHash]);
+ assert.equal((await restarted.commit('owner',scope,command,confirmation(p,'native-frozen-review'))).replayed,true);
+});
+
+test('native revocation after frozen review reconstruction blocks the final write transaction',async()=>{
+ const Auth=require('../backend/supabase-auth.cjs'),Fixture=require('./helpers/server-fixture.cjs'),before=await read(),command=request(200,before.head.revision),p=await api.prepare('owner',scope,command),auth=Auth.create({publishableKey:'fixture',now:Fixture.now,fetchImpl:async()=>new Response(JSON.stringify(Fixture.user(scope.ownerId)))});let checks=0;
+ const guarded=Store.create({db,authenticate:auth.authenticate,authorizeTransaction:async(tx,user,s)=>{if(++checks===2)await pool.query('delete from auth.sessions where id=$1',[Fixture.SA]);return auth.assertSession(tx,user,s);},contextProvider:async()=>{throw Error('NEW_CONTEXT_FORBIDDEN');},enabled:true});
+ try{await assert.rejects(guarded.commit(Fixture.TA,scope,command,confirmation(p,'native-revoke-frozen')),/SESSION_NOT_VALID/);assert.equal(checks,2);assert.deepEqual((await read()).state,before.state);}finally{await pool.query('insert into auth.sessions(id,user_id) values($1,$2) on conflict do nothing',[Fixture.SA,scope.ownerId]);}
 });
