@@ -1,0 +1,132 @@
+{
+  "kind": "synthetic-accounting-review-only",
+  "fixtureAsOf": "2026-10-20T23:40:00Z",
+  "officialKrakenData": false,
+  "livePrices": false,
+  "disclaimer": "Local journal adjustments do not cancel or alter exchange executions. No cloud writes, automatic orders, protection guarantees or inferred funding.",
+  "scenarios": [
+    {
+      "name": "500 USD corrigidos para 50 USD",
+      "status": "awaiting-correction-confirmation",
+      "canConfirm": true,
+      "before": {
+        "quantityBTC": "0.005",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "500",
+        "walletUSD": "1000",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "0",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2000",
+        "estimatedLiquidationUSD": null
+      },
+      "after": {
+        "quantityBTC": "0.0005",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "50",
+        "walletUSD": "1000",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "0",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2000",
+        "estimatedLiquidationUSD": null
+      },
+      "blocking": null,
+      "appendedEventCount": 1,
+      "planReviewRequired": true,
+      "exchangeTradeChanged": false,
+      "databaseWritten": false
+    },
+    {
+      "name": "Correção antiga incompatível com venda posterior",
+      "status": "blocked-inconsistent-history",
+      "canConfirm": false,
+      "before": {
+        "quantityBTC": "0.002",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "200",
+        "walletUSD": "1030",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "30",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2030",
+        "estimatedLiquidationUSD": null
+      },
+      "after": null,
+      "blocking": {
+        "code": "SELL_EXCEEDS_AVAILABLE_BTC",
+        "eventId": "00000000-0000-4000-a000-000000000104"
+      },
+      "appendedEventCount": 1,
+      "planReviewRequired": true,
+      "exchangeTradeChanged": false,
+      "databaseWritten": false
+    },
+    {
+      "name": "Compra e venda corrigidas num lote coerente",
+      "status": "awaiting-correction-confirmation",
+      "canConfirm": true,
+      "before": {
+        "quantityBTC": "0.002",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "200",
+        "walletUSD": "1030",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "30",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2030",
+        "estimatedLiquidationUSD": null
+      },
+      "after": {
+        "quantityBTC": "0.0002",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "20",
+        "walletUSD": "1003",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "3",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2003",
+        "estimatedLiquidationUSD": null
+      },
+      "blocking": null,
+      "appendedEventCount": 2,
+      "planReviewRequired": true,
+      "exchangeTradeChanged": false,
+      "databaseWritten": false
+    },
+    {
+      "name": "Reverter a correção por novo evento",
+      "status": "awaiting-correction-confirmation",
+      "canConfirm": true,
+      "before": {
+        "quantityBTC": "0.0005",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "50",
+        "walletUSD": "1000",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "0",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2000",
+        "estimatedLiquidationUSD": null
+      },
+      "after": {
+        "quantityBTC": "0.005",
+        "averageEntryUSD": "100000",
+        "remainingBasisUSD": "500",
+        "walletUSD": "1000",
+        "isolatedMarginUSD": "1000",
+        "realizedGrossUSD": "0",
+        "unrealizedGrossUSD": "0",
+        "totalEquityUSD": "2000",
+        "estimatedLiquidationUSD": null
+      },
+      "blocking": null,
+      "appendedEventCount": 1,
+      "planReviewRequired": true,
+      "exchangeTradeChanged": false,
+      "databaseWritten": false
+    }
+  ],
+  "originalFactsPreserved": true,
+  "reconstructedAfterConfirmation": "0.0005"
+}
