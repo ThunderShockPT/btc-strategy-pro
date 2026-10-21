@@ -1,0 +1,13 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path');const root=path.resolve(__dirname,'..'),f=require('./helpers/onboarding-fixture.cjs'),W=require('../wallet-onboarding.js');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8'),json=o=>JSON.stringify(o).replace(/</g,'\\u003c');
+function buildPreview(){
+const decimal=read('node_modules/decimal.js/decimal.js');
+const modules=['kraken-rules.js','journal-projection.js','financial-engine.js','position-risk.js','cycle-planner.js','risk-profiles.js','wallet-onboarding.js'];
+const worker=decimal+'\nself.BTCProfileDefinition='+json(require('../policies/profiles-beta-20261021.json'))+';\n'+modules.map(read).join('\n')+`\nself.onmessage=async e=>{try{const {method,payload:p}=e.data;let value;if(method==='calculate')value=BTCWalletOnboarding.calculate(p.context,p.request,p.existing);else if(method==='prepare')value=await BTCWalletOnboarding.prepare(p.context,p.request,p.existing);else if(method==='confirm')value=await BTCWalletOnboarding.confirm(p.context,p.review,p.options);else throw Error('UNKNOWN_SETUP_METHOD');self.postMessage({ok:true,value});}catch(error){self.postMessage({ok:false,code:error.code||error.message||'SETUP_FAILED'});}};`;
+const fixture={context:f.context(),request:f.request(),existing:f.existing(),existingProjectId:'00000000-0000-4000-a000-000000000003',tutorial:W.tutorial()};
+const html=read('previews/onboarding-template.html').replace('/*__WORKER_BUNDLE__*/','const BTCPreviewWorkerSource='+json(worker)+';\n'+decimal+'\nconst BTCPreviewDecimal=Decimal;').replace('/*__FIXTURE_DATA__*/','const BTCPreviewData='+json(fixture)+';').replace('/*__UI_CODE__*/',read('previews/onboarding-ui.js'));
+if(html.includes('/*__'))throw Error('Unresolved preview placeholder');return {html,worker,fixture,modules};
+}
+module.exports={buildPreview};
+if(require.main===module){const {html,modules}=buildPreview();fs.mkdirSync(path.join(root,'build'),{recursive:true});const output=path.join(root,'build/v20-onboarding.html');fs.writeFileSync(output,html);console.log(JSON.stringify({output,bytes:Buffer.byteLength(html),fixtureOnly:true,sourceModules:modules}));}
