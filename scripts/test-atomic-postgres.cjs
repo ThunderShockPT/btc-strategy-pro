@@ -57,3 +57,32 @@ test('native row lock really blocks a second session until commit',async()=>{
  const first=await pool.connect(),second=await pool.connect();assert.notEqual(first.processID,second.processID);
  try{await first.query('begin');await first.query('select * from btcsp_private.project_heads for update');await second.query('begin');await second.query("set local lock_timeout='100ms'");await assert.rejects(second.query('select * from btcsp_private.project_heads for update'),{code:'55P03'});await second.query('rollback');await first.query('commit');await second.query('select * from btcsp_private.project_heads for update');}finally{await first.query('rollback');await second.query('rollback');first.release();second.release();}
 });
+test('native API rechecks a revoked Auth session before the financial transaction',async()=>{
+ const Auth=require('../backend/supabase-auth.cjs'),HTTP=require('../backend/http-api.cjs'),fixture=require('./helpers/server-fixture.cjs');
+ await pool.query(`alter table auth.users add column email_confirmed_at timestamptz,add column deleted_at timestamptz,add column banned_until timestamptz;create table auth.sessions(id uuid primary key,user_id uuid references auth.users(id),not_after timestamptz);update auth.users set email_confirmed_at='2026-10-20';`);
+ await pool.query('insert into auth.sessions(id,user_id) values($1,$2)',[fixture.SA,scope.ownerId]);
+ const auth=Auth.create({publishableKey:'native-publishable-fixture',now:fixture.now,fetchImpl:async()=>new Response(JSON.stringify(fixture.user(scope.ownerId)))});let revoke=false;
+ const handler=HTTP.create({db,auth,admit:async()=>true,origins:['https://btc.example.test'],enabled:true,contextProvider:async(s,input)=>{if(revoke)await pool.query('delete from auth.sessions where id=$1',[fixture.SA]);return {rules:input.rules,valuation:input.valuation};}});
+ const body={projectId:scope.projectId,scenarioKey:scope.scenarioKey,request:request(4,'7')};
+ const call=(route,data)=>handler(new Request('https://api.example.test/api/v20/'+route,{method:'POST',headers:{origin:'https://btc.example.test','Content-Type':'application/json',Authorization:'Bearer '+fixture.TA},body:JSON.stringify(data)}),{remoteAddress:'127.0.0.1'});
+ const prepared=await call('prepare',body);assert.equal(prepared.status,200);const proposal=(await prepared.json()).result;revoke=true;
+ const result=await call('commit',{...body,confirmation:{headHash:proposal.headHash,reviewHash:proposal.reviewHash,idempotencyKey:'revoked-native-session'}});assert.equal(result.status,401);assert.equal((await read()).head.revision,'7');
+});
+test('native session guard holds a share lock against deletion during a transaction',async()=>{
+ const Auth=require('../backend/supabase-auth.cjs'),fixture=require('./helpers/server-fixture.cjs');await pool.query('insert into auth.sessions(id,user_id) values($1,$2)',[fixture.SA,scope.ownerId]);
+ const auth=Auth.create({publishableKey:'fixture',now:fixture.now,fetchImpl:async()=>new Response(JSON.stringify(fixture.user(scope.ownerId)))}),user=await auth.authenticate(fixture.TA);
+ const first=await pool.connect(),second=await pool.connect();try{await first.query('begin');await auth.assertSession(first,user,scope);await second.query('begin');await second.query("set local lock_timeout='100ms'");await assert.rejects(second.query('delete from auth.sessions where id=$1',[fixture.SA]),{code:'55P03'});await second.query('rollback');await first.query('commit');}finally{await first.query('rollback');await second.query('rollback');first.release();second.release();}
+});
+test('native encrypted pg_dump restores facts, balances, plans, RLS and append-only triggers in a second database',async()=>{
+ const {execFileSync}=require('node:child_process'),Backup=require('../backend/backup-envelope.cjs'),container=process.env.BTCSP_TEST_PG_CONTAINER;
+ assert(container&&/^[a-f0-9]{12,64}$/.test(container),'Explicit ephemeral QA PostgreSQL container is required for native dump/restore');
+ const expected=(await read()).state,dump=execFileSync('docker',['exec',container,'pg_dump','-U','postgres','--format=custom','--no-owner',database],{maxBuffer:Backup.MAX,timeout:15000});
+ assert.equal(dump.subarray(0,5).toString(),'PGDMP');const key=require('node:crypto').randomBytes(32),options={key,keyId:'ephemeral-qa-key',createdAt:new Date().toISOString(),sourceKind:'isolated-postgres-qa'},encrypted=Backup.seal(dump,options),opened=Backup.open(encrypted,{key,expectedKeyId:options.keyId,expectedSourceKind:options.sourceKind});assert.deepEqual(opened.dump,dump);
+ const restoreName=database+'_restore';let restoredPool;
+ try{await admin.query('create database '+restoreName);execFileSync('docker',['exec','-i',container,'pg_restore','-U','postgres','--exit-on-error','--no-owner','--dbname',restoreName],{input:opened.dump,maxBuffer:1000000,timeout:15000});const restoredUrl=new URL(url);restoredUrl.pathname='/'+restoreName;restoredPool=new Pool({connectionString:restoredUrl.toString(),max:1});
+  const client=await restoredPool.connect();try{await client.query('begin');const recovered=await Store.load(client,scope);assert.deepEqual(recovered.state,expected);assert.deepEqual(Core.reconstruct(recovered.state.input),Core.reconstruct(expected.input));await client.query('commit');}finally{client.release();}
+  assert.equal((await restoredPool.query("select count(*)::int n from pg_policies where schemaname='public' and tablename like 'btcsp_%'")).rows[0].n,5);
+  await assert.rejects(restoredPool.query("update public.btcsp_financial_events set facts='{}'"),/APPEND_ONLY/);
+  const c=await restoredPool.connect();try{await c.query('begin');await c.query('set local role authenticated');await c.query("select set_config('request.jwt.claim.sub',$1,true)",[uuid(90)]);assert.equal((await c.query('select * from public.btcsp_financial_events')).rows.length,0);await c.query('rollback');}finally{c.release();}
+ }finally{if(restoredPool)await restoredPool.end();await admin.query('drop database if exists '+restoreName);key.fill(0);dump.fill(0);opened.dump.fill(0);}
+});

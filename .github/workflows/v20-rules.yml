@@ -1,7 +1,7 @@
 name: V20 rules data financial engine and risk checks
 on:
   push:
-    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy, feat/v20-auditable-corrections, feat/v20-temporal-simulation, feat/v20-wallet-onboarding, fix/v20-buy-sequence-clarity, feat/v20-app-navigation, feat/v20-trade-journal-ui, feat/v20-persistence-contract, feat/v20-atomic-persistence]
+    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy, feat/v20-auditable-corrections, feat/v20-temporal-simulation, feat/v20-wallet-onboarding, fix/v20-buy-sequence-clarity, feat/v20-app-navigation, feat/v20-trade-journal-ui, feat/v20-persistence-contract, feat/v20-atomic-persistence, feat/v20-authenticated-api]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -24,6 +24,12 @@ jobs:
           node --check correction-workflow.js
           node --check temporal-simulator.js
           node --check wallet-onboarding.js
+          node --check backend/backup-envelope.cjs
+          node --test scripts/test-backup-envelope.cjs
+          node --check backend/supabase-auth.cjs
+          node --check backend/http-api.cjs
+          node --check cloud-client-v20.js
+          node --test scripts/test-authenticated-api.cjs
           node --check backend/atomic-store.cjs
           node --test scripts/test-atomic-store.cjs
           node --check backend/persistence-contract.cjs
@@ -83,4 +89,5 @@ jobs:
       - name: Real PostgreSQL concurrent commands and rollback
         env:
           BTCSP_TEST_PG_URL: postgresql://postgres:btcsp_local_qa_only@127.0.0.1:5432/postgres
+          BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
         run: node --test scripts/test-atomic-postgres.cjs
