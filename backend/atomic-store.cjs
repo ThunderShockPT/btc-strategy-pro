@@ -2,7 +2,7 @@
 // Backend-only PostgreSQL adapter. No keys, HTTP endpoints, or cloud activation.
 const {createHash,randomUUID}=require('node:crypto'),P=require('./persistence-contract.cjs');
 const W=require('../execution-workflow.js'),Cash=require('../cash-workflow.js');
-const VERSION='v20-atomic-store-12b.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+const VERSION='v20-atomic-store-12c.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const clone=v=>JSON.parse(P.canonical(v)),hash=v=>createHash('sha256').update(P.canonical(v)).digest('hex');
 function need(v,code){if(!v)throw Error(code);}
 function fields(v,required,optional=[]){need(v&&typeof v==='object'&&!Array.isArray(v)&&required.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>required.includes(k)||optional.includes(k)),'INVALID_COMMAND_FIELDS');}
@@ -45,9 +45,10 @@ async function load(tx,s,lock='share'){
  need(sourceHash(state)===h.state_hash&&revision(state)===h.revision,'STORED_SOURCE_INTEGRITY_FAILURE');
  return {state,head:h};
 }
-function create({db,authenticate,contextProvider,enabled=false}){
+function create({db,authenticate,contextProvider,authorizeTransaction=null,enabled=false}){
  need(db&&typeof db.transaction==='function'&&typeof authenticate==='function'&&typeof contextProvider==='function','SERVER_DEPENDENCIES_REQUIRED');
- async function identity(token,s){need(enabled===true,'CLOUD_WRITE_GATE_CLOSED');scope(s);const user=await authenticate(token);need(user&&user.id===s.ownerId&&typeof user.email_confirmed_at==='string'&&Number.isFinite(Date.parse(user.email_confirmed_at))&&user.is_anonymous===false,'VERIFIED_OWNER_SESSION_REQUIRED');}
+ async function identity(token,s){need(enabled===true,'CLOUD_WRITE_GATE_CLOSED');scope(s);const user=await authenticate(token);need(user&&user.id===s.ownerId&&typeof user.email_confirmed_at==='string'&&Number.isFinite(Date.parse(user.email_confirmed_at))&&user.is_anonymous===false,'VERIFIED_OWNER_SESSION_REQUIRED');return user;}
+ async function authorize(tx,user,s){if(authorizeTransaction)await authorizeTransaction(tx,user,s);}
  async function proposal(base,s,request){
   fields(request,['workflow','command']);need(['execution','movement'].includes(request.workflow),'UNSUPPORTED_WORKFLOW');
   need(Buffer.byteLength(P.canonical(request),'utf8')<=64000,'COMMAND_TOO_LARGE');
@@ -61,14 +62,14 @@ function create({db,authenticate,contextProvider,enabled=false}){
   const result={version:VERSION,headHash:base.head.state_hash,basisRevision:base.head.revision,request:clone(request),review};
   return {state,review,result:{...result,reviewHash:hash(result)}};
  }
- async function prepare(token,s,raw){const request=clone(raw);await identity(token,s);const base=await db.transaction(tx=>load(tx,s));return (await proposal(base,s,request)).result;}
+ async function prepare(token,s,raw){const request=clone(raw);const user=await identity(token,s);const base=await db.transaction(async tx=>{await authorize(tx,user,s);return load(tx,s);});return (await proposal(base,s,request)).result;}
  async function commit(token,s,raw,rawConfirmation){
   const request=clone(raw),confirmation=clone(rawConfirmation);fields(confirmation,['headHash','reviewHash','idempotencyKey'],['acceptPlanLinkCleanup']);
   need(typeof confirmation.idempotencyKey==='string'&&confirmation.idempotencyKey.length>0&&confirmation.idempotencyKey.length<=128,'INVALID_COMMAND_IDEMPOTENCY_KEY');
-  await identity(token,s);const commandHash=hash({request,confirmation});
+  const user=await identity(token,s);const commandHash=hash({request,confirmation});
   const receipt=async tx=>(await tx.query('select command_hash,result from btcsp_private.command_receipts where project_id=$1 and owner_id=$2 and scenario_key=$3 and idempotency_key=$4',[...params(s),confirmation.idempotencyKey])).rows[0];
   const replay=r=>{need(r.command_hash===commandHash,'COMMAND_IDEMPOTENCY_CONFLICT');return {...r.result,replayed:true};};
-  const base=await db.transaction(async tx=>{const b=await load(tx,s);const r=await receipt(tx);return r?{receipt:r}:b;});
+  const base=await db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);const r=await receipt(tx);return r?{receipt:r}:b;});
   if(base.receipt)return replay(base.receipt);
   need(confirmation.headHash===base.head.state_hash,'STALE_PROJECT_REVIEW');
   const p=await proposal(base,s,request);need(confirmation.reviewHash===p.result.reviewHash,'REVIEW_CHANGED_OR_TAMPERED');
@@ -85,6 +86,7 @@ function create({db,authenticate,contextProvider,enabled=false}){
   need(sorted.every((e,i)=>BigInt(e.revision)===BigInt(base.head.revision)+BigInt(i)+1n),'NON_CONTIGUOUS_REVISIONS');
   const {context,extras}=split(state),stateHash=sourceHash(state);
   return db.transaction(async tx=>{
+   await authorize(tx,user,s);
    const current=(await tx.query('select state_hash,generation::text as generation from btcsp_private.project_heads where project_id=$1 and owner_id=$2 and scenario_key=$3 for update',params(s))).rows[0];need(current,'PROJECT_NOT_INITIALIZED');
    const r=await receipt(tx);if(r)return replay(r);
    need(current.state_hash===base.head.state_hash&&current.generation===base.head.generation,'CONCURRENT_PROJECT_CHANGE');
@@ -97,6 +99,7 @@ function create({db,authenticate,contextProvider,enabled=false}){
    return result;
   });
  }
- return Object.freeze({prepare,commit});
+ async function snapshot(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);return {state:clone(b.state),headHash:b.head.state_hash,revision:b.head.revision};});}
+ return Object.freeze({prepare,commit,snapshot});
 }
 module.exports=Object.freeze({VERSION,initialize,create,load,sourceHash});
