@@ -6,7 +6,7 @@
   "files": {
     "backend/public-profile-context.cjs": "5c8de2d176ce6dca092c4e9aa108ab20b7c8550d59f231fbc8fb1a56404df7be",
     "backend/public-market.cjs": "fdd4f92f0630c7e1538e1eef276d91b8fa681ca4336a694e9ce8f100976bc252",
-    "backend/public-observations.cjs": "159787e796a7ff9fdd0bac52d63515d11b9c96ba36ff589d4287a6979a65b18e",
+    "backend/public-observations.cjs": "f179de50d53504bec5893e8c0e3059e8cadfdb9cc64fed089e47f5d3efe07864",
     "backend/financial-context.cjs": "a9973078780b33fd8797153fd0ada6bbccd324e851ad561741e914cde4768f64",
     "policies/public-liquidity-20261021.json": "27b714663839b6e8ab54ebb0a64c9fd327fc44bc6dad065878a5cacdb1a82417",
     "backend/calculation-checkpoints.cjs": "9d0416aa33082603a579563cf863bf7e226bb27713006c0182daddaf6c02584d",
