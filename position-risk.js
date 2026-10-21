@@ -41,9 +41,18 @@
   const c=s.ledger.cash;
   return D.max(0,new D(c.walletUSD).sub(c.reservedOrdersUSD).sub(c.protectedUSD).sub(useReservedMargin?'0':c.reservedMarginUSD));
  }
+ function requiredMarginForFloor({quantityBTC,basisUSD,floorUSD,bufferUSD='0',markPriceUSD,rules,platform,clientType}){
+  need(typeof quantityBTC==='string'&&/^(0|[1-9]\d{0,39})(\.\d{1,24})?$/.test(quantityBTC),'INVALID_DERIVED_QUANTITY');
+  const q=new D(quantityBTC),floor=amount(floorUSD,true),desired=amount(bufferUSD);
+  const req=Core.marginRequirements({basisUSD,rules,platform,clientType});
+  need(q.eq(0)?new D(basisUSD).eq(0):new D(basisUSD).gt(0),'INVALID_EMPTY_POSITION');
+  const required=q.eq(0)?new D(0):D.max(0,new D(basisUSD).sub(q.mul(floor)).add(req.maintenanceUSD).add(desired));
+  const initialEquityMargin=markPriceUSD===undefined?null:str(D.max(0,new D(req.initialUSD).sub(q.mul(amount(markPriceUSD,true))).add(basisUSD)));
+  return freeze({requiredTotalMarginUSD:str(required),initialRequiredUSD:req.initialUSD,maintenanceRequiredUSD:req.maintenanceUSD,initialEquityRequiredMarginUSD:initialEquityMargin});
+ }
  function inverse(input,{floorUSD,bufferUSD='0',useReservedMargin=false}={}){
   need(typeof useReservedMargin==='boolean','INVALID_RESERVE_POLICY');const floor=amount(floorUSD,true),desired=amount(bufferUSD),s=snapshot(input);
-  const required=s.q.eq(0)?new D(0):D.max(0,s.basis.sub(s.q.mul(floor)).add(s.mm).add(desired));
+  const required=new D(requiredMarginForFloor({quantityBTC:str(s.q),basisUSD:str(s.basis),floorUSD,bufferUSD,rules:input.rules,platform:input.platform,clientType:input.clientType}).requiredTotalMarginUSD);
   const addition=s.q.eq(0)?new D(0):D.max(0,required.sub(s.margin)),funds=available(s,useReservedMargin),shortfall=D.max(0,addition.sub(funds));
   const late=s.q.gt(0)&&buffer(s,s.mark).lte(0),projected={...s,margin:s.margin.add(addition)};
   return freeze({modelVersion:'v20-risk-4.1',status:s.q.eq(0)?'no-position':late?'too-late-under-current-scenario':shortfall.gt(0)?'infeasible-with-current-cash':'model-fundable',
@@ -132,5 +141,5 @@
    finalRisk:view(state),projectedLedger:state.ledger,ledgerChanged:false,ordersExecuted:false,transfersPerformed:false,protectionGuaranteed:false,
    assumptions:['Synthetic path; filled actions are explicit hypothetical assumptions.','Maintenance equality stops conservatively; this is not an official exchange execution.','Partial liquidation requires explicit supplied fills and costs.','No automatic funding forecast or unseen between-step movement.']});
  }
- return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate});
+ return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,requiredMarginForFloor});
 });
