@@ -167,3 +167,11 @@ test('native revocation after frozen review reconstruction blocks the final writ
  const guarded=Store.create({db,authenticate:auth.authenticate,authorizeTransaction:async(tx,user,s)=>{if(++checks===2)await pool.query('delete from auth.sessions where id=$1',[Fixture.SA]);return auth.assertSession(tx,user,s);},contextProvider:async()=>{throw Error('NEW_CONTEXT_FORBIDDEN');},enabled:true});
  try{await assert.rejects(guarded.commit(Fixture.TA,scope,command,confirmation(p,'native-revoke-frozen')),/SESSION_NOT_VALID/);assert.equal(checks,2);assert.deepEqual((await read()).state,before.state);}finally{await pool.query('insert into auth.sessions(id,user_id) values($1,$2) on conflict do nothing',[Fixture.SA,scope.ownerId]);}
 });
+
+test('native completed signed calculation applies a reviewed plan without changing financial facts',async()=>{
+ const x=durableNative(),before=await read();let job=await x.jobs.enqueue(x.token,scope,{idempotencyKey:'native-reviewed-calculation'});
+ for(let i=0;job.status!=='completed';i++){assert(i<20);job=await x.jobs.runUnit(x.token,scope,job.id);}
+ const source=await x.jobs.reviewSource(x.token,scope,job.id),store=Store.create({...x.options,calculationJobs:x.jobs,contextProvider:async()=>{throw Error('NEW_CONTEXT_FORBIDDEN');}}),command={workflow:'plan-calculation',command:{mode:'recorded',jobId:job.id,change:{id:uuid(2200),version:(BigInt(before.state.plan.version)+1n).toString()}}},p=await store.prepare(x.token,scope,command);
+ assert.equal(p.calculationSource.expiresAt,source.expiresAt);assert(Date.parse(p.expiresAt)<=Date.parse(source.expiresAt));assert.equal(p.review.result.failedMarginSurvived,true);
+ const result=await store.commit(x.token,scope,command,confirmation(p,'native-reviewed-calculation-apply'));assert.equal(result.planApplied,true);assert.deepEqual(result.eventsAppended,[]);const after=await read();assert.deepEqual(after.state.input.events,before.state.input.events);assert.equal(after.head.revision,before.head.revision);assert.equal(after.state.plan.id,uuid(2200));assert.equal((await store.commit(x.token,scope,command,confirmation(p,'native-reviewed-calculation-apply'))).replayed,true);
+});

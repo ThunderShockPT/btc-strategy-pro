@@ -38,10 +38,12 @@ function create({db,authenticate,authorizeTransaction,checkpoints,leaseSeconds=1
  });}
  async function runUnit(token,s,id){const user=await identity(token,s),claimed=await claim(user,s,id);if(claimed.response)return claimed.response;try{const next=await checkpoints.advance(token,s,claimed.row.envelope);return await settle(user,s,claimed.row,next);}catch(error){try{await release(user,s,claimed.row,error);}catch{/* A failed release leaves a lease that can expire; preserve the original error. */}throw error;}}
  async function status(token,s,id){const user=await identity(token,s);return db.transaction(async tx=>{await authorizeTransaction(tx,user,s);const basis=await head(tx,s);return view(await refresh(tx,s,await row(tx,s,id),basis));});}
- async function result(token,s,id){const user=await identity(token,s),r=await db.transaction(async tx=>{await authorizeTransaction(tx,user,s);const basis=await head(tx,s);return refresh(tx,s,await row(tx,s,id),basis);});need(r.status==='completed',r.error_code||'SEARCH_NOT_COMPLETED');
-  try{return await checkpoints.result(token,s,r.envelope);}catch(error){if(TERMINAL.has(error.code||error.message))try{await db.transaction(async tx=>{await authorizeTransaction(tx,user,s);await head(tx,s);const latest=await row(tx,s,id);if(latest.status==='completed'&&String(latest.version)===String(r.version))await blocked(tx,s,latest,error.code||error.message);});}catch{}throw error;}
+ async function completedValue(token,s,id,method){const user=await identity(token,s),r=await db.transaction(async tx=>{await authorizeTransaction(tx,user,s);const basis=await head(tx,s);return refresh(tx,s,await row(tx,s,id),basis);});need(r.status==='completed',r.error_code||'SEARCH_NOT_COMPLETED');
+  try{need(typeof checkpoints[method]==='function','CALCULATION_REVIEW_NOT_ENABLED');return await checkpoints[method](token,s,r.envelope);}catch(error){if(TERMINAL.has(error.code||error.message))try{await db.transaction(async tx=>{await authorizeTransaction(tx,user,s);await head(tx,s);const latest=await row(tx,s,id);if(latest.status==='completed'&&String(latest.version)===String(r.version))await blocked(tx,s,latest,error.code||error.message);});}catch{}throw error;}
  }
+ async function result(token,s,id){return completedValue(token,s,id,'result');}
+ async function reviewSource(token,s,id){return completedValue(token,s,id,'reviewSource');}
  async function cancel(token,s,id){const user=await identity(token,s);return db.transaction(async tx=>{await authorizeTransaction(tx,user,s);await head(tx,s);const r=await row(tx,s,id);if(['completed','blocked','cancelled'].includes(r.status))return view(r);return view((await tx.query('update btcsp_private.calculation_jobs set status=$5,error_code=null,lease_id=null,lease_until=null,version=version+1,updated_at=clock_timestamp() where id=$1 and project_id=$2 and owner_id=$3 and scenario_key=$4 returning '+returning,[...params(id,s),'cancelled'])).rows[0]);});}
- return Object.freeze({enqueue,runUnit,status,result,cancel});
+ return Object.freeze({enqueue,runUnit,status,result,cancel,reviewSource});
 }
 module.exports=Object.freeze({create});

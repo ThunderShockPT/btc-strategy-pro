@@ -28,6 +28,7 @@ function create({key,loadSnapshot,contextProvider,policyProvider,now=()=>new Dat
  }
  async function advance(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);if(p.search.done)return seal(p);const search=Cycles.advanceSearch(p.search,{maxScenarios:1});fresh(p);return seal({...p,sequence:p.sequence+1,search});}
  async function result(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);const value=Cycles.searchResult(p.search);fresh(p);return value;}
- return Object.freeze({start,advance,result});
+ async function reviewSource(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);Cycles.searchResult(p.search);fresh(p);return freeze(clone({headHash:p.headHash,engineBuild:p.engineBuild,createdAt:p.createdAt,expiresAt:p.expiresAt,search:p.search}));}
+ return Object.freeze({start,advance,result,reviewSource});
 }
 module.exports=Object.freeze({create,VERSION});

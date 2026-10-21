@@ -2,7 +2,7 @@
 // Backend-only PostgreSQL adapter. No keys, HTTP endpoints, or cloud activation.
 const {createHash,randomUUID}=require('node:crypto'),P=require('./persistence-contract.cjs');
 const W=require('../execution-workflow.js'),Cash=require('../cash-workflow.js'),build=require('../policies/calculation-checkpoint-build-20261021.json');
-const VERSION='v20-atomic-store-12d5b.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+const VERSION='v20-atomic-store-12d5c.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const clone=v=>JSON.parse(P.canonical(v)),hash=v=>createHash('sha256').update(P.canonical(v)).digest('hex');
 function need(v,code){if(!v)throw Error(code);}
 function fields(v,required,optional=[]){need(v&&typeof v==='object'&&!Array.isArray(v)&&required.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>required.includes(k)||optional.includes(k)),'INVALID_COMMAND_FIELDS');}
@@ -44,13 +44,23 @@ async function load(tx,s,lock='share'){
  need(sourceHash(state)===h.state_hash&&revision(state)===h.revision,'STORED_SOURCE_INTEGRITY_FAILURE');
  return {state,head:h};
 }
-function create({db,authenticate,contextProvider,planContextProvider=null,authorizeTransaction=null,enabled=false}){
+function create({db,authenticate,contextProvider,planContextProvider=null,calculationJobs=null,authorizeTransaction=null,enabled=false}){
  need(db&&typeof db.transaction==='function'&&typeof authenticate==='function'&&typeof contextProvider==='function','SERVER_DEPENDENCIES_REQUIRED');
  async function identity(token,s){need(enabled===true,'CLOUD_WRITE_GATE_CLOSED');scope(s);const user=await authenticate(token);need(user&&user.id===s.ownerId&&typeof user.email_confirmed_at==='string'&&Number.isFinite(Date.parse(user.email_confirmed_at))&&user.is_anonymous===false,'VERIFIED_OWNER_SESSION_REQUIRED');return user;}
  async function authorize(tx,user,s){if(authorizeTransaction)await authorizeTransaction(tx,user,s);}
- async function proposal(base,s,request){
-  fields(request,['workflow','command']);need(['execution','movement','plan-reservations','plan-cycles','plan-profile'].includes(request.workflow),'UNSUPPORTED_WORKFLOW');
+ async function proposal(base,s,request,token){
+  fields(request,['workflow','command']);need(['execution','movement','plan-reservations','plan-cycles','plan-profile','plan-calculation'].includes(request.workflow),'UNSUPPORTED_WORKFLOW');
   need(Buffer.byteLength(P.canonical(request),'utf8')<=64000,'COMMAND_TOO_LARGE');
+  if(request.workflow==='plan-calculation'){
+   fields(request.command,['mode','jobId','change']);need(request.command.mode==='recorded','ONLY_RECORDED_COMMANDS_ALLOWED');fields(request.command.change,['id','version']);need(ID.test(request.command.jobId),'INVALID_CALCULATION_JOB_ID');
+   need(typeof calculationJobs?.reviewSource==='function','CALCULATION_REVIEW_NOT_ENABLED');
+   const source=await calculationJobs.reviewSource(token,s,request.command.jobId);need(source.headHash===base.head.state_hash,'STALE_CALCULATION_BASIS');need(source.engineBuild===REVIEW_BUILD,'CALCULATION_BUILD_CHANGED');
+   const state=clone(base.state),search=clone(source.search),expectedInput={...state.input,rules:search.input.rules,valuation:search.input.valuation};
+   need(hash(search.input)===hash(expectedInput)&&hash(search.plan)===hash(state.plan)&&search.input.bookkeepingOnly!==true,'COMPLETED_SEARCH_BASIS_MISMATCH');state.input=search.input;P.stage(state,s);
+   const review=await Cash.prepareCompletedCyclePlanChange(state.input,state.plan,{...clone(request.command.change),policy:search.policy},search);
+   const calculationSource={jobId:request.command.jobId,createdAt:source.createdAt,expiresAt:source.expiresAt,engineBuild:source.engineBuild},result={version:VERSION,headHash:base.head.state_hash,basisRevision:base.head.revision,request:clone(request),review,calculationSource};
+   return {state,review,completedSearch:search,calculationSource,result:{...result,reviewHash:hash(result)}};
+  }
   const state=clone(base.state),context=await contextProvider(s,clone(state.input));
   fields(context,['rules','valuation'],['bookkeepingOnly']);
   state.input={...state.input,rules:context.rules,valuation:context.valuation};
@@ -75,12 +85,13 @@ function create({db,authenticate,contextProvider,planContextProvider=null,author
  async function prepare(token,s,raw){
   const request=clone(raw),user=await identity(token,s);
   const base=await db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);const clock=(await tx.query('select clock_timestamp() as at')).rows[0].at;return {...b,startedAt:new Date(clock).toISOString()};});
-  const p=await proposal(base,s,request);let expiry=Date.parse(base.startedAt)+60000,manualQuote=null;
+  const p=await proposal(base,s,request,token);let expiry=Date.parse(base.startedAt)+60000,manualQuote=null;
   if(s.scenarioKey==='manual_long'&&p.state.input.bookkeepingOnly!==true){
    const quote=Date.parse(p.state.input.valuation.asOf),observed=Date.parse(p.state.input.rules.observedAt),age=p.state.input.rules.applicationPolicy.reviewMaxAgeSeconds;
    need(Number.isFinite(quote)&&Number.isFinite(observed)&&Number.isFinite(age),'CURRENT_MANUAL_CONTEXT_REQUIRED');
    manualQuote=p.state.input.valuation.asOf;expiry=Math.min(expiry,quote+60000,observed+age*1000);
   }
+  if(p.calculationSource)expiry=Math.min(expiry,Date.parse(p.calculationSource.expiresAt));
   const {reviewHash:unused,...result}=p.result;p.result={...result,reviewBuild:REVIEW_BUILD,reviewedAt:base.startedAt,expiresAt:new Date(expiry).toISOString()};p.result.reviewHash=hash(p.result);
   return db.transaction(async tx=>{
    await authorize(tx,user,s);await tx.query('select pg_advisory_xact_lock(hashtextextended($1,0))',[s.ownerId]);const current=await load(tx,s);
@@ -104,7 +115,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,author
   const saved=base.prepared;need(saved&&saved.request_hash===hash(request)&&saved.basis_hash===base.head.state_hash,'REVIEW_CHANGED_OR_TAMPERED');need(saved.fresh,'COMMAND_REVIEW_EXPIRED');
   const p=clone(saved.payload),{reviewHash,...reviewedResult}=p.result;need(reviewHash===confirmation.reviewHash&&hash(reviewedResult)===reviewHash&&p.result.version===VERSION&&p.result.reviewBuild===REVIEW_BUILD&&hash(p.result.request)===hash(request),'REVIEW_CHANGED_OR_TAMPERED');
   const planWorkflow=request.workflow.startsWith('plan-'),handlers={'plan-reservations':Cash.confirmPlanChange,'plan-cycles':Cash.confirmCyclePlanChange,'plan-profile':Cash.confirmProfileChange};
-  const next=request.workflow==='execution'?await W.confirm(p.state.input,p.state.plan,p.review,{confirmedReviewHash:p.review.reviewHash,acceptPlanLinkCleanup:confirmation.acceptPlanLinkCleanup===true}):planWorkflow?await handlers[request.workflow](p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash}):await Cash.confirmMovement(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash});
+  const next=request.workflow==='plan-calculation'?await Cash.confirmCompletedCyclePlanChange(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash},p.completedSearch):request.workflow==='execution'?await W.confirm(p.state.input,p.state.plan,p.review,{confirmedReviewHash:p.review.reviewHash,acceptPlanLinkCleanup:confirmation.acceptPlanLinkCleanup===true}):planWorkflow?await handlers[request.workflow](p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash}):await Cash.confirmMovement(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash});
   const nextPlan=next.nextPlan||next.activePlan;
   need(nextPlan.id!==base.state.plan.id?BigInt(nextPlan.version)===BigInt(base.state.plan.version)+1n:hash(nextPlan)===hash(base.state.plan),'PLAN_VERSION_REQUIRED');
   const history=[...base.state.planHistory];if(nextPlan.id!==base.state.plan.id)history.push(base.state.plan);
@@ -124,7 +135,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,author
    need((await tx.query('select expires_at>clock_timestamp() as fresh from btcsp_private.command_reviews where project_id=$1 and owner_id=$2 and scenario_key=$3 and review_hash=$4',[...params(s),confirmation.reviewHash])).rows[0]?.fresh,'COMMAND_REVIEW_EXPIRED');
    if(nextPlan.id!==base.state.plan.id)await addPlan(tx,nextPlan,revision(state),state.input.rules.version);
    for(const e of sorted)await addEvent(tx,e);
-   await tx.query('insert into public.btcsp_calculation_runs(id,project_id,owner_id,basis_revision,engine_version,rule_version,result_kind,assumptions,results) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),s.projectId,s.ownerId,base.head.revision,p.review.workflowVersion||p.review.version,state.input.rules.version,state.input.valuation.kind==='synthetic'?'synthetic':'manual-position-estimate',{rules:state.input.rules,valuation:state.input.valuation,headHash:base.head.state_hash,request,reviewHash:confirmation.reviewHash,reviewedAt:p.result.reviewedAt,expiresAt:p.result.expiresAt,reviewBuild:REVIEW_BUILD},{before:p.review.before||null,after:p.review.after||null,result:p.review.result||null}]);
+   await tx.query('insert into public.btcsp_calculation_runs(id,project_id,owner_id,basis_revision,engine_version,rule_version,result_kind,assumptions,results) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),s.projectId,s.ownerId,base.head.revision,p.review.workflowVersion||p.review.version,state.input.rules.version,state.input.valuation.kind==='synthetic'?'synthetic':'manual-position-estimate',{rules:state.input.rules,valuation:state.input.valuation,headHash:base.head.state_hash,request,reviewHash:confirmation.reviewHash,reviewedAt:p.result.reviewedAt,expiresAt:p.result.expiresAt,reviewBuild:REVIEW_BUILD,calculationSource:p.calculationSource||null},{before:p.review.before||null,after:p.review.after||null,result:p.review.result||null}]);
    await tx.query('update btcsp_private.project_heads set revision=$4,generation=generation+1,state_hash=$5,active_plan_id=$6,input_context=$7,extras=$8,event_order=$9,history_order=$10 where project_id=$1 and owner_id=$2 and scenario_key=$3',[...params(s),revision(state),stateHash,nextPlan.id,context,extras,JSON.stringify(state.input.events.map(e=>e.id)),JSON.stringify(history.map(p=>p.id))]);
    const result={version:VERSION,revision:revision(state),planId:nextPlan.id,stateHash,reviewHash:confirmation.reviewHash,eventsAppended:events.map(e=>e.id),databaseWritten:true,exchangeTradeChanged:false,planApplied:planWorkflow,planReviewRequired:!planWorkflow};
    await tx.query('insert into btcsp_private.command_receipts(project_id,owner_id,scenario_key,idempotency_key,command_hash,result) values($1,$2,$3,$4,$5,$6)',[...params(s),confirmation.idempotencyKey,commandHash,result]);
