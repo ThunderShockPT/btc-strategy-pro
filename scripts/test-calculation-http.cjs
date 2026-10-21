@@ -16,6 +16,9 @@ test('authenticated HTTP calculation lifecycle preserves financial state and iso
  assert.equal((await call('status',{jobId:id})).result.sequence,1);
  const cancelled=await call('cancel',{jobId:id});assert.equal(cancelled.result.status,'cancelled');
  assert.equal((await call('advance',{jobId:id})).result.status,'cancelled');
+ const second=await call('enqueue',{request:{idempotencyKey:'http-complete'}});let progress=second.result;
+ for(let n=0;progress.status!=='completed';n++){assert(n<20);const step=await call('advance',{jobId:progress.id});assert.equal(step.status,200);progress=step.result;}
+ const completed=await call('result',{jobId:progress.id});assert.equal(completed.status,200);assert.equal(completed.result.plannerVersion,'v20-cycles-6.1');
  assert.deepEqual(await store.snapshot(f.TA,scope),before);
  assert(!JSON.stringify(created).includes('envelope'));assert(!JSON.stringify(created).includes('lease_id'));
  assert(buckets.includes('/api/v20/prepare'));assert(buckets.includes('/api/v20/state'));assert(buckets.includes('/api/v20/commit'));assert(buckets.every(p=>!p.includes('calculations')));
