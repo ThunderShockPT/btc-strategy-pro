@@ -1,0 +1,5 @@
+/* A failed read must never cause automatic replacement of an existing draft. */
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.BTCDemoStorage=factory();})(typeof globalThis!=='undefined'?globalThis:this,function(){
+'use strict';function create(storage){const blocked=new Set();function read(key,scope){try{const raw=storage.getItem(key);if(raw===null)return null;if(raw.length>=500000)throw Error('DEMO_DRAFT_TOO_LARGE');const value=JSON.parse(raw);if(!value||Object.entries(scope).some(([k,v])=>value[k]!==v))throw Error('DEMO_DRAFT_SCOPE_OR_VERSION_MISMATCH');return value;}catch(err){blocked.add(key);throw err;}}
+function write(key,value){if(blocked.has(key))throw Error('DEMO_DRAFT_PRESERVED_READ_FAILED');const raw=JSON.stringify(value);if(raw.length>=500000)throw Error('DEMO_DRAFT_TOO_LARGE');storage.setItem(key,raw);}
+function preserve(key){blocked.add(key);}return Object.freeze({read,write,preserve});}return Object.freeze({create});});

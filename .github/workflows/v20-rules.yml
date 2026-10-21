@@ -1,7 +1,7 @@
 name: V20 rules data financial engine and risk checks
 on:
   push:
-    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy, feat/v20-auditable-corrections, feat/v20-temporal-simulation, feat/v20-wallet-onboarding, fix/v20-buy-sequence-clarity]
+    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy, feat/v20-auditable-corrections, feat/v20-temporal-simulation, feat/v20-wallet-onboarding, fix/v20-buy-sequence-clarity, feat/v20-app-navigation]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -26,6 +26,9 @@ jobs:
           node --check wallet-onboarding.js
           node --check previews/onboarding-ui.js
           node --check previews/plan-view.js
+          node --check previews/app-views.js
+          node --check previews/app-workflows.js
+          node --check previews/demo-storage.js
           node --check financial-engine.js
           node --check position-risk.js
           node --check cash-workflow.js
@@ -43,7 +46,7 @@ jobs:
           node --test scripts/test-corrections.cjs
           node --test scripts/test-temporal-simulator.cjs
           node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs
-          node --test scripts/test-plan-view.cjs
+          node --test scripts/test-plan-view.cjs scripts/test-app-workflows.cjs scripts/test-demo-storage.cjs
           node scripts/build-onboarding-preview.cjs
           node scripts/test-auth-guard.cjs
           node scripts/test-cloud-sync.cjs
