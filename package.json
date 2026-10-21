@@ -20,7 +20,8 @@
     "preview:v20:temporal": "node scripts/preview-temporal.cjs",
     "test:v20:onboarding": "node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs scripts/test-plan-view.cjs",
     "build:v20:onboarding": "node scripts/build-onboarding-preview.cjs",
-    "test:v20:app": "node --test scripts/test-app-workflows.cjs scripts/test-onboarding-preview.cjs scripts/test-demo-storage.cjs"
+    "test:v20:app": "node --test scripts/test-app-workflows.cjs scripts/test-onboarding-preview.cjs scripts/test-demo-storage.cjs",
+    "test:v20:executions": "node --test scripts/test-execution-workflow.cjs scripts/test-onboarding-preview.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"

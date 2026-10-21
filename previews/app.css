@@ -5,3 +5,5 @@
 @media(max-width:360px){.hero-balance>strong,.market-quote>strong{font-size:27px}.stats{grid-template-columns:1fr}.stats .stat{display:flex;gap:10px;align-items:center;justify-content:space-between}.stats .stat small{max-width:55%}.stats .stat strong{font-size:17px;margin:0;text-align:right}.card .data-line{font-size:11px}.mobile-nav button{font-size:9px}}
 
 .nav-icon svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+#tradeDialog{max-width:720px}#tradeDialog .field{margin:14px 0}#tradeDialog .field small{display:block;color:var(--muted);font-size:11px}#tradeDialog p{overflow-wrap:anywhere}#tradeDialog h3{font-size:17px}
