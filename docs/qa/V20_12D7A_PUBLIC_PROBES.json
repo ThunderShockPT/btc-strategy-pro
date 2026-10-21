@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "status": "live-data-observed-default-timeout-not-approved",
+  "project": "BTC Strategy Pro",
+  "noAccountCredentials": true,
+  "profileContextEnabled": false,
+  "extendedTimeoutProbe": {
+    "startedAt": "2026-10-21T19:18:53.931Z",
+    "completedAt": "2026-10-21T19:18:58.774Z",
+    "timeoutMs": 10000,
+    "defaultTimeoutTested": false,
+    "status": "success",
+    "book": {
+      "source": "https://futures.kraken.com/derivatives/api/v3/orderbook?symbol=PF_XBTUSD",
+      "observedAt": "2026-10-21T19:18:58.525Z",
+      "receivedAt": "2026-10-21T19:18:58.723Z",
+      "bidCount": 2022,
+      "askCount": 1239,
+      "bestBid": {
+        "priceUSD": "84312",
+        "size": "0.0263"
+      },
+      "bestAsk": {
+        "priceUSD": "84313",
+        "size": "0.113"
+      },
+      "depthBudgetUSD": null
+    },
+    "history": {
+      "source": "https://futures.kraken.com/api/charts/v1/mark/PF_XBTUSD/1m?count=65",
+      "receivedAt": "2026-10-21T19:18:58.692Z",
+      "closedCandles": 64,
+      "observedThrough": "2026-10-21T19:18:00.000Z",
+      "first": {
+        "startAt": "2026-10-21T18:14:00.000Z",
+        "endAt": "2026-10-21T18:15:00.000Z",
+        "openMarkUSD": "84621.55889632645",
+        "highMarkUSD": "84663.25455961539",
+        "lowMarkUSD": "84621.55889632645",
+        "closeMarkUSD": "84644.19242383303"
+      },
+      "last": {
+        "startAt": "2026-10-21T19:17:00.000Z",
+        "endAt": "2026-10-21T19:18:00.000Z",
+        "openMarkUSD": "84401.84849285852",
+        "highMarkUSD": "84403.74421251273",
+        "lowMarkUSD": "84367.53745581944",
+        "closeMarkUSD": "84378.82959665662"
+      },
+      "excludedOpenCandles": 1
+    },
+    "profileContextEnabled": false
+  },
+  "defaultTimeoutProbe": {
+    "startedAt": "2026-10-21T19:20:34.035Z",
+    "completedAt": "2026-10-21T19:20:37.043Z",
+    "timeoutMs": 3000,
+    "status": "failed",
+    "code": "PUBLIC_OBSERVATION_TIMEOUT"
+  },
+  "documentation": [
+    "https://docs.kraken.com/api-reference/market-data/get-orderbook",
+    "https://docs.kraken.com/api-reference/candles/market-candles",
+    "https://docs.kraken.com/api-reference/candles/resolutions"
+  ],
+  "limitations": [
+    "Environment/network timings are observations, not latency guarantees",
+    "No automatic liquidity budget or profile provider has been enabled",
+    "Sources are public PF_XBTUSD market data, not account data"
+  ]
+}
