@@ -48,7 +48,9 @@
   const mark=decimal(valuation.markPriceUSD,{positive:true}),asOf=time(valuation.asOf);
   const rules=Rules.load(input.rules);
   const eligibility=Rules.assess(rules,{now:valuation.asOf,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
-  insist(eligibility.scopeReady,'RULES_OUT_OF_SCOPE_OR_STALE');
+  const blockingReasons=eligibility.reasons.slice(0,eligibility.reasons.length-rules.limitations.length);
+  const staleBookkeeping=input.bookkeepingOnly===true&&blockingReasons.length===1&&blockingReasons[0]==='STALE_RULES';
+  insist(eligibility.scopeReady||staleBookkeeping,'RULES_OUT_OF_SCOPE_OR_STALE');
   const levels=Rules.selectSchedule(rules,input.platform,input.clientType);
   function requirements(basis){
    return calculateMargin(basis,levels);
@@ -84,7 +86,8 @@
     const f=e.facts,type=e.event_type;
     insist(opened||type==='opening_balance','OPENING_BALANCE_REQUIRED',e.id);
     if(['opening_balance','capital_deposit','capital_withdrawal','margin_add','margin_remove'].includes(type)){
-     keys(f,['amountUSD','currency'],type==='margin_add'?['purpose']:[]);insist(f.currency==='USD','UNSUPPORTED_CURRENCY',e.id);
+     keys(f,['amountUSD','currency'],['source','note',...(type==='margin_add'?['purpose']:[])]);insist(f.currency==='USD','UNSUPPORTED_CURRENCY',e.id);
+     for(const [field,max]of [['source',120],['note',500]])if(f[field]!==undefined)insist(typeof f[field]==='string'&&f[field].trim().length>0&&f[field].length<=max&&!/[\u0000-\u001f\u007f]/.test(f[field]),'INVALID_MOVEMENT_METADATA',e.id);
      const amount=decimal(f.amountUSD,{positive:type!=='opening_balance'});
      if(type==='opening_balance'){insist(!opened,'DUPLICATE_OPENING_BALANCE',e.id);opened=true;initialCapital=amount;wallet=wallet.add(amount);}
      if(type==='capital_deposit'){deposits=deposits.add(amount);wallet=wallet.add(amount);}
@@ -162,7 +165,8 @@
   const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
   const equity=wallet.add(margin).add(unrealized);
   insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
-  return freeze({engineVersion:'v20-core-3.1',ruleVersion:rules.version,status:'approximate-manual-ledger',
+  return freeze({engineVersion:'v20-core-3.2',ruleVersion:rules.version,status:eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
+   ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady},
    inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
    capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
    cash:{walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),bookCashTotalUSD:fmt(wallet.add(margin)),spendableUSD:fmt(D.max(0,free)),unfundedReservationsUSD:fmt(D.max(0,free.neg())),

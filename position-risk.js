@@ -13,7 +13,8 @@
  function instant(value){need(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(value),'INVALID_RISK_TIMESTAMP');const n=Date.parse(value);need(Number.isFinite(n)&&new Date(n).toISOString().slice(0,19)===value.slice(0,19),'INVALID_RISK_TIMESTAMP');return n;}
  function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
  function snapshot(input){
-  const ledger=Core.reconstruct(input),q=new D(ledger.position.quantityBTC),basis=new D(ledger.position.remainingBasisUSD),margin=new D(ledger.cash.isolatedMarginUSD),mark=new D(input.valuation.markPriceUSD);
+  const ledger=Core.reconstruct(input);need(ledger.ruleAssessment.scopeReady,'RISK_RULES_UNAVAILABLE');
+  const q=new D(ledger.position.quantityBTC),basis=new D(ledger.position.remainingBasisUSD),margin=new D(ledger.cash.isolatedMarginUSD),mark=new D(input.valuation.markPriceUSD);
   const req=Core.marginRequirements({basisUSD:ledger.position.remainingBasisUSD,rules:input.rules,platform:input.platform,clientType:input.clientType});
   return {ledger,q,basis,margin,mark,mm:new D(req.maintenanceUSD),im:new D(req.initialUSD)};
  }
