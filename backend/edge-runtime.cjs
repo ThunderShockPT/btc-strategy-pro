@@ -1,10 +1,10 @@
 'use strict';
 const HTTP=require('./http-api.cjs'),Auth=require('./supabase-auth.cjs'),Database=require('./pg-database.cjs'),Admission=require('./request-admission.cjs');
-const VERSION='v20-edge-runtime-12c2.1',PREFIX='/functions/v1/btcsp-v20-api';
+const VERSION='v20-edge-runtime-12d1.1',PREFIX='/functions/v1/btcsp-v20-api';
 const CHECKS=['smtpExclusive','confirmedAndRecoveredAccounts','realAccountIsolation','productionRestore','backupRetentionAndKeys','ingressAndAbuse','financialContext','onboardingAndPlans','privacyLifecycle'];
 function approved(p){return p?.projectRef===Auth.PROJECT&&p.financialCloudApproved===true&&CHECKS.every(k=>p.checks?.[k]===true)&&Array.isArray(p.pendingWorkflows)&&p.pendingWorkflows.length===0;}
-function create({getEnv,Pool,policy,origins,contextProvider}){
- const release=JSON.parse(JSON.stringify(policy)),enabled=approved(release)&&typeof contextProvider==='function';let services=null;
+function create({getEnv,Pool,policy,origins,contextProvider,planContextProvider,setupContextProvider,now}){
+ const release=JSON.parse(JSON.stringify(policy)),enabled=approved(release)&&[contextProvider,planContextProvider,setupContextProvider].every(p=>typeof p==='function');let services=null;
  function live(){if(!enabled)throw Error('CLOUD_NOT_ENABLED');if(services)return services;
   if(getEnv('SUPABASE_URL')!==Auth.URL_BASE||typeof contextProvider!=='function')throw Error('CLOUD_CONFIGURATION_INCOMPLETE');
   const db=Database.create({Pool,connectionString:getEnv('SUPABASE_DB_URL')});
@@ -13,7 +13,7 @@ function create({getEnv,Pool,policy,origins,contextProvider}){
   }catch(e){void db.close().catch(()=>{});throw e;}
  }
  const db={transaction:fn=>live().db.transaction(fn)},auth={authenticate:t=>live().auth.authenticate(t),assertSession:(tx,u,s)=>live().auth.assertSession(tx,u,s)};
- const handler=HTTP.create({db,auth,contextProvider:(s,i)=>contextProvider(s,i),admit:context=>live().admit(context),origins,enabled});
+ const handler=HTTP.create({db,auth,contextProvider:(s,i)=>contextProvider(s,i),planContextProvider,setupContextProvider,now,admit:context=>live().admit(context),origins,enabled});
  return async function handle(request,info){
   const original=new URL(request.url),path=original.pathname;
   const base=path===PREFIX||path.startsWith(PREFIX+'/')?PREFIX:'/btcsp-v20-api';
