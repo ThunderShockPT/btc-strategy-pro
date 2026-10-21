@@ -31,3 +31,5 @@ Testes novos: referência diferente altera entradas sem alterar a fixture; dados
 Execução alargada encontrou impedimento ambiental no script legado test-mobile-layout.cjs: binário Chromium ausente. Não é classificado como teste aprovado. QA desta prévia usa navegador gerido por CUA, incluindo larguras de iframe, sem alegar ensaio físico S25/PWA.
 
 Faltam os blocos principais 11–15. Esta correção é um checkpoint anterior à continuação da renovação visual; não significa conclusão da aplicação nem publicação em main.
+
+Execução final: 348/348 testes V20 aprovados; após a última alteração de apresentação, 9/9 testes da prévia/ordenação novamente aprovados. QA CUA confirmou adoção explícita de cotação pública, resultado com preços recalculados e ausência de transbordo horizontal nos iframes 280/360/393/430/768 px; revisão calculada também verificada a 280 px. Cotação pública foi recebida no navegador, não apenas testada com mocks. Continuidade cloud e telemóvel físico não testados neste checkpoint.
