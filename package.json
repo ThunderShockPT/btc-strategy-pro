@@ -9,7 +9,8 @@
     "test:v20:data": "node --test scripts/test-v20-data.cjs",
     "test:v20:engine": "node --test scripts/test-financial-engine.cjs",
     "test:v20:risk": "node --test scripts/test-position-risk.cjs",
-    "test:v20:cash": "node --test scripts/test-cash-workflow.cjs"
+    "test:v20:cash": "node --test scripts/test-cash-workflow.cjs",
+    "test:v20:cycles": "node --test scripts/test-cycle-planner.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
