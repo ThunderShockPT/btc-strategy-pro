@@ -30,7 +30,8 @@
     "test:v20:api": "node --test scripts/test-authenticated-api.cjs",
     "test:v20:backup": "node --test scripts/test-backup-envelope.cjs",
     "test:v20:runtime": "node --test scripts/test-edge-runtime.cjs",
-    "build:v20:edge": "node scripts/build-edge-runtime.cjs"
+    "build:v20:edge": "node scripts/build-edge-runtime.cjs",
+    "test:v20:wallet-store": "node --test scripts/test-wallet-plan-store.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
