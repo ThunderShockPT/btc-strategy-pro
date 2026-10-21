@@ -1,9 +1,9 @@
 /* V20 Block 5: manual cash movement reviews, never exchange or database writes.
  * Review hashes detect stale local state; they are NOT authorization signatures. */
 (function(root,factory){
- if(typeof module==='object'&&module.exports)module.exports=factory(require('decimal.js'),require('./financial-engine.js'),require('./position-risk.js'),require('node:crypto').webcrypto);
- else root.BTCCashWorkflow=factory(root.Decimal,root.BTCFinancialEngine,root.BTCPositionRisk,root.crypto);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Decimal,Core,Risk,crypto){
+ if(typeof module==='object'&&module.exports)module.exports=factory(require('decimal.js'),require('./financial-engine.js'),require('./position-risk.js'),require('node:crypto').webcrypto,require('./cycle-planner.js'));
+ else root.BTCCashWorkflow=factory(root.Decimal,root.BTCFinancialEngine,root.BTCPositionRisk,root.crypto,root.BTCCyclePlanner);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Decimal,Core,Risk,crypto,Cycles){
  'use strict';
  const D=Decimal.clone({precision:80,rounding:Decimal.ROUND_HALF_EVEN,toExpNeg:-100,toExpPos:100});
  const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -102,11 +102,17 @@
   if(!replayed&&request.kind.startsWith('capital_')){
    need(canonical(before.ledger.position)===canonical(after.ledger.position)&&before.risk.estimatedPriceUSD===after.risk.estimatedPriceUSD,'CAPITAL_MOVEMENT_CHANGED_POSITION');
   }
-  return seal({workflowVersion:'v20-cash-5.1',type:'movement-review',basisHash:await hash({input,plan}),baseRevision,request,
+  let newCycles={status:'not-configured',count:null};
+  if(plan.configuration?.cyclePolicy){
+   try{need(Cycles,'CYCLE_PLANNER_REQUIRED');const a=Cycles.generate(input,plan,plan.configuration.cyclePolicy),b=Cycles.generate(projectedInput,plan,plan.configuration.cyclePolicy);
+    newCycles={status:'calculated-synthetic',beforeCount:a.newCycleCount,count:b.newCycleCount,additionalCycleCapacity:b.newCycleCount-a.newCycleCount,before:a,after:b};
+   }catch(error){newCycles={status:'requires-plan-review',count:null,reason:error.code||'INVALID_CYCLE_CONFIGURATION'};warnings.push('CYCLE_RECALCULATION_REQUIRES_REVIEW');}
+  }
+  return seal({workflowVersion:'v20-cash-6.1',type:'movement-review',basisHash:await hash({input,plan}),baseRevision,request,
    status:replayed?'already-recorded':request.mode==='planned'?'planned-only':'awaiting-record-confirmation',before,after,delta:difference(before,after),
    projectionBasis:request.mode==='planned'?'if-recorded-now-at-unchanged-mark-and-rules':'declared-effective-time-at-current-valuation',
    eventToAppend:request.mode==='recorded'?event:null,plannedMovement:request.mode==='planned'?request:null,transferPreview,movementFitsCurrentConstraints:feasible,warnings,
-   activePlan:plan,planReviewRequired:!replayed,newCycles:{status:'not-calculated-block6',count:null},
+   activePlan:plan,planReviewRequired:!replayed,newCycles,
    databaseWritten:false,krakenTransferPerformed:false,planApplied:false,protectionGuaranteed:false});
  }
  async function verifyReview(input,plan,proposal,type,confirmation){
@@ -126,6 +132,7 @@
  }
  async function preparePlanChange(input,plan,change){
   input=clone(input);plan=clone(plan);change=clone(change);validatePlan(plan,input);
+  need(!plan.configuration?.cyclePolicy,'USE_CYCLE_PLAN_REVIEW_FOR_MODELED_CYCLES');
   fields(change,['id','version','reservations']);
   need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
   need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');
@@ -144,5 +151,23 @@
    basisRevision:lastRevision(input),databaseWritten:false,krakenTransferPerformed:false,planApplied:false,
    limitations:['RESERVATIONS_ONLY_NOT_FULL_CYCLE_VALIDATION','ATOMIC_PERSISTENCE_BLOCK12']});
  }
- return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange});
+ async function prepareCyclePlanChange(input,plan,change){
+  input=clone(input);plan=clone(plan);change=clone(change);validatePlan(plan,input);
+  fields(change,['id','version','policy']);need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
+  need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');need(Cycles,'CYCLE_PLANNER_REQUIRED');
+  const result=Cycles.generate(input,plan,change.policy),candidatePlan={...plan,id:change.id.toLowerCase(),version:change.version,configuration:{...(plan.configuration||{}),cyclePolicy:change.policy,cycleInventory:result.candidateInventory||clone(plan.configuration?.cycleInventory||[])}};
+  if(result.selected)candidatePlan.configuration.cycleReservationBasis={protectedCashUSD:change.policy.protectedCashUSD,fundingReserveUSD:change.policy.fundingReserveUSD,closingFeeReserveUSD:result.selected.closingFeeReserveUSD};
+  return seal({workflowVersion:'v20-cash-6.1',type:'cycle-plan-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,
+   previousReservations:input.reservations||{ordersUSD:'0',marginUSD:'0',protectedUSD:'0'},proposedReservations:result.selected?.reservations||null,
+   status:'awaiting-cycle-plan-confirmation',planApplied:false,databaseWritten:false,krakenTransferPerformed:false});
+ }
+ async function confirmCyclePlanChange(input,plan,proposal,confirmation){
+  input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);
+  await verifyReview(input,plan,proposal,'cycle-plan-review',confirmation);
+  const fresh=await prepareCyclePlanChange(input,plan,proposal.change);need(fresh.reviewHash===proposal.reviewHash,'MODIFIED_REVIEW');
+  need(fresh.result.selected,'CYCLE_PLAN_INFEASIBLE');
+  return freeze({status:'prepared-for-persistence',nextInput:{...input,reservations:clone(fresh.proposedReservations)},nextPlan:clone(fresh.candidatePlan),basisRevision:lastRevision(input),
+   planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false});
+ }
+ return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange});
 });
