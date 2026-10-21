@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@electric-sql/pglite": "0.5.10",
+    "esbuild": "0.28.2",
     "pg": "8.23.1"
   },
   "name": "btc-strategy-pro",
@@ -27,7 +28,9 @@
     "test:v20:atomic": "node --test scripts/test-atomic-store.cjs",
     "test:v20:postgres": "node --test scripts/test-atomic-postgres.cjs",
     "test:v20:api": "node --test scripts/test-authenticated-api.cjs",
-    "test:v20:backup": "node --test scripts/test-backup-envelope.cjs"
+    "test:v20:backup": "node --test scripts/test-backup-envelope.cjs",
+    "test:v20:runtime": "node --test scripts/test-edge-runtime.cjs",
+    "build:v20:edge": "node scripts/build-edge-runtime.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
