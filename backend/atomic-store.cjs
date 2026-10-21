@@ -65,7 +65,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,author
    if(request.workflow==='plan-reservations')review=await Cash.preparePlanChange(state.input,state.plan,change);
    else{
     need(typeof planContextProvider==='function','PLAN_CONTEXT_REQUIRED');const trusted=await planContextProvider(s,clone(state.input));
-    if(request.workflow==='plan-cycles'){fields(change,['id','version']);review=await Cash.prepareCyclePlanChange(state.input,state.plan,{...change,policy:trusted.cyclePolicy});}
+    if(request.workflow==='plan-cycles'){fields(change,['id','version']);need(trusted.cyclePolicy?.requireFailedMarginSurvival===true,'PROFILE_ADMISSION_NOT_APPROVED');review=await Cash.prepareCyclePlanChange(state.input,state.plan,{...change,policy:trusted.cyclePolicy});}
     else{fields(change,['id','version','profile','floorMode','marginAdmission']);review=await Cash.prepareProfileChange(state.input,state.plan,{...change,market:trusted.market,baseCyclePolicy:trusted.baseCyclePolicy});}
    }
   }
