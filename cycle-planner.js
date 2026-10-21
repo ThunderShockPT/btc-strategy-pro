@@ -130,7 +130,7 @@
   return summaries;
  }
  function generate(input,plan,policy){
-  input=clone(input);plan=clone(plan);policy=clone(policy);const ctx=context(input,plan,policy),existing=inventory(input,ctx.inventory,ctx);
+  input=clone(input);input.rules=Rules.load(input.rules);plan=clone(plan);policy=clone(policy);const ctx=context(input,plan,policy),existing=inventory(input,ctx.inventory,ctx);
   const used=new Set([...ctx.inventory.map(c=>c.cycle),...Core.effectiveEvents(input).filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle),...input.events.filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle)]);
   let nextNumber=[...used].reduce((n,c)=>Math.max(n,Number(c.slice(6))),0)+1;
   const active=new Set(ctx.ledger.position.cycles.map(c=>c.cycle));for(const c of existing)if(c.entries.some(e=>new D(e.pendingQuantityBTC).gt(0)))active.add(c.cycle);
