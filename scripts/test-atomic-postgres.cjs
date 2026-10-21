@@ -86,3 +86,16 @@ test('native encrypted pg_dump restores facts, balances, plans, RLS and append-o
   const c=await restoredPool.connect();try{await c.query('begin');await c.query('set local role authenticated');await c.query("select set_config('request.jwt.claim.sub',$1,true)",[uuid(90)]);assert.equal((await c.query('select * from public.btcsp_financial_events')).rows.length,0);await c.query('rollback');}finally{c.release();}
  }finally{if(restoredPool)await restoredPool.end();await admin.query('drop database if exists '+restoreName);key.fill(0);dump.fill(0);opened.dump.fill(0);}
 });
+test('native admission counter is shared atomically by concurrent API workers',async()=>{
+ const Admission=require('../backend/request-admission.cjs'),key=Buffer.alloc(32,9),limits={'/api/v20/state':3,'/api/v20/prepare':3,'/api/v20/commit':3};
+ const seconds=Number((await pool.query('select extract(second from clock_timestamp())::text as second')).rows[0].second);if(seconds>58)await new Promise(r=>setTimeout(r,Math.ceil((60-seconds)*1000)+20));
+ const a=Admission.create({db,key,limits}),b=Admission.create({db,key,limits}),context={remoteAddress:'203.0.113.17',route:'/api/v20/commit'};
+ const results=await Promise.all(Array.from({length:8},(_,n)=>(n%2?a:b)(context)));assert.equal(results.filter(Boolean).length,3);
+ const row=(await pool.query('select subject_hash,hits from btcsp_private.request_buckets')).rows[0];assert.equal(row.hits,4);assert.equal(row.subject_hash.length,64);assert(!JSON.stringify(row).includes(context.remoteAddress));
+});
+test('native runtime database adapter keeps a transaction on one connection and rolls back operational writes',async()=>{
+ const Database=require('../backend/pg-database.cjs'),adapter=Database.fromPool(pool);
+ await adapter.transaction(async tx=>{const a=(await tx.query('select pg_backend_pid() as id')).rows[0].id,b=(await tx.query('select pg_backend_pid() as id')).rows[0].id;assert.equal(a,b);assert.equal((await tx.query("select current_setting('statement_timeout') as timeout")).rows[0].timeout,'10s');});
+ await assert.rejects(adapter.transaction(async tx=>{await tx.query("insert into btcsp_private.request_buckets values($1,'/api/v20/state',date_trunc('minute',clock_timestamp()),1)",['b'.repeat(64)]);throw Error('RUNTIME_TRANSACTION_ROLLBACK');}),/RUNTIME_TRANSACTION_ROLLBACK/);
+ assert.equal((await pool.query('select count(*)::int n from btcsp_private.request_buckets where subject_hash=$1',['b'.repeat(64)])).rows[0].n,0);
+});
