@@ -29,7 +29,7 @@ function create({fetchImpl=globalThis.fetch,now=()=>new Date().toISOString(),cac
    const reader=response.body?.getReader();need(reader,'PUBLIC_MARKET_BODY_REQUIRED');let size=0,parts=[];try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;need(size<=64000,'PUBLIC_MARKET_RESPONSE_TOO_LARGE');parts.push(value);}}finally{void reader.cancel().catch(()=>{});}
    let body;try{body=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{throw Error('INVALID_PUBLIC_TICKER');}return parse(body,now());})(),deadline]);}finally{clearTimeout(timer);}
  }
- async function snapshot(){if(cached&&valid(cached))return clone(cached);if(!inflight)inflight=read().then(v=>{cached=v;return v;}).finally(()=>{inflight=null;});const result=await inflight;need(timestamp(now())>=timestamp(result.observedAt)&&timestamp(now())-timestamp(result.observedAt)<=60000,'STALE_OR_FUTURE_PUBLIC_QUOTE');return clone(result);}
+ async function snapshot({notBefore=null}={}){const floor=notBefore===null?null:timestamp(notBefore);if(cached&&valid(cached)&&(floor===null||timestamp(cached.observedAt)>=floor))return clone(cached);if(!inflight)inflight=read().then(v=>{cached=v;return v;}).finally(()=>{inflight=null;});const result=await inflight;need(timestamp(now())>=timestamp(result.observedAt)&&timestamp(now())-timestamp(result.observedAt)<=60000,'STALE_OR_FUTURE_PUBLIC_QUOTE');need(floor===null||timestamp(result.observedAt)>=floor,'PUBLIC_QUOTE_PRECEDES_CONTEXT');return clone(result);}
  return Object.freeze({snapshot});
 }
 module.exports=Object.freeze({create,parse,VERSION,URL_TICKER});
