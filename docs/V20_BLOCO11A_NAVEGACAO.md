@@ -38,7 +38,7 @@ A comparação/confirmacão de movimentos requer Web Crypto. O navegador QA HTTP
 
 ## Verificação executada
 
-- 357/357 testes V20 aprovados (348 anteriores + 8 testes do adaptador + 1 protocolo completo do Worker).
+- 362/362 testes V20 aprovados (348 anteriores + 8 testes do adaptador + 1 protocolo completo do Worker + 5 testes de preservação local).
 - Worker com clonagem JSON no próprio realm, equivalente a mensagens reais do navegador: snapshot, depósito, revisão e confirmação sem alteração artificial da liquidação.
 - QA CUA: Home da posição Demo, navegação, Conta/histórico, modal financeiro com bloqueio HTTPS, calculadora inversa (piso 40 000 exige 650 de margem total e +150), Mercado com cotação pública recebida.
 - Home sem transbordo nos iframes 280/360/393/430/768; Risco e modal financeiro verificados a 280. O cenário selecionado foi recuperado após reload.
@@ -51,3 +51,5 @@ A comparação/confirmacão de movimentos requer Web Crypto. O navegador QA HTTP
 Depois: 12 backend/cloud/RLS/concorrência e recuperação; 13 alertas/tutorial contextual; 14 auditoria financeira independente; 15 Beta/QA/privacidade e decisão de lançamento.
 
 Verificação complementar: 386 verificações Beta aprovadas (19 auth, 26 cloud isolada, 38 release, 37 responsividade, 266 planeador legado). Após últimos ajustes de UI, os 13 testes adaptador/Worker foram novamente executados e aprovados. O navegador confirmou também gap de 100 000 para 40 000: fronteira estimada 55 000, aviso de manutenção atingida e PnL projetado -600. Conta/modal e Mercado verificados a 280 px; proposta preservada entre Estratégias e confirmação. Não houve bypass de Web Crypto no QA HTTP.
+
+Proteção adicional executada: rascunhos JSON inválidos, demasiado grandes ou com proprietário/projeto/versão divergentes bloqueiam gravações sobre a chave original. Não são substituídos automaticamente por um estado vazio. Escritas acima do limite não alteram o valor anterior. O aviso é apresentado na aplicação; a sessão pode continuar sem prometer gravação. Cinco testes verificam a preservação byte a byte e a independência entre projetos.
