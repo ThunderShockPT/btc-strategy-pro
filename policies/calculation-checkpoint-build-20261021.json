@@ -4,9 +4,14 @@
     "decimal.js": "10.6.0"
   },
   "files": {
-    "backend/calculation-checkpoints.cjs": "7dc68eaf3589741d006f5519d6231c58f3aa7e05f1be193a5a92a9e2e12217f9",
+    "backend/public-profile-context.cjs": "5c8de2d176ce6dca092c4e9aa108ab20b7c8550d59f231fbc8fb1a56404df7be",
+    "backend/public-market.cjs": "fdd4f92f0630c7e1538e1eef276d91b8fa681ca4336a694e9ce8f100976bc252",
+    "backend/public-observations.cjs": "159787e796a7ff9fdd0bac52d63515d11b9c96ba36ff589d4287a6979a65b18e",
+    "backend/financial-context.cjs": "a9973078780b33fd8797153fd0ada6bbccd324e851ad561741e914cde4768f64",
+    "policies/public-liquidity-20261021.json": "27b714663839b6e8ab54ebb0a64c9fd327fc44bc6dad065878a5cacdb1a82417",
+    "backend/calculation-checkpoints.cjs": "9d0416aa33082603a579563cf863bf7e226bb27713006c0182daddaf6c02584d",
     "backend/calculation-jobs.cjs": "50b5826f69318e05c86670797d8104d031d75059e8059f3173fd1bae47f6f812",
-    "backend/atomic-store.cjs": "5d255f78a58a22bb1405f47f4b69ad736a65403333eeff4afb1da6826e711235",
+    "backend/atomic-store.cjs": "6533b2cb3f52cfd7c75caf3f2b45015f621ca4b748219fcd4753ba44c510adb6",
     "backend/persistence-contract.cjs": "a01cb3e0b74b653ad34db8ae979542e516b4bf97782a6d8dca62d7e43528ceab",
     "cash-workflow.js": "ec7d258a120e195c862407ded856e280381781e5e1736a68d02df9c19d63a689",
     "execution-workflow.js": "b1dd49b0b014394dfef2843a87ed8d846775dedbe945c886c53526813b927702",
