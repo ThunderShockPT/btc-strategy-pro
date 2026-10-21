@@ -4,7 +4,7 @@
     "decimal.js": "10.6.0"
   },
   "files": {
-    "backend/calculation-checkpoints.cjs": "5b95922c0072afae90e7419aa4cf3060d52d40149d2890c1d194b6849df0e9eb",
+    "backend/calculation-checkpoints.cjs": "db927a041bb495bc856909f0cc5d40615aa7e844b8a019a01bad021fb3998937",
     "backend/persistence-contract.cjs": "a01cb3e0b74b653ad34db8ae979542e516b4bf97782a6d8dca62d7e43528ceab",
     "cycle-planner.js": "e9415ca9ed3dfea7c542464ef95fb33b3eff97a1eba5385911171977757e8f45",
     "position-risk.js": "e86a1f1890be3b91b378002ea1a1468a1a35a049d2ae9282a4c8c33d50d4e888",
