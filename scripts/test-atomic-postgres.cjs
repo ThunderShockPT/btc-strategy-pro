@@ -105,6 +105,13 @@ test('native simultaneous plan applications detect a conflict without adding fin
  assert.equal(result.filter(r=>r.status==='fulfilled').length,1);assert.equal(result.filter(r=>r.status==='rejected').length,1);const after=await read();assert.equal(after.head.revision,before.head.revision);assert.deepEqual(after.state.input.events,before.state.input.events);assert.equal(after.state.plan.version,version);
 });
 
+test('native signed continuation resumes across workers without financial writes and respects session revocation',async()=>{
+ const Auth=require('../backend/supabase-auth.cjs'),Fixture=require('./helpers/server-fixture.cjs'),Checkpoints=require('../backend/calculation-checkpoints.cjs'),cf=require('./helpers/cycle-fixture.cjs');
+ const auth=Auth.create({publishableKey:'fixture',now:Fixture.now,fetchImpl:async()=>new Response(JSON.stringify(Fixture.user(scope.ownerId)))}),store=Store.create({db,authenticate:auth.authenticate,authorizeTransaction:auth.assertSession,contextProvider:async(s,input)=>({rules:input.rules,valuation:input.valuation}),enabled:true});
+ const options={key:Buffer.alloc(32,12),enabled:true,now:()=>new Date(Fixture.now()).toISOString(),loadSnapshot:(token,s)=>store.snapshot(token,s),contextProvider:async(s,input)=>({rules:input.rules,valuation:input.valuation}),policyProvider:async(s,input)=>({...cf.policy(),maxCycles:1,protectedCashUSD:input.reservations.protectedUSD})},service=Checkpoints.create(options),before=await read(),envelope=await service.start(Fixture.TA,scope);
+ const [a,b]=await Promise.all([service.advance(Fixture.TA,scope,envelope),Checkpoints.create(options).advance(Fixture.TA,scope,JSON.parse(JSON.stringify(envelope)))]);assert.deepEqual(a,b);assert.equal(a.payload.sequence,1);assert.deepEqual((await read()).state,before.state);
+ await pool.query('delete from auth.sessions where id=$1',[Fixture.SA]);try{await assert.rejects(service.advance(Fixture.TA,scope,a),/SESSION_NOT_VALID/);}finally{await pool.query('insert into auth.sessions(id,user_id) values($1,$2)',[Fixture.SA,scope.ownerId]);}
+});
 test('native encrypted pg_dump restores facts, balances, plans, RLS and append-only triggers in a second database',async()=>{
  const {execFileSync}=require('node:child_process'),Backup=require('../backend/backup-envelope.cjs'),container=process.env.BTCSP_TEST_PG_CONTAINER;
  assert(container&&/^[a-f0-9]{12,64}$/.test(container),'Explicit ephemeral QA PostgreSQL container is required for native dump/restore');

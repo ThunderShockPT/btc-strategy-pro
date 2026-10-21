@@ -86,12 +86,14 @@
    reservations:{ordersUSD:str(fees.add(ctx.p.externalOrderReserveUSD)),marginUSD:str(addition.add(ctx.p.externalMarginReserveUSD)),protectedUSD:str(protectedTotal)},
    totalWalletRequiredUSD:str(needed),cashShortfallUSD:str(shortfall),uncommittedAfterFullPlanUSD:str(D.max(0,new D(ctx.ledger.cash.walletUSD).sub(needed))),finalQuantityBTC:str(q),finalBasisUSD:str(b)};
  }
- function scenarios(input,ctx,candidate,policy){
+ const SCENARIO_NAMES=['descent','ascent','volatile','gap','missedOrders','partialFills','failedMargin'];
+ function scenarios(input,ctx,candidate,policy,names=SCENARIO_NAMES){
   const mark=input.valuation.markPriceUSD,levels=[...new Set(candidate.orders.map(o=>o.priceUSD))].sort((a,b)=>new D(b).cmp(a));
   const descending=[mark,...levels.filter(p=>!new D(p).eq(mark)),ctx.floor.toFixed()];
   const paths={descent:descending,ascent:[mark,policy.upPriceUSD],volatile:[mark,...levels.flatMap(p=>[p,policy.upPriceUSD]),ctx.floor.toFixed(),policy.upPriceUSD],gap:[mark,ctx.floor.toFixed()],missedOrders:descending,partialFills:descending,failedMargin:descending};
   const summaries=[];
-  for(const [name,path]of Object.entries(paths)){
+  for(const name of names){
+   const path=paths[name];need(path,'INVALID_SEARCH_SCENARIO');
    const failureMode=name==='failedMargin'&&new D(candidate.additionalMarginUSD).gt(0);
    let rev=input.events.reduce((r,e)=>BigInt(e.revision)>r?BigInt(e.revision):r,0n),serial=0,clock=Date.parse(input.valuation.asOf),steps=[];
    const ids=new Set(input.events.map(e=>e.id.toLowerCase())),keys=new Set(input.events.map(e=>e.idempotency_key)),done=new Set();
@@ -129,7 +131,7 @@
   }
   return summaries;
  }
- function generate(input,plan,policy){
+ function beginSearch(input,plan,policy){
   input=clone(input);input.rules=Rules.load(input.rules);plan=clone(plan);policy=clone(policy);const ctx=context(input,plan,policy),existing=inventory(input,ctx.inventory,ctx);
   const used=new Set([...ctx.inventory.map(c=>c.cycle),...Core.effectiveEvents(input).filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle),...input.events.filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle)]);
   let nextNumber=[...used].reduce((n,c)=>Math.max(n,Number(c.slice(6))),0)+1;
@@ -146,23 +148,47 @@
    try{const c=build(input,ctx,existing,newSource);c.newCount=count;candidates.push(c);audit.push({newCycles:count,status:new D(c.cashShortfallUSD).gt(0)?'rejected-cash':'cash-checked-not-simulated',cashShortfallUSD:c.cashShortfallUSD});}
    catch(error){if(!(error instanceof CycleError))throw error;audit.push({newCycles:count,status:'rejected',reason:error.code});break;}
   }
-  let selected=null,stress=[];
-  for(const c of [...candidates].reverse()){
-   if(new D(c.cashShortfallUSD).gt(0))continue;
-   const s=scenarios(input,ctx,c,policy),normal=s.filter(x=>x.name!=='failedMargin');
-   const acceptable=normal.every(x=>x.completed&&x.maintenanceSurvived&&x.reservationsPreserved)&&(!policy.requireFailedMarginSurvival||s.find(x=>x.name==='failedMargin').maintenanceSurvived);
-   const a=audit.find(x=>x.newCycles===c.newCount);a.status=acceptable?'validated-synthetic-scenarios':'rejected-stress';a.failedScenarios=s.filter(x=>!x.completed||!x.maintenanceSurvived||!x.reservationsPreserved).map(x=>x.name);
-   a.stressFailures=s.filter(x=>!x.completed||!x.maintenanceSurvived||!x.reservationsPreserved).map(x=>({scenario:x.name,firstRiskEvent:x.firstRiskEvent,firstFailure:x.firstFailure}));
-   if(acceptable){selected=c;stress=s;break;}
+  return freeze({checkpointVersion:'v20-cycle-search-12d3.1',input,plan,policy,candidates,audit,activeCount:active.size,
+   cursor:candidates.length-1,scenarioResults:[],selected:null,stress:[],done:false,unitsCompleted:0});
+ }
+ function advanceSearch(checkpoint,{maxScenarios=1}={}){
+  need(Number.isSafeInteger(maxScenarios)&&maxScenarios>=1&&maxScenarios<=7,'INVALID_SEARCH_BATCH_SIZE');
+  need(checkpoint?.checkpointVersion==='v20-cycle-search-12d3.1'&&typeof checkpoint.done==='boolean','INVALID_SEARCH_CHECKPOINT');
+  const job=clone(checkpoint);if(job.done)return freeze(job);
+  need(Number.isSafeInteger(job.cursor)&&job.cursor>=-1&&job.cursor<job.candidates.length&&Array.isArray(job.scenarioResults)&&job.scenarioResults.length<7&&job.scenarioResults.every((s,i)=>s.name===SCENARIO_NAMES[i]),'INVALID_SEARCH_CURSOR');
+  job.input.rules=Rules.load(job.input.rules);let count=0,ctx;
+  while(job.cursor>=0){
+   const c=job.candidates[job.cursor];
+   if(new D(c.cashShortfallUSD).gt(0)){job.cursor--;continue;}
+   if(count===maxScenarios)break;
+   ctx??=context(job.input,job.plan,job.policy);
+   const name=SCENARIO_NAMES[job.scenarioResults.length];
+   job.scenarioResults.push(scenarios(job.input,ctx,c,job.policy,[name])[0]);job.unitsCompleted++;count++;
+   if(job.scenarioResults.length===7){
+    const s=job.scenarioResults,normal=s.filter(x=>x.name!=='failedMargin');
+    const acceptable=normal.every(x=>x.completed&&x.maintenanceSurvived&&x.reservationsPreserved)&&(!job.policy.requireFailedMarginSurvival||s.find(x=>x.name==='failedMargin').maintenanceSurvived);
+    const a=job.audit.find(x=>x.newCycles===c.newCount);a.status=acceptable?'validated-synthetic-scenarios':'rejected-stress';a.failedScenarios=s.filter(x=>!x.completed||!x.maintenanceSurvived||!x.reservationsPreserved).map(x=>x.name);
+    a.stressFailures=s.filter(x=>!x.completed||!x.maintenanceSurvived||!x.reservationsPreserved).map(x=>({scenario:x.name,firstRiskEvent:x.firstRiskEvent,firstFailure:x.firstFailure}));
+    if(acceptable){job.selected=c;job.stress=s;job.done=true;break;}
+    job.scenarioResults=[];job.cursor--;
+   }
   }
+  if(job.cursor<0)job.done=true;
+  return freeze(job);
+ }
+ function searchResult(job){
+  need(job?.checkpointVersion==='v20-cycle-search-12d3.1'&&job.done===true,'SEARCH_NOT_COMPLETED');
+  const {input,plan,policy,selected,stress,audit}=job;
+  need(selected?stress.length===7&&stress.every((s,i)=>s.name===SCENARIO_NAMES[i]):job.cursor<0,'SEARCH_NOT_COMPLETED');
   const failureSensitive=stress.some(s=>s.name==='failedMargin'&&!s.maintenanceSurvived);
   return freeze({plannerVersion:'v20-cycles-6.1',status:selected?(failureSensitive?'conditional-on-planned-margin':selected.newCount===0?'no-new-cycles':'synthetically-validated'):'infeasible',
    message:selected?'Resultado condicionado aos pressupostos e cenários declarados.':'Plano inviável com a caixa e as condições atuais.',profile:plan.profile,referencePriceUSD:plan.referencePriceUSD,referenceAt:plan.referenceAt,protectionFloorUSD:plan.protectionFloorUSD,
-   conditionalOnPlannedMargin:failureSensitive,failedMarginSurvived:stress.length?stress.find(s=>s.name==='failedMargin').maintenanceSurvived:null,existingActiveCycles:active.size,newCycleCount:selected?.newCount??0,totalActiveCycles:active.size+(selected?.newCount||0),technicalLimit:TECHNICAL_LIMIT,configuredLimit:policy.maxCycles,
-   selected,stress,audit,candidateInventory:selected?[...ctx.inventory,...selected.newSource]:null,
+   conditionalOnPlannedMargin:failureSensitive,failedMarginSurvived:stress.length?stress.find(s=>s.name==='failedMargin').maintenanceSurvived:null,existingActiveCycles:job.activeCount,newCycleCount:selected?.newCount??0,totalActiveCycles:job.activeCount+(selected?.newCount||0),technicalLimit:TECHNICAL_LIMIT,configuredLimit:policy.maxCycles,
+   selected,stress,audit,candidateInventory:selected?[...(plan.configuration?.cycleInventory||[]),...selected.newSource]:null,
    reservationReplacementRequiresConfirmation:true,selectionCriterion:'Largest tested new-cycle count within explicit equal nominal budgets, levels, cash and declared stress requirements.',
    ruleVersion:input.rules.version,officialKrakenPrice:false,protectionGuaranteed:false,recommendationsAllowed:false,ordersExecuted:false,transfersPerformed:false,planApplied:false,
    limitations:['SYNTHETIC_SCENARIOS_NOT_PROBABILITIES','PROFILE_POLICY_BLOCK7','NO_FUNDING_FORECAST_BLOCK9','NO_EXIT_TARGETS_BLOCK7','MANUAL_FILL_LINKS','NO_UNSEEN_PATH_OUTSIDE_DECLARED_SCENARIOS']});
  }
- return Object.freeze({CycleError,generate,TECHNICAL_LIMIT});
+ function generate(input,plan,policy){let job=beginSearch(input,plan,policy);while(!job.done)job=advanceSearch(job,{maxScenarios:7});return searchResult(job);}
+ return Object.freeze({CycleError,generate,beginSearch,advanceSearch,searchResult,TECHNICAL_LIMIT});
 });
