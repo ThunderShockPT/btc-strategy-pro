@@ -37,7 +37,7 @@
   if(p.configuration!==undefined)need(object(p.configuration)&&canonical(p.configuration).length<=500000,'INVALID_PLAN_CONFIGURATION');
  }
  function validateRequest(r,input){
-  fields(r,['id','idempotencyKey','expectedRevision','kind','mode','amountUSD','currency','effectiveAt','recordedAt'],['source','note','purpose']);
+  fields(r,['id','idempotencyKey','expectedRevision','kind','mode','amountUSD','currency','effectiveAt','recordedAt'],['source','note','purpose','profileMarketContext']);
   need(typeof r.id==='string'&&UUID.test(r.id),'INVALID_MOVEMENT_ID');
   need(typeof r.idempotencyKey==='string'&&r.idempotencyKey.trim().length>0&&r.idempotencyKey.length<=128,'INVALID_IDEMPOTENCY_KEY');
   revision(r.expectedRevision,true);need(TYPES.includes(r.kind),'INVALID_MOVEMENT_KIND');need(['recorded','planned'].includes(r.mode),'MOVEMENT_MODE_REQUIRED');
@@ -103,12 +103,20 @@
    need(canonical(before.ledger.position)===canonical(after.ledger.position)&&before.risk.estimatedPriceUSD===after.risk.estimatedPriceUSD,'CAPITAL_MOVEMENT_CHANGED_POSITION');
   }
   let newCycles={status:'not-configured',count:null};
-  if(plan.configuration?.cyclePolicy){
+  if(plan.configuration?.profilePolicyVersion){
+   try{
+    need(Profiles&&plan.configuration.profilePolicyVersion===Profiles.definition().version,'PROFILE_POLICY_VERSION_REQUIRES_REVIEW');
+    need(request.profileMarketContext,'FRESH_PROFILE_MARKET_CONTEXT_REQUIRED');
+    const profileRequest={profile:plan.profile,floorMode:'preserve',marginAdmission:'strict',market:request.profileMarketContext,baseCyclePolicy:plan.configuration.profileBaseCyclePolicy};
+    const a=Profiles.preview(input,plan,profileRequest),b=Profiles.preview(projectedInput,plan,profileRequest);
+    newCycles={status:'calculated-approved-profile',beforeCount:a.cycles.newCycleCount,count:b.cycles.newCycleCount,additionalCycleCapacity:b.cycles.newCycleCount-a.cycles.newCycleCount,before:a,after:b};
+   }catch(error){newCycles={status:'requires-profile-review',count:null,reason:error.code||'INVALID_PROFILE_CONTEXT'};warnings.push('PROFILE_RECALCULATION_REQUIRES_REVIEW');}
+  }else if(plan.configuration?.cyclePolicy){
    try{need(Cycles,'CYCLE_PLANNER_REQUIRED');const a=Cycles.generate(input,plan,plan.configuration.cyclePolicy),b=Cycles.generate(projectedInput,plan,plan.configuration.cyclePolicy);
     newCycles={status:'calculated-synthetic',beforeCount:a.newCycleCount,count:b.newCycleCount,additionalCycleCapacity:b.newCycleCount-a.newCycleCount,before:a,after:b};
    }catch(error){newCycles={status:'requires-plan-review',count:null,reason:error.code||'INVALID_CYCLE_CONFIGURATION'};warnings.push('CYCLE_RECALCULATION_REQUIRES_REVIEW');}
   }
-  return seal({workflowVersion:'v20-cash-6.1',type:'movement-review',basisHash:await hash({input,plan}),baseRevision,request,
+  return seal({workflowVersion:'v20-cash-7b.1',type:'movement-review',basisHash:await hash({input,plan}),baseRevision,request,
    status:replayed?'already-recorded':request.mode==='planned'?'planned-only':'awaiting-record-confirmation',before,after,delta:difference(before,after),
    projectionBasis:request.mode==='planned'?'if-recorded-now-at-unchanged-mark-and-rules':'declared-effective-time-at-current-valuation',
    eventToAppend:request.mode==='recorded'?event:null,plannedMovement:request.mode==='planned'?request:null,transferPreview,movementFitsCurrentConstraints:feasible,warnings,
@@ -153,6 +161,7 @@
  }
  async function prepareCyclePlanChange(input,plan,change){
   input=clone(input);plan=clone(plan);change=clone(change);validatePlan(plan,input);
+  need(!plan.configuration?.profilePolicyVersion,'USE_PROFILE_REVIEW_FOR_APPROVED_PROFILE');
   fields(change,['id','version','policy']);need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
   need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');need(Cycles,'CYCLE_PLANNER_REQUIRED');
   const result=Cycles.generate(input,plan,change.policy),candidatePlan={...plan,id:change.id.toLowerCase(),version:change.version,configuration:{...(plan.configuration||{}),cyclePolicy:change.policy,cycleInventory:result.candidateInventory||clone(plan.configuration?.cycleInventory||[])}};
@@ -175,16 +184,23 @@
   need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
   need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');
   const result=Profiles.preview(input,plan,change),candidatePlan={...result.candidatePlan,id:change.id.toLowerCase(),version:change.version};
-  candidatePlan.configuration={...(plan.configuration||{}),cyclePolicy:result.cyclePolicy,profilePolicyVersion:result.policyVersion,cycleInventory:result.cycles.candidateInventory||clone(plan.configuration?.cycleInventory||[])};
+  candidatePlan.configuration={...(plan.configuration||{}),cyclePolicy:result.cyclePolicy,profilePolicyVersion:result.policyVersion,profileAdmission:change.marginAdmission,
+   profileBaseCyclePolicy:clone(change.baseCyclePolicy),profileMarketContext:clone(change.market),profileValuation:clone(input.valuation),profileFloorMode:change.floorMode,
+   cycleInventory:result.cycles.candidateInventory||clone(plan.configuration?.cycleInventory||[])};
   if(result.cycles.selected)candidatePlan.configuration.cycleReservationBasis={protectedCashUSD:result.cyclePolicy.protectedCashUSD,fundingReserveUSD:result.cyclePolicy.fundingReserveUSD,closingFeeReserveUSD:result.cycles.selected.closingFeeReserveUSD};
-  return seal({workflowVersion:'v20-cash-7a.1',type:'profile-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,
-   status:'awaiting-owner-policy-approval',canApply:false,planApplied:false,databaseWritten:false,krakenTransferPerformed:false});
+  validatePlan(candidatePlan,input);
+  return seal({workflowVersion:'v20-cash-7b.1',type:'profile-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,
+   status:result.canApply?'awaiting-project-confirmation':result.status,canApply:result.canApply,planApplied:false,databaseWritten:false,krakenTransferPerformed:false});
  }
  async function confirmProfileChange(input,plan,proposal,confirmation){
   input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);
   await verifyReview(input,plan,proposal,'profile-review',confirmation);
-  // Product-policy approval is separate from confirming an individual project review.
-  throw new CashError('PROFILE_POLICY_APPROVAL_PENDING');
+  const fresh=await prepareProfileChange(input,plan,proposal.change);need(fresh.reviewHash===proposal.reviewHash,'MODIFIED_REVIEW');
+  need(fresh.change.marginAdmission===Profiles.definition().approvedAdmission,'PROFILE_ADMISSION_NOT_APPROVED');
+  need(fresh.canApply&&fresh.result.cycles.selected,'PROFILE_PLAN_INFEASIBLE');
+  return freeze({status:'prepared-for-persistence',nextInput:{...input,reservations:clone(fresh.result.cycles.selected.reservations)},nextPlan:clone(fresh.candidatePlan),basisRevision:lastRevision(input),
+   policyVersion:fresh.result.policyVersion,policyAdmission:'strict',planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false,
+   limitations:['LOCAL_REVIEW_NOT_SERVER_AUTHORIZATION','ATOMIC_PERSISTENCE_BLOCK12','BETA_POLICY_NOT_PUBLIC_LAUNCH_APPROVAL']});
  }
  return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange,prepareProfileChange,confirmProfileChange});
 });

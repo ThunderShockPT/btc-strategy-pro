@@ -1,7 +1,7 @@
 name: V20 rules data financial engine and risk checks
 on:
   push:
-    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits]
+    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -33,6 +33,7 @@ jobs:
           node --test scripts/test-cash-workflow.cjs
           node --test scripts/test-cycle-planner.cjs
           node --test scripts/test-profiles-exits.cjs
+          node --test scripts/test-profile-approval.cjs
           node scripts/test-auth-guard.cjs
           node scripts/test-cloud-sync.cjs
           node scripts/test-public-release.cjs
