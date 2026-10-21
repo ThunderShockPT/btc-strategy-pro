@@ -29,6 +29,15 @@
   insist(facts&&typeof facts==='object'&&!Array.isArray(facts),'INVALID_FACTS');
   insist(required.every(k=>Object.hasOwn(facts,k))&&Object.keys(facts).every(k=>required.includes(k)||optional.includes(k)),'INVALID_FACT_FIELDS');
  }
+ function calculateMargin(basis,levels){
+  const level=levels.reduce((chosen,l)=>basis.gte(l.lowerBoundUSD)?l:chosen,levels[0]);
+  return {initial:basis.mul(D.max(new D(level.initialRate),new D(1).div(10))),maintenance:basis.mul(level.maintenanceRate),level};
+ }
+ function marginRequirements({basisUSD,rules,platform,clientType}){
+  insist(typeof basisUSD==='string'&&/^(0|[1-9]\d{0,39})(\.\d{1,24})?$/.test(basisUSD),'INVALID_DERIVED_BASIS');
+  const result=calculateMargin(new D(basisUSD),Rules.selectSchedule(rules,platform,clientType));
+  return freeze({initialUSD:fmt(result.initial),maintenanceUSD:fmt(result.maintenance),initialRate:result.level.initialRate,maintenanceRate:result.level.maintenanceRate});
+ }
  function reconstruct(input){
   insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
   insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
@@ -41,10 +50,8 @@
   const eligibility=Rules.assess(rules,{now:valuation.asOf,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
   insist(eligibility.scopeReady,'RULES_OUT_OF_SCOPE_OR_STALE');
   const levels=Rules.selectSchedule(rules,input.platform,input.clientType);
-  function levelFor(basis){return levels.reduce((chosen,l)=>basis.gte(l.lowerBoundUSD)?l:chosen,levels[0]);}
   function requirements(basis){
-   const level=levelFor(basis),rate=D.max(new D(level.initialRate),new D(1).div(10));
-   return {initial:basis.mul(rate),maintenance:basis.mul(level.maintenanceRate),level};
+   return calculateMargin(basis,levels);
   }
   const projectId=uuid(input.projectId),ownerId=uuid(input.ownerId);
   const ids=new Set(),revisions=new Set(),idempotency=new Set();
@@ -100,7 +107,14 @@
       insist(validCycle(f.cycle),'INVALID_CYCLE',e.id);const cq=cycleQty.get(f.cycle)||ZERO;
       quantity=quantity.add(q);basis=basis.add(notional);acquisition=acquisition.add(notional);cycleQty.set(f.cycle,cq.add(q));
       insist(quantity.lte(rules.instrument.maxQuantity),'POSITION_LIMIT_EXCEEDED',e.id);
-      insist(margin.gte(requirements(basis).initial),'INITIAL_MARGIN_NOT_ALLOCATED',e.id);
+      let buyRequirements=requirements(basis);
+      if(input.buyRulesByEvent&&Object.hasOwn(input.buyRulesByEvent,e.id.toLowerCase())){
+       const historical=input.buyRulesByEvent[e.id.toLowerCase()];
+       const valid=Rules.assess(historical,{now:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
+       insist(valid.scopeReady,'HISTORICAL_RULES_INVALID',e.id);
+       buyRequirements=calculateMargin(basis,Rules.selectSchedule(historical,input.platform,input.clientType));
+      }
+      insist(margin.gte(buyRequirements.initial),'INITIAL_MARGIN_NOT_ALLOCATED',e.id);
      }else{
       insist(q.lte(quantity),'SELL_EXCEEDS_AVAILABLE_BTC',e.id);
       insist(['wallet','isolated'].includes(f.pnlDestination),'PNL_DESTINATION_REQUIRED',e.id);
@@ -167,5 +181,5 @@
    limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_BLOCK9','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
    recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
  }
- return Object.freeze({FinancialError,reconstruct});
+ return Object.freeze({FinancialError,reconstruct,marginRequirements});
 });
