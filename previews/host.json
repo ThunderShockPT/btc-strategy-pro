@@ -7,9 +7,9 @@
   "artifact": "build/v20-onboarding.html",
   "productionGitHubPagesUnchanged": true,
   "verifiedURL": "https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site",
-  "deploymentId": "appgdep_6ad884680054819188d98cc2a210393b",
-  "savedVersionId": "appgprj_6ad88188fbf88191896531870c23f213~appgver_1a903fd4eb0481919ff99dc76cfe2936",
-  "sourceCommit": "c9abffbd11d3b9d12ad3c05d6f62c3ba9222eda6",
-  "artifactSHA256": "b6eaa3b13240cbec4580c449340e13c8b8de04f8d2a4041b0ae32d52104bb27c",
+  "deploymentId": "appgdep_6ad89e7f922c81919f00aef9b56b86da",
+  "savedVersionId": "appgprj_6ad88188fbf88191896531870c23f213~appgver_efd2d91537348191bfdf36eb670a8c88",
+  "sourceCommit": "b9e958ea04568112d73ff11d749bd741b2af4981",
+  "artifactSHA256": "fcf52fc852ad0f91f485678e0d14b340a49ea90cfb01c95e54cfc7aa5f338ec5",
   "status": "succeeded"
 }
