@@ -1,15 +1,15 @@
 'use strict';
 // Backend-only PostgreSQL adapter. No keys, HTTP endpoints, or cloud activation.
 const {createHash,randomUUID}=require('node:crypto'),P=require('./persistence-contract.cjs');
-const W=require('../execution-workflow.js'),Cash=require('../cash-workflow.js');
-const VERSION='v20-atomic-store-12c3.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+const W=require('../execution-workflow.js'),Cash=require('../cash-workflow.js'),build=require('../policies/calculation-checkpoint-build-20261021.json');
+const VERSION='v20-atomic-store-12d5b.1',ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const clone=v=>JSON.parse(P.canonical(v)),hash=v=>createHash('sha256').update(P.canonical(v)).digest('hex');
 function need(v,code){if(!v)throw Error(code);}
 function fields(v,required,optional=[]){need(v&&typeof v==='object'&&!Array.isArray(v)&&required.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>required.includes(k)||optional.includes(k)),'INVALID_COMMAND_FIELDS');}
 function scope(s){fields(s,['ownerId','projectId','scenarioKey']);need(ID.test(s.ownerId)&&ID.test(s.projectId)&&['manual_long','demo_long'].includes(s.scenarioKey),'INVALID_SCOPE');}
 const params=s=>[s.projectId,s.ownerId,s.scenarioKey];
 const revision=s=>s.input.events.reduce((m,e)=>BigInt(e.revision)>m?BigInt(e.revision):m,0n).toString();
-const sourceHash=s=>hash(s);
+const sourceHash=s=>hash(s),REVIEW_BUILD=hash(build);
 function split(s){const {events,...context}=s.input,{input,plan,planHistory,...extras}=s;return {context,extras};}
 async function addPlan(tx,p,basis,ruleVersion){
  await tx.query(`insert into public.btcsp_plan_versions
@@ -72,17 +72,37 @@ function create({db,authenticate,contextProvider,planContextProvider=null,author
   const result={version:VERSION,headHash:base.head.state_hash,basisRevision:base.head.revision,request:clone(request),review};
   return {state,review,result:{...result,reviewHash:hash(result)}};
  }
- async function prepare(token,s,raw){const request=clone(raw);const user=await identity(token,s);const base=await db.transaction(async tx=>{await authorize(tx,user,s);return load(tx,s);});return (await proposal(base,s,request)).result;}
+ async function prepare(token,s,raw){
+  const request=clone(raw),user=await identity(token,s);
+  const base=await db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);const clock=(await tx.query('select clock_timestamp() as at')).rows[0].at;return {...b,startedAt:new Date(clock).toISOString()};});
+  const p=await proposal(base,s,request);let expiry=Date.parse(base.startedAt)+60000,manualQuote=null;
+  if(s.scenarioKey==='manual_long'&&p.state.input.bookkeepingOnly!==true){
+   const quote=Date.parse(p.state.input.valuation.asOf),observed=Date.parse(p.state.input.rules.observedAt),age=p.state.input.rules.applicationPolicy.reviewMaxAgeSeconds;
+   need(Number.isFinite(quote)&&Number.isFinite(observed)&&Number.isFinite(age),'CURRENT_MANUAL_CONTEXT_REQUIRED');
+   manualQuote=p.state.input.valuation.asOf;expiry=Math.min(expiry,quote+60000,observed+age*1000);
+  }
+  const {reviewHash:unused,...result}=p.result;p.result={...result,reviewBuild:REVIEW_BUILD,reviewedAt:base.startedAt,expiresAt:new Date(expiry).toISOString()};p.result.reviewHash=hash(p.result);
+  return db.transaction(async tx=>{
+   await authorize(tx,user,s);await tx.query('select pg_advisory_xact_lock(hashtextextended($1,0))',[s.ownerId]);const current=await load(tx,s);
+   need(current.head.state_hash===base.head.state_hash&&current.head.generation===base.head.generation,'CONCURRENT_PROJECT_CHANGE');
+   need((await tx.query('select $1::timestamptz>clock_timestamp() and ($2::timestamptz is null or $2::timestamptz<=clock_timestamp()) as fresh',[p.result.expiresAt,manualQuote])).rows[0].fresh,'COMMAND_REVIEW_EXPIRED');
+   await tx.query('delete from btcsp_private.command_reviews where owner_id=$1 and expires_at<=clock_timestamp()',[s.ownerId]);
+   need((await tx.query('select count(*)::int n from btcsp_private.command_reviews where owner_id=$1',[s.ownerId])).rows[0].n<200,'COMMAND_REVIEW_LIMIT_REACHED');
+   await tx.query('insert into btcsp_private.command_reviews(project_id,owner_id,scenario_key,review_hash,request_hash,basis_hash,payload,expires_at) values($1,$2,$3,$4,$5,$6,$7,$8)',[...params(s),p.result.reviewHash,hash(request),base.head.state_hash,p,p.result.expiresAt]);
+   return p.result;
+  });
+ }
  async function commit(token,s,raw,rawConfirmation){
   const request=clone(raw),confirmation=clone(rawConfirmation);fields(confirmation,['headHash','reviewHash','idempotencyKey'],['acceptPlanLinkCleanup']);
   need(typeof confirmation.idempotencyKey==='string'&&confirmation.idempotencyKey.length>0&&confirmation.idempotencyKey.length<=128,'INVALID_COMMAND_IDEMPOTENCY_KEY');
   const user=await identity(token,s);const commandHash=hash({request,confirmation});
   const receipt=async tx=>(await tx.query('select command_hash,result from btcsp_private.command_receipts where project_id=$1 and owner_id=$2 and scenario_key=$3 and idempotency_key=$4',[...params(s),confirmation.idempotencyKey])).rows[0];
   const replay=r=>{need(r.command_hash===commandHash,'COMMAND_IDEMPOTENCY_CONFLICT');return {...r.result,replayed:true};};
-  const base=await db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);const r=await receipt(tx);return r?{receipt:r}:b;});
+  const base=await db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);const r=await receipt(tx);if(r)return {receipt:r};const prepared=(await tx.query('select *,expires_at>clock_timestamp() as fresh from btcsp_private.command_reviews where project_id=$1 and owner_id=$2 and scenario_key=$3 and review_hash=$4',[...params(s),confirmation.reviewHash])).rows[0];return {...b,prepared};});
   if(base.receipt)return replay(base.receipt);
   need(confirmation.headHash===base.head.state_hash,'STALE_PROJECT_REVIEW');
-  const p=await proposal(base,s,request);need(confirmation.reviewHash===p.result.reviewHash,'REVIEW_CHANGED_OR_TAMPERED');
+  const saved=base.prepared;need(saved&&saved.request_hash===hash(request)&&saved.basis_hash===base.head.state_hash,'REVIEW_CHANGED_OR_TAMPERED');need(saved.fresh,'COMMAND_REVIEW_EXPIRED');
+  const p=clone(saved.payload),{reviewHash,...reviewedResult}=p.result;need(reviewHash===confirmation.reviewHash&&hash(reviewedResult)===reviewHash&&p.result.version===VERSION&&p.result.reviewBuild===REVIEW_BUILD&&hash(p.result.request)===hash(request),'REVIEW_CHANGED_OR_TAMPERED');
   const planWorkflow=request.workflow.startsWith('plan-'),handlers={'plan-reservations':Cash.confirmPlanChange,'plan-cycles':Cash.confirmCyclePlanChange,'plan-profile':Cash.confirmProfileChange};
   const next=request.workflow==='execution'?await W.confirm(p.state.input,p.state.plan,p.review,{confirmedReviewHash:p.review.reviewHash,acceptPlanLinkCleanup:confirmation.acceptPlanLinkCleanup===true}):planWorkflow?await handlers[request.workflow](p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash}):await Cash.confirmMovement(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash});
   const nextPlan=next.nextPlan||next.activePlan;
@@ -101,9 +121,10 @@ function create({db,authenticate,contextProvider,planContextProvider=null,author
    const current=(await tx.query('select state_hash,generation::text as generation from btcsp_private.project_heads where project_id=$1 and owner_id=$2 and scenario_key=$3 for update',params(s))).rows[0];need(current,'PROJECT_NOT_INITIALIZED');
    const r=await receipt(tx);if(r)return replay(r);
    need(current.state_hash===base.head.state_hash&&current.generation===base.head.generation,'CONCURRENT_PROJECT_CHANGE');
+   need((await tx.query('select expires_at>clock_timestamp() as fresh from btcsp_private.command_reviews where project_id=$1 and owner_id=$2 and scenario_key=$3 and review_hash=$4',[...params(s),confirmation.reviewHash])).rows[0]?.fresh,'COMMAND_REVIEW_EXPIRED');
    if(nextPlan.id!==base.state.plan.id)await addPlan(tx,nextPlan,revision(state),state.input.rules.version);
    for(const e of sorted)await addEvent(tx,e);
-   await tx.query('insert into public.btcsp_calculation_runs(id,project_id,owner_id,basis_revision,engine_version,rule_version,result_kind,assumptions,results) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),s.projectId,s.ownerId,base.head.revision,p.review.workflowVersion||p.review.version,state.input.rules.version,state.input.valuation.kind==='synthetic'?'synthetic':'manual-position-estimate',{rules:state.input.rules,valuation:state.input.valuation,headHash:base.head.state_hash,request,reviewHash:confirmation.reviewHash},{before:p.review.before||null,after:p.review.after||null,result:p.review.result||null}]);
+   await tx.query('insert into public.btcsp_calculation_runs(id,project_id,owner_id,basis_revision,engine_version,rule_version,result_kind,assumptions,results) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',[randomUUID(),s.projectId,s.ownerId,base.head.revision,p.review.workflowVersion||p.review.version,state.input.rules.version,state.input.valuation.kind==='synthetic'?'synthetic':'manual-position-estimate',{rules:state.input.rules,valuation:state.input.valuation,headHash:base.head.state_hash,request,reviewHash:confirmation.reviewHash,reviewedAt:p.result.reviewedAt,expiresAt:p.result.expiresAt,reviewBuild:REVIEW_BUILD},{before:p.review.before||null,after:p.review.after||null,result:p.review.result||null}]);
    await tx.query('update btcsp_private.project_heads set revision=$4,generation=generation+1,state_hash=$5,active_plan_id=$6,input_context=$7,extras=$8,event_order=$9,history_order=$10 where project_id=$1 and owner_id=$2 and scenario_key=$3',[...params(s),revision(state),stateHash,nextPlan.id,context,extras,JSON.stringify(state.input.events.map(e=>e.id)),JSON.stringify(history.map(p=>p.id))]);
    const result={version:VERSION,revision:revision(state),planId:nextPlan.id,stateHash,reviewHash:confirmation.reviewHash,eventsAppended:events.map(e=>e.id),databaseWritten:true,exchangeTradeChanged:false,planApplied:planWorkflow,planReviewRequired:!planWorkflow};
    await tx.query('insert into btcsp_private.command_receipts(project_id,owner_id,scenario_key,idempotency_key,command_hash,result) values($1,$2,$3,$4,$5,$6)',[...params(s),confirmation.idempotencyKey,commandHash,result]);
