@@ -4,10 +4,11 @@
     "decimal.js": "10.6.0"
   },
   "files": {
-    "backend/calculation-checkpoints.cjs": "db927a041bb495bc856909f0cc5d40615aa7e844b8a019a01bad021fb3998937",
-    "backend/atomic-store.cjs": "fa9e883b99b3cef27bfd693ac49327c0d82b058cc2fb2d94c098f0afe8df7258",
+    "backend/calculation-checkpoints.cjs": "3e88a4183bb334060e5a8c2c246a14269ca69b638002bcaae9310044986aedb5",
+    "backend/calculation-jobs.cjs": "8b71c308f873d45e12102684b38f0dab26d2f37106a3442a7da48a39771faab8",
+    "backend/atomic-store.cjs": "2ca67dd0b5059556ac6f9ca922c85d56edcbf74d404243f383bc7078c9cbf089",
     "backend/persistence-contract.cjs": "a01cb3e0b74b653ad34db8ae979542e516b4bf97782a6d8dca62d7e43528ceab",
-    "cash-workflow.js": "e80107091080227e2edf5534d3f762adca4ab55d897bced528d6db93f64cc5e1",
+    "cash-workflow.js": "366bf1139cbf638811bce77b4d26e0c84eb5b094dc3d662c528cbda175822491",
     "execution-workflow.js": "b1dd49b0b014394dfef2843a87ed8d846775dedbe945c886c53526813b927702",
     "correction-workflow.js": "a2ce59a09bfd3acde5ddcb337af616b0c454040a17dab49cb8150b3e1377d5c8",
     "risk-profiles.js": "f02347ea3cea00f40c1f4cdeac96960c5c99190e061a49108210f190f7b38215",
