@@ -73,9 +73,13 @@
  }
  function simulate(input,{steps}={}){
   need(Array.isArray(steps)&&steps.length<=500,'INVALID_STRESS_STEPS');
-  let current=JSON.parse(JSON.stringify(input)),state=snapshot(current),previousTime=instant(input.valuation.asOf),stopped=false,firstRiskEvent=null,firstFailure=null;
-  const history=[],hypotheticalIds=new Set();
+  let current=JSON.parse(JSON.stringify(input));
+  current.rules=Rules.load(input.rules);
   current.buyRulesByEvent={...(current.buyRulesByEvent||{})};
+  let state=snapshot(current),previousTime=instant(input.valuation.asOf),stopped=false,firstRiskEvent=null,firstFailure=null;
+  const history=[],hypotheticalIds=new Set(),views=new WeakMap();
+  function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
+  for(const e of Core.effectiveEvents(current))if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
   for(const e of current.events)if(e.event_type==='trade_buy'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;
   function fail(reason,index,phase,details={}){if(!firstFailure)firstFailure={reason,index,phase,...details};stopped=true;}
   function risk(index,phase,transition,prior,arrival){
@@ -83,22 +87,26 @@
   }
   function apply(events,index,{liquidation=false}={}){
    need(Array.isArray(events)&&events.length>0&&events.length<=50,'INVALID_ACTION_EVENTS');
-   let candidate=JSON.parse(JSON.stringify(current));
+   // Journal/valuation are copied. Active rules are validated/frozen; unused metadata
+   // is detached from caller input and never mutated inside this simulation.
+   const {rules,buyRulesByEvent,...mutable}=current;
+   let candidate={...JSON.parse(JSON.stringify(mutable)),rules,buyRulesByEvent:{...buyRulesByEvent}};
    const startRevision=candidate.events.reduce((v,e)=>BigInt(e.revision)>v?BigInt(e.revision):v,0n);
+   let evaluated;
    for(let j=0;j<events.length;j++){
     const e=events[j];need(e&&['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(e.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION');need(e&&e.effective_at===candidate.valuation.asOf&&typeof e.id==='string'&&!hypotheticalIds.has(e.id.toLowerCase()),'INVALID_HYPOTHETICAL_EVENT');
     need(e.revision===(startRevision+BigInt(j)+1n).toString(),'NON_SEQUENTIAL_HYPOTHETICAL_REVISION');
     if(liquidation)need(['trade_sell','fee','funding'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
     candidate.events.push(e);
     if(e.event_type==='trade_buy')candidate.buyRulesByEvent[e.id.toLowerCase()]=candidate.rules;
-    let evaluated;
     try{evaluated=snapshot(candidate);}catch(error){fail(error.code||'INVALID_ACTION',index,'action');return false;}
     const equity=evaluated.margin.add(evaluated.q.mul(evaluated.mark)).sub(evaluated.basis);
     if(e.event_type==='trade_buy'&&equity.lt(evaluated.im)){fail('INSUFFICIENT_INITIAL_EQUITY',index,'action');return false;}
     if(e.event_type==='margin_remove'&&evaluated.q.gt(0)&&equity.lt(evaluated.im)){fail('INITIAL_EQUITY_REQUIRED_AFTER_WITHDRAWAL',index,'action');return false;}
     if(!liquidation&&evaluated.q.gt(0)&&buffer(evaluated,evaluated.mark).lte(0)){risk(index,'after-event','event',evaluated,evaluated.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
    }
-   const next=snapshot(candidate);
+   // The final event already rebuilt this exact candidate; retain every post-action check.
+   const next=evaluated;
    if(!liquidation&&next.q.gt(0)&&buffer(next,next.mark).lte(0)){risk(index,'after-action','event',state,next.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
    current=candidate;state=next;for(const e of events)hypotheticalIds.add(e.id.toLowerCase());return true;
   }
@@ -110,7 +118,7 @@
    const prior=state,crossed=prior.q.gt(0)&&buffer(prior,price).lte(0);
    current.valuation={kind:'synthetic',source:'explicit-stress-path',markPriceUSD:str(price),asOf:step.at};
    if(step.rules){
-    need(step.rules.version!==current.rules.version||JSON.stringify(step.rules)===JSON.stringify(current.rules),'RULE_VERSION_REUSED');current.rules=JSON.parse(JSON.stringify(step.rules));
+    need(step.rules.version!==current.rules.version||JSON.stringify(step.rules)===JSON.stringify(current.rules),'RULE_VERSION_REUSED');current.rules=Rules.load(step.rules);
    }
    state=snapshot(current);
    const breached=crossed||(state.q.gt(0)&&buffer(state,price).lte(0));
@@ -119,10 +127,10 @@
     if(step.liquidationFill){
      need(step.liquidationFill.events?.some(e=>e.event_type==='trade_sell'),'LIQUIDATION_FILL_REQUIRED');
      if(!apply(step.liquidationFill.events,index,{liquidation:true}))break;
-     history.push({index,markPriceUSD:str(price),phase:'explicit-liquidation-fill',risk:view(state),projectedLedger:state.ledger,skippedActions:(step.actions||[]).length});
+     history.push({index,markPriceUSD:str(price),phase:'explicit-liquidation-fill',risk:riskView(state),projectedLedger:state.ledger,skippedActions:(step.actions||[]).length});
      if(state.q.gt(0)&&buffer(state,price).lte(0))fail('MAINTENANCE_REMAINS_AFTER_PARTIAL_FILL',index,'after-liquidation');
     }else{
-     history.push({index,markPriceUSD:str(price),phase:'before-actions',risk:view(state),skippedActions:(step.actions||[]).length});
+     history.push({index,markPriceUSD:str(price),phase:'before-actions',risk:riskView(state),skippedActions:(step.actions||[]).length});
      fail('MAINTENANCE_REACHED_BEFORE_ACTIONS',index,'before-actions');
     }
    }else{
@@ -131,14 +139,14 @@
      need(action&&['filled','failed','unfilled'].includes(action.outcome),'ACTION_OUTCOME_REQUIRED');
      if(action.outcome!=='filled'){history.push({index,phase:'skipped-action',outcome:action.outcome});continue;}
      if(!apply(action.events,index))break;
-     history.push({index,phase:'after-action',risk:view(state),projectedLedger:state.ledger});
+     history.push({index,phase:'after-action',risk:riskView(state),projectedLedger:state.ledger});
     }
-    if(!stopped)history.push({index,phase:'after-mark',risk:view(state)});
+    if(!stopped)history.push({index,phase:'after-mark',risk:riskView(state)});
    }
    previousTime=at;
   }
   return freeze({modelVersion:'v20-risk-4.1',status:stopped?'stopped-at-first-failure':'completed-declared-path',firstRiskEvent,firstFailure,history,
-   finalRisk:view(state),projectedLedger:state.ledger,ledgerChanged:false,ordersExecuted:false,transfersPerformed:false,protectionGuaranteed:false,
+   finalRisk:riskView(state),projectedLedger:state.ledger,ledgerChanged:false,ordersExecuted:false,transfersPerformed:false,protectionGuaranteed:false,
    assumptions:['Synthetic path; filled actions are explicit hypothetical assumptions.','Maintenance equality stops conservatively; this is not an official exchange execution.','Partial liquidation requires explicit supplied fills and costs.','No automatic funding forecast or unseen between-step movement.']});
  }
  return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,requiredMarginForFloor});
