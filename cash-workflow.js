@@ -160,16 +160,27 @@
    basisRevision:lastRevision(input),databaseWritten:false,krakenTransferPerformed:false,planApplied:false,
    limitations:['RESERVATIONS_ONLY_NOT_FULL_CYCLE_VALIDATION','ATOMIC_PERSISTENCE_BLOCK12']});
  }
- async function prepareCyclePlanChange(input,plan,change){
+ async function cyclePlanReview(input,plan,change,completedSearch){
   input=clone(input);plan=clone(plan);change=clone(change);validatePlan(plan,input);
   need(!plan.configuration?.profilePolicyVersion,'USE_PROFILE_REVIEW_FOR_APPROVED_PROFILE');
   fields(change,['id','version','policy']);need(typeof change.id==='string'&&UUID.test(change.id)&&change.id.toLowerCase()!==plan.id.toLowerCase(),'NEW_PLAN_ID_REQUIRED');
   need(revision(change.version)===revision(plan.version)+1n,'NEXT_PLAN_VERSION_REQUIRED');need(Cycles,'CYCLE_PLANNER_REQUIRED');
-  const result=Cycles.generate(input,plan,change.policy),candidatePlan={...plan,id:change.id.toLowerCase(),version:change.version,configuration:{...(plan.configuration||{}),cyclePolicy:change.policy,cycleInventory:result.candidateInventory||clone(plan.configuration?.cycleInventory||[])}};
+  let result;if(completedSearch){need(canonical(completedSearch.input)===canonical(input)&&canonical(completedSearch.plan)===canonical(plan)&&canonical(completedSearch.policy)===canonical(change.policy),'COMPLETED_SEARCH_BASIS_MISMATCH');need(change.policy.requireFailedMarginSurvival===true,'PROFILE_ADMISSION_NOT_APPROVED');result=Cycles.searchResult(completedSearch);}else result=Cycles.generate(input,plan,change.policy);
+  const candidatePlan={...plan,id:change.id.toLowerCase(),version:change.version,configuration:{...(plan.configuration||{}),cyclePolicy:change.policy,cycleInventory:result.candidateInventory||clone(plan.configuration?.cycleInventory||[])}};
   if(result.selected)candidatePlan.configuration.cycleReservationBasis={protectedCashUSD:change.policy.protectedCashUSD,fundingReserveUSD:change.policy.fundingReserveUSD,closingFeeReserveUSD:result.selected.closingFeeReserveUSD};
   return seal({workflowVersion:'v20-cash-6.1',type:'cycle-plan-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,
    previousReservations:input.reservations||{ordersUSD:'0',marginUSD:'0',protectedUSD:'0'},proposedReservations:result.selected?.reservations||null,
    status:'awaiting-cycle-plan-confirmation',planApplied:false,databaseWritten:false,krakenTransferPerformed:false});
+ }
+ async function prepareCyclePlanChange(input,plan,change){return cyclePlanReview(input,plan,change,null);}
+ // A local review is not authorization. Server callers must authenticate the completed checkpoint.
+ async function prepareCompletedCyclePlanChange(input,plan,change,completedSearch){return cyclePlanReview(input,plan,change,clone(completedSearch));}
+ async function confirmCompletedCyclePlanChange(input,plan,proposal,confirmation,completedSearch){
+  input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);
+  await verifyReview(input,plan,proposal,'cycle-plan-review',confirmation);
+  const fresh=await prepareCompletedCyclePlanChange(input,plan,proposal.change,completedSearch);need(fresh.reviewHash===proposal.reviewHash,'MODIFIED_REVIEW');
+  need(fresh.result.selected&&fresh.result.failedMarginSurvived===true&&!fresh.result.conditionalOnPlannedMargin,'CYCLE_PLAN_INFEASIBLE');
+  return freeze({status:'prepared-for-persistence',nextInput:{...input,reservations:clone(fresh.proposedReservations)},nextPlan:clone(fresh.candidatePlan),basisRevision:lastRevision(input),planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false});
  }
  async function confirmCyclePlanChange(input,plan,proposal,confirmation){
   input=clone(input);plan=clone(plan);proposal=clone(proposal);confirmation=clone(confirmation);
@@ -203,5 +214,5 @@
    policyVersion:fresh.result.policyVersion,policyAdmission:'strict',planApplied:false,databaseWritten:false,krakenTransferPerformed:false,protectionGuaranteed:false,
    limitations:['LOCAL_REVIEW_NOT_SERVER_AUTHORIZATION','ATOMIC_PERSISTENCE_BLOCK12','BETA_POLICY_NOT_PUBLIC_LAUNCH_APPROVAL']});
  }
- return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange,prepareProfileChange,confirmProfileChange});
+ return Object.freeze({CashError,prepareMovement,confirmMovement,preparePlanChange,confirmPlanChange,prepareCyclePlanChange,confirmCyclePlanChange,prepareCompletedCyclePlanChange,confirmCompletedCyclePlanChange,prepareProfileChange,confirmProfileChange});
 });
