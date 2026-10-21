@@ -32,7 +32,8 @@
     "test:v20:runtime": "node --test scripts/test-edge-runtime.cjs",
     "build:v20:edge": "node scripts/build-edge-runtime.cjs",
     "test:v20:wallet-store": "node --test scripts/test-wallet-plan-store.cjs",
-    "test:v20:public-context": "node --test scripts/test-public-financial-context.cjs"
+    "test:v20:public-context": "node --test scripts/test-public-financial-context.cjs",
+    "test:v20:rule-reuse": "node --test scripts/test-rule-reuse.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
