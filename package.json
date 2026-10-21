@@ -35,7 +35,8 @@
     "test:v20:public-context": "node --test scripts/test-public-financial-context.cjs",
     "test:v20:rule-reuse": "node --test scripts/test-rule-reuse.cjs",
     "test:v20:checkpoints": "node --test scripts/test-calculation-checkpoints.cjs",
-    "build:v20:calculation-manifest": "node scripts/build-calculation-manifest.cjs"
+    "build:v20:calculation-manifest": "node scripts/build-calculation-manifest.cjs",
+    "test:v20:jobs": "node --test scripts/test-calculation-jobs.cjs"
   },
   "dependencies": {
     "decimal.js": "10.6.0"
