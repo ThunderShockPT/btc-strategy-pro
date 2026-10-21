@@ -12,6 +12,7 @@
  async function hash(o){need(crypto?.subtle,'SECURE_CONTEXT_REQUIRED');const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(canonical(o)));return Array.from(new Uint8Array(digest),v=>v.toString(16).padStart(2,'0')).join('');}
  function state(input){const ledger=Core.reconstruct({...input,bookkeepingOnly:true});return {ledger,risk:ledger.ruleAssessment.scopeReady?Risk.estimate(input):{status:'unavailable-stale-rules',estimatedPriceUSD:null,officialKrakenPrice:false}};}
  function validate(input,request){
+  need(input.ruleScenario===undefined,'SYNTHETIC_RULE_SCENARIO_NOT_RECORDABLE');
   fields(request,['expectedRevision','recordedAt','changes']);rev(request.expectedRevision,true);need(instant(request.recordedAt)<=instant(input.valuation.asOf),'FUTURE_CORRECTION');
   need(Array.isArray(request.changes)&&request.changes.length>0&&request.changes.length<=100,'INVALID_CORRECTION_BATCH');
   const ids=new Set(),keys=new Set();
