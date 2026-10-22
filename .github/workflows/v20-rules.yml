@@ -1,7 +1,7 @@
 name: V20 rules data financial engine and risk checks
 on:
   push:
-    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy, feat/v20-auditable-corrections, feat/v20-temporal-simulation, feat/v20-wallet-onboarding, fix/v20-buy-sequence-clarity, feat/v20-app-navigation, feat/v20-trade-journal-ui, feat/v20-persistence-contract, feat/v20-atomic-persistence, feat/v20-authenticated-api, feat/v20-edge-runtime, feat/v20-wallet-plan-persistence, feat/v20-public-financial-context, perf/v20-immutable-rule-reuse, feat/v20-resumable-cycle-search, feat/v20-durable-calculation-jobs, feat/v20-calculation-http, feat/v20-frozen-command-reviews, feat/v20-calculation-plan-review, feat/v20-resumable-profile-plans, feat/v20-runtime-calculation-composition, feat/v20-public-history-orderbook, feat/v20-best-ask-profile-context, perf/v20-public-observation-refresh, perf/v20-large-history-capacity]
+    branches: [feat/v20-kraken-rules, feat/v20-data-model, feat/v20-financial-engine, feat/v20-liquidation-risk, feat/v20-dynamic-cash, feat/v20-dynamic-cycles, feat/v20-profiles-exits, feat/v20-strict-profile-policy, feat/v20-auditable-corrections, feat/v20-temporal-simulation, feat/v20-wallet-onboarding, fix/v20-buy-sequence-clarity, feat/v20-app-navigation, feat/v20-trade-journal-ui, feat/v20-persistence-contract, feat/v20-atomic-persistence, feat/v20-authenticated-api, feat/v20-edge-runtime, feat/v20-wallet-plan-persistence, feat/v20-public-financial-context, perf/v20-immutable-rule-reuse, feat/v20-resumable-cycle-search, feat/v20-durable-calculation-jobs, feat/v20-calculation-http, feat/v20-frozen-command-reviews, feat/v20-calculation-plan-review, feat/v20-resumable-profile-plans, feat/v20-runtime-calculation-composition, feat/v20-public-history-orderbook, feat/v20-best-ask-profile-context, perf/v20-public-observation-refresh, perf/v20-large-history-capacity, perf/v20-bounded-risk-paths]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -35,6 +35,8 @@ jobs:
           node --check wallet-onboarding.js
           node --check backend/wallet-store.cjs
           node --test scripts/test-wallet-plan-store.cjs
+          node --test scripts/test-resumable-risk-paths.cjs
+          node --test scripts/test-live-clock-qa.cjs
           node --test scripts/test-large-checkpoint-benchmark.cjs
           node --test scripts/test-kraken-screen-reconciliation.cjs
           node --test scripts/test-public-latency-probe.cjs
