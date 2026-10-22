@@ -38,7 +38,7 @@
   const result=calculateMargin(new D(basisUSD),Rules.selectSchedule(rules,platform,clientType));
   return freeze({initialUSD:fmt(result.initial),maintenanceUSD:fmt(result.maintenance),initialRate:result.level.initialRate,maintenanceRate:result.level.maintenanceRate});
  }
- function reconstruct(input){
+ function rebuild(input,includeEvents=false){
   insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
   insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
   insist(Array.isArray(input.events)&&input.events.length<=10000,'INVALID_EVENT_COUNT');
@@ -173,7 +173,7 @@
   const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
   const equity=wallet.add(margin).add(unrealized);
   insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
-  return freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
+  const ledger=freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
    ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady&&!input.ruleScenario,syntheticFrozenRules:!!input.ruleScenario,assessedAt:assessmentAt},
    journal:{sourceEventCount:input.events.length,correctionCount:projection.correctionCount,activeFactCount:projection.events.length,localAdjustmentsOnly:true},
    inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
@@ -193,7 +193,10 @@
    precision:{inputDecimals:18,calculationSignificantDigits:80,outputDecimals:24,rounding:'half-even'},
    limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_REQUIRES_TEMPORAL_SCENARIO','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
    recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
+  return includeEvents?Object.freeze({ledger,effectiveEvents:projection.events}):ledger;
  }
- function effectiveEvents(input){reconstruct(input);return Journal.project(input.events).events;}
- return Object.freeze({FinancialError,reconstruct,marginRequirements,effectiveEvents});
+ function reconstruct(input){return rebuild(input);}
+ function reconstructWithEvents(input){return rebuild(input,true);}
+ function effectiveEvents(input){return reconstructWithEvents(input).effectiveEvents;}
+ return Object.freeze({FinancialError,reconstruct,reconstructWithEvents,marginRequirements,effectiveEvents});
 });

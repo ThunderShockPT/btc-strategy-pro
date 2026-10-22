@@ -159,3 +159,12 @@ test('browser module has no network or storage dependency',()=>{
  const sandbox={Decimal,BTCKrakenRules:require('../kraken-rules.js'),BTCJournalProjection:require('../journal-projection.js')};vm.runInNewContext(fs.readFileSync('financial-engine.js','utf8'),sandbox);
  assert.equal(typeof sandbox.BTCFinancialEngine.reconstruct,'function');assert.equal(sandbox.BTCFinancialEngine.reconstruct({projectId,ownerId,scenarioKey:'manual_long',platform:'europa',clientType:'retail',rules,valuation:{kind:'synthetic',source:'test',markPriceUSD:'100000',asOf:'2026-10-20T23:40:00Z'},events:basic().events}).cash.walletUSD,'1900');
 });
+test('combined reconstruction validates every event and detaches the effective journal',()=>{
+ const f=require('./helpers/cycle-fixture.cjs'),input=f.input(),before=structuredClone(input),combined=engine.reconstructWithEvents(input);
+ assert.deepEqual(combined.ledger,engine.reconstruct(input));assert.deepEqual(combined.effectiveEvents,engine.effectiveEvents(input));
+ assert(Object.isFrozen(combined)&&Object.isFrozen(combined.effectiveEvents)&&Object.isFrozen(combined.effectiveEvents[0].facts));
+ assert.equal(Object.isFrozen(input.events[0].facts),false);input.events[0].facts.amountUSD='999';assert.equal(combined.effectiveEvents[0].facts.amountUSD,before.events[0].facts.amountUSD);
+ for(const change of [x=>x.events.push(structuredClone(x.events[0])),x=>x.events[0].owner_id=f.uuid(99),x=>x.events[0].facts.amountUSD='-1']){
+  const bad=structuredClone(before);change(bad);let expected;try{engine.reconstruct(bad);}catch(e){expected=e.code;}assert(expected);assert.throws(()=>engine.reconstructWithEvents(bad),e=>e.code===expected);assert.throws(()=>engine.effectiveEvents(bad),e=>e.code===expected);
+ }
+});

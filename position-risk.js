@@ -12,11 +12,11 @@
  const str=v=>v.toDecimalPlaces(24,D.ROUND_HALF_EVEN).toFixed();
  function instant(value){need(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(value),'INVALID_RISK_TIMESTAMP');const n=Date.parse(value);need(Number.isFinite(n)&&new Date(n).toISOString().slice(0,19)===value.slice(0,19),'INVALID_RISK_TIMESTAMP');return n;}
  function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
- function snapshot(input){
-  const ledger=Core.reconstruct(input);need(ledger.ruleAssessment.scopeReady,'RISK_RULES_UNAVAILABLE');
+ function snapshot(input,includeEvents=false){
+  const rebuilt=includeEvents?Core.reconstructWithEvents(input):null,ledger=rebuilt?rebuilt.ledger:Core.reconstruct(input);need(ledger.ruleAssessment.scopeReady,'RISK_RULES_UNAVAILABLE');
   const q=new D(ledger.position.quantityBTC),basis=new D(ledger.position.remainingBasisUSD),margin=new D(ledger.cash.isolatedMarginUSD),mark=new D(input.valuation.markPriceUSD);
   const req=Core.marginRequirements({basisUSD:ledger.position.remainingBasisUSD,rules:input.rules,platform:input.platform,clientType:input.clientType});
-  return {ledger,q,basis,margin,mark,mm:new D(req.maintenanceUSD),im:new D(req.initialUSD)};
+  return {ledger,q,basis,margin,mark,mm:new D(req.maintenanceUSD),im:new D(req.initialUSD),...(rebuilt?{effectiveEvents:rebuilt.effectiveEvents}:{})};
  }
  const buffer=(s,p)=>s.margin.add(s.q.mul(p)).sub(s.basis).sub(s.mm);
  function boundary(s){
@@ -82,10 +82,10 @@
    const pool=resume.rulePool.map(r=>Rules.load(r));current.buyRulesByEvent={};
    for(const [id,index]of Object.entries(resume.buyRuleRefs)){need(Number.isInteger(index)&&index>=0&&index<pool.length,'INVALID_STRESS_RULE_REFERENCE');current.buyRulesByEvent[id]=pool[index];}
   }else current.buyRulesByEvent=JSON.parse(JSON.stringify(sourceBuyRules||{}));
-  let state=snapshot(current),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
+  let state=snapshot(current,true),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
   const history=resume?JSON.parse(JSON.stringify(resume.history)):[],hypotheticalIds=new Set(resume?resume.hypotheticalIds:[]),views=new WeakMap();
   function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
-  for(const e of Core.effectiveEvents(current))if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
+  for(const e of state.effectiveEvents)if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
   for(const e of current.events)if(e.event_type==='trade_buy'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;
   function fail(reason,index,phase,details={}){if(!firstFailure)firstFailure={reason,index,phase,...details};stopped=true;}
   function risk(index,phase,transition,prior,arrival){
