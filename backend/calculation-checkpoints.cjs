@@ -29,7 +29,7 @@ function create({key,loadSnapshot,contextProvider,policyProvider,profileContextP
   need(policy.requireFailedMarginSurvival===true,'PROFILE_ADMISSION_NOT_APPROVED');
   const p={version:VERSION,engineBuild:ENGINE_BUILD,scope:clone(s),headHash:base.headHash,createdAt,expiresAt:new Date(expiry).toISOString(),sequence:0,search,...(profileContext?{profileContext}: {})};fresh(p);return seal(p);
  }
- async function advance(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);if(p.search.done)return seal(p);const search=Cycles.advanceSearch(p.search,{maxScenarios:1});fresh(p);return seal({...p,sequence:p.sequence+1,search});}
+ async function advance(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);if(p.search.done)return seal(p);const search=Cycles.advanceSearch(p.search,{maxScenarios:1,maxPathSteps:1});fresh(p);return seal({...p,sequence:p.sequence+1,search});}
  async function result(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);const value=p.profileContext?Profiles.completePreview(p.search.input,p.profileContext.plan,p.profileContext.request,p.search):Cycles.searchResult(p.search);fresh(p);return value;}
  async function reviewSource(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);Cycles.searchResult(p.search);fresh(p);return freeze(clone({headHash:p.headHash,engineBuild:p.engineBuild,createdAt:p.createdAt,expiresAt:p.expiresAt,search:p.search,...(p.profileContext?{profileContext:p.profileContext}: {})}));}
  return Object.freeze({start,advance,result,reviewSource});
