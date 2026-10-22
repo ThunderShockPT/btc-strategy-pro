@@ -1,7 +1,8 @@
 'use strict';
 const {createHmac}=require('node:crypto');
-const LIMITS=Object.freeze({'/api/v20/state':60,'/api/v20/prepare':12,'/api/v20/commit':12});
+const LIMITS=Object.freeze({'/api/v20/state':60,'/api/v20/prepare':12,'/api/v20/commit':12,'/api/v20/calculations/advance':240});
 function create({db,key,limits=LIMITS}){
+ limits={...LIMITS,...limits};
  if(!db||typeof db.transaction!=='function'||!Buffer.isBuffer(key)||key.length!==32||Object.keys(LIMITS).some(route=>!Number.isInteger(limits[route])||limits[route]<1||limits[route]>10000))throw Error('INVALID_ADMISSION_CONFIGURATION');
  const secret=Buffer.from(key);
  return async function admit({remoteAddress,route}){
