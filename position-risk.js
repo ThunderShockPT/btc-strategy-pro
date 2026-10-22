@@ -81,7 +81,7 @@
    need(Array.isArray(resume.rulePool)&&resume.rulePool.length>0&&resume.rulePool.length<=10001&&resume.buyRuleRefs&&typeof resume.buyRuleRefs==='object','INVALID_STRESS_RULE_POOL');
    const pool=resume.rulePool.map(r=>Rules.load(r));current.buyRulesByEvent={};
    for(const [id,index]of Object.entries(resume.buyRuleRefs)){need(Number.isInteger(index)&&index>=0&&index<pool.length,'INVALID_STRESS_RULE_REFERENCE');current.buyRulesByEvent[id]=pool[index];}
-  }else current.buyRulesByEvent={...(sourceBuyRules||{})};
+  }else current.buyRulesByEvent=JSON.parse(JSON.stringify(sourceBuyRules||{}));
   let state=snapshot(current),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
   const history=resume?JSON.parse(JSON.stringify(resume.history)):[],hypotheticalIds=new Set(resume?resume.hypotheticalIds:[]),views=new WeakMap();
   function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
