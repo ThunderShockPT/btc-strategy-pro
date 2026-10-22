@@ -1,9 +1,9 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),Store=require('../backend/atomic-store.cjs'),Jobs=require('../backend/calculation-jobs.cjs'),CP=require('../backend/calculation-checkpoints.cjs'),HTTP=require('../backend/http-api.cjs'),f=require('./helpers/server-fixture.cjs'),cf=require('./helpers/cycle-fixture.cjs');
 const scope={ownerId:f.A,projectId:f.P,scenarioKey:'demo_long'},request=(id,jobId)=>({workflow:'plan-calculation',command:{mode:'recorded',jobId,change:{id:f.uuid(id),version:'2'}}}),confirmation=p=>({headHash:p.headHash,reviewHash:p.reviewHash,idempotencyKey:'apply-calculation'});
-async function setup(t){const x=await f.setup(t),options={...x,authenticate:x.auth.authenticate,authorizeTransaction:x.auth.assertSession,enabled:true},store=Store.create(options);let contextCalls=0,timeOffset=0;
+async function setup(t){const x=await f.setup(t,{liveCalculationClock:true}),options={...x,authenticate:x.auth.authenticate,authorizeTransaction:x.auth.assertSession,enabled:true},store=Store.create(options);let contextCalls=0,timeOffset=0;
  const checkpoints=CP.create({key:Buffer.alloc(32,19),enabled:true,now:()=>new Date(Date.now()+timeOffset).toISOString(),loadSnapshot:(token,s)=>store.snapshot(token,s),contextProvider:async(...args)=>{contextCalls++;return x.contextProvider(...args);},policyProvider:async(s,input)=>({...cf.policy(),maxCycles:1,protectedCashUSD:input.reservations.protectedUSD})}),jobs=Jobs.create({...options,checkpoints}),reviewStore=Store.create({...options,calculationJobs:jobs,contextProvider:async()=>{throw Error('NEW_CONTEXT_FORBIDDEN');},planContextProvider:async()=>{throw Error('NEW_POLICY_FORBIDDEN');}});
- async function finish(key){let job=await jobs.enqueue(f.TA,scope,{idempotencyKey:key});for(let i=0;job.status!=='completed';i++){assert(i<20);job=await jobs.runUnit(f.TA,scope,job.id);}return job;}
+ async function finish(key){let job=await jobs.enqueue(f.TA,scope,{idempotencyKey:key});for(let i=0;job.status!=='completed';i++){assert(i<300);job=await jobs.runUnit(f.TA,scope,job.id);}return job;}
  return {...x,options,store,reviewStore,jobs,finish,contextCalls:()=>contextCalls,setTimeOffset:v=>{timeOffset=v;}};
 }
 test('completed signed job becomes a frozen review and applies exactly once without generating scenarios again',async t=>{
