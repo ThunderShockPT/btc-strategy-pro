@@ -24,3 +24,27 @@ test('rules reaching the review deadline expire a checkpoint even with a newly o
 test('repeating a unit is deterministic and cannot append a second copy of its scenario',async()=>{const x=fixture(),e=await x.service.start('owner',scope),[a,b]=await Promise.all([x.service.advance('owner',scope,e),x.service.advance('owner',scope,json(e))]);assert.deepEqual(a,b);assert.equal(a.payload.sequence,1);assert.equal(a.payload.search.unitsCompleted,1);});
 test('closed gate, conditional admission, stale manual prices and caller key mutation are handled safely',async()=>{const x=fixture();await assert.rejects(Checkpoints.create({...x.options,enabled:false}).start('owner',scope),/GATE_CLOSED/);await assert.rejects(Checkpoints.create({...x.options,policyProvider:async()=>({...f.policy(),requireFailedMarginSurvival:false})}).start('owner',scope),/PROFILE_ADMISSION_NOT_APPROVED/);x.setTime(Date.parse(f.now)+60001);await assert.rejects(x.service.start('owner',scope),/CURRENT_MANUAL_CONTEXT_REQUIRED/);x.setTime(Date.parse(f.now));const e=await x.service.start('owner',scope);x.options.key.fill(0);assert.equal((await x.service.advance('owner',scope,e)).payload.sequence,1);});
 test('authenticated PostgreSQL adapter rechecks sessions and detects a real deposit without checkpoint financial writes',async t=>{const server=require('./helpers/server-fixture.cjs'),Store=require('../backend/atomic-store.cjs'),db=await server.setup(t),s={ownerId:server.A,projectId:server.P,scenarioKey:'demo_long'},store=Store.create({...db,authenticate:db.auth.authenticate,authorizeTransaction:db.auth.assertSession,enabled:true}),service=Checkpoints.create({key:Buffer.alloc(32,9),enabled:true,now:()=>new Date(server.now()).toISOString(),loadSnapshot:(token,s)=>store.snapshot(token,s),contextProvider:db.contextProvider,policyProvider:async()=>({...f.policy(),maxCycles:1})});const before=(await db.db.query('select count(*)::int n from public.btcsp_financial_events')).rows[0].n,e=await service.start(server.TA,s),next=await service.advance(server.TA,s,e);assert.equal((await db.db.query('select count(*)::int n from public.btcsp_financial_events')).rows[0].n,before);await assert.rejects(service.advance(server.TB,s,next),/VERIFIED_OWNER_SESSION_REQUIRED/);const request=server.movement(),p=await store.prepare(server.TA,s,request);await store.commit(server.TA,s,request,{headHash:p.headHash,reviewHash:p.reviewHash,idempotencyKey:'checkpoint-deposit'});await assert.rejects(service.advance(server.TA,s,next),/STALE_CALCULATION_BASIS/);await db.db.query('delete from auth.sessions where id=$1',[server.SA]);await assert.rejects(service.advance(server.TA,s,next),/SESSION_NOT_VALID/);});
+test('bounded two-step requests reduce round trips without changing reviewed results or expiry',async()=>{
+ const x=fixture(),initial=await x.service.start('owner',scope),before=json(initial),services=[1,2].map(maxPathStepsPerUnit=>Checkpoints.create({...x.options,maxPathStepsPerUnit})),runs=[];
+ for(const service of services){let e=json(initial),calls=0;while(!e.payload.search.done){const previous=e;e=await service.advance('owner',scope,json(e));assert.equal(e.payload.sequence,previous.payload.sequence+1);assert.equal(e.payload.expiresAt,initial.payload.expiresAt);assert(++calls<300);}runs.push({calls,result:await service.result('owner',scope,e)});}
+ assert.deepEqual(runs[0].result,runs[1].result);assert(runs[1].calls<runs[0].calls);assert.deepEqual(initial,before);
+ for(const maxPathStepsPerUnit of [0,3,1.5,'2',null])assert.throws(()=>Checkpoints.create({...x.options,maxPathStepsPerUnit}),/CALCULATION_DEPENDENCIES_REQUIRED/);
+});
+test('large source histories and large search payloads retain the single-step boundary',async()=>{
+ for(const size of [1000,1001]){
+  const x=fixture(),input=require('./benchmark-large-checkpoints.cjs').fixture(size,'deposits');
+  const options={...x.options,loadSnapshot:async()=>({headHash:'a'.repeat(64),state:{input,plan:f.plan()}}),contextProvider:async()=>({rules:input.rules,valuation:input.valuation})};
+  const service=Checkpoints.create(options),single=Checkpoints.create({...options,maxPathStepsPerUnit:1}),e=await service.start('owner',scope);
+  const a=await service.advance('owner',scope,e),b=await single.advance('owner',scope,e);
+  if(size===1001)assert.deepEqual(a,b);else assert(a.payload.search.activeScenario.simulation.nextIndex>b.payload.search.activeScenario.simulation.nextIndex);
+ }
+ const x=fixture();x.state.input.events[0].qaPadding='x'.repeat(1500000);
+ const service=Checkpoints.create(x.options),single=Checkpoints.create({...x.options,maxPathStepsPerUnit:1}),e=await service.start('owner',scope);
+ assert.deepEqual(await service.advance('owner',scope,e),await single.advance('owner',scope,e));
+});
+test('a two-step request completing after its original deadline cannot return progress',async()=>{
+ const x=fixture(),e=await x.service.start('owner',scope),before=json(e);let ticks=0;
+ const service=Checkpoints.create({...x.options,maxPathStepsPerUnit:2,now:()=>{if(++ticks===3)x.setTime(Date.parse(e.payload.expiresAt));return x.options.now();}});
+ await assert.rejects(service.advance('owner',scope,e),/CALCULATION_EXPIRED/);assert.deepEqual(e,before);
+ await assert.rejects(x.service.advance('owner',scope,e),/CALCULATION_EXPIRED/);
+});

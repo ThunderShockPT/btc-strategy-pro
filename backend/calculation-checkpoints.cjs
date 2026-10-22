@@ -8,8 +8,8 @@ const ENGINE_BUILD=createHash('sha256').update(P.canonical(build)).digest('hex')
 function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
 function scope(s){need(s&&Object.keys(s).sort().join(',')==='ownerId,projectId,scenarioKey'&&ID.test(s.ownerId)&&ID.test(s.projectId)&&['manual_long','demo_long'].includes(s.scenarioKey),'INVALID_CALCULATION_SCOPE');}
 function instant(v){need(typeof v==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(v)&&Number.isFinite(Date.parse(v))&&new Date(v).toISOString().slice(0,19)===v.slice(0,19),'INVALID_CALCULATION_CLOCK');return Date.parse(v);}
-function create({key,loadSnapshot,contextProvider,policyProvider,profileContextProvider=null,now=()=>new Date().toISOString(),enabled=false}){
- need(Buffer.isBuffer(key)&&key.length===32&&[loadSnapshot,contextProvider,policyProvider,now].every(v=>typeof v==='function'),'CALCULATION_DEPENDENCIES_REQUIRED');const privateKey=Buffer.from(key);
+function create({key,loadSnapshot,contextProvider,policyProvider,profileContextProvider=null,now=()=>new Date().toISOString(),enabled=false,maxPathStepsPerUnit=2}){
+ need([1,2].includes(maxPathStepsPerUnit)&&Buffer.isBuffer(key)&&key.length===32&&[loadSnapshot,contextProvider,policyProvider,now].every(v=>typeof v==='function'),'CALCULATION_DEPENDENCIES_REQUIRED');const privateKey=Buffer.from(key);
  function encoded(payload){const value=P.canonical(payload);need(Buffer.byteLength(value,'utf8')<=8000000,'CALCULATION_CHECKPOINT_TOO_LARGE');return value;}
  const mac=payload=>createHmac('sha256',privateKey).update(encoded(payload)).digest('hex');
  function seal(payload){return freeze({payload,mac:mac(payload)});}
@@ -32,7 +32,9 @@ function create({key,loadSnapshot,contextProvider,policyProvider,profileContextP
   need(policy.requireFailedMarginSurvival===true,'PROFILE_ADMISSION_NOT_APPROVED');
   const p={version:VERSION,engineBuild:ENGINE_BUILD,scope:clone(s),headHash:base.headHash,createdAt,expiresAt:new Date(expiry).toISOString(),sequence:0,search,...(profileContext?{profileContext}: {})};fresh(p);return seal(p);
  }
- async function advance(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);if(p.search.done)return seal(p);const search=Cycles.advanceSearch(p.search,{maxScenarios:1,maxPathSteps:1});fresh(p);return seal({...p,sequence:p.sequence+1,search});}
+ async function advance(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);if(p.search.done)return seal(p);// Operational Beta bound: large histories/checkpoints retain single-step requests.
+  const batch=p.search.input.events.length<=1000&&Buffer.byteLength(JSON.stringify(p.search),'utf8')<=1500000?maxPathStepsPerUnit:1;
+  const search=Cycles.advanceSearch(p.search,{maxScenarios:1,maxPathSteps:batch});fresh(p);return seal({...p,sequence:p.sequence+1,search});}
  async function result(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);const value=p.profileContext?Profiles.completePreview(p.search.input,p.profileContext.plan,p.profileContext.request,p.search):Cycles.searchResult(p.search);fresh(p);return value;}
  async function reviewSource(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);Cycles.searchResult(p.search);fresh(p);return freeze(clone({headHash:p.headHash,engineBuild:p.engineBuild,createdAt:p.createdAt,expiresAt:p.expiresAt,search:p.search,...(p.profileContext?{profileContext:p.profileContext}: {})}));}
  return Object.freeze({start,advance,result,reviewSource});
