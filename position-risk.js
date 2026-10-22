@@ -71,13 +71,19 @@
   if(s.q.gt(0)&&buffer(projected,s.mark).lte(minimum))reasons.push('INSUFFICIENT_MAINTENANCE_BUFFER');
   return freeze({feasibleUnderAssumptions:reasons.length===0,reasons,before:view(s),after:projected.margin.gte(0)?view(projected):null,transferPerformed:false,protectionGuaranteed:false});
  }
- function simulate(input,{steps}={}){
+ function runSimulation(input,{steps}={},resume=null,maxSteps=500){
+  need(Number.isSafeInteger(maxSteps)&&maxSteps>=0&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
   need(Array.isArray(steps)&&steps.length<=500,'INVALID_STRESS_STEPS');
-  let current=JSON.parse(JSON.stringify(input));
-  current.rules=Rules.load(input.rules);
-  current.buyRulesByEvent={...(current.buyRulesByEvent||{})};
-  let state=snapshot(current),previousTime=instant(input.valuation.asOf),stopped=false,firstRiskEvent=null,firstFailure=null;
-  const history=[],hypotheticalIds=new Set(),views=new WeakMap();
+  const source=resume?resume.current:input,{buyRulesByEvent:sourceBuyRules,...facts}=source;
+  let current=JSON.parse(JSON.stringify(facts));
+  current.rules=Rules.load(current.rules);
+  if(resume){
+   need(Array.isArray(resume.rulePool)&&resume.rulePool.length>0&&resume.rulePool.length<=10001&&resume.buyRuleRefs&&typeof resume.buyRuleRefs==='object','INVALID_STRESS_RULE_POOL');
+   const pool=resume.rulePool.map(r=>Rules.load(r));current.buyRulesByEvent={};
+   for(const [id,index]of Object.entries(resume.buyRuleRefs)){need(Number.isInteger(index)&&index>=0&&index<pool.length,'INVALID_STRESS_RULE_REFERENCE');current.buyRulesByEvent[id]=pool[index];}
+  }else current.buyRulesByEvent={...(sourceBuyRules||{})};
+  let state=snapshot(current),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
+  const history=resume?JSON.parse(JSON.stringify(resume.history)):[],hypotheticalIds=new Set(resume?resume.hypotheticalIds:[]),views=new WeakMap();
   function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
   for(const e of Core.effectiveEvents(current))if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
   for(const e of current.events)if(e.event_type==='trade_buy'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;
@@ -110,8 +116,10 @@
    if(!liquidation&&next.q.gt(0)&&buffer(next,next.mark).lte(0)){risk(index,'after-action','event',state,next.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
    current=candidate;state=next;for(const e of events)hypotheticalIds.add(e.id.toLowerCase());return true;
   }
-  if(state.q.gt(0)&&buffer(state,state.mark).lte(0)){risk(-1,'initial','initial',state,state.mark);fail('MAINTENANCE_ALREADY_REACHED',-1,'initial');}
-  for(let index=0;index<steps.length&&!stopped;index++){
+  if(!resume&&state.q.gt(0)&&buffer(state,state.mark).lte(0)){risk(-1,'initial','initial',state,state.mark);fail('MAINTENANCE_ALREADY_REACHED',-1,'initial');}
+  let nextIndex=resume?resume.nextIndex:0,processed=0;
+  for(let index=nextIndex;index<steps.length&&!stopped&&processed<maxSteps;index++,processed++){
+   nextIndex=index+1;
    const step=steps[index],at=instant(step.at),price=amount(step.markPriceUSD,true);
    need(at>previousTime&&['continuous','gap'].includes(step.transition),'INVALID_STRESS_PATH');
    need(Array.isArray(step.actions||[])&&(step.actions||[]).length<=50,'INVALID_STRESS_ACTIONS');
@@ -145,9 +153,22 @@
    }
    previousTime=at;
   }
-  return freeze({modelVersion:'v20-risk-4.1',status:stopped?'stopped-at-first-failure':'completed-declared-path',firstRiskEvent,firstFailure,history,
+  if(!stopped&&nextIndex<steps.length){
+   const {buyRulesByEvent,...savedCurrent}=current,rulePool=[],indexes=new Map(),byContent=new Map(),buyRuleRefs={};
+   for(const [id,rules]of Object.entries(buyRulesByEvent)){if(!indexes.has(rules)){const key=JSON.stringify(rules);if(!byContent.has(key)){byContent.set(key,rulePool.length);rulePool.push(rules);}indexes.set(rules,byContent.get(key));}buyRuleRefs[id]=indexes.get(rules);}
+   if(rulePool.length===0)rulePool.push(current.rules);
+   return freeze({continuation:{version:'v20-risk-path-12d9.1',current:savedCurrent,rulePool,buyRuleRefs,steps,nextIndex,previousTime,stopped,firstRiskEvent,firstFailure,history,hypotheticalIds:[...hypotheticalIds]},result:null});
+  }
+  return freeze({continuation:null,result:{modelVersion:'v20-risk-4.1',status:stopped?'stopped-at-first-failure':'completed-declared-path',firstRiskEvent,firstFailure,history,
    finalRisk:riskView(state),projectedLedger:state.ledger,ledgerChanged:false,ordersExecuted:false,transfersPerformed:false,protectionGuaranteed:false,
-   assumptions:['Synthetic path; filled actions are explicit hypothetical assumptions.','Maintenance equality stops conservatively; this is not an official exchange execution.','Partial liquidation requires explicit supplied fills and costs.','No automatic funding forecast or unseen between-step movement.']});
+   assumptions:['Synthetic path; filled actions are explicit hypothetical assumptions.','Maintenance equality stops conservatively; this is not an official exchange execution.','Partial liquidation requires explicit supplied fills and costs.','No automatic funding forecast or unseen between-step movement.']}});
  }
- return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,requiredMarginForFloor});
+ function simulate(input,path){return runSimulation(input,path).result;}
+ function beginSimulation(input,path){return runSimulation(input,path,null,0);}
+ function advanceSimulation(saved,{maxSteps=1}={}){
+  need(saved?.version==='v20-risk-path-12d9.1'&&Number.isInteger(saved.nextIndex)&&saved.nextIndex>=0&&saved.nextIndex<=saved.steps?.length&&Number.isFinite(saved.previousTime)&&Array.isArray(saved.history)&&Array.isArray(saved.hypotheticalIds)&&saved.stopped===false,'INVALID_STRESS_CONTINUATION');
+  need(Number.isSafeInteger(maxSteps)&&maxSteps>=1&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
+  return runSimulation(saved.current,{steps:saved.steps},JSON.parse(JSON.stringify(saved)),maxSteps);
+ }
+ return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,beginSimulation,advanceSimulation,requiredMarginForFloor});
 });
