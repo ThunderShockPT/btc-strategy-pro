@@ -26,7 +26,7 @@ before(async()=>{
  create table public.project_snapshots(project_id uuid primary key,owner_id uuid,payload jsonb,version integer);`);
  await pool.query('insert into auth.users values($1),($2)',[scope.ownerId,uuid(90)]);await pool.query("insert into public.projects(id,owner_id,name,capital) values($1,$2,'Native QA',2000)",[scope.projectId,scope.ownerId]);
  for(const name of fs.readdirSync('supabase/migrations').filter(x=>x.endsWith('.sql')).sort())await pool.query(fs.readFileSync('supabase/migrations/'+name,'utf8'));
- const state={...f.existing(),planHistory:[],receipts:[]};require('./helpers/live-clock-qa.cjs').pinHistoricalRules(state.input);state.plan.configuration.cycleInventory[0].entries[1].state='active';await Store.initialize(db,scope,state);
+ const state={...f.existing(),planHistory:[],receipts:[]};require('./helpers/live-clock-qa.cjs').pinHistoricalRules(state.input);/* QA reference for the dated fill exercised below; not live rule verification. */state.input.buyRulesByEvent[uuid(810)]=structuredClone(state.input.rules);state.plan.configuration.cycleInventory[0].entries[1].state='active';await Store.initialize(db,scope,state);
  api=Store.create({db,authenticate,contextProvider,enabled:true});
 });
 after(async()=>{if(pool)await pool.end();if(admin){try{await admin.query('drop database if exists '+database);}finally{await admin.end();}}});
