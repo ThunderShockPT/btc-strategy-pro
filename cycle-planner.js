@@ -13,7 +13,7 @@
  const str=v=>v.toDecimalPlaces(24,D.ROUND_HALF_EVEN).toFixed(),money=v=>v.toDecimalPlaces(18,D.ROUND_CEIL);
  function decimal(v,positive=false){need(typeof v==='string'&&/^(0|[1-9]\d{0,19})(\.\d{1,18})?$/.test(v),'INVALID_CYCLE_DECIMAL');const n=new D(v);need(positive?n.gt(0):n.gte(0),'INVALID_CYCLE_AMOUNT');return n;}
  function fields(v,required,optional=[]){need(v&&typeof v==='object'&&!Array.isArray(v)&&required.every(k=>Object.hasOwn(v,k))&&Object.keys(v).every(k=>required.includes(k)||optional.includes(k)),'INVALID_CYCLE_FIELDS');}
- function context(input,plan,policy){
+ function context(input,plan,policy,withLedger=true){
   need(plan&&UUID.test(plan.id)&&typeof plan.projectId==='string'&&typeof plan.ownerId==='string'&&plan.projectId.toLowerCase()===input.projectId.toLowerCase()&&plan.ownerId.toLowerCase()===input.ownerId.toLowerCase()&&plan.scenarioKey===input.scenarioKey,'PLAN_SCOPE_MISMATCH');
   need(['safe','balanced','risky'].includes(plan.profile),'INVALID_PROFILE');
   need(typeof plan.version==='string'&&/^[1-9]\d{0,18}$/.test(plan.version)&&BigInt(plan.version)<=9223372036854775807n,'INVALID_PLAN_VERSION');
@@ -37,6 +37,7 @@
   need(p.protectedCashUSD.gte(protectedFloor),'PROTECTED_RESERVE_REDUCTION_REQUIRES_SEPARATE_REVIEW');
   need(!Object.hasOwn(config,'pendingPurchases')||(Array.isArray(config.pendingPurchases)&&config.pendingPurchases.length===0),'UNMAPPED_LEGACY_PENDING_ORDERS');
   need(!Object.hasOwn(config,'cycleInventory')||Array.isArray(config.cycleInventory),'INVALID_CYCLE_INVENTORY');
+  if(!withLedger)return {p,floor,inventory:clone(config.cycleInventory||[])};
   const ledger=Core.reconstruct(input);need(ledger.ruleAssessment.scopeReady,'CURRENT_RULES_REQUIRED');
   need(!Risk.estimate(input).atOrBelowMaintenance,'EXISTING_POSITION_AT_MAINTENANCE');
   return {p,floor,ledger,inventory:clone(config.cycleInventory||[])};
@@ -87,7 +88,7 @@
    totalWalletRequiredUSD:str(needed),cashShortfallUSD:str(shortfall),uncommittedAfterFullPlanUSD:str(D.max(0,new D(ctx.ledger.cash.walletUSD).sub(needed))),finalQuantityBTC:str(q),finalBasisUSD:str(b)};
  }
  const SCENARIO_NAMES=['descent','ascent','volatile','gap','missedOrders','partialFills','failedMargin'];
- function scenarios(input,ctx,candidate,policy,names=SCENARIO_NAMES){
+ function scenarios(input,ctx,candidate,policy,names=SCENARIO_NAMES,active=null,maxPathSteps=null){
   const mark=input.valuation.markPriceUSD,levels=[...new Set(candidate.orders.map(o=>o.priceUSD))].sort((a,b)=>new D(b).cmp(a));
   const descending=[mark,...levels.filter(p=>!new D(p).eq(mark)),ctx.floor.toFixed()];
   const paths={descent:descending,ascent:[mark,policy.upPriceUSD],volatile:[mark,...levels.flatMap(p=>[p,policy.upPriceUSD]),ctx.floor.toFixed(),policy.upPriceUSD],gap:[mark,ctx.floor.toFixed()],missedOrders:descending,partialFills:descending,failedMargin:descending};
@@ -121,13 +122,32 @@
      }return actions;
     },gap?'gap':'continuous');previous=price;
    }
-   const result=Risk.simulate(input,{steps});
+   let result;
+   if(maxPathSteps===null)result=Risk.simulate(input,{steps});
+   else{
+    need(!active||active.name===name,'INVALID_ACTIVE_SCENARIO');
+    let progress;
+    if(active){
+     need(active.simulation.baseEventCount===input.events.length,'INVALID_SCENARIO_EVENT_BASIS');
+     const restored=clone(active.simulation);restored.current.events=[...input.events,...restored.current.events];
+     progress={continuation:restored,result:null};
+    }else progress=Risk.beginSimulation(input,{steps});
+    if(progress.continuation)progress=Risk.advanceSimulation(progress.continuation,{maxSteps:maxPathSteps});
+    if(progress.continuation){
+     const saved=progress.continuation;need(saved.current.events.length>=input.events.length,'INVALID_SCENARIO_EVENT_BASIS');
+     const compact={...saved,baseEventCount:input.events.length,current:{...saved.current,events:saved.current.events.slice(input.events.length)}};
+     return {pending:{name,simulation:compact},summary:null};
+    }
+    result=progress.result;
+   }
    const wallet=new D(result.projectedLedger.cash.walletUSD),held=ctx.p.protectedCashUSD.add(ctx.p.fundingReserveUSD).add(candidate.closingFeeReserveUSD).add(ctx.p.externalOrderReserveUSD).add(ctx.p.externalMarginReserveUSD);
-   summaries.push({name,status:result.status,completed:result.firstFailure===null,maintenanceSurvived:result.firstRiskEvent===null,
+   const summary={name,status:result.status,completed:result.firstFailure===null,maintenanceSurvived:result.firstRiskEvent===null,
     reservationsPreserved:wallet.gte(held),firstRiskEvent:result.firstRiskEvent,firstFailure:result.firstFailure,
     finalPosition:result.projectedLedger.position,finalCash:result.projectedLedger.cash,finalPnL:result.projectedLedger.pnl,finalMargin:result.projectedLedger.margin,finalRisk:result.finalRisk,
     checkpoints:result.history.filter(h=>h.risk).map(h=>({index:h.index,phase:h.phase,markPriceUSD:h.risk.markPriceUSD,maintenanceBufferUSD:h.risk.maintenanceBufferUSD,estimatedLiquidationUSD:h.risk.estimatedPriceUSD,initialRequiredUSD:h.risk.initialRequiredUSD,maintenanceRequiredUSD:h.risk.maintenanceRequiredUSD,isolatedMarginUSD:h.risk.marginUSD,quantityBTC:h.projectedLedger?.position.quantityBTC??null,walletUSD:h.projectedLedger?.cash.walletUSD??null,effectiveEntryLeverage:h.projectedLedger?.margin.effectiveEntryLeverage??null})),
-    assumptions:name==='failedMargin'?['Planned transfers fail; new buys are not placed. Existing exposure continues through the path.']:name==='gap'?['No fills assumed at levels crossed by a gap.']:name==='partialFills'?['Half of each quantity rounded down to a lot, or unfilled if below minimum. Declared full margin additions are retained conservatively.']:['Synthetic hypothetical limit fills at declared levels; not execution guarantees.']});
+    assumptions:name==='failedMargin'?['Planned transfers fail; new buys are not placed. Existing exposure continues through the path.']:name==='gap'?['No fills assumed at levels crossed by a gap.']:name==='partialFills'?['Half of each quantity rounded down to a lot, or unfilled if below minimum. Declared full margin additions are retained conservatively.']:['Synthetic hypothetical limit fills at declared levels; not execution guarantees.']};
+   if(maxPathSteps!==null)return {pending:null,summary};
+   summaries.push(summary);
   }
   return summaries;
  }
@@ -151,7 +171,8 @@
   return freeze({checkpointVersion:'v20-cycle-search-12d3.1',input,plan,policy,candidates,audit,activeCount:active.size,
    cursor:candidates.length-1,scenarioResults:[],selected:null,stress:[],done:false,unitsCompleted:0});
  }
- function advanceSearch(checkpoint,{maxScenarios=1}={}){
+ function advanceSearch(checkpoint,{maxScenarios=1,maxPathSteps=null}={}){
+  need(maxPathSteps===null||Number.isSafeInteger(maxPathSteps)&&maxPathSteps>=1&&maxPathSteps<=500,'INVALID_SEARCH_PATH_BATCH_SIZE');
   need(Number.isSafeInteger(maxScenarios)&&maxScenarios>=1&&maxScenarios<=7,'INVALID_SEARCH_BATCH_SIZE');
   need(checkpoint?.checkpointVersion==='v20-cycle-search-12d3.1'&&typeof checkpoint.done==='boolean','INVALID_SEARCH_CHECKPOINT');
   const job=clone(checkpoint);if(job.done)return freeze(job);
@@ -161,9 +182,14 @@
    const c=job.candidates[job.cursor];
    if(new D(c.cashShortfallUSD).gt(0)){job.cursor--;continue;}
    if(count===maxScenarios)break;
-   ctx??=context(job.input,job.plan,job.policy);
+   ctx??=context(job.input,job.plan,job.policy,false);
    const name=SCENARIO_NAMES[job.scenarioResults.length];
-   job.scenarioResults.push(scenarios(job.input,ctx,c,job.policy,[name])[0]);job.unitsCompleted++;count++;
+   if(maxPathSteps===null){need(!job.activeScenario,'ACTIVE_SCENARIO_REQUIRES_PATH_BATCH');job.scenarioResults.push(scenarios(job.input,ctx,c,job.policy,[name])[0]);}
+   else{const progress=scenarios(job.input,ctx,c,job.policy,[name],job.activeScenario||null,maxPathSteps);
+    if(progress.pending){job.activeScenario=progress.pending;job.unitsCompleted++;count++;break;}
+    delete job.activeScenario;job.scenarioResults.push(progress.summary);
+   }
+   job.unitsCompleted++;count++;
    if(job.scenarioResults.length===7){
     const s=job.scenarioResults,normal=s.filter(x=>x.name!=='failedMargin');
     const acceptable=normal.every(x=>x.completed&&x.maintenanceSurvived&&x.reservationsPreserved)&&(!job.policy.requireFailedMarginSurvival||s.find(x=>x.name==='failedMargin').maintenanceSurvived);
