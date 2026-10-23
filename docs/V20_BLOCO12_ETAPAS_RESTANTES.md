@@ -51,6 +51,10 @@ A CI passa a medir quatro cargas independentes: 3 movimentos/1 ciclo, 1000/12, 5
 
 As operações de controlo deixam de transportar repetidamente o envelope completo: um avanço recebe-o na aquisição da lease, mantendo a autenticação e a origem integral. Resultado/revisão e idempotência continuam a ler o necessário. Acrescentadas métricas agregadas de consultas no laboratório, sem informação privada. Ver V20_BLOCO12D20_CONTROLO_SQL_COMPACTO.md e matriz efetiva na PR #34; isto não conclui 12D.
 
+### Datas e cópias internas 12D21
+
+Cada string exata de data passa a ser validada uma vez por reconstrução, mantendo todas as verificações temporais por evento. Ações copiam o array interno do histórico já destacado, sem serializar novamente todos os factos; o replay integral e o rollback continuam após cada evento. Ver V20_BLOCO12D21_DATAS_E_JOURNAL.md e resultados da matriz na PR #34. A capacidade máxima continua por aprovar.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.

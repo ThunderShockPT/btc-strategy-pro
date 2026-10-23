@@ -58,6 +58,10 @@
   insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
   insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
   insist(Array.isArray(input.events)&&input.events.length<=10000,'INVALID_EVENT_COUNT');
+  // Exact timestamp strings are immutable. Validate each distinct string once per
+  // replay; chronology is still checked independently for every source fact.
+  const timestamps=new Map();
+  function eventTime(value){if(!timestamps.has(value))timestamps.set(value,time(value));return timestamps.get(value);}
   const rules=Rules.load(input.rules);
   const {valuation,asOf,assessmentAt}=valuationContext(input,input.valuation,rules);
   const levels=Rules.selectSchedule(rules,input.platform,input.clientType);
@@ -74,12 +78,12 @@
    insist(typeof event.revision==='string'&&/^[1-9]\d{0,18}$/.test(event.revision)&&BigInt(event.revision)<=9223372036854775807n&&!revisions.has(event.revision),'DUPLICATE_OR_INVALID_REVISION',event.id);revisions.add(event.revision);
    insist(typeof event.idempotency_key==='string'&&event.idempotency_key.length>0&&event.idempotency_key.length<=128&&!idempotency.has(event.idempotency_key),'DUPLICATE_OR_INVALID_IDEMPOTENCY_KEY',event.id);idempotency.add(event.idempotency_key);
    insist(TYPES.includes(event.event_type),'UNSUPPORTED_EVENT_TYPE',event.id);
-   const effective=time(event.effective_at);time(event.recorded_at);
+   const effective=eventTime(event.effective_at);eventTime(event.recorded_at);
    insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);
    return {event,effective,revision:BigInt(event.revision)};
   });
   const projection=Journal.project(validated.map(v=>v.event));
-  const sorted=projection.events.map(event=>{const effective=time(event.effective_at);insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);return {event,effective,revision:BigInt(event.revision)};}).sort((a,b)=>a.effective-b.effective||(a.revision<b.revision?-1:a.revision>b.revision?1:0));
+  const sorted=projection.events.map(event=>{const effective=eventTime(event.effective_at);insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);return {event,effective,revision:BigInt(event.revision)};}).sort((a,b)=>a.effective-b.effective||(a.revision<b.revision?-1:a.revision>b.revision?1:0));
   let opened=false,wallet=ZERO,margin=ZERO,quantity=ZERO,basis=ZERO,realized=ZERO,fees=ZERO,fundingNet=ZERO;
   let initialCapital=ZERO,deposits=ZERO,withdrawals=ZERO,marginAdded=ZERO,marginRemoved=ZERO,extraMargin=ZERO;
   let acquisition=ZERO,saleNotional=ZERO,allocatedBasis=ZERO;
@@ -124,7 +128,7 @@
       let buyRequirements=requirements(basis);
       if(input.buyRulesByEvent&&Object.hasOwn(input.buyRulesByEvent,e.id.toLowerCase())){
        const historical=input.buyRulesByEvent[e.id.toLowerCase()];
-       const valid=Rules.assess(historical,{now:input.ruleScenario&&(time(e.effective_at)>time(assessmentAt)||time(historical.observedAt)>time(e.effective_at))?assessmentAt:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
+       const valid=Rules.assess(historical,{now:input.ruleScenario&&(eventTime(e.effective_at)>eventTime(assessmentAt)||eventTime(historical.observedAt)>eventTime(e.effective_at))?assessmentAt:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
        insist(valid.scopeReady,'HISTORICAL_RULES_INVALID',e.id);
        buyRequirements=calculateMargin(basis,Rules.selectSchedule(historical,input.platform,input.clientType));
       }

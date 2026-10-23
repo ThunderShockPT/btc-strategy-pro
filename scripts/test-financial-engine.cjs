@@ -190,3 +190,10 @@ test('prepared valuations enforce price, time and rule expiry without admitting 
  assert.throws(()=>frozenPrepared.atValuation({...valuation,kind:'public_mark'}),/INVALID_RULE_SCENARIO/);
  const invalid=JSON.parse(JSON.stringify(input));invalid.events.push({...invalid.events[0]});assert.throws(()=>engine.prepareValuations(invalid),/DUPLICATE_OR_INVALID_EVENT_ID/);
 });
+
+test('repeated timestamp strings do not hide invalid dates, future facts or changes between replays',()=>{
+ const d=basic();const original=run(d);assert.equal(original.journal.sourceEventCount,3);
+ for(const field of ['effective_at','recorded_at'])for(const invalid of ['2026-10-20T23:35:00+00:00','2026-02-30T23:35:00Z','2026-10-20T23:35:00.0000Z']){const bad={events:structuredClone(d.events)};bad.events[2][field]=invalid;assert.throws(()=>run(bad),/INVALID_TIMESTAMP/);}
+ const future={events:structuredClone(d.events)};future.events[2].effective_at='2026-10-20T23:40:01Z';assert.throws(()=>run(future),/FUTURE_EVENT_REQUIRES_PLAN/);
+ d.events[2].effective_at='invalid-after-first-replay';assert.throws(()=>run(d),/INVALID_TIMESTAMP/);
+});

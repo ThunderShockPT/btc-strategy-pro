@@ -98,10 +98,10 @@
   }
   function apply(events,index,{liquidation=false}={}){
    need(Array.isArray(events)&&events.length>0&&events.length<=50,'INVALID_ACTION_EVENTS');
-   // Journal/valuation are copied. Active rules are validated/frozen; unused metadata
-   // is detached from caller input and never mutated inside this simulation.
-   const {rules,buyRulesByEvent,...mutable}=current;
-   let candidate={...JSON.parse(JSON.stringify(mutable)),rules,buyRulesByEvent:{...buyRulesByEvent}};
+   // The source journal was detached on entry. Actions append to a new array;
+   // existing facts are read-only and still fully replayed after every event.
+   const {rules,buyRulesByEvent,events:journal,...mutable}=current;
+   let candidate={...JSON.parse(JSON.stringify(mutable)),events:journal.slice(),rules,buyRulesByEvent:{...buyRulesByEvent}};
    const startRevision=candidate.events.reduce((v,e)=>BigInt(e.revision)>v?BigInt(e.revision):v,0n);
    let evaluated;
    for(let j=0;j<events.length;j++){
