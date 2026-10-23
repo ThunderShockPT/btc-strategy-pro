@@ -187,6 +187,11 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
+      - name: Use the browser already supplied by the Ubuntu runner
+        run: |
+          browser_bin="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$browser_bin"
+          "$browser_bin" --version
+          printf 'CHROME_BIN=%s\n' "$browser_bin" >> "$GITHUB_ENV"
       - name: Browser session, account review and financial confirmation
         run: node --test scripts/test-account-browser.cjs
