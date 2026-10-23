@@ -38,6 +38,7 @@ jobs:
           node --test scripts/test-wallet-plan-store.cjs
           node --test scripts/test-resumable-risk-paths.cjs
           node --test scripts/test-live-clock-qa.cjs
+          node --test scripts/test-real-auth-capacity-fixture.cjs
           node --test scripts/test-large-checkpoint-benchmark.cjs
           node --test scripts/test-kraken-screen-reconciliation.cjs
           node --test scripts/test-public-latency-probe.cjs
@@ -125,6 +126,10 @@ jobs:
         run: node --test scripts/test-atomic-postgres.cjs
 
   real-auth-runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        capacity: [baseline, medium-12, large-1, large-12]
     runs-on: ubuntu-latest
     timeout-minutes: 8
     services:
@@ -141,6 +146,7 @@ jobs:
           --health-retries 10
     env:
       BTCSP_QA_AUTH_DB_URL: postgresql://postgres:btcsp_disposable_auth_qa@127.0.0.1:55432/postgres
+      BTCSP_QA_CAPACITY_CASE: ${{ matrix.capacity }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

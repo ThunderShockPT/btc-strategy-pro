@@ -39,6 +39,10 @@ Resolvido o pedido público de ciclos sem mudança de perfil: reutiliza o perfil
 
 Preparado o job real-auth-runtime com GoTrue oficial e PostgreSQL nativo em loopback da CI. Duas contas de QA entram por password; a suite percorre HTTP, fila, retoma, revisão/confirmação, assinatura inválida, isolamento e logout, com relógio real e sem recursos de produção. Fontes/regras continuam sintéticas; confirmação de email é automática apenas no laboratório. Não substitui medição no Edge alojado nem testes SMTP. Ver V20_BLOCO12D16_AUTH_SQL_ISOLADOS.md e resultado da CI no PR.
 
+### Capacidade com Auth/SQL 12D17
+
+A CI passa a medir quatro cargas independentes: 3 movimentos/1 ciclo, 1000/12, 5000/1 e 5000/12. Relatórios distinguem conclusão de rejeição ou expiração; o caso máximo não aprova capacidade apenas por bloquear corretamente. Comparação direta fora do tempo medido, métricas por ação e validação das referências de fees/histórico de QA. Resultados efetivos no PR; não equivalem a limites do Edge alojado. Ver V20_BLOCO12D17_CAPACIDADE_AUTH_SQL.md.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
