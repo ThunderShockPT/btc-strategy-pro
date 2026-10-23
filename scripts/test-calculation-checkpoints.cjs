@@ -30,15 +30,15 @@ test('bounded two-step requests reduce round trips without changing reviewed res
  assert.deepEqual(runs[0].result,runs[1].result);assert(runs[1].calls<runs[0].calls);assert.deepEqual(initial,before);
  for(const maxPathStepsPerUnit of [0,3,1.5,'2',null])assert.throws(()=>Checkpoints.create({...x.options,maxPathStepsPerUnit}),/CALCULATION_DEPENDENCIES_REQUIRED/);
 });
-test('large source histories and large search payloads retain the single-step boundary',async()=>{
- for(const size of [1000,1001]){
+test('two-step grouping stops above 5000 source events or a four-megabyte search',async()=>{
+ for(const size of [1000,5000,5001]){
   const x=fixture(),input=require('./benchmark-large-checkpoints.cjs').fixture(size,'deposits');
   const options={...x.options,loadSnapshot:async()=>({headHash:'a'.repeat(64),state:{input,plan:f.plan()}}),contextProvider:async()=>({rules:input.rules,valuation:input.valuation})};
   const service=Checkpoints.create(options),single=Checkpoints.create({...options,maxPathStepsPerUnit:1}),e=await service.start('owner',scope);
   const a=await service.advance('owner',scope,e),b=await single.advance('owner',scope,e);
-  if(size===1001)assert.deepEqual(a,b);else assert(a.payload.search.activeScenario.simulation.nextIndex>b.payload.search.activeScenario.simulation.nextIndex);
+  if(size===5001)assert.deepEqual(a,b);else assert(a.payload.search.activeScenario.simulation.nextIndex>b.payload.search.activeScenario.simulation.nextIndex);
  }
- const x=fixture();x.state.input.events[0].qaPadding='x'.repeat(1500000);
+ const x=fixture();x.state.input.events[0].qaPadding='x'.repeat(4000000);
  const service=Checkpoints.create(x.options),single=Checkpoints.create({...x.options,maxPathStepsPerUnit:1}),e=await service.start('owner',scope);
  assert.deepEqual(await service.advance('owner',scope,e),await single.advance('owner',scope,e));
 });
