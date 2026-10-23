@@ -1,6 +1,6 @@
 # V20 — etapas restantes do Bloco 12
 
-Atualizado em 22/10/2026, após 12D12. As seis etapas abaixo organizam o trabalho ainda necessário; não são seis etapas já concluídas. Subdivisões técnicas não alteram os critérios de aceitação.
+Atualizado em 23/10/2026, após 12D23 e início da ligação do cliente aos cálculos retomáveis. As seis etapas abaixo organizam o trabalho ainda necessário; não são seis etapas já concluídas. Subdivisões técnicas não alteram os critérios de aceitação.
 
 | Etapa | Entrega | Critério para concluir |
 | --- | --- | --- |
@@ -63,14 +63,23 @@ O motor valida o histórico inteiro à entrada e aplica novos eventos da mesma a
 
 O ensaio no Edge encontrou HTTP 546 / CPU excedido nos inícios de 5000 movimentos/12 ciclos, incluindo perfil. Corrigida a reconstrução repetida por candidato: uma única projeção validada alimenta a preparação. A repetição passou 16 hashes completos; os workers dos dois inícios registaram 560 e 695 ms, com máximo global observado 900 ms. A função temporária foi encerrada na versão 14. A CI passou 658 testes V20, quatro cargas Auth/SQL obrigatórias e restantes regressões; a máxima concluiu em 47,446 s. Ver V20_BLOCO12D23_CPU_ALOJADO.md e artefactos V20_12D23_* em docs/qa. Ainda faltam fluxo alojado completo, ingresso, concorrência, pico de memória e validação de todas as janelas de admissão.
 
-Antes de concluir 12D, faltam:
+## Pendências consolidadas para fechar o Bloco 12
 
-1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
-2. Ligar os providers validados ao entrypoint e ensaiar o pacote no runtime alojado, mantendo os gates fechados enquanto houver critérios por cumprir. A composição dos serviços e os fluxos retomáveis de ciclos/perfis já estão implementados e testados em QA.
-3. Corrigir a unidade de cenário ainda indivisível: o ensaio 12D8 mediu até 3,88 s CPU local com 5000 movimentos e um ciclo. A retoma por passo já está implementada e preserva os resultados; falta reduzir os custos que persistem por passo, repetir as cargas até ao limite de ciclos e validar retenção/concorrência SQL e prazos no alojamento. Não relaxar as condições financeiras nem descartar histórico.
-4. Medir separadamente CPU, Auth, SQL e tempo total no ambiente efetivo; validar endereço de ingresso, admissão e configuração. Uma chamada Auth por pedido foi demonstrada em QA; rede, TLS e latências de produção ainda não foram validados.
+| Prioridade | Trabalho concreto | Situação verificável |
+| --- | --- | --- |
+| 1 | Fluxo completo no alojamento: sessão, fila, SQL, revisão e confirmação | CPU das unidades passou; fluxo completo apenas em CI com Auth/SQL real e fontes sintéticas. Última carga máxima: 45,819 s na CI 39949964653 |
+| 2 | Validar admissão temporal, ingresso, concorrência e pico de memória | O mínimo provisório de 45 s é inferior a tempos máximos observados. Ainda não constitui garantia de conclusão; não aumentar validade das fontes |
+| 3 | Ligar interface de carteira/planos/movimentos/correções e cálculos à conta | Cliente autenticado tem revisão/confirmação e agora controlo de cálculos. A interface Demo continua local; ligação visual e testes completos pendentes |
+| 4 | Privacidade e ciclo de vida da conta | Preferências, termos, exportação e eliminação autenticada ainda carecem de conclusão integrada |
+| 5 | Recuperação e migração V19 | Backups e contratos existentes não substituem ensaio de restauro do servidor, reconciliação e rollback antes da aplicação |
+| 6 | Email e recuperação de acesso exclusivos BTC | SMTP, confirmação e recuperação real por email pendentes. Duas contas descartáveis na CI não aprovam email de produção |
+| 7 | Teste integrado e S25 | Preparar acesso de teste e roteiro de conta, cálculo, revisão, confirmação, offline, recuperação e segundo dispositivo; executar antes do Bloco 13 |
 
-Não se passa para 12E deixando estes pontos críticos por resolver. A política cloud continua fechada.
+Não reabrir otimizações antigas sem uma falha que as justifique. Os relatórios históricos acima conservam os números da altura; a tabela constitui a lista atual de pendências. A política cloud continua fechada até os critérios estarem comprovados.
+
+### Ligação do cliente aos cálculos
+
+O cliente `cloud-client-v20.js` expõe início, avanço, estado, resultado e cancelamento, sem polling ou confirmação automática. Um início cuja resposta se perdeu conserva a mesma chave para repetição explícita; novo início e preparação financeira ficam bloqueados até reconciliar. Um avanço incerto pode ser consultado por estado. Logout e troca de conta eliminam o estado privado e invalidam respostas tardias. Isto prepara a ligação visual, mas não a dá por concluída nem altera o frontend publicado.
 
 ## Blocos principais posteriores
 
