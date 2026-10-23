@@ -66,7 +66,19 @@ async function refreshQuote(){if(quoteBusy||document.hidden)return;quoteBusy=tru
 document.addEventListener('visibilitychange',()=>{paintQuote();if(!document.hidden)refreshQuote();});
 function navigate(area){capture();cancel();app.invalidate();activeArea=area;render();}
 function openPlanner(action){capture();cancel();app.invalidate();activeArea='planner';if(action==='help'){stage='guide';topic=0;}else if(action==='review'&&review)stage='review';else stage=visited.size===6?'setup':'guide';render();}
-app=BTCAppViews.create({equalAmount:(x,y)=>new BTCPreviewDecimal(x).eq(y),amountLTE:(x,y)=>new BTCPreviewDecimal(x).lte(y),comparePrice:(x,y)=>new BTCPreviewDecimal(y).cmp(x),esc,money,stat,line,warning,timeline,normalize,uuid,secure:()=>!!crypto.subtle,rpc,getExisting:()=>({input:existing.input,plan:existing.plan}),getReview:()=>review,getQuote:()=>liveQuote,needsReview:()=>!!existing.needsReview,storageAvailable:()=>storageAvailable,getPlanHistory:()=>existing.planHistory||[],getTitle:()=>draft.projectTitle,onSnapshot:s=>{existing.capitalUSD=s.ledger.capital.netContributedUSD;draft.capitalUSD=existing.capitalUSD;},navigate,openPlanner,acceptExecution:result=>{existing={...existing,planHistory:BTCDemoStorage.keepPlanVersion(existing.planHistory,existing.plan,result.nextPlan),input:result.nextInput,plan:result.nextPlan,needsReview:true};review=null;reviewContext=null;store();},acceptMovement:input=>{existing={...existing,input,needsReview:true};review=null;reviewContext=null;store();}});
+// Hosting supplies an already authenticated client only after its release checks.
+// No credentials, automatic sign-in, Demo upload or production enablement here.
+let accountWorkflow=null;
+function mountAccountPanel(element){
+ if(!accountWorkflow){element.innerHTML='<section class="surface"><h3>Conta online</h3><p>A ligação à conta online está em preparação. Os dados Demo ficam neste navegador.</p></section>';return null;}
+ return BTCAccountViewV20.mount({element,workflow:accountWorkflow,money});
+}
+globalThis.BTCV20AccountConnection=Object.freeze({
+ attach(client){accountWorkflow?.clearSession();accountWorkflow=BTCAccountWorkflowV20.create({client,newId:uuid,shouldPause:()=>document.hidden});if(activeArea==='account')app.render('account');},
+ clearSession(){accountWorkflow?.clearSession();},
+ detach(){accountWorkflow?.clearSession();accountWorkflow=null;if(activeArea==='account')app.render('account');}
+});
+app=BTCAppViews.create({mountAccountPanel,equalAmount:(x,y)=>new BTCPreviewDecimal(x).eq(y),amountLTE:(x,y)=>new BTCPreviewDecimal(x).lte(y),comparePrice:(x,y)=>new BTCPreviewDecimal(y).cmp(x),esc,money,stat,line,warning,timeline,normalize,uuid,secure:()=>!!crypto.subtle,rpc,getExisting:()=>({input:existing.input,plan:existing.plan}),getReview:()=>review,getQuote:()=>liveQuote,needsReview:()=>!!existing.needsReview,storageAvailable:()=>storageAvailable,getPlanHistory:()=>existing.planHistory||[],getTitle:()=>draft.projectTitle,onSnapshot:s=>{existing.capitalUSD=s.ledger.capital.netContributedUSD;draft.capitalUSD=existing.capitalUSD;},navigate,openPlanner,acceptExecution:result=>{existing={...existing,planHistory:BTCDemoStorage.keepPlanVersion(existing.planHistory,existing.plan,result.nextPlan),input:result.nextInput,plan:result.nextPlan,needsReview:true};review=null;reviewContext=null;store();},acceptMovement:input=>{existing={...existing,input,needsReview:true};review=null;reviewContext=null;store();}});
 for(const el of document.querySelectorAll('[data-area]'))el.onclick=()=>navigate(el.dataset.area);
 try{const previous=localStorage.getItem('btcsp:v20:preview-fixture:'+base.ownerId);if(['new','existing'].includes(previous)){fixture=previous;$('fixture').value=fixture;}}catch{storageAvailable=false;}
 restore();refreshQuote();setInterval(refreshQuote,5000);setInterval(paintQuote,1000);

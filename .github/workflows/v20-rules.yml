@@ -22,6 +22,7 @@ jobs:
           node --test scripts/test-calculation-jobs.cjs
           node --test scripts/test-calculation-http.cjs
           node --test scripts/test-cloud-calculations.cjs
+          node --test scripts/test-account-workflow.cjs
           node --test scripts/test-calculation-window.cjs
           node --test scripts/test-calculation-plan-review.cjs
           node --test scripts/test-profile-calculation-review.cjs
