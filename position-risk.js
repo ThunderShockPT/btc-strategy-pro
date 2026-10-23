@@ -39,6 +39,13 @@
   marginUSD:str(s.margin),maintenanceBufferUSD:str(buffer(s,s.mark)),atOrBelowMaintenance:s.q.gt(0)&&buffer(s,s.mark).lte(0),
   source:'local-model',syntheticFrozenRules:s.ledger.ruleAssessment.syntheticFrozenRules,ruleAssessmentAt:s.ledger.ruleAssessment.assessedAt,officialKrakenPrice:false,guaranteedProtection:false,recommendationsAllowed:false,
   limitations:['USD_LONG_ONLY','MANUAL_FACTS','ENTRY_NOTIONAL_MARGIN','NO_EXECUTION_PRICE_GUARANTEE','NO_FUNDING_FORECAST']};}
+ // Reconstruct once when a planner needs both validated facts and risk admission.
+ // No caller-supplied ledger or cached state is accepted here.
+ function reconstructContext(input){
+  const rebuilt=Core.reconstructWithEvents(input),ledger=rebuilt.ledger;
+  const state=ledger.ruleAssessment.scopeReady?ledgerSnapshot(input,ledger):null;
+  return freeze({ledger,effectiveEvents:rebuilt.effectiveEvents,atOrBelowMaintenance:state?state.q.gt(0)&&buffer(state,state.mark).lte(0):null});
+ }
  function estimate(input){return freeze(view(snapshot(input)));}
  function available(s,useReservedMargin){
   // Cap by actual wallet after other reservations, even if the plan is unfunded.
@@ -189,5 +196,5 @@
   need(Number.isSafeInteger(maxSteps)&&maxSteps>=1&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
   return runSimulation(saved.current,{steps:saved.steps},JSON.parse(JSON.stringify(saved)),maxSteps);
  }
- return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,beginSimulation,startSimulation,advanceSimulation,requiredMarginForFloor});
+ return Object.freeze({RiskError,reconstructContext,estimate,inverse,previewTransfer,simulate,beginSimulation,startSimulation,advanceSimulation,requiredMarginForFloor});
 });
