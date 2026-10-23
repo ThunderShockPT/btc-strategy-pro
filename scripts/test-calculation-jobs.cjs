@@ -26,3 +26,12 @@ test('private durable calculation jobs',async t=>{const x=await setup(t);let ser
 });
 
 test('more than 100 successful path units do not exhaust the retry budget',async t=>{const x=await setup(t),checkpoints=Checkpoints.create({...x.cpOptions,maxPathStepsPerUnit:1,policyProvider:async(s,input)=>({...cf.policy(),maxCycles:12,nominalCycleBudgetUSD:'100',protectedCashUSD:input.reservations.protectedUSD})}),queue=Jobs.create({...x.options,checkpoints});let job=await queue.enqueue(f.TA,scope,{idempotencyKey:'many-successful-path-units'});for(let n=0;n<105&&job.status!=='completed';n++){job=await queue.runUnit(f.TA,scope,job.id);assert.notEqual(job.status,'blocked');}assert(job.sequence>100,'fixture must exercise the former attempt limit');const row=(await x.db.query('select attempts,sequence from btcsp_private.calculation_jobs where id=$1',[job.id])).rows[0];assert.equal(row.attempts,row.sequence);});
+
+test('operational control reads omit checkpoints while a claimed unit receives the full signed state',async t=>{
+ const x=await setup(t),responses=[],db={transaction:fn=>x.db.transaction(tx=>fn({query:async(...args)=>{const result=await tx.query(...args);if(String(args[0]).includes('calculation_jobs'))responses.push(result.rows);return result;}}))},queue=Jobs.create({...x.options,db});
+ const job=await queue.enqueue(f.TA,scope,{idempotencyKey:'compact-job-control'});responses.length=0;
+ const next=await queue.runUnit(f.TA,scope,job.id);assert.equal(next.sequence,1);assert.equal(next.unitsCompleted,1);
+ const transported=responses.flat().filter(row=>Object.hasOwn(row,'envelope'));assert.equal(transported.length,1);assert.equal(typeof transported[0].envelope.mac,'string');assert(transported[0].envelope.payload.search.input.events.length>0);
+ responses.length=0;const status=await queue.status(f.TA,scope,job.id);assert.equal(status.unitsCompleted,next.unitsCompleted);assert.equal(responses.flat().some(row=>Object.hasOwn(row,'envelope')),false);
+ responses.length=0;assert.equal((await queue.cancel(f.TA,scope,job.id)).status,'cancelled');assert.equal(responses.flat().some(row=>Object.hasOwn(row,'envelope')),false);
+});
