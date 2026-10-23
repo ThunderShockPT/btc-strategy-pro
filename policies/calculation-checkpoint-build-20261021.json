@@ -27,7 +27,7 @@
     "position-risk.js": "7cc749094645235f2f7859c42ccff171a19800799f3e0a228b1a3e7d66306738",
     "financial-engine.js": "cba1963d40147c206edaa4d16c59a186bb1851b823e943058370a2a8a113a8f0",
     "kraken-rules.js": "b1feec61a15fa29fd1b62e74f86ebaa15666c61b64b6f7e030e467add76a4843",
-    "journal-projection.js": "4a3d359734084b15e8b2f70fcac36c90407f1245615a1bfcfe586e98a6a2aa64",
+    "journal-projection.js": "a25608350ee367d6f453626196088fe97c735f3db127a7cbcccce39b724484d2",
     "package-lock.json": "11e0ae0277017ed2bc3798993c62712f166b9f8b305db37b76a2f88cf6f335c9"
   }
 }
