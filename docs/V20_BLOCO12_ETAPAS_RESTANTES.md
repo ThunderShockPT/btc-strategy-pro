@@ -59,6 +59,10 @@ Cada string exata de data passa a ser validada uma vez por reconstrução, mante
 
 O motor valida o histórico inteiro à entrada e aplica novos eventos da mesma ação sobre acumuladores exatos, com verificações por evento e rollback integral de valores, mapas, IDs, custos e trace. Retomas e mudanças de regras continuam a exigir replay integral. Os ledgers são comparados com replay completo após cada evento; não há alteração de lotes, prazos ou escrita financeira real. A primeira matriz concluiu a carga máxima em 55,316 s (CI 39941063091), com resultado completo igual, mas a repetição obrigatória expirou e falhou. O agrupamento máximo de dois passos passa a abranger até 5000 eventos/4 MB, com métricas de CPU de processo na QA e validação alojada ainda pendente. A conclusão passa a obrigatória também no caso máximo, com repetição em janela favorável de QA. Ver V20_BLOCO12D22_ACOES_TRANSACIONAIS.md e matriz efetiva na PR #34. Isto não aprova o Edge nem todas as janelas de admissão.
 
+### Preparação de candidatos e CPU alojado 12D23
+
+O ensaio no Edge encontrou HTTP 546 / CPU excedido nos inícios de 5000 movimentos/12 ciclos, incluindo perfil. Corrigida a reconstrução repetida por candidato: uma única projeção validada alimenta a preparação. A repetição passou 16 hashes completos; os workers dos dois inícios registaram 560 e 695 ms, com máximo global observado 900 ms. A função temporária foi encerrada na versão 14. A CI passou 658 testes V20, quatro cargas Auth/SQL obrigatórias e restantes regressões; a máxima concluiu em 47,446 s. Ver V20_BLOCO12D23_CPU_ALOJADO.md e artefactos V20_12D23_* em docs/qa. Ainda faltam fluxo alojado completo, ingresso, concorrência, pico de memória e validação de todas as janelas de admissão.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
