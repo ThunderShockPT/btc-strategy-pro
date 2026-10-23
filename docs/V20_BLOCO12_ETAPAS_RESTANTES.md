@@ -43,6 +43,10 @@ Preparado o job real-auth-runtime com GoTrue oficial e PostgreSQL nativo em loop
 
 A CI passa a medir quatro cargas independentes: 3 movimentos/1 ciclo, 1000/12, 5000/1 e 5000/12. Relatórios distinguem conclusão de rejeição ou expiração; o caso máximo não aprova capacidade apenas por bloquear corretamente. Comparação direta fora do tempo medido, métricas por ação e validação das referências de fees/histórico de QA. Resultados efetivos no PR; não equivalem a limites do Edge alojado. Ver V20_BLOCO12D17_CAPACIDADE_AUTH_SQL.md.
 
+### Redução de replays 12D18–12D19
+
+12D18 junta início e primeiro lote de cada cenário. A CI 39924812137 passou; 1000/12 concluiu em 16,116 s, 5000/1 em 41,562 s e 5000/12 expirou em 60,441 s sem alterações financeiras. 12D19 acrescenta reavaliação em memória com acumuladores Decimal exatos quando apenas o preço muda, mantendo replay integral em ações, novas regras e retomas. O novo ensaio de capacidade será registado na PR. Ver V20_BLOCO12D18_INICIO_STRESS.md e V20_BLOCO12D19_REAVALIACAO_EXATA.md. Estes passos não concluem 12D nem aprovam o Edge.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.

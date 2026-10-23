@@ -168,3 +168,25 @@ test('combined reconstruction validates every event and detaches the effective j
   const bad=structuredClone(before);change(bad);let expected;try{engine.reconstruct(bad);}catch(e){expected=e.code;}assert(expected);assert.throws(()=>engine.reconstructWithEvents(bad),e=>e.code===expected);assert.throws(()=>engine.effectiveEvents(bad),e=>e.code===expected);
  }
 });
+
+test('prepared valuations match full replay with exact partial-sale basis and detached source facts',()=>{
+ const d=diary();d.open('50000');d.margin('500');d.buy('0.003','100000');d.buy('0.004','100001');d.sell('0.001','100002');
+ const input={projectId,ownerId,scenarioKey:'manual_long',platform:'europa',clientType:'retail',rules:JSON.parse(JSON.stringify(rules)),events:d.events,includeTrace:true,reservations:{ordersUSD:'10',marginUSD:'20',protectedUSD:'30'},valuation:{kind:'synthetic',source:'QA',markPriceUSD:'100000',asOf:'2026-10-20T23:40:00Z'}};
+ const original=JSON.parse(JSON.stringify(input)),prepared=engine.prepareValuations(input);
+ assert.deepEqual(prepared.ledger,engine.reconstruct(original));
+ input.events.length=0;input.reservations.ordersUSD='999';input.ruleScenario={mode:'invalid'};input.platform='invalid';input.rules.version='changed';
+ for(const price of ['0.1','99999.9','100000','123456.7']){
+  const valuation={kind:'synthetic',source:'repricing-QA',markPriceUSD:price,asOf:'2026-10-20T23:40:01Z'};
+  assert.deepEqual(prepared.atValuation(valuation),engine.reconstruct({...original,valuation}));
+ }
+ assert.deepEqual(prepared.ledger,engine.reconstruct(original));
+});
+test('prepared valuations enforce price, time and rule expiry without admitting new journal facts',()=>{
+ const d=basic(),input={projectId,ownerId,scenarioKey:'manual_long',platform:'europa',clientType:'retail',rules,events:d.events,valuation:{kind:'synthetic',source:'QA',markPriceUSD:'100000',asOf:'2026-10-20T23:40:00Z'}};
+ const p=engine.prepareValuations(input);
+ for(const valuation of [{...input.valuation,markPriceUSD:'0'},{...input.valuation,source:''},{...input.valuation,asOf:'2026-10-20T23:39:59Z'},{...input.valuation,asOf:'2030-01-01T00:00:00Z'}])assert.throws(()=>p.atValuation(valuation));
+ const frozen={...input,ruleScenario:{mode:'frozen-rules-synthetic',referenceAt:input.valuation.asOf}},frozenPrepared=engine.prepareValuations(frozen),valuation={...input.valuation,asOf:'2030-01-01T00:00:00Z'};
+ assert.deepEqual(frozenPrepared.atValuation(valuation),engine.reconstruct({...frozen,valuation}));
+ assert.throws(()=>frozenPrepared.atValuation({...valuation,kind:'public_mark'}),/INVALID_RULE_SCENARIO/);
+ const invalid=JSON.parse(JSON.stringify(input));invalid.events.push({...invalid.events[0]});assert.throws(()=>engine.prepareValuations(invalid),/DUPLICATE_OR_INVALID_EVENT_ID/);
+});

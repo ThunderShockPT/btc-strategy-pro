@@ -38,15 +38,10 @@
   const result=calculateMargin(new D(basisUSD),Rules.selectSchedule(rules,platform,clientType));
   return freeze({initialUSD:fmt(result.initial),maintenanceUSD:fmt(result.maintenance),initialRate:result.level.initialRate,maintenanceRate:result.level.maintenanceRate});
  }
- function rebuild(input,includeEvents=false){
-  insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
-  insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
-  insist(Array.isArray(input.events)&&input.events.length<=10000,'INVALID_EVENT_COUNT');
-  const valuation=input.valuation;
+ function valuationContext(input,valuation,rules){
   insist(valuation&&['synthetic','public_mark','manual_mark'].includes(valuation.kind),'MARK_PRICE_REQUIRED');
   insist(typeof valuation.source==='string'&&valuation.source.trim().length>0&&valuation.source.length<=200,'PRICE_SOURCE_REQUIRED');
   const mark=decimal(valuation.markPriceUSD,{positive:true}),asOf=time(valuation.asOf);
-  const rules=Rules.load(input.rules);
   let assessmentAt=valuation.asOf;
   if(input.ruleScenario!==undefined){
    keys(input.ruleScenario,['mode','referenceAt']);
@@ -57,6 +52,14 @@
   const blockingReasons=eligibility.reasons.slice(0,eligibility.reasons.length-rules.limitations.length);
   const staleBookkeeping=input.bookkeepingOnly===true&&blockingReasons.length===1&&blockingReasons[0]==='STALE_RULES';
   insist(eligibility.scopeReady||staleBookkeeping,'RULES_OUT_OF_SCOPE_OR_STALE');
+  return {valuation,mark,asOf,assessmentAt,eligibility,blockingReasons};
+ }
+ function rebuild(input,includeEvents=false,prepare=false){
+  insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
+  insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
+  insist(Array.isArray(input.events)&&input.events.length<=10000,'INVALID_EVENT_COUNT');
+  const rules=Rules.load(input.rules);
+  const {valuation,asOf,assessmentAt}=valuationContext(input,input.valuation,rules);
   const levels=Rules.selectSchedule(rules,input.platform,input.clientType);
   function requirements(basis){
    return calculateMargin(basis,levels);
@@ -165,38 +168,51 @@
    }catch(error){if(error instanceof FinancialError&&error.eventId===null)error.eventId=e.id;throw error;}
   }
   insist(opened,'OPENING_BALANCE_REQUIRED');
-  const req=requirements(basis),unrealized=quantity.mul(mark).sub(basis),isolatedEquity=margin.add(unrealized);
-  const reservations=input.reservations||{ordersUSD:'0',marginUSD:'0',protectedUSD:'0'};
-  keys(reservations,['ordersUSD','marginUSD','protectedUSD']);
-  const orders=decimal(reservations.ordersUSD),reservedMargin=decimal(reservations.marginUSD),protectedCash=decimal(reservations.protectedUSD);
-  const totalReserved=orders.add(reservedMargin).add(protectedCash),free=wallet.sub(totalReserved);
-  const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
-  const equity=wallet.add(margin).add(unrealized);
-  insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
-  const ledger=freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
-   ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady&&!input.ruleScenario,syntheticFrozenRules:!!input.ruleScenario,assessedAt:assessmentAt},
-   journal:{sourceEventCount:input.events.length,correctionCount:projection.correctionCount,activeFactCount:projection.events.length,localAdjustmentsOnly:true},
-   inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
-   capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
-   cash:{walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),bookCashTotalUSD:fmt(wallet.add(margin)),spendableUSD:fmt(D.max(0,free)),unfundedReservationsUSD:fmt(D.max(0,free.neg())),
-    reservedOrdersUSD:fmt(orders),reservedMarginUSD:fmt(reservedMargin),protectedUSD:fmt(protectedCash),reservationStatus:free.gte(0)?'funded':'unfunded',
-    marginTransferredInUSD:fmt(marginAdded),marginTransferredOutUSD:fmt(marginRemoved),additionalMarginTransferredUSD:fmt(extraMargin)},
-   position:{symbol:'PF_XBTUSD',quantityBTC:fmt(quantity),remainingBasisUSD:fmt(basis),averageEntryUSD:quantity.gt(0)?fmt(basis.div(quantity)):null,
-    markNotionalUSD:fmt(quantity.mul(mark)),acquisitionNotionalUSD:fmt(acquisition),saleNotionalUSD:fmt(saleNotional),allocatedBasisUSD:fmt(allocatedBasis),
-    cycles:Array.from(cycleQty.entries()).filter(([,q])=>q.gt(0)).sort(([a],[b])=>BigInt(a.slice(6))<BigInt(b.slice(6))?-1:1).map(([cycle,q])=>({cycle,quantityBTC:fmt(q)}))},
-   pnl:{realizedGrossUSD:fmt(realized),unrealizedGrossUSD:fmt(unrealized),feesPaidUSD:fmt(fees),fundingNetUSD:fmt(fundingNet),totalNetUSD:fmt(netResult),totalEquityUSD:fmt(equity)},
-   margin:{selectedLeverage:'10',initialRequiredUSD:fmt(req.initial),maintenanceRequiredUSD:fmt(req.maintenance),isolatedEquityUSD:fmt(isolatedEquity),maintenanceBufferUSD:fmt(isolatedEquity.sub(req.maintenance)),
-    initialCollateralShortfallUSD:fmt(D.max(0,req.initial.sub(margin))),maintenanceStatus:quantity.eq(0)?'no-position':isolatedEquity.lt(req.maintenance)?'breached':'not-breached-at-mark',
-    effectiveEntryLeverage:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(basis.div(isolatedEquity)):null,
-    markExposureToIsolatedEquity:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(quantity.mul(mark).div(isolatedEquity)):null,
-    unreturnedMarginUSD:quantity.eq(0)?fmt(margin):'0',estimatedLiquidationUSD:null},
-   precision:{inputDecimals:18,calculationSignificantDigits:80,outputDecimals:24,rounding:'half-even'},
-   limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_REQUIRES_TEMPORAL_SCENARIO','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
-   recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
+  // This closure holds exact Decimal accumulators, never rounded ledger outputs.
+  // Capture only immutable valuation context; callers cannot change its source facts.
+  const valuationInput={scenarioKey:input.scenarioKey,platform:input.platform,clientType:input.clientType,bookkeepingOnly:input.bookkeepingOnly,
+   reservations:input.reservations?{...input.reservations}:input.reservations,ruleScenario:input.ruleScenario===undefined?undefined:{...input.ruleScenario},events:{length:input.events.length}};
+  function render(nextValuation){
+   const input=valuationInput;
+   const {valuation,mark,asOf:nextAsOf,assessmentAt,eligibility,blockingReasons}=valuationContext(input,nextValuation,rules);
+   insist(nextAsOf>=asOf,'VALUATION_BEFORE_VALIDATED_BASIS');
+   const req=requirements(basis),unrealized=quantity.mul(mark).sub(basis),isolatedEquity=margin.add(unrealized);
+   const reservations=input.reservations||{ordersUSD:'0',marginUSD:'0',protectedUSD:'0'};
+   keys(reservations,['ordersUSD','marginUSD','protectedUSD']);
+   const orders=decimal(reservations.ordersUSD),reservedMargin=decimal(reservations.marginUSD),protectedCash=decimal(reservations.protectedUSD);
+   const totalReserved=orders.add(reservedMargin).add(protectedCash),free=wallet.sub(totalReserved);
+   const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
+   const equity=wallet.add(margin).add(unrealized);
+   insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
+   const ledger=freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
+    ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady&&!input.ruleScenario,syntheticFrozenRules:!!input.ruleScenario,assessedAt:assessmentAt},
+    journal:{sourceEventCount:input.events.length,correctionCount:projection.correctionCount,activeFactCount:projection.events.length,localAdjustmentsOnly:true},
+    inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
+    capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
+    cash:{walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),bookCashTotalUSD:fmt(wallet.add(margin)),spendableUSD:fmt(D.max(0,free)),unfundedReservationsUSD:fmt(D.max(0,free.neg())),
+     reservedOrdersUSD:fmt(orders),reservedMarginUSD:fmt(reservedMargin),protectedUSD:fmt(protectedCash),reservationStatus:free.gte(0)?'funded':'unfunded',
+     marginTransferredInUSD:fmt(marginAdded),marginTransferredOutUSD:fmt(marginRemoved),additionalMarginTransferredUSD:fmt(extraMargin)},
+    position:{symbol:'PF_XBTUSD',quantityBTC:fmt(quantity),remainingBasisUSD:fmt(basis),averageEntryUSD:quantity.gt(0)?fmt(basis.div(quantity)):null,
+     markNotionalUSD:fmt(quantity.mul(mark)),acquisitionNotionalUSD:fmt(acquisition),saleNotionalUSD:fmt(saleNotional),allocatedBasisUSD:fmt(allocatedBasis),
+     cycles:Array.from(cycleQty.entries()).filter(([,q])=>q.gt(0)).sort(([a],[b])=>BigInt(a.slice(6))<BigInt(b.slice(6))?-1:1).map(([cycle,q])=>({cycle,quantityBTC:fmt(q)}))},
+    pnl:{realizedGrossUSD:fmt(realized),unrealizedGrossUSD:fmt(unrealized),feesPaidUSD:fmt(fees),fundingNetUSD:fmt(fundingNet),totalNetUSD:fmt(netResult),totalEquityUSD:fmt(equity)},
+    margin:{selectedLeverage:'10',initialRequiredUSD:fmt(req.initial),maintenanceRequiredUSD:fmt(req.maintenance),isolatedEquityUSD:fmt(isolatedEquity),maintenanceBufferUSD:fmt(isolatedEquity.sub(req.maintenance)),
+     initialCollateralShortfallUSD:fmt(D.max(0,req.initial.sub(margin))),maintenanceStatus:quantity.eq(0)?'no-position':isolatedEquity.lt(req.maintenance)?'breached':'not-breached-at-mark',
+     effectiveEntryLeverage:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(basis.div(isolatedEquity)):null,
+     markExposureToIsolatedEquity:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(quantity.mul(mark).div(isolatedEquity)):null,
+     unreturnedMarginUSD:quantity.eq(0)?fmt(margin):'0',estimatedLiquidationUSD:null},
+    precision:{inputDecimals:18,calculationSignificantDigits:80,outputDecimals:24,rounding:'half-even'},
+    limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_REQUIRES_TEMPORAL_SCENARIO','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
+    recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
+   return ledger;
+  }
+  const ledger=render(valuation);
+  if(prepare)return Object.freeze({ledger,effectiveEvents:projection.events,atValuation:render});
   return includeEvents?Object.freeze({ledger,effectiveEvents:projection.events}):ledger;
  }
  function reconstruct(input){return rebuild(input);}
  function reconstructWithEvents(input){return rebuild(input,true);}
+ function prepareValuations(input){return rebuild(input,true,true);}
  function effectiveEvents(input){return reconstructWithEvents(input).effectiveEvents;}
- return Object.freeze({FinancialError,reconstruct,reconstructWithEvents,marginRequirements,effectiveEvents});
+ return Object.freeze({FinancialError,reconstruct,reconstructWithEvents,prepareValuations,marginRequirements,effectiveEvents});
 });
