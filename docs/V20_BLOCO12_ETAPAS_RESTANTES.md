@@ -57,7 +57,7 @@ Cada string exata de data passa a ser validada uma vez por reconstrução, mante
 
 ### Ações transacionais em memória 12D22
 
-O motor valida o histórico inteiro à entrada e aplica novos eventos da mesma ação sobre acumuladores exatos, com verificações por evento e rollback integral de valores, mapas, IDs, custos e trace. Retomas e mudanças de regras continuam a exigir replay integral. Os ledgers são comparados com replay completo após cada evento; não há alteração de lotes, prazos ou escrita financeira real. Ver V20_BLOCO12D22_ACOES_TRANSACIONAIS.md e matriz efetiva na PR #34. A aprovação de capacidade depende da conclusão completa, não de um teste verde por expiração segura.
+O motor valida o histórico inteiro à entrada e aplica novos eventos da mesma ação sobre acumuladores exatos, com verificações por evento e rollback integral de valores, mapas, IDs, custos e trace. Retomas e mudanças de regras continuam a exigir replay integral. Os ledgers são comparados com replay completo após cada evento; não há alteração de lotes, prazos ou escrita financeira real. A primeira matriz concluiu a carga máxima em 55,316 s (CI 39941063091), com resultado completo igual. A conclusão passa a obrigatória também no caso máximo, com repetição em janela favorável de QA. Ver V20_BLOCO12D22_ACOES_TRANSACIONAIS.md e matriz efetiva na PR #34. Isto não aprova o Edge nem todas as janelas de admissão.
 
 Antes de concluir 12D, faltam:
 

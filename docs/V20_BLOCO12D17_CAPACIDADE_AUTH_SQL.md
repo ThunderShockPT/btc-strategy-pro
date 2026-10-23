@@ -20,3 +20,7 @@ O cálculo direto usado como comparação é executado depois da confirmação e
 Após confirmar e comparar, a suite pode aguardar outra janela para o teste de logout; essa espera fica fora do intervalo medido. O caso que expire termina após provar o bloqueio, sem executar confirmação ou marcar a revogação como testada nessa carga. Revogação continua coberta nos casos concluídos e no ensaio 12D16.
 
 Os relatórios JSON `REAL_AUTH_SQL_QA` são extraídos dos logs da CI e registados no PR. Não são métricas do Edge alojado: o laboratório usa loopback, Node, fontes sintéticas e pools de QA. CPU por isolate, memória de pico, TLS, ingresso e desempenho alojado continuam por validar. O Bloco 12 permanece aberto, seguido de 12E–12I e teste S25 antes do Bloco 13.
+
+## Critério posterior ao 12D22
+
+Após a primeira conclusão máxima em 55316 ms na CI 39941063091, requireCompletion passa a true também para large-12. Uma nova execução que expire deixa de poder passar o critério de capacidade. O protocolo de medição original acima descreve os runs anteriores; os relatórios históricos de expiração não são reclassificados como conclusões. A espera de QA passa a iniciar recolha nos primeiros dois segundos do minuto, sem prolongar fontes nem alterar o timeout real. Continua a faltar a validação alojada e de janelas menos favoráveis.
