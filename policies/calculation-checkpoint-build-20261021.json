@@ -28,6 +28,6 @@
     "financial-engine.js": "e5835e18947bb3446999536bb9c3adb6b9fb49060841fcb2041fc2be65b5c89c",
     "kraken-rules.js": "b1feec61a15fa29fd1b62e74f86ebaa15666c61b64b6f7e030e467add76a4843",
     "journal-projection.js": "a25608350ee367d6f453626196088fe97c735f3db127a7cbcccce39b724484d2",
-    "package-lock.json": "11e0ae0277017ed2bc3798993c62712f166b9f8b305db37b76a2f88cf6f335c9"
+    "package-lock.json": "1652e48b42af02baff9174dd648e4e08fff45ac554f976f1772447edfbb70f95"
   }
 }

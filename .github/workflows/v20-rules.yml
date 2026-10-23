@@ -27,6 +27,8 @@ jobs:
           node --test scripts/test-account-executions.cjs
           node --test scripts/test-account-wallets.cjs
           node --test scripts/test-account-export.cjs
+          node --test scripts/test-account-session.cjs
+          node scripts/build-account-host.cjs
           node --test scripts/test-calculation-window.cjs
           node --test scripts/test-calculation-plan-review.cjs
           node --test scripts/test-profile-calculation-review.cjs
@@ -175,3 +177,16 @@ jobs:
         run: |
           docker rm -f btcsp-auth-qa || true
           rm -f "$RUNNER_TEMP/btcsp-auth-qa.env"
+
+  account-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Browser session, account review and financial confirmation
+        run: node --test scripts/test-account-browser.cjs

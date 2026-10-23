@@ -68,12 +68,21 @@ function navigate(area){capture();cancel();app.invalidate();activeArea=area;rend
 function openPlanner(action){capture();cancel();app.invalidate();activeArea='planner';if(action==='help'){stage='guide';topic=0;}else if(action==='review'&&review)stage='review';else stage=visited.size===6?'setup':'guide';render();}
 // Hosting supplies an already authenticated client only after its release checks.
 // No credentials, automatic sign-in, Demo upload or production enablement here.
-let accountWorkflow=null;
+let accountWorkflow=null,accountSession=null;
 function mountAccountPanel(element){
+ if(accountSession)return BTCAccountAccessViewV20.mount({element,controller:accountSession,mountAccount:node=>BTCAccountViewV20.mount({element:node,workflow:accountWorkflow,money})});
  if(!accountWorkflow){element.innerHTML='<section class="surface"><h3>Conta online</h3><p>A ligação à conta online está em preparação. Os dados Demo ficam neste navegador.</p></section>';return null;}
  return BTCAccountViewV20.mount({element,workflow:accountWorkflow,money});
 }
 globalThis.BTCV20AccountConnection=Object.freeze({
+ configureSession({supabase,supabaseURL}){
+  if(!globalThis.BTCAccountSessionV20||!globalThis.BTCAccountAccessViewV20)throw Error('ACCOUNT_HOST_BUNDLE_REQUIRED');
+  accountSession?.dispose();accountWorkflow?.clearSession();accountWorkflow=null;
+  accountSession=BTCAccountSessionV20.create({supabase,supabaseURL,connection:globalThis.BTCV20AccountConnection,newId:uuid});
+  if(activeArea==='account')app.render('account');
+  if(accountSession.state().enabled)accountSession.start().catch(()=>{});
+  return accountSession;
+ },
  attach(client){accountWorkflow?.clearSession();accountWorkflow=BTCAccountWorkflowV20.create({client,newId:uuid,tutorialCatalog:catalog,shouldPause:()=>document.hidden});if(activeArea==='account')app.render('account');},
  clearSession(){accountWorkflow?.clearSession();},
  detach(){accountWorkflow?.clearSession();accountWorkflow=null;if(activeArea==='account')app.render('account');}

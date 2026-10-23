@@ -69,3 +69,16 @@ O projeto BTC está ativo e saudável, sem branches de desenvolvimento. A inspe�
 - Teste visual e ponta a ponta no S25 após disponibilizar o acesso de teste.
 
 O entrypoint financeiro, registo público e política de abertura permanecem fechados. Nenhum recurso de produção ou do Racing Horse Manager foi alterado.
+
+
+## Sessão e verificação no navegador — 23/10/2026
+
+`account-session-v20.js` compõe o cliente HTTP com uma sessão fornecida pelo SDK do próprio projeto BTC. Verifica a identidade remota, email confirmado e sessão não anónima antes de montar o painel. Não inclui chaves ou SDK e não guarda credenciais. `scripts/build-account-host.cjs` produz o bundle separado que o alojamento pode carregar explicitamente; a Demo não o carrega e a política publicada continua fechada.
+
+A página Conta aceita esta composição por `configureSession({supabase,supabaseURL})`. O formulário de acesso permite entrada e logout global, e o evento de recuperação apresenta exclusivamente a alteração de password, seguida de logout. Isto trata um link já recebido: não implementa ainda registo, envio de recuperação, configuração SMTP nem bootstrap autenticado no alojamento.
+
+Renovação para o mesmo utilizador conserva o cliente, revisão e aceitação do painel financeiro. Troca de utilizador, logout e recuperação limpam o estado privado e invalidam respostas tardias. Uma falha tardia de uma verificação já substituída não pode desligar uma sessão mais recente. Os métodos Auth são executados fora do callback do SDK, para evitar bloqueios de sessão.
+
+Passaram 15 testes da composição de sessão. O novo teste Chromium percorre a página completa, o cliente real, a API HTTP e PGlite: entrada, diretório, seleção, comparação de depósito, confirmação explícita com um único evento, renovação preservando a revisão, logout com leitura pendente, troca de utilizador e alteração de password em recuperação. Usa identidades/Auth e preços sintéticos de QA; não é um ensaio de email real ou do alojamento. Verifica ausência de scroll horizontal em 280, 360, 393, 430 e 1280 px; a revisão em 393 px foi também inspecionada visualmente. Os campos de movimento e data usam a largura da linha para evitar truncar o seletor e a data no telemóvel.
+
+A suite de sessão e um job Chromium próprio passam a fazer parte da CI. A integração alojada, SMTP BTC, migração/restauro de produção, privacidade e QA no S25 continuam pendentes. O Bloco 12 permanece aberto.

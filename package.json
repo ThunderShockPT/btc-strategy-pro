@@ -2,7 +2,8 @@
   "devDependencies": {
     "@electric-sql/pglite": "0.5.10",
     "esbuild": "0.28.2",
-    "pg": "8.23.1"
+    "pg": "8.23.1",
+    "playwright": "1.62.1"
   },
   "name": "btc-strategy-pro",
   "private": true,
