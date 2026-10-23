@@ -21,7 +21,7 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
    if(enabled!==true)return reply(503,{code:'CLOUD_NOT_ENABLED'});
    const jobAction=url.pathname.startsWith('/api/v20/calculations/')?url.pathname.slice('/api/v20/calculations/'.length):null;
    const jobRoute=jobAction!==null&&Object.hasOwn(JOB_ROUTES,jobAction);
-   if(!jobRoute&&!['/api/v20/state','/api/v20/wallets','/api/v20/prepare','/api/v20/commit'].includes(url.pathname))return reply(404,{code:'API_ROUTE_NOT_FOUND'});
+   if(!jobRoute&&!['/api/v20/state','/api/v20/wallets','/api/v20/export','/api/v20/prepare','/api/v20/commit'].includes(url.pathname))return reply(404,{code:'API_ROUTE_NOT_FOUND'});
    if(request.method==='OPTIONS'){
     if(!origin)return reply(403,{code:'ORIGIN_NOT_ALLOWED'});
     headers['Access-Control-Allow-Methods']='POST, OPTIONS';headers['Access-Control-Allow-Headers']='Authorization, Content-Type';return reply(200,{});
@@ -30,12 +30,12 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
    if(!/^application\/json(?:\s*;\s*charset=utf-8)?$/i.test(request.headers.get('content-type')||''))return reply(415,{code:'JSON_REQUIRED'});
    if(typeof remoteAddress!=='string'||remoteAddress.length<1||remoteAddress.length>200)return reply(503,{code:'REQUEST_ADMISSION_UNAVAILABLE'});
    // Deployment adapter supplies a trusted remote address; never trust forwarded headers here.
-   if(await admit({remoteAddress,route:jobRoute?JOB_ROUTES[jobAction]:url.pathname==='/api/v20/wallets'?'/api/v20/state':url.pathname})!==true)return reply(429,{code:'RATE_LIMITED'});
+   if(await admit({remoteAddress,route:jobRoute?JOB_ROUTES[jobAction]:['/api/v20/wallets','/api/v20/export'].includes(url.pathname)?'/api/v20/state':url.pathname})!==true)return reply(429,{code:'RATE_LIMITED'});
    const bearer=request.headers.get('authorization')||'';if(!/^Bearer [A-Za-z0-9_.-]{1,12000}$/.test(bearer))return reply(401,{code:'SESSION_NOT_VALID'});const token=bearer.slice(7);
    const reader=request.body?.getReader();if(!reader)return reply(400,{code:'INVALID_API_REQUEST'});
    let count=0,parts=[];try{for(;;){const {done,value}=await reader.read();if(done)break;count+=value.byteLength;if(count>96000)return reply(413,{code:'REQUEST_TOO_LARGE'});parts.push(value);}}finally{await reader.cancel().catch(()=>{});}
    let body;try{body=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{return reply(400,{code:'INVALID_API_REQUEST'});}
-   const required=jobRoute?['projectId','scenarioKey',jobAction==='enqueue'?'request':'jobId']:['/api/v20/state','/api/v20/wallets'].includes(url.pathname)?['projectId','scenarioKey']:url.pathname==='/api/v20/prepare'?['projectId','scenarioKey','request']:['projectId','scenarioKey','request','confirmation'];
+   const required=jobRoute?['projectId','scenarioKey',jobAction==='enqueue'?'request':'jobId']:['/api/v20/state','/api/v20/wallets','/api/v20/export'].includes(url.pathname)?['projectId','scenarioKey']:url.pathname==='/api/v20/prepare'?['projectId','scenarioKey','request']:['projectId','scenarioKey','request','confirmation'];
    if(!body||Array.isArray(body)||required.some(k=>!Object.hasOwn(body,k))||Object.keys(body).some(k=>!required.includes(k)&&!(url.pathname==='/api/v20/wallets'&&k==='afterProjectId'))||!ID.test(body.projectId)||!['manual_long','demo_long'].includes(body.scenarioKey))return reply(400,{code:'INVALID_API_REQUEST'});
    if(jobRoute&&(jobAction==='enqueue'?(!body.request||Array.isArray(body.request)||Object.keys(body.request).some(k=>!['idempotencyKey','profileChange'].includes(k))||typeof body.request.idempotencyKey!=='string'||body.request.idempotencyKey.length<1||body.request.idempotencyKey.length>128):!ID.test(body.jobId)))return reply(400,{code:'INVALID_API_REQUEST'});
    // Owner is derived from a remotely validated identity, not from the JSON body.
@@ -51,7 +51,7 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
    }
    if(url.pathname==='/api/v20/wallets'){if(body.afterProjectId!==undefined&&!ID.test(body.afterProjectId))return reply(400,{code:'INVALID_WALLET_CURSOR'});return reply(200,{result:await Wallet.create(options).list(token,scope,{afterProjectId:body.afterProjectId??null})});}
    const api=body.request?.workflow==='wallet-create'?Wallet.create(options):Store.create(options);
-   const result=url.pathname==='/api/v20/state'?await api.snapshot(token,scope):url.pathname==='/api/v20/prepare'?await api.prepare(token,scope,body.request):await api.commit(token,scope,body.request,body.confirmation);
+   const result=url.pathname==='/api/v20/export'?await api.exportWallet(token,scope):url.pathname==='/api/v20/state'?await api.snapshot(token,scope):url.pathname==='/api/v20/prepare'?await api.prepare(token,scope,body.request):await api.commit(token,scope,body.request,body.confirmation);
    return reply(200,{result});
   }catch(error){if(error instanceof Window.WindowError){const d=error.details;if(d.retryAt)headers['Retry-After']=String(Math.max(1,Math.ceil((Date.parse(d.retryAt)-Date.parse(d.serverTime))/1000)));return reply(error.code==='CALCULATION_RULE_WINDOW_TOO_SHORT'?422:425,{code:error.code,...d});}const code=error.code||error.message;return reply(ERRORS[code]||503,{code:Object.hasOwn(ERRORS,code)?code:'API_UNAVAILABLE'});}
  };

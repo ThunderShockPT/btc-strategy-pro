@@ -48,6 +48,18 @@ A proposta apresenta o prazo efetivo guardado no SQL. Este metadado de apresenta
 
 A suite `scripts/test-account-wallets.cjs` cobre isolamento, paginação de 51 carteiras, cursor inválido, seleção, criação sem escrita prévia, capital sem BTC/margem inventados, tutorial, resposta perdida, recibo único, sessão revogada e prazo SQL expirado. A confirmação e os metadados do prazo mantêm os testes do contrato de carteira existentes.
 
+## Backup autenticado da carteira
+
+A rota `export` devolve uma fonte financeira completa e consistente, validada pelo contrato de persistência, com digest SHA-256, revisão, hash da origem e data do relógio SQL. Reutiliza autenticação remota, sessão SQL, lock de leitura e limite partilhado de leituras. Não consulta nem devolve tabelas Auth, passwords, tokens de sessão, configurações ou chaves de assinatura. O ficheiro inclui os factos, planos, recibos e notas que fazem parte da fonte desta carteira; pode conter informação privada e não é cifrado como o backup administrativo pg_dump.
+
+O botão faz download apenas após ação explícita e depois de resolver qualquer confirmação financeira incerta. Logout invalida respostas tardias antes do download. O contrato de restauro revalida digest, âmbito e invariantes financeiros, sem gravar nem ativar dados automaticamente. O digest deteta corrupção; não é autorização nem assinatura de servidor. Não existe endpoint público de restauro por este ficheiro. O backup administrativo cifrado e respetivo pg_dump/pg_restore continuam a ter um ensaio separado em PostgreSQL nativo de QA.
+
+Isto é portabilidade financeira por carteira, não uma exportação integral de todos os dados pessoais da conta. Preferências, pedidos de eliminação, retenção, termos de contas e restauro de produção continuam pendentes.
+
+## Inspeção do alojamento em 23/10/2026
+
+O projeto BTC está ativo e saudável, sem branches de desenvolvimento. A inspeção apenas de leitura encontrou `projects` e `project_snapshots` em public; o schema/tabelas V20 ainda não estão aplicados no alojamento. O único domínio de envio encontrado está associado ao Racing Horse Manager. Não foi reutilizado nem alterado. A passagem V19 → V20 e o SMTP próprio BTC são bloqueios concretos do fecho, além dos restantes critérios. Nenhum schema, conta ou recurso de produção foi alterado nesta inspeção.
+
 ## Ainda necessário
 
 - Composição alojada completa e admissão temporal comprovadas; ingresso, concorrência e pico de memória.

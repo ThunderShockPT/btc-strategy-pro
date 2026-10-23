@@ -6,7 +6,7 @@
   "files": {
     "backend/edge-runtime.cjs": "d00cae690dda3357e864636d012fa617a90c25df098cd8a8b07ab23d44d79a0f",
     "backend/calculation-window.cjs": "0d93f400b91d63b69b2a4e5a8c426dadf5da4c593cbdd22a35e646ff8aa81b8d",
-    "backend/http-api.cjs": "a8df0c5d6c90e893cb11c6d7d219a792b22fabf710a39173b5d4da982c67e583",
+    "backend/http-api.cjs": "24ded1ff1976de8af452993450d3f93582402291948528c658018fb7eb2545e7",
     "backend/request-admission.cjs": "d1691d02610a00f2e802f09d9c54620b59c74964303f79df1760e63f517d15eb",
     "backend/public-profile-context.cjs": "5c8de2d176ce6dca092c4e9aa108ab20b7c8550d59f231fbc8fb1a56404df7be",
     "backend/public-market.cjs": "fdd4f92f0630c7e1538e1eef276d91b8fa681ca4336a694e9ce8f100976bc252",
@@ -15,7 +15,7 @@
     "policies/public-liquidity-20261021.json": "27b714663839b6e8ab54ebb0a64c9fd327fc44bc6dad065878a5cacdb1a82417",
     "backend/calculation-checkpoints.cjs": "59764fa51255aa90de2e07ec882436f9e68170d4f27457fea2f4a874fa376682",
     "backend/calculation-jobs.cjs": "92bedad68d2854c2056b75f50a2e14da42d5ae3c7fe1081ec49cb66f1a253f3f",
-    "backend/atomic-store.cjs": "6533b2cb3f52cfd7c75caf3f2b45015f621ca4b748219fcd4753ba44c510adb6",
+    "backend/atomic-store.cjs": "91e2708e044acbe8d8c028586a8837716e4a1f7771c1b71cfbe6bb59949e011b",
     "backend/persistence-contract.cjs": "a01cb3e0b74b653ad34db8ae979542e516b4bf97782a6d8dca62d7e43528ceab",
     "cash-workflow.js": "ec7d258a120e195c862407ded856e280381781e5e1736a68d02df9c19d63a689",
     "execution-workflow.js": "b1dd49b0b014394dfef2843a87ed8d846775dedbe945c886c53526813b927702",

@@ -143,7 +143,8 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
    return result;
   });
  }
+ async function exportWallet(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s),envelope=P.stage(b.state,s),at=(await tx.query('select clock_timestamp() as exported_at')).rows[0].exported_at;return {format:'btcsp-wallet-export-v20.1',projectRef:'oftzqqjbwonngubihrsd',exportedAt:new Date(at).toISOString(),headHash:b.head.state_hash,revision:b.head.revision,envelope,includesAuthTables:false,automaticRestoreAllowed:false};});}
  async function snapshot(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);return {state:clone(b.state),headHash:b.head.state_hash,revision:b.head.revision};});}
- return Object.freeze({prepare,commit,snapshot});
+ return Object.freeze({prepare,commit,snapshot,exportWallet});
 }
 module.exports=Object.freeze({VERSION,initialize,initializeInTransaction,create,load,sourceHash});
