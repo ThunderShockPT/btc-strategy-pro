@@ -1,0 +1,11 @@
+# Bloco 12D22 — aplicação transacional de sufixos hipotéticos
+
+O motor reconstrói e valida integralmente a origem antes de preparar um journal em memória. Uma ação pode depois acrescentar eventos cronológicos e de revisão sequencial aos acumuladores Decimal exatos, usando a mesma lógica financeira do replay. Cada evento valida âmbito, origem, schema, identidade, idempotência, data, instrumento, lotes, margem inicial, referências, caixa e conservação. Correções, voids, reversões e abertura não são aceites como novos eventos de uma ação de mercado; o histórico original mantém a projeção completa de correções.
+
+Cada ação guarda os acumuladores exatos, mapas, conjuntos, contadores e trace anteriores. Uma falha do motor ou uma rejeição de equity/manutenção do simulador repõe a ação inteira. Isso inclui IDs, fees e períodos de funding, permitindo repetir corretamente depois do rollback. Os ledgers produzidos são imutáveis, e o contexto da avaliação é destacado. Não se lê o estado parcial por outra ação nem se reverte uma ação já confirmada.
+
+O simulador usa essa transação apenas dentro da chamada atual. Mudança de regras ou introdução de vínculos históricos invalida a base e exige replay. Uma retoma noutro pedido continua a reconstruir o histórico completo e a verificar a sessão/origem atuais. A função e os acumuladores não entram nos checkpoints ou na base de dados. Nada é acrescentado aos movimentos financeiros reais; não há migração, alteração de validade, maior lote de passos ou relaxamento dos critérios de perfil.
+
+Passaram 163 testes locais de motor, risco, retoma, ciclos e correções. Os novos casos comparam o ledger completo após cada evento com um replay integral, incluindo vendas parciais de base periódica, alocações entre ciclos, taxas, funding, reservas e trace. Cobrem rollback tardio após vários tipos de movimentos, repetição dos mesmos IDs, duplicação de fees/funding, âmbito inválido, data futura e origem já corrigida. Mantêm-se os hashes de resultados anteriores de planeamento e as regras de paragem cronológica/manutenção.
+
+A matriz Auth/SQL real será executada no commit desta entrega. Os resultados efetivos ficam na PR #34. Testes verdes por expiração segura não aprovam capacidade máxima. Continuam pendentes a carga máxima completa e a validação do fluxo no runtime alojado.

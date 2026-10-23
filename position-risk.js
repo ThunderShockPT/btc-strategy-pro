@@ -86,7 +86,7 @@
    const pool=resume.rulePool.map(r=>Rules.load(r));current.buyRulesByEvent={};
    for(const [id,index]of Object.entries(resume.buyRuleRefs)){need(Number.isInteger(index)&&index>=0&&index<pool.length,'INVALID_STRESS_RULE_REFERENCE');current.buyRulesByEvent[id]=pool[index];}
   }else current.buyRulesByEvent=JSON.parse(JSON.stringify(sourceBuyRules||{}));
-  let valuationBasis=Core.prepareValuations(current);
+  let valuationBasis=Core.prepareJournal(current);
   let state=ledgerSnapshot(current,valuationBasis.ledger,valuationBasis.effectiveEvents),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
   const history=resume?JSON.parse(JSON.stringify(resume.history)):[],hypotheticalIds=new Set(resume?resume.hypotheticalIds:[]),views=new WeakMap();
   function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
@@ -99,27 +99,31 @@
   function apply(events,index,{liquidation=false}={}){
    need(Array.isArray(events)&&events.length>0&&events.length<=50,'INVALID_ACTION_EVENTS');
    // The source journal was detached on entry. Actions append to a new array;
-   // existing facts are read-only and still fully replayed after every event.
+   // existing facts are read-only; each new event checks the exact ledger state.
    const {rules,buyRulesByEvent,events:journal,...mutable}=current;
    let candidate={...JSON.parse(JSON.stringify(mutable)),events:journal.slice(),rules,buyRulesByEvent:{...buyRulesByEvent}};
    const startRevision=candidate.events.reduce((v,e)=>BigInt(e.revision)>v?BigInt(e.revision):v,0n);
-   let evaluated;
-   for(let j=0;j<events.length;j++){
-    const e=events[j];need(e&&['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(e.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION');need(e&&e.effective_at===candidate.valuation.asOf&&typeof e.id==='string'&&!hypotheticalIds.has(e.id.toLowerCase()),'INVALID_HYPOTHETICAL_EVENT');
-    need(e.revision===(startRevision+BigInt(j)+1n).toString(),'NON_SEQUENTIAL_HYPOTHETICAL_REVISION');
-    if(liquidation)need(['trade_sell','fee','funding'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
-    candidate.events.push(e);
-    if(e.event_type==='trade_buy')candidate.buyRulesByEvent[e.id.toLowerCase()]=candidate.rules;
-    try{evaluated=snapshot(candidate);}catch(error){fail(error.code||'INVALID_ACTION',index,'action');return false;}
-    const equity=evaluated.margin.add(evaluated.q.mul(evaluated.mark)).sub(evaluated.basis);
-    if(e.event_type==='trade_buy'&&equity.lt(evaluated.im)){fail('INSUFFICIENT_INITIAL_EQUITY',index,'action');return false;}
-    if(e.event_type==='margin_remove'&&evaluated.q.gt(0)&&equity.lt(evaluated.im)){fail('INITIAL_EQUITY_REQUIRED_AFTER_WITHDRAWAL',index,'action');return false;}
-    if(!liquidation&&evaluated.q.gt(0)&&buffer(evaluated,evaluated.mark).lte(0)){risk(index,'after-event','event',evaluated,evaluated.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
-   }
-   // The final event already rebuilt this exact candidate; retain every post-action check.
-   const next=evaluated;
-   if(!liquidation&&next.q.gt(0)&&buffer(next,next.mark).lte(0)){risk(index,'after-action','event',state,next.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
-   current=candidate;state=next;valuationBasis=null;for(const e of events)hypotheticalIds.add(e.id.toLowerCase());return true;
+   let evaluated,accepted=false;
+   valuationBasis??=Core.prepareJournal(current);
+   const action=valuationBasis.beginAction(current.valuation);
+   try{
+    for(let j=0;j<events.length;j++){
+     const e=events[j];need(e&&['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(e.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION');need(e&&e.effective_at===candidate.valuation.asOf&&typeof e.id==='string'&&!hypotheticalIds.has(e.id.toLowerCase()),'INVALID_HYPOTHETICAL_EVENT');
+     need(e.revision===(startRevision+BigInt(j)+1n).toString(),'NON_SEQUENTIAL_HYPOTHETICAL_REVISION');
+     if(liquidation)need(['trade_sell','fee','funding'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
+     candidate.events.push(e);
+     if(e.event_type==='trade_buy')candidate.buyRulesByEvent[e.id.toLowerCase()]=candidate.rules;
+     try{evaluated=ledgerSnapshot(candidate,action.append(e));}catch(error){fail(error.code||'INVALID_ACTION',index,'action');return false;}
+     const equity=evaluated.margin.add(evaluated.q.mul(evaluated.mark)).sub(evaluated.basis);
+     if(e.event_type==='trade_buy'&&equity.lt(evaluated.im)){fail('INSUFFICIENT_INITIAL_EQUITY',index,'action');return false;}
+     if(e.event_type==='margin_remove'&&evaluated.q.gt(0)&&equity.lt(evaluated.im)){fail('INITIAL_EQUITY_REQUIRED_AFTER_WITHDRAWAL',index,'action');return false;}
+     if(!liquidation&&evaluated.q.gt(0)&&buffer(evaluated,evaluated.mark).lte(0)){risk(index,'after-event','event',evaluated,evaluated.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
+    }
+    // Retain every post-action check on the final exact candidate.
+    const next=evaluated;
+    if(!liquidation&&next.q.gt(0)&&buffer(next,next.mark).lte(0)){risk(index,'after-action','event',state,next.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
+    action.commit();accepted=true;current=candidate;state=next;for(const e of events)hypotheticalIds.add(e.id.toLowerCase());return true;
+   }finally{if(!accepted)action.rollback();}
   }
   if(!resume&&state.q.gt(0)&&buffer(state,state.mark).lte(0)){risk(-1,'initial','initial',state,state.mark);fail('MAINTENANCE_ALREADY_REACHED',-1,'initial');}
   let nextIndex=resume?resume.nextIndex:0,processed=0;
@@ -134,9 +138,10 @@
     need(step.rules.version!==current.rules.version||JSON.stringify(step.rules)===JSON.stringify(current.rules),'RULE_VERSION_REUSED');current.rules=Rules.load(step.rules);valuationBasis=null;
    }
    // Reprice exact validated accumulators only while facts/rules are unchanged.
-   // Every action, rule change and resumed request reconstructs the journal again.
+   // Rule changes and resumed requests reconstruct; actions verify each new fact
+   // against exact accumulators with transactional rollback.
    if(valuationBasis)state=ledgerSnapshot(current,valuationBasis.atValuation(current.valuation));
-   else{valuationBasis=Core.prepareValuations(current);state=ledgerSnapshot(current,valuationBasis.ledger);}
+   else{valuationBasis=Core.prepareJournal(current);state=ledgerSnapshot(current,valuationBasis.ledger);}
    const breached=crossed||(state.q.gt(0)&&buffer(state,price).lte(0));
    if(breached){
     risk(index,crossed?'before-actions':'rule-change',step.transition,crossed?prior:state,price);

@@ -55,6 +55,10 @@ As operações de controlo deixam de transportar repetidamente o envelope comple
 
 Cada string exata de data passa a ser validada uma vez por reconstrução, mantendo todas as verificações temporais por evento. Ações copiam o array interno do histórico já destacado, sem serializar novamente todos os factos; o replay integral e o rollback continuam após cada evento. Ver V20_BLOCO12D21_DATAS_E_JOURNAL.md e resultados da matriz na PR #34. A capacidade máxima continua por aprovar.
 
+### Ações transacionais em memória 12D22
+
+O motor valida o histórico inteiro à entrada e aplica novos eventos da mesma ação sobre acumuladores exatos, com verificações por evento e rollback integral de valores, mapas, IDs, custos e trace. Retomas e mudanças de regras continuam a exigir replay integral. Os ledgers são comparados com replay completo após cada evento; não há alteração de lotes, prazos ou escrita financeira real. Ver V20_BLOCO12D22_ACOES_TRANSACIONAIS.md e matriz efetiva na PR #34. A aprovação de capacidade depende da conclusão completa, não de um teste verde por expiração segura.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.

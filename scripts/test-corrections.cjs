@@ -154,3 +154,4 @@ test('projection preserves the pre-optimization correction output and detaches i
  assert.throws(()=>{result.events[0].facts.amountUSD='1';},TypeError);assert.throws(()=>{result.records[1].state.record.facts.quantityBTC='99';},TypeError);
  const invalid=f.input().events;invalid[0].facts.hidden=NaN;assert.throws(()=>J.project(invalid),/INVALID_JOURNAL_JSON/);
 });
+test('transactional hypothetical suffix preserves the full corrected source projection',async()=>{const i=await applied(opened()),p=Core.prepareJournal(i),valuation={...i.valuation,asOf:'2026-10-20T23:41:00Z'},n=i.events.length+1,e={...f.event(n,'capital_deposit',{amountUSD:'50',currency:'USD'}),effective_at:valuation.asOf,recorded_at:valuation.asOf},action=p.beginAction(valuation),actual=action.append(e);assert.deepEqual(actual,Core.reconstruct({...i,events:[...i.events,e],valuation}));assert.equal(actual.journal.correctionCount,1);action.commit();});
