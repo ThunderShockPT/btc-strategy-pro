@@ -35,6 +35,10 @@ Três testes isolados ligam os adaptadores públicos ao runtime HTTP, fila, pesq
 
 Resolvido o pedido público de ciclos sem mudança de perfil: reutiliza o perfil e piso do plano atual através do caminho validado de perfis, incluindo profundidade, reservas, sobrevivência estrita e validade original. A chave distingue recálculo de alteração explícita; repetições não criam novo trabalho nem renovam fontes. Testados o resultado completo, revisão/confirmação e novo recálculo de um plano já aprovado, sem alterar movimentos ou saldos. São ensaios isolados; não aprovam o fluxo alojado. Ver V20_BLOCO12D15_RECALCULO_PERFIL_ATUAL.md.
 
+### Ambiente descartável Auth/SQL 12D16
+
+Preparado o job real-auth-runtime com GoTrue oficial e PostgreSQL nativo em loopback da CI. Duas contas de QA entram por password; a suite percorre HTTP, fila, retoma, revisão/confirmação, assinatura inválida, isolamento e logout, com relógio real e sem recursos de produção. Fontes/regras continuam sintéticas; confirmação de email é automática apenas no laboratório. Não substitui medição no Edge alojado nem testes SMTP. Ver V20_BLOCO12D16_AUTH_SQL_ISOLADOS.md e resultado da CI no PR.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.

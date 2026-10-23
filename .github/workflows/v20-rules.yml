@@ -123,3 +123,43 @@ jobs:
           BTCSP_TEST_PG_URL: postgresql://postgres:btcsp_local_qa_only@127.0.0.1:5432/postgres
           BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
         run: node --test scripts/test-atomic-postgres.cjs
+
+  real-auth-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: btcsp_disposable_auth_qa
+        ports:
+          - 127.0.0.1:55432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      BTCSP_QA_AUTH_DB_URL: postgresql://postgres:btcsp_disposable_auth_qa@127.0.0.1:55432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: Prepare disposable loopback Auth database
+        run: node scripts/qa/auth-stack/bootstrap.cjs
+      - name: Start official Auth service in isolated CI
+        run: docker run -d --name btcsp-auth-qa --network host --env-file "$RUNNER_TEMP/btcsp-auth-qa.env" supabase/gotrue:v2.197.0
+      - name: Wait for real Auth migrations and health
+        run: node scripts/qa/auth-stack/wait.cjs
+      - name: Real password sessions and native SQL runtime lifecycle
+        run: node --test scripts/test-real-auth-runtime.cjs
+      - name: Sanitized Auth startup diagnostics
+        if: failure()
+        run: node scripts/qa/auth-stack/diagnose.cjs
+      - name: Dispose Auth service and temporary configuration
+        if: always()
+        run: |
+          docker rm -f btcsp-auth-qa || true
+          rm -f "$RUNNER_TEMP/btcsp-auth-qa.env"
