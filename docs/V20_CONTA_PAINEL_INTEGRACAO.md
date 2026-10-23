@@ -38,11 +38,21 @@ Uma comparação perdida conserva IDs, chave e datas. Editar dados invalida a pr
 
 Limites da primeira ligação visual: vendas distribuídas simultaneamente por vários ciclos/allocations, edição do ciclo/destino do PnL de uma execução existente e seleção de lotes arbitrários de correção ainda não têm formulário. O backend possui contratos mais abrangentes; não se enviam campos financeiros em JSON livre para contornar o formulário.
 
+## Diretório e criação de carteiras
+
+A rota autenticada `wallets` consulta apenas projetos V20 inicializados do próprio utilizador e do cenário selecionado. Devolve metadados mínimos, sem saldos, eventos ou dados de outras contas, em páginas de 50 por cursor UUID. Reutiliza o limite de leitura existente e valida a sessão SQL em cada transação. Não lê carteiras V19 como se fossem V20.
+
+O cliente permite selecionar uma carteira com descarte das revisões e estado anterior; a seleção exige nova leitura autenticada. Pedidos financeiros incertos bloqueiam a troca de carteira. A criação reutiliza `wallet-create`: só abre uma carteira sem posição, com capital declarado, perfil e reservas explícitos, seis temas do tutorial, compreensão de risco e versões de documentos Beta. Uma posição existente precisa de histórico próprio; não é importada nem substituída por um saldo. A confirmação guarda um recibo idempotente e a mesma carteira é recuperada se a resposta se perder.
+
+A proposta apresenta o prazo efetivo guardado no SQL. Este metadado de apresentação não faz parte do hash financeiro já existente e não autoriza prolongar fontes: a confirmação continua a usar o payload privado e os prazos SQL/regras/contexto. Os documentos mostrados são referências Demo/Beta, com ligações de leitura; ainda não são a revisão de privacidade e termos para contas online. A política de abertura continua fechada.
+
+A suite `scripts/test-account-wallets.cjs` cobre isolamento, paginação de 51 carteiras, cursor inválido, seleção, criação sem escrita prévia, capital sem BTC/margem inventados, tutorial, resposta perdida, recibo único, sessão revogada e prazo SQL expirado. A confirmação e os metadados do prazo mantêm os testes do contrato de carteira existentes.
+
 ## Ainda necessário
 
 - Composição alojada completa e admissão temporal comprovadas; ingresso, concorrência e pico de memória.
 - Login/recuperação e SMTP exclusivos BTC, com testes de email reais.
-- Compor o painel com login no alojamento e validar cálculos, movimentos, execuções e correções nesse ambiente; criação/listagem de carteiras e restantes formulários indicados acima.
+- Compor o painel com login no alojamento e validar cálculos, movimentos, execuções e correções nesse ambiente; restantes formulários indicados acima e importação/reconciliação de carteiras com posição aberta.
 - Privacidade, portabilidade, eliminação, restauro e migração/reconciliação V19.
 - Teste visual e ponta a ponta no S25 após disponibilizar o acesso de teste.
 

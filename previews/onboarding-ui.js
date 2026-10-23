@@ -74,7 +74,7 @@ function mountAccountPanel(element){
  return BTCAccountViewV20.mount({element,workflow:accountWorkflow,money});
 }
 globalThis.BTCV20AccountConnection=Object.freeze({
- attach(client){accountWorkflow?.clearSession();accountWorkflow=BTCAccountWorkflowV20.create({client,newId:uuid,shouldPause:()=>document.hidden});if(activeArea==='account')app.render('account');},
+ attach(client){accountWorkflow?.clearSession();accountWorkflow=BTCAccountWorkflowV20.create({client,newId:uuid,tutorialCatalog:catalog,shouldPause:()=>document.hidden});if(activeArea==='account')app.render('account');},
  clearSession(){accountWorkflow?.clearSession();},
  detach(){accountWorkflow?.clearSession();accountWorkflow=null;if(activeArea==='account')app.render('account');}
 });

@@ -44,7 +44,13 @@ function create({baseURL,apiPath='/api/v20',projectId,scenarioKey,getSession,fet
    throw e;
   }
  });}
- return Object.freeze({read,prepare,confirm,retry,clearSession,startCalculation:profileChange=>calculate('enqueue',profileChange),retryCalculationStart:()=>calculate('retry-enqueue'),calculationStatus:()=>calculate('status'),advanceCalculation:()=>calculate('advance'),calculationResult:()=>calculate('result'),cancelCalculation:()=>calculate('cancel'),state:()=>({status,hasPending:!!pending,hasReview:!!review,snapshot:snapshot?copy(snapshot):null,calculation:calculation?copy(calculation):null,hasUncertainCalculationStart:!!calculationRequest})});
+ async function listWallets(afterProjectId){return exclusive(async seq=>{const value=await call('wallets',afterProjectId?{afterProjectId}:{});ensure(seq);return copy(value);});}
+ async function selectWallet(nextProjectId,nextScenarioKey=scenarioKey){return exclusive(async seq=>{
+  if(pending||calculationRequest)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');
+  if(typeof nextProjectId!=='string'||!(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/).test(nextProjectId)||!['manual_long','demo_long'].includes(nextScenarioKey))throw Error('INVALID_WALLET_ID');
+  await session();ensure(seq);generation++;projectId=nextProjectId;scenarioKey=nextScenarioKey;review=snapshot=calculation=calculationRequest=null;status='wallet-selected';
+ });}
+ return Object.freeze({read,prepare,confirm,retry,clearSession,listWallets,selectWallet,startCalculation:profileChange=>calculate('enqueue',profileChange),retryCalculationStart:()=>calculate('retry-enqueue'),calculationStatus:()=>calculate('status'),advanceCalculation:()=>calculate('advance'),calculationResult:()=>calculate('result'),cancelCalculation:()=>calculate('cancel'),state:()=>({projectId,scenarioKey,status,hasPending:!!pending,hasReview:!!review,snapshot:snapshot?copy(snapshot):null,calculation:calculation?copy(calculation):null,hasUncertainCalculationStart:!!calculationRequest})});
 }
 return Object.freeze({create});
 });
