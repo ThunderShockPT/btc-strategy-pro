@@ -1,0 +1,17 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),{gzipSync,gunzipSync}=require('node:zlib'),{randomBytes,createHash}=require('node:crypto'),esbuild=require('esbuild');
+const privateDir=process.argv[2];if(!privateDir||!path.isAbsolute(privateDir))throw Error('ABSOLUTE_PRIVATE_DIRECTORY_REQUIRED');
+fs.mkdirSync(privateDir,{recursive:true,mode:0o700});
+fs.mkdirSync('build/hosted-qa',{recursive:true});
+if(!fs.existsSync('build/hosted-qa/cases.json'))fs.writeFileSync('build/hosted-qa/cases.json',gunzipSync(fs.readFileSync('docs/qa/V20_12D12_FIXTURES.json.gz')));
+if(!fs.existsSync('build/hosted-qa/fixture-manifest.json'))fs.copyFileSync('docs/qa/V20_12D12_FIXTURE_MANIFEST.json','build/hosted-qa/fixture-manifest.json');
+const token=randomBytes(32).toString('hex'),capHash=createHash('sha256').update(token).digest('hex'),runId=capHash.slice(0,12),expiresAt=new Date(Date.now()+15*60*1000).toISOString();
+fs.writeFileSync(path.join(privateDir,'token'),token,{mode:0o600});
+const compressed=gzipSync(fs.readFileSync('build/hosted-qa/cases.json'));
+fs.writeFileSync('build/hosted-qa/cases.json.gz',compressed);
+const config={capHash,runId,expiresAt},entry=`import {createRequire} from 'node:module';import {Buffer} from 'node:buffer';import {gunzipSync} from 'node:zlib';import pg from 'pg';import Handler from '../../scripts/qa/hosted-runtime-handler.cjs';const require=createRequire(import.meta.url);globalThis.Buffer??=Buffer;const driverProbe=new pg.Pool({max:1});await driverProbe.end();const cases=JSON.parse(gunzipSync(Buffer.from(${JSON.stringify(compressed.toString('base64'))},'base64')).toString('utf8'));const handler=Handler.create({...${JSON.stringify(config)},cases,Pool:pg.Pool,getEnv:k=>Deno.env.get(k),log:v=>console.log(JSON.stringify({kind:'BTCSP_QA_RESULT',...v}))});Deno.serve(handler);`;
+fs.writeFileSync('build/hosted-qa/entry.mjs',entry);
+esbuild.buildSync({entryPoints:['build/hosted-qa/entry.mjs'],outfile:'build/hosted-qa/index.mjs',bundle:true,platform:'node',format:'esm',target:'es2022',minify:true,external:['pg-native','cloudflare:sockets'],banner:{js:'import {createRequire as btcCreateRequire} from "node:module";const require=btcCreateRequire(import.meta.url);import {Buffer as BTCBuffer} from "node:buffer";globalThis.Buffer??=BTCBuffer;import BTCProcess from "node:process";globalThis.process??=BTCProcess;globalThis.global??=globalThis;'},legalComments:'none'});
+fs.writeFileSync('build/hosted-qa/deno.json',JSON.stringify({nodeModulesDir:'auto'}));
+fs.writeFileSync(path.join(privateDir,'run.json'),JSON.stringify({...config,capHash:undefined,privateDir,bundleSHA256:createHash('sha256').update(fs.readFileSync('build/hosted-qa/index.mjs')).digest('hex')},null,2));
+console.log(JSON.stringify({runId,expiresAt,bundleBytes:fs.statSync('build/hosted-qa/index.mjs').size,fixtureCompressedBytes:compressed.length}));

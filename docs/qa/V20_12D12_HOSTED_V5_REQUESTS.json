@@ -1,0 +1,311 @@
+{
+  "kind": "hosted-synthetic-fixed-clock-runtime-diagnostic",
+  "startedAt": "2026-10-23T04:32:20.710Z",
+  "recordedAt": "2026-10-23T04:32:34.072Z",
+  "runId": "ec3dd876d046",
+  "bundleSHA256": "4240f57e8bbdce94ab610f6252ebe66274d9701d69dd0a1507e4e46436d6f21b",
+  "sourceCommit": "91bf7f8aa050a608ba4e582918627b2757580034",
+  "results": [
+    {
+      "operation": "small-start",
+      "authorized": false,
+      "httpStatus": 401,
+      "clientWallMs": 4525.379536,
+      "requestId": "01a16708-12eb-775b-a00b-f012f86e66cf",
+      "body": {
+        "code": "QA_CAPABILITY_REQUIRED"
+      }
+    },
+    {
+      "operation": "small-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 340.9322520000005,
+      "requestId": "01a16708-14a1-710d-8b7f-eda2ae561073",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "small-start",
+        "recordedAt": "2026-10-23T04:32:25.554Z",
+        "totalWallMs": 20.844302,
+        "result": {
+          "operationWallMs": 20.086127000000005,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "small-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 364.10579099999995,
+      "requestId": "01a16708-15f5-7aab-96d9-2ebc631e8d20",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "small-advance",
+        "recordedAt": "2026-10-23T04:32:25.918Z",
+        "totalWallMs": 46.53676899999999,
+        "result": {
+          "operationWallMs": 45.37077500000001,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "small-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 277.1575219999995,
+      "requestId": "01a16708-1765-731c-a8a4-20484d76d17a",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "small-result",
+        "recordedAt": "2026-10-23T04:32:26.194Z",
+        "totalWallMs": 6.887807000000009,
+        "result": {
+          "operationWallMs": 5.52560299999999,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1090.0097559999995,
+      "requestId": "01a16708-187a-740e-bdca-59ba85364f7c",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "medium-start",
+        "recordedAt": "2026-10-23T04:32:27.283Z",
+        "totalWallMs": 798.476283,
+        "result": {
+          "operationWallMs": 791.9684629999999,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1105.474322,
+      "requestId": "01a16708-1cbd-729b-ace1-9442633c2262",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "medium-advance",
+        "recordedAt": "2026-10-23T04:32:28.389Z",
+        "totalWallMs": 849.2826520000001,
+        "result": {
+          "operationWallMs": 836.15679,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 412.6814519999998,
+      "requestId": "01a16708-210f-7146-8f39-070d36faebc5",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "medium-result",
+        "recordedAt": "2026-10-23T04:32:28.695Z",
+        "totalWallMs": 48.839721,
+        "result": {
+          "operationWallMs": 37.154088,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1808.3544120000006,
+      "requestId": "01a16708-22ac-7790-84cb-6762c6d4a519",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "large-start",
+        "recordedAt": "2026-10-23T04:32:30.612Z",
+        "totalWallMs": 1536.087542,
+        "result": {
+          "operationWallMs": 1512.6184269999999,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1678.4311099999995,
+      "requestId": "01a16708-29c0-7b6c-a148-046213ffacd7",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "large-advance",
+        "recordedAt": "2026-10-23T04:32:32.295Z",
+        "totalWallMs": 1411.5617309999998,
+        "result": {
+          "operationWallMs": 1361.5584430000001,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 357.6931059999988,
+      "requestId": "01a16708-304a-7ea1-863a-4c19a514389b",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "large-result",
+        "recordedAt": "2026-10-23T04:32:32.651Z",
+        "totalWallMs": 115.66281600000002,
+        "result": {
+          "operationWallMs": 77.489497,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "public-3s",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 408.5715220000002,
+      "requestId": "01a16708-31b3-7e14-bc4b-0bad03fe6ec6",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "public-3s",
+        "recordedAt": "2026-10-23T04:32:33.060Z",
+        "totalWallMs": 164.59688300000002,
+        "result": {
+          "timeoutMs": 3000,
+          "totalWallMs": 164.43395399999997,
+          "sources": [
+            {
+              "source": "mark-ticker",
+              "ok": true,
+              "observedAt": "2026-10-23T04:32:32.967Z"
+            },
+            {
+              "source": "book-and-closed-mark-candles",
+              "ok": true,
+              "bookObservedAt": "2026-10-23T04:32:32.966Z",
+              "historyObservedThrough": "2026-10-23T04:32:00.000Z",
+              "candles": 64
+            }
+          ]
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "sql-read-only",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 250.64548100000138,
+      "requestId": "01a16708-334a-756c-8275-03785dcf2b3e",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "sql-read-only",
+        "recordedAt": "2026-10-23T04:32:33.312Z",
+        "totalWallMs": 0.5509180000000242,
+        "result": {
+          "status": "failed",
+          "code": "BTC_DATABASE_CONFIGURATION_REQUIRED"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "invalid-auth",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 733.7553390000012,
+      "requestId": "01a16708-3444-7b89-b444-229aae83c084",
+      "body": {
+        "runId": "ec3dd876d046",
+        "operation": "invalid-auth",
+        "recordedAt": "2026-10-23T04:32:34.044Z",
+        "totalWallMs": 496.2115289999999,
+        "result": {
+          "status": "unexpected-status",
+          "httpStatus": 403,
+          "authWallMs": 496.098842,
+          "validUserTested": false
+        },
+        "financialCloudEnabled": false
+      }
+    }
+  ],
+  "excludes": [
+    "financial-write-approval",
+    "valid-account-session-flow",
+    "end-to-end-job-deadline-approval"
+  ]
+}

@@ -53,6 +53,7 @@ jobs:
           node --test scripts/test-runtime-calculations.cjs
           node scripts/build-edge-runtime.cjs
           node --test scripts/test-edge-bundle.cjs
+          node --test scripts/test-hosted-runtime-qa.cjs
           node --check backend/backup-envelope.cjs
           node --test scripts/test-backup-envelope.cjs
           node --check backend/supabase-auth.cjs

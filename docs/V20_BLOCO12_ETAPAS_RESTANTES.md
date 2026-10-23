@@ -1,6 +1,6 @@
 # V20 — etapas restantes do Bloco 12
 
-Atualizado em 22/10/2026, após 12D11. As seis etapas abaixo organizam o trabalho ainda necessário; não são seis etapas já concluídas. Subdivisões técnicas não alteram os critérios de aceitação.
+Atualizado em 22/10/2026, após 12D12. As seis etapas abaixo organizam o trabalho ainda necessário; não são seis etapas já concluídas. Subdivisões técnicas não alteram os critérios de aceitação.
 
 | Etapa | Entrega | Critério para concluir |
 | --- | --- | --- |
@@ -19,9 +19,13 @@ Atualizado em 22/10/2026, após 12D11. As seis etapas abaixo organizam o trabalh
 
 12D10 elimina a reconstrução repetida para obter o ledger e a projeção efetiva: 617 testes V20, 386 verificações Beta e 23 PostgreSQL passaram na CI do commit e812a5692938004d528564433998590f5c10ae29. 12D11 agrupa até dois passos em pedidos de menor carga e conserva um passo para bases acima de 1000 eventos ou pesquisas acima de 1500000 bytes. Na amostra isolada de 1000 movimentos e 12 ciclos, os avanços desceram de 203 para 104 e o tempo local somado de 33.16 para 24.07 segundos, com resultado completo igual e input intacto. O prazo não aumentou e pode ser inferior a 60 segundos conforme a validade mais curta das fontes. Os relatórios próprios distinguem os testes locais da CI. Estas otimizações não concluem a etapa nem aprovam o alojamento.
 
+### Ensaio alojado 12D12
+
+O diagnóstico reproduzível passou nove unidades sintéticas no alojamento, com resultados completos iguais e histórico intacto; máximo CPU observado 1533 ms. Quatro recolhas públicas passaram no timeout normal de 3 s. Uma consulta SQL read only passou com TLS verificado após corrigir o bootstrap dos globais Node no bundle QA. A função temporária foi encerrada na versão 10. São amostras isoladas, não o fluxo completo com sessão real, fila e concorrência. Foi confirmada uma janela de apenas 2817 ms de validade perto do fecho de minuto: a admissão temporal continua um bloqueio, sem prolongar validade. Ver relatório V20_BLOCO12D12_ENSAIO_ALOJADO.md e SUMMARY JSON.
+
 Antes de concluir 12D, faltam:
 
-1. Resolver e medir a latência observada no prazo normal. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
+1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
 2. Ligar os providers validados ao entrypoint e ensaiar o pacote no runtime alojado, mantendo os gates fechados enquanto houver critérios por cumprir. A composição dos serviços e os fluxos retomáveis de ciclos/perfis já estão implementados e testados em QA.
 3. Corrigir a unidade de cenário ainda indivisível: o ensaio 12D8 mediu até 3,88 s CPU local com 5000 movimentos e um ciclo. A retoma por passo já está implementada e preserva os resultados; falta reduzir os custos que persistem por passo, repetir as cargas até ao limite de ciclos e validar retenção/concorrência SQL e prazos no alojamento. Não relaxar as condições financeiras nem descartar histórico.
 4. Medir separadamente CPU, Auth, SQL e tempo total no ambiente efetivo; validar endereço de ingresso, admissão e configuração. Uma chamada Auth por pedido foi demonstrada em QA; rede, TLS e latências de produção ainda não foram validados.
