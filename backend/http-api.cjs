@@ -1,4 +1,5 @@
 'use strict';
+const Window=require('./calculation-window.cjs');
 const {randomUUID}=require('node:crypto'),Store=require('./atomic-store.cjs'),Wallet=require('./wallet-store.cjs');
 const ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const JOB_ROUTES=Object.freeze({enqueue:"/api/v20/prepare",advance:"/api/v20/calculations/advance",status:"/api/v20/state",result:"/api/v20/state",cancel:"/api/v20/commit"});
@@ -51,7 +52,7 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
    const api=body.request?.workflow==='wallet-create'?Wallet.create(options):Store.create(options);
    const result=url.pathname==='/api/v20/state'?await api.snapshot(token,scope):url.pathname==='/api/v20/prepare'?await api.prepare(token,scope,body.request):await api.commit(token,scope,body.request,body.confirmation);
    return reply(200,{result});
-  }catch(error){const code=error.code||error.message;return reply(ERRORS[code]||503,{code:Object.hasOwn(ERRORS,code)?code:'API_UNAVAILABLE'});}
+  }catch(error){if(error instanceof Window.WindowError){const d=error.details;if(d.retryAt)headers['Retry-After']=String(Math.max(1,Math.ceil((Date.parse(d.retryAt)-Date.parse(d.serverTime))/1000)));return reply(error.code==='CALCULATION_RULE_WINDOW_TOO_SHORT'?422:425,{code:error.code,...d});}const code=error.code||error.message;return reply(ERRORS[code]||503,{code:Object.hasOwn(ERRORS,code)?code:'API_UNAVAILABLE'});}
  };
 }
 module.exports=Object.freeze({create});

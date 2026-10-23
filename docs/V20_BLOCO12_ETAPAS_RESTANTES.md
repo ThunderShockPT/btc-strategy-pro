@@ -23,6 +23,10 @@ Atualizado em 22/10/2026, após 12D12. As seis etapas abaixo organizam o trabalh
 
 O diagnóstico reproduzível passou nove unidades sintéticas no alojamento, com resultados completos iguais e histórico intacto; máximo CPU observado 1533 ms. Quatro recolhas públicas passaram no timeout normal de 3 s. Uma consulta SQL read only passou com TLS verificado após corrigir o bootstrap dos globais Node no bundle QA. A função temporária foi encerrada na versão 10. São amostras isoladas, não o fluxo completo com sessão real, fila e concorrência. Foi confirmada uma janela de apenas 2817 ms de validade perto do fecho de minuto: a admissão temporal continua um bloqueio, sem prolongar validade. Ver relatório V20_BLOCO12D12_ENSAIO_ALOJADO.md e SUMMARY JSON.
 
+### Admissão temporal 12D13
+
+Implementada admissão mínima provisória de 45 segundos para cálculos manuais com mark público, antes de preparar e assinar. A API devolve 425 com indicação de recolha futura quando o histórico deixa pouco tempo, sem inserir trabalho; regras perto de expirar exigem revisão com 422. Não prolonga validade nem implementa espera automática. Fixtures antigas passam a ser recusadas pelo gerador QA. Ver V20_BLOCO12D13_ADMISSAO_TEMPORAL.md. Falta comprovar o fluxo alojado completo dentro da janela; 12D permanece aberto.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
