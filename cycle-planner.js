@@ -130,9 +130,8 @@
     if(active){
      need(active.simulation.baseEventCount===input.events.length,'INVALID_SCENARIO_EVENT_BASIS');
      const restored=clone(active.simulation);restored.current.events=[...input.events,...restored.current.events];
-     progress={continuation:restored,result:null};
-    }else progress=Risk.beginSimulation(input,{steps});
-    if(progress.continuation)progress=Risk.advanceSimulation(progress.continuation,{maxSteps:maxPathSteps});
+     progress=Risk.advanceSimulation(restored,{maxSteps:maxPathSteps});
+    }else progress=Risk.startSimulation(input,{steps},{maxSteps:maxPathSteps});
     if(progress.continuation){
      const saved=progress.continuation;need(saved.current.events.length>=input.events.length,'INVALID_SCENARIO_EVENT_BASIS');
      const compact={...saved,baseEventCount:input.events.length,current:{...saved.current,events:saved.current.events.slice(input.events.length)}};

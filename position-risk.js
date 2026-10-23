@@ -165,10 +165,16 @@
  }
  function simulate(input,path){return runSimulation(input,path).result;}
  function beginSimulation(input,path){return runSimulation(input,path,null,0);}
+ // Start and consume the first bounded unit in one validated reconstruction.
+ // Nothing is cached across requests; persisted continuations still rebuild fully.
+ function startSimulation(input,path,{maxSteps=1}={}){
+  need(Number.isSafeInteger(maxSteps)&&maxSteps>=1&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
+  return runSimulation(input,path,null,maxSteps);
+ }
  function advanceSimulation(saved,{maxSteps=1}={}){
   need(saved?.version==='v20-risk-path-12d9.1'&&Number.isInteger(saved.nextIndex)&&saved.nextIndex>=0&&saved.nextIndex<=saved.steps?.length&&Number.isFinite(saved.previousTime)&&Array.isArray(saved.history)&&Array.isArray(saved.hypotheticalIds)&&saved.stopped===false,'INVALID_STRESS_CONTINUATION');
   need(Number.isSafeInteger(maxSteps)&&maxSteps>=1&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
   return runSimulation(saved.current,{steps:saved.steps},JSON.parse(JSON.stringify(saved)),maxSteps);
  }
- return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,beginSimulation,advanceSimulation,requiredMarginForFloor});
+ return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,beginSimulation,startSimulation,advanceSimulation,requiredMarginForFloor});
 });
