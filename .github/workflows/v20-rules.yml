@@ -52,6 +52,7 @@ jobs:
           node --check backend/request-admission.cjs
           node --test scripts/test-edge-runtime.cjs
           node --test scripts/test-runtime-calculations.cjs
+          node --test scripts/test-public-runtime-flow.cjs
           node scripts/build-edge-runtime.cjs
           node --test scripts/test-edge-bundle.cjs
           node --test scripts/test-hosted-runtime-qa.cjs

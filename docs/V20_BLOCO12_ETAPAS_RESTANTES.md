@@ -27,6 +27,10 @@ O diagnóstico reproduzível passou nove unidades sintéticas no alojamento, com
 
 Implementada admissão mínima provisória de 45 segundos para cálculos manuais com mark público, antes de preparar e assinar. A API devolve 425 com indicação de recolha futura quando o histórico deixa pouco tempo, sem inserir trabalho; regras perto de expirar exigem revisão com 422. Não prolonga validade nem implementa espera automática. Fixtures antigas passam a ser recusadas pelo gerador QA. Ver V20_BLOCO12D13_ADMISSAO_TEMPORAL.md. Falta comprovar o fluxo alojado completo dentro da janela; 12D permanece aberto.
 
+### Fluxo integrado 12D14
+
+Três testes isolados ligam os adaptadores públicos ao runtime HTTP, fila, pesquisa dos três perfis, retoma entre workers, revisão e confirmação. Cobrem rejeição perto do minuto, recolha de histórico novo, resultados iguais ao cálculo direto, validade original, isolamento, revogação de sessão e confirmação tardia recusada, com posição manual já existente. Corrigida a propagação do relógio de servidor para Auth/checkpoints. Fontes, identidade e relógio SQL são sintéticos em PGlite: isto não substitui o ensaio alojado com sessão real nem comprova capacidade. Ver V20_BLOCO12D14_FLUXO_PUBLICO_INTEGRADO.md.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.

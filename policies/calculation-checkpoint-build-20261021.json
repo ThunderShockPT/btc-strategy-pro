@@ -4,6 +4,7 @@
     "decimal.js": "10.6.0"
   },
   "files": {
+    "backend/edge-runtime.cjs": "d00cae690dda3357e864636d012fa617a90c25df098cd8a8b07ab23d44d79a0f",
     "backend/calculation-window.cjs": "0d93f400b91d63b69b2a4e5a8c426dadf5da4c593cbdd22a35e646ff8aa81b8d",
     "backend/http-api.cjs": "a7249d4acf40719389c311fb8f6775aaec862a5c777131432793be871d3ad6cd",
     "backend/request-admission.cjs": "d1691d02610a00f2e802f09d9c54620b59c74964303f79df1760e63f517d15eb",
