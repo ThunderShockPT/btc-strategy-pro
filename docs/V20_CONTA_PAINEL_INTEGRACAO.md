@@ -28,11 +28,21 @@ Editar qualquer campo invalida a revisão. Um commit incerto bloqueia outro movi
 
 A suite `scripts/test-account-movements.cjs` cobre os quatro tipos, caixa/margem/BTC, validações, edição, respostas perdidas, recibo único, logout, conflitos e datas posteriores ao contexto. `backend/http-api.cjs` passa a expor três erros de domínio já existentes como 422/409, mantendo erros internos ocultos; o manifesto de checkpoints foi regenerado, invalidando checkpoints de builds anteriores. Não houve alteração de regras financeiras, prazos, schema ou política de abertura.
 
+## Execuções e correções na conta
+
+O painel permite declarar compras e vendas por ciclo, completas ou parciais, com quantidade realmente executada, preço, comissão efetiva e data. O remanescente de uma ordem parcial não é convertido em exposição. Nas vendas, o destino do PnL é explícito: caixa ou margem isolada. A revisão apresenta os saldos e BTC antes/depois, PnL realizado, comissões, nominal, ciclo e data, sempre provenientes do motor do servidor. Ordens pendentes não são registos de execução.
+
+O histórico auditável tem páginas de 50 registos originais. Mostra valores originais/atuais, versões e motivos das alterações. Permite corrigir quantidades/preços/datas ou montantes de fees/funding, anular, restaurar e reverter a última correção. As correções acrescentam eventos e preservam os originais. A inclusão de comissões associadas numa anulação/restauração é explícita e cria um lote atómico. Limpeza ou reposição de vínculos ao plano exige aceitação separada, além da confirmação do registo. O motor bloqueia alterações incompatíveis com a restante história.
+
+Uma comparação perdida conserva IDs, chave e datas. Editar dados invalida a proposta; conta alterada ou logout limpam formulário e histórico. Um registo confirmado invalida a apresentação do cálculo anterior e pede revisão do plano. A suite `scripts/test-account-executions.cjs` verifica compra+fee atómicas, venda parcial/PnL, oversale bloqueada, edição, validações, correções/versões/vínculos, comissões associadas, resposta perdida, logout, conflito e contexto temporal. São testes HTTP/PGlite isolados; ainda não são QA visual em browser, SMTP ou fluxo alojado completo.
+
+Limites da primeira ligação visual: vendas distribuídas simultaneamente por vários ciclos/allocations, edição do ciclo/destino do PnL de uma execução existente e seleção de lotes arbitrários de correção ainda não têm formulário. O backend possui contratos mais abrangentes; não se enviam campos financeiros em JSON livre para contornar o formulário.
+
 ## Ainda necessário
 
 - Composição alojada completa e admissão temporal comprovadas; ingresso, concorrência e pico de memória.
 - Login/recuperação e SMTP exclusivos BTC, com testes de email reais.
-- Compor o painel com login no alojamento e validar os movimentos nesse ambiente; ligar execuções/correções e criação/listagem de carteiras.
+- Compor o painel com login no alojamento e validar cálculos, movimentos, execuções e correções nesse ambiente; criação/listagem de carteiras e restantes formulários indicados acima.
 - Privacidade, portabilidade, eliminação, restauro e migração/reconciliação V19.
 - Teste visual e ponta a ponta no S25 após disponibilizar o acesso de teste.
 
