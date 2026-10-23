@@ -24,3 +24,8 @@ test('default public admission rejects a short history window and accepts newly 
  if(fresh)assert.equal((await start()).payload.expiresAt,'2026-10-21T19:31:00.000Z');else await assert.rejects(start(),e=>e.code==='CALCULATION_WINDOW_TOO_SHORT'&&e.details.reason==='WAIT_FOR_CLOSED_HISTORY');assert.deepEqual(state,before);
  }
 });
+test('public recalculation derives the current profile with a preserved floor and requires its trusted observations',async()=>{
+ for(const profile of ['safe','balanced','risky']){const x=fixture(),state={input:f.input(),plan:{...f.plan(),profile}},original=copy(state),service=CP.create({enabled:true,minimumPublicWindowMs:20000,key:Buffer.alloc(32,8),loadSnapshot:async()=>({headHash:'a'.repeat(64),state}),contextProvider:x.pair.contextProvider,profileContextProvider:x.pair.planContextProvider,policyProvider:async()=>{throw Error('LEGACY_POLICY_NOT_ALLOWED');},now:x.options.now}),e=await service.start('test',s);assert.equal(e.payload.profileContext.selection,'current-profile');assert.equal(e.payload.profileContext.request.profile,profile);assert.equal(e.payload.profileContext.request.floorMode,'preserve');assert.equal(e.payload.profileContext.request.marginAdmission,'strict');assert.equal(e.payload.search.plan.protectionFloorUSD,state.plan.protectionFloorUSD);assert.equal(e.payload.expiresAt,'2026-10-21T19:31:00.000Z');assert.deepEqual(state,original);
+ const missing=CP.create({enabled:true,key:Buffer.alloc(32,8),loadSnapshot:async()=>({headHash:'a'.repeat(64),state}),contextProvider:x.pair.contextProvider,policyProvider:async()=>f.policy(),now:x.options.now});await assert.rejects(missing.start('test',s),/PROFILE_CONTEXT_REQUIRED/);
+ }
+});

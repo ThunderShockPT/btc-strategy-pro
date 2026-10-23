@@ -31,6 +31,10 @@ Implementada admissão mínima provisória de 45 segundos para cálculos manuais
 
 Três testes isolados ligam os adaptadores públicos ao runtime HTTP, fila, pesquisa dos três perfis, retoma entre workers, revisão e confirmação. Cobrem rejeição perto do minuto, recolha de histórico novo, resultados iguais ao cálculo direto, validade original, isolamento, revogação de sessão e confirmação tardia recusada, com posição manual já existente. Corrigida a propagação do relógio de servidor para Auth/checkpoints. Fontes, identidade e relógio SQL são sintéticos em PGlite: isto não substitui o ensaio alojado com sessão real nem comprova capacidade. Ver V20_BLOCO12D14_FLUXO_PUBLICO_INTEGRADO.md.
 
+### Recálculo do perfil atual 12D15
+
+Resolvido o pedido público de ciclos sem mudança de perfil: reutiliza o perfil e piso do plano atual através do caminho validado de perfis, incluindo profundidade, reservas, sobrevivência estrita e validade original. A chave distingue recálculo de alteração explícita; repetições não criam novo trabalho nem renovam fontes. Testados o resultado completo, revisão/confirmação e novo recálculo de um plano já aprovado, sem alterar movimentos ou saldos. São ensaios isolados; não aprovam o fluxo alojado. Ver V20_BLOCO12D15_RECALCULO_PERFIL_ATUAL.md.
+
 Antes de concluir 12D, faltam:
 
 1. Consolidar a validação das fontes e resolver a admissão temporal: o prazo normal passou em quatro amostras alojadas, mas a validade do histórico pode deixar poucos segundos para calcular. A política de liquidez ao melhor ask está aprovada; mapeamento de unidades, coerência temporal, contexto para os perfis e prazos de validade estão implementados e testados, sem ativação na produção.
