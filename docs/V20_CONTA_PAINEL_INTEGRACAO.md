@@ -20,11 +20,19 @@ A suite do painel usa o cliente real, API HTTP, fila/checkpoints e migrações e
 
 A CI anterior, do commit 79d2c26b2942899ccc4324fa3bc44ec50409962d, terminou com sucesso: execução 39957594653. A nova entrega acrescenta a suite do painel ao workflow obrigatório.
 
+## Movimentos da conta
+
+O painel inclui registo de capital adicionado/retirado e de margem adicionada/retirada. Exige montante, data de ocorrência, declaração de que o movimento já aconteceu e uma segunda aceitação da comparação do servidor. Mostra capital, caixa, caixa livre, margem e liquidação antes/depois, além de avisos específicos do motor. Não executa transferências nem aplica novos ciclos automaticamente.
+
+Editar qualquer campo invalida a revisão. Um commit incerto bloqueia outro movimento até recuperar o recibo. Uma resposta de comparação perdida pode repetir o mesmo pedido, conservando IDs, chave e datas originais. Dados de mercado anteriores ao registo originam 422; datas nunca são alteradas para caber numa cotação. Histórico alterado noutro dispositivo origina conflito 409 e exige atualização. Após registo, limpa o formulário e invalida a apresentação do cálculo anterior; o servidor exige nova revisão do plano.
+
+A suite `scripts/test-account-movements.cjs` cobre os quatro tipos, caixa/margem/BTC, validações, edição, respostas perdidas, recibo único, logout, conflitos e datas posteriores ao contexto. `backend/http-api.cjs` passa a expor três erros de domínio já existentes como 422/409, mantendo erros internos ocultos; o manifesto de checkpoints foi regenerado, invalidando checkpoints de builds anteriores. Não houve alteração de regras financeiras, prazos, schema ou política de abertura.
+
 ## Ainda necessário
 
 - Composição alojada completa e admissão temporal comprovadas; ingresso, concorrência e pico de memória.
 - Login/recuperação e SMTP exclusivos BTC, com testes de email reais.
-- Ligação dos fluxos de movimentos, execuções e correções da conta; criação e listagem de carteiras.
+- Compor o painel com login no alojamento e validar os movimentos nesse ambiente; ligar execuções/correções e criação/listagem de carteiras.
 - Privacidade, portabilidade, eliminação, restauro e migração/reconciliação V19.
 - Teste visual e ponta a ponta no S25 após disponibilizar o acesso de teste.
 
