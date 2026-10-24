@@ -1,0 +1,398 @@
+{
+  "kind": "hosted-synthetic-selected-units-12d23",
+  "recordedAt": "2026-10-23T11:57:13.016Z",
+  "sourceCommit": "3f0879c8dba45ff6cdc0ef5d4c028949569f2a21",
+  "engineBuild": "94733b970daa69d6f240037c58d44f0df23884bf43a5547afb396724ce0c05ba",
+  "function": "btcsp-v20-runtime-qa",
+  "failedVersion": 11,
+  "measuredVersion": 13,
+  "retiredVersion": 14,
+  "calculationSamples": 16,
+  "allHashesMatched": true,
+  "allInputsUnchanged": true,
+  "allOperationsMatchedToShutdown": true,
+  "maximumObservedWorkerCpuMs": 900,
+  "maximumShutdownMemoryBytes": 15669509,
+  "peakMemoryMeasured": false,
+  "workerCpuMayIncludeSeveralOperations": true,
+  "publicProbe": {
+    "operation": "public-3s",
+    "executionId": "906b07a8-6bba-48e8-8da8-4e302c9b95f0",
+    "workerCpuMs": 74,
+    "shutdownMemoryBytes": 15262269,
+    "timeoutMs": 3000,
+    "totalWallMs": 446.082858,
+    "sources": [
+      {
+        "source": "mark-ticker",
+        "ok": true,
+        "observedAt": "2026-10-23T11:52:06.152Z"
+      },
+      {
+        "source": "book-and-closed-mark-candles",
+        "ok": true,
+        "bookObservedAt": "2026-10-23T11:52:06.139Z",
+        "historyObservedThrough": "2026-10-23T11:52:00.000Z",
+        "candles": 64
+      }
+    ]
+  },
+  "readOnlySql": {
+    "operation": "sql-read-only",
+    "executionId": "29577760-26f1-49c9-9008-4bcd1ac1cb9f",
+    "workerCpuMs": 43,
+    "shutdownMemoryBytes": 15384701,
+    "status": "passed",
+    "connectionAndTransactionWallMs": 1706.737052,
+    "readOnly": true,
+    "tlsUpgraded": true,
+    "certificateVerificationRequired": true,
+    "authenticatedFinancialSessionTested": false
+  },
+  "invalidAuth": {
+    "operation": "invalid-auth",
+    "executionId": "906b07a8-6bba-48e8-8da8-4e302c9b95f0",
+    "workerCpuMs": 74,
+    "shutdownMemoryBytes": 15262269,
+    "status": "rejected-as-expected",
+    "httpStatus": 403,
+    "authWallMs": 185.36040000000003,
+    "validUserTested": false
+  },
+  "shutdown": {
+    "checkedAt": "2026-10-23T11:53:10.529Z",
+    "httpStatus": 503,
+    "body": {
+      "code": "QA_COMPLETE_CLOSED",
+      "financialCloudEnabled": false
+    }
+  },
+  "operations": [
+    {
+      "operation": "small-start",
+      "executionId": "27d1384b-d26a-41d5-a8bd-8ac458e921f6",
+      "workerCpuMs": 47,
+      "shutdownMemoryBytes": 15329709,
+      "operationWallMs": 14.528016999999998,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 10,
+      "maxCycles": 1,
+      "method": "start"
+    },
+    {
+      "operation": "small-advance",
+      "executionId": "3bc27c04-3208-403e-b6f3-b71a0ac71e10",
+      "workerCpuMs": 67,
+      "shutdownMemoryBytes": 15490357,
+      "operationWallMs": 22.658337000000003,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 10,
+      "maxCycles": 1,
+      "method": "advance"
+    },
+    {
+      "operation": "small-result",
+      "executionId": "a632ad75-b88c-4afd-94e4-5c1484977162",
+      "workerCpuMs": 43,
+      "shutdownMemoryBytes": 14991117,
+      "operationWallMs": 4.910944000000001,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 10,
+      "maxCycles": 1,
+      "method": "result"
+    },
+    {
+      "operation": "medium-start",
+      "executionId": "27daadf3-ff02-4cca-a74f-f238bf7e2872",
+      "workerCpuMs": 178,
+      "shutdownMemoryBytes": 15669509,
+      "operationWallMs": 134.854013,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 1000,
+      "maxCycles": 12,
+      "method": "start"
+    },
+    {
+      "operation": "medium-advance",
+      "executionId": "520b384c-181f-4c09-9c4c-50ca7bf51e0d",
+      "workerCpuMs": 155,
+      "shutdownMemoryBytes": 15662797,
+      "operationWallMs": 121.43805900000001,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 1000,
+      "maxCycles": 12,
+      "method": "advance"
+    },
+    {
+      "operation": "medium-result",
+      "executionId": "d05f0961-c9bb-41e2-9b09-27871cb1d3fb",
+      "workerCpuMs": 900,
+      "shutdownMemoryBytes": 15546549,
+      "operationWallMs": 32.465948999999995,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 1000,
+      "maxCycles": 12,
+      "method": "result"
+    },
+    {
+      "operation": "large-start",
+      "executionId": "6267d23a-a5f6-4bf0-8baf-d7a2ee24fc9e",
+      "workerCpuMs": 517,
+      "shutdownMemoryBytes": 15225757,
+      "operationWallMs": 478.314894,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 1,
+      "method": "start"
+    },
+    {
+      "operation": "large-advance",
+      "executionId": "d05f0961-c9bb-41e2-9b09-27871cb1d3fb",
+      "workerCpuMs": 900,
+      "shutdownMemoryBytes": 15546549,
+      "operationWallMs": 603.1658150000001,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 1,
+      "method": "advance"
+    },
+    {
+      "operation": "large-result",
+      "executionId": "7bae8fce-e613-42e3-8d7d-ddf7c925b25a",
+      "workerCpuMs": 196,
+      "shutdownMemoryBytes": 15039333,
+      "operationWallMs": 90.87830000000001,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 1,
+      "method": "result"
+    },
+    {
+      "operation": "large-limit-start",
+      "executionId": "85a61ab1-e8d2-4221-aead-4bb2a8348c68",
+      "workerCpuMs": 560,
+      "shutdownMemoryBytes": 15429653,
+      "operationWallMs": 510.73054500000006,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "start"
+    },
+    {
+      "operation": "large-limit-advance",
+      "executionId": "59ace970-dd1a-436c-8132-2304fed2e425",
+      "workerCpuMs": 664,
+      "shutdownMemoryBytes": 15376381,
+      "operationWallMs": 554.7314230000001,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "advance"
+    },
+    {
+      "operation": "large-limit-result",
+      "executionId": "d05f0961-c9bb-41e2-9b09-27871cb1d3fb",
+      "workerCpuMs": 900,
+      "shutdownMemoryBytes": 15546549,
+      "operationWallMs": 91.5236689999997,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "result"
+    },
+    {
+      "operation": "profile-large-start",
+      "executionId": "0d04eaab-da3a-46ef-a14e-5fde7c143a1a",
+      "workerCpuMs": 695,
+      "shutdownMemoryBytes": 15462685,
+      "operationWallMs": 625.563881,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "start"
+    },
+    {
+      "operation": "profile-large-advance",
+      "executionId": "659e79fa-c9a2-48b4-b83d-b5b2566d5a44",
+      "workerCpuMs": 667,
+      "shutdownMemoryBytes": 15369245,
+      "operationWallMs": 552.04367,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "advance"
+    },
+    {
+      "operation": "profile-large-result",
+      "executionId": "e625f383-5e34-4e23-87de-c7115f3c08f5",
+      "workerCpuMs": 477,
+      "shutdownMemoryBytes": 15448101,
+      "operationWallMs": 372.880477,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "result"
+    },
+    {
+      "operation": "profile-large-review",
+      "executionId": "2ee10348-eb78-4be0-8c35-0bdd37626099",
+      "workerCpuMs": 290,
+      "shutdownMemoryBytes": 15051917,
+      "operationWallMs": 171.41788100000002,
+      "expectedHashMatched": true,
+      "inputUnchanged": true,
+      "synthetic": true,
+      "fixedClock": "2026-10-20T23:40:00Z",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "method": "reviewSource"
+    },
+    {
+      "operation": "public-3s",
+      "executionId": "906b07a8-6bba-48e8-8da8-4e302c9b95f0",
+      "workerCpuMs": 74,
+      "shutdownMemoryBytes": 15262269,
+      "timeoutMs": 3000,
+      "totalWallMs": 446.082858,
+      "sources": [
+        {
+          "source": "mark-ticker",
+          "ok": true,
+          "observedAt": "2026-10-23T11:52:06.152Z"
+        },
+        {
+          "source": "book-and-closed-mark-candles",
+          "ok": true,
+          "bookObservedAt": "2026-10-23T11:52:06.139Z",
+          "historyObservedThrough": "2026-10-23T11:52:00.000Z",
+          "candles": 64
+        }
+      ]
+    },
+    {
+      "operation": "sql-read-only",
+      "executionId": "29577760-26f1-49c9-9008-4bcd1ac1cb9f",
+      "workerCpuMs": 43,
+      "shutdownMemoryBytes": 15384701,
+      "status": "passed",
+      "connectionAndTransactionWallMs": 1706.737052,
+      "readOnly": true,
+      "tlsUpgraded": true,
+      "certificateVerificationRequired": true,
+      "authenticatedFinancialSessionTested": false
+    },
+    {
+      "operation": "invalid-auth",
+      "executionId": "906b07a8-6bba-48e8-8da8-4e302c9b95f0",
+      "workerCpuMs": 74,
+      "shutdownMemoryBytes": 15262269,
+      "status": "rejected-as-expected",
+      "httpStatus": 403,
+      "authWallMs": 185.36040000000003,
+      "validUserTested": false
+    }
+  ],
+  "artifacts": {
+    "V20_12D23_AUTH_SQL_CI.json": {
+      "bytes": 12228,
+      "sha256": "bc4ca6287aec0ae6e6e15ed3cb2d971530c7b55510c1ce77bb29e11c7bba0e3a"
+    },
+    "V20_12D23_FIXTURES_V11.json.gz": {
+      "bytes": 1390204,
+      "sha256": "483afae7285a329a02689ae4dd5735ae30a05c62d7de392df1a6a7e4fd5865c8"
+    },
+    "V20_12D23_FIXTURES_V13.json.gz": {
+      "bytes": 1344718,
+      "sha256": "97f2dced64f7bf69819a695f99cbb81cb861721b34dc8aefc0c799b6cf55bb58"
+    },
+    "V20_12D23_FIXTURE_MANIFEST_V11.json": {
+      "bytes": 5959,
+      "sha256": "a6043d16065a6ab4b258ca792e351b86f79cceba19c0580d7e443f3e3a861c11"
+    },
+    "V20_12D23_FIXTURE_MANIFEST_V13.json": {
+      "bytes": 5959,
+      "sha256": "47287f3c902e8fc848d6b371d01b48c1eabb0511cbb342a51222591a60f34df1"
+    },
+    "V20_12D23_HOSTED_LOGS_V11.json": {
+      "bytes": 22218,
+      "sha256": "5b270facea08746c8bca7893813c39d9e426ababd9ea1c76525a60d54ecd8652"
+    },
+    "V20_12D23_HOSTED_LOGS_V13.json": {
+      "bytes": 23521,
+      "sha256": "201b5ba6a31ad492d44f42294a660c5d42f4d8ae74afac86d7a8b4e4029c3c4e"
+    },
+    "V20_12D23_HTTP_V11.json": {
+      "bytes": 14065,
+      "sha256": "d116d77b2dd3ad82eb8bb61b537f99e0f18dc16295ba18c02cd00cf00afb33b1"
+    },
+    "V20_12D23_HTTP_V13.json": {
+      "bytes": 14829,
+      "sha256": "eaa39243dec41cf04fa45173f45f27f79b317ddbb9ae2c5ff3809489a63b124f"
+    },
+    "V20_12D23_RUNTIME_V11.mjs.gz": {
+      "bytes": 948657,
+      "sha256": "e036bf0fd301bd51a9ac01670f27041978d169fc731ee71b1f9be4e9caaad884"
+    },
+    "V20_12D23_RUNTIME_V13.mjs.gz": {
+      "bytes": 909439,
+      "sha256": "7596ae125c09db1522fff21eb00797d7201b09cb039195d7feb0610b2181e9b1"
+    },
+    "V20_12D23_SHUTDOWN.json": {
+      "bytes": 153,
+      "sha256": "efc5f2a33816550b52476a022b1ca8d844eded5b3fa2f0bcbe4c49de30a25b8f"
+    }
+  },
+  "excludes": [
+    "hosted-valid-session-full-job-and-confirmation",
+    "hosted-concurrent-financial-transactions",
+    "peak-memory-approval",
+    "ingress-approval",
+    "all-source-admission-windows",
+    "financial-cloud-release"
+  ]
+}

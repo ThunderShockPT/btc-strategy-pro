@@ -1,0 +1,109 @@
+{
+  "kind": "hosted-real-public-prices-auth-sql",
+  "caseName": "baseline",
+  "runId": "1d9d70236992",
+  "startedAt": "2026-10-24T07:54:38.605Z",
+  "rules": "synthetic-not-Kraken-verification",
+  "history": "invented-QA-fixture",
+  "prices": "real-public-Kraken-endpoints",
+  "emailDeliveryTested": false,
+  "publicReleaseApproved": false,
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 5726,
+      "worker": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-0",
+      "status": 200,
+      "wallMs": 513,
+      "worker": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-1",
+      "status": 200,
+      "wallMs": 274,
+      "worker": null,
+      "heapBytes": null
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 1919,
+      "worker": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 2360,
+      "worker": "3079bcd3-ab2a-4629-9200-3ac721f8aeeb",
+      "heapBytes": 10425624
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 2154,
+      "worker": "eac32169-495c-4275-b24c-5da98d2630ba",
+      "heapBytes": 10287736,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 425,
+      "wallMs": 3264,
+      "worker": "bfb727ab-b007-4437-876a-7daeec7531e5",
+      "heapBytes": 12677848,
+      "code": "CALCULATION_WINDOW_TOO_SHORT"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 503,
+      "wallMs": 6961,
+      "worker": "b988774a-ddbb-4fd3-b70a-7023888be49e",
+      "heapBytes": 12962496,
+      "code": "API_UNAVAILABLE"
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 2199,
+      "worker": "4f9acc4e-a399-4cc0-97b1-5bc09e7729aa",
+      "heapBytes": 10497944
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 183,
+      "worker": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 4053,
+      "worker": null,
+      "heapBytes": null
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 5265,
+      "worker": null,
+      "heapBytes": null
+    }
+  ],
+  "bundleSHA256": "e83c2597fe300347de9a8c643b4e71e3e88676c3496280eb6e15d858353406eb",
+  "eventCount": 3,
+  "beforeHead": "3a4c647793d7dedefc4b4b9decd19b56325fd55c80ff3e8fabf4179ecaeddd51",
+  "admissionRejected": true,
+  "retryWaitMs": 6677,
+  "status": "blocked-at-source-or-admission",
+  "failureCode": "API_UNAVAILABLE",
+  "financialStateUnchanged": true,
+  "accountsDisabled": 2
+}

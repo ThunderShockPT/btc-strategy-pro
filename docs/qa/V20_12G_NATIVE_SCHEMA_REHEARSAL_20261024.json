@@ -1,0 +1,49 @@
+{
+  "kind": "empty-hosted-public-schema-rehearsal",
+  "adapter": "native-postgres",
+  "postgres": "17.11 (Debian 17.11-1.pgdg13+2)",
+  "snapshotSHA256": "251c108a869f94f5fb903359eac4fc80f7f4228710f6b71447d233a9884a7ac9",
+  "migrations": [
+    {
+      "name": "20261020233925_v20_manual_financial_foundation.sql",
+      "sha256": "2c2360b77834e0766e5c7fa4e6d061ab7e497bb7565f0c5a1c387fb6c313b330"
+    },
+    {
+      "name": "20261021133133_v20_atomic_financial_persistence.sql",
+      "sha256": "e9729f7674dd518bc130bf825a490f1b4d500c34f22367ec75060ec9ad2b4575"
+    },
+    {
+      "name": "20261021140705_v20_request_admission.sql",
+      "sha256": "81a3ceedd4e4c4b2d8b2ea8ffe807616464614b45f13a482810c3241148bee69"
+    },
+    {
+      "name": "20261021142525_v20_wallet_reviews_receipts.sql",
+      "sha256": "11ac8b685ceeda79d546ced5bfb0f4b6d3aa9bf08efb61d70d4172542a071acf"
+    },
+    {
+      "name": "20261021174034_v20_durable_calculation_jobs.sql",
+      "sha256": "284dde4ecb4d5f8d92ae8255002a0b5ec9638f9fc8c68827dab5f84b38449552"
+    },
+    {
+      "name": "20261021180609_v20_frozen_command_reviews.sql",
+      "sha256": "9c4ac5cfbc03d570ba61f1e195b67f56276e593b081cb98992f7fe1da09ef445"
+    },
+    {
+      "name": "20261022191052_v20_path_checkpoint_capacity.sql",
+      "sha256": "8100fc9b4c55564d43e8b87984ab5706fefcac92a94d6aa8bc2cdfa3143e289d"
+    }
+  ],
+  "tables": 14,
+  "legacyRPC": true,
+  "legacyRLS": true,
+  "transactionRollback": true,
+  "excludes": [
+    "auth-restore",
+    "non-empty-data-restore",
+    "smtp",
+    "hosted-runtime-approval"
+  ],
+  "ciCommit": "31d783bd38a95c258b66a7507dec86eb9e82d615",
+  "ciRun": 40062499559,
+  "ciJob": 120778823226
+}

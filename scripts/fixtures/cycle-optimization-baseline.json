@@ -1,0 +1,47 @@
+{
+  "kind": "pre-optimization-regression-oracle-not-independent-financial-validation",
+  "sourceCommit": "d4731ee408dcd11ea20c043c499e7eb924aef88b",
+  "recordedAt": "2026-10-21T16:49:27.149Z",
+  "canonicalization": "recursive-sorted-object-keys-preserve-array-order",
+  "cases": [
+    {
+      "name": "small-capital",
+      "capital": "100",
+      "maxCycles": 3,
+      "sha256": "6394dfcf0832e4e58a56451d6c40a5e66ca8c198aa3b304aeca8a5ce97908d3a"
+    },
+    {
+      "name": "standard-twelve-limit",
+      "capital": "2000",
+      "maxCycles": 12,
+      "sha256": "bfe6e269ee9ace5265ee370bcbc9eb3601037fe027fa287c0c881bff1239d948"
+    },
+    {
+      "name": "large-capital-twelve-limit",
+      "capital": "50000",
+      "maxCycles": 12,
+      "sha256": "111dbb68c6f2d7c0458083398ce987ff8f2607ce7d91e0583cadee6c8cc18168"
+    },
+    {
+      "name": "prefunded",
+      "capital": "2000",
+      "maxCycles": 3,
+      "marginPlacement": "prefunded",
+      "sha256": "32dfc0e39afddea4177f5a6384ae026f20d756fc547b3b649a76d13d70828dde"
+    },
+    {
+      "name": "conditional-comparison-only",
+      "capital": "2000",
+      "maxCycles": 3,
+      "requireFailedMarginSurvival": false,
+      "sha256": "d230ac9861c3bf09fbf6fb18a58b04fcb443b8d36bf6124109a0209e456adc21"
+    },
+    {
+      "name": "existing-position",
+      "capital": "2000",
+      "maxCycles": 3,
+      "existing": true,
+      "sha256": "bf861fb43caab6d4f379c29d90d4545a99e5e9b542fcf5e25c93f8378a5702cd"
+    }
+  ]
+}

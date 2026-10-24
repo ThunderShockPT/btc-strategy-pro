@@ -1,0 +1,49 @@
+{
+  "version": "funding-eea-review-2026-10-21.1",
+  "reviewedOn": "2026-10-21",
+  "symbol": "PF_XBTUSD",
+  "jurisdiction": "EEA",
+  "marginMode": "isolated",
+  "status": "documented-model-independent-validation-pending",
+  "sourceRuleVersion": "kraken-eea-pf-xbtusd-2026-10-21.2",
+  "sources": [
+    "https://support.kraken.com/pt/articles/perpetual-contract-specifications-for-clients-in-the-eea",
+    "https://support.kraken.com/pt/articles/4844463246100-margining-liquidations-multi-collateral-derivatives"
+  ],
+  "documented": {
+    "accrual": "continuous",
+    "settlement": "UTC-hour-end-or-net-position-change",
+    "absoluteRateUnit": "USD-per-BTC-per-hour",
+    "relativeConversion": "relative-hourly-rate-times-index-at-rate-setting",
+    "positiveRateLongDirection": "paid",
+    "negativeRateLongDirection": "received",
+    "isolatedFundingDestination": "general-wallet"
+  },
+  "testedPublicExample": {
+    "indexPriceUSD": "37000",
+    "quantityBTC": "2",
+    "firstRelativeHourlyRate": "-0.0004",
+    "secondRelativeHourlyRate": "0.0004",
+    "firstFundingReceivedUSD": "29.6",
+    "secondFundingPaidUSD": "29.6",
+    "netFundingUSD": "0"
+  },
+  "modelAssumptions": {
+    "positiveUnsettledFundingSpendable": false,
+    "negativeUnsettledFundingReserved": true,
+    "settlementPrecisionDecimals": 18,
+    "settlementRounding": "half-even-with-explicit-rounding-delta",
+    "sub-precisionUnsettledDust": "carried-until-representable",
+    "futureRulePolicy": "explicit-frozen-rules-synthetic",
+    "generalWalletExhaustion": "stop-not-official-account-liquidation"
+  },
+  "unresolved": [
+    "The public short-position half-hour example states 36.99 USD where the direct stated-rate arithmetic yields 37 USD; do not infer exchange rounding from that discrepancy.",
+    "The spec contains inconsistent prose for the hourly cap versus an eight-hour equivalent; this module consumes explicit absolute rates and does not derive rates or silently cap them.",
+    "The general perpetual funding explanation describes unrealized PnL, while the isolated margin page specifies general-wallet debits; this model keeps unsettled accrual outside position PnL and posts settlements once to wallet.",
+    "Account-level liquidation and exact exchange rounding require independent validation; no account integration is intended."
+  ],
+  "accountLinkRequired": false,
+  "automaticRateForecastEnabled": false,
+  "specificRiskRecommendationsEnabled": false
+}

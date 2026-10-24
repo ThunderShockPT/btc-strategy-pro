@@ -1,0 +1,467 @@
+{
+  "kind": "disposable-real-auth-sql-capacity",
+  "sourceCommit": "3f0879c8dba45ff6cdc0ef5d4c028949569f2a21",
+  "workflowRun": 39948913609,
+  "generalV20Tests": 658,
+  "legacyChecks": 386,
+  "nativePostgresTests": 23,
+  "allCasesRequireCompletion": true,
+  "cases": [
+    {
+      "kind": "REAL_AUTH_SQL_QA",
+      "caseName": "medium-12",
+      "eventCount": 1000,
+      "maxCycles": 12,
+      "requiredCompletion": true,
+      "outcome": "completed",
+      "fullResultsEqual": true,
+      "selectedNewCycles": 6,
+      "configuredCycles": 12,
+      "candidateCount": 13,
+      "roundTrips": {
+        "state": {
+          "requests": 4,
+          "maximumMs": 101.353924,
+          "totalMs": 243.4500629999984
+        },
+        "calculations/enqueue": {
+          "requests": 3,
+          "maximumMs": 398.7080129999995,
+          "totalMs": 768.4940240000014
+        },
+        "calculations/advance": {
+          "requests": 58,
+          "maximumMs": 296.1287830000001,
+          "totalMs": 14095.409034000008
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 42.71817700000065,
+          "totalMs": 42.71817700000065
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 155.21692000000257,
+          "totalMs": 155.21692000000257
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 419.74084500000026,
+          "totalMs": 419.74084500000026
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 366.44641099999717,
+          "totalMs": 427.3900909999975
+        }
+      },
+      "sql": {
+        "other": {
+          "queries": 1131,
+          "totalMs": 626.294309999972,
+          "maximumMs": 50.35878600000069,
+          "checkpointRows": 0
+        },
+        "session": {
+          "queries": 183,
+          "totalMs": 114.3680449999938,
+          "maximumMs": 1.471363000000565,
+          "checkpointRows": 0
+        },
+        "source": {
+          "queries": 311,
+          "totalMs": 498.35647899996184,
+          "maximumMs": 7.954965000000811,
+          "checkpointRows": 0
+        },
+        "jobs": {
+          "queries": 234,
+          "totalMs": 4680.197760999978,
+          "maximumMs": 56.78996600000028,
+          "checkpointRows": 60
+        }
+      },
+      "processCpu": {
+        "calculations/enqueue": {
+          "requests": 2,
+          "maximumMs": 469.904
+        },
+        "calculations/advance": {
+          "requests": 57,
+          "maximumMs": 237.785
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 4.48
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 129.925
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 385.285
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 406.779
+        }
+      },
+      "accounts": 2,
+      "workers": 2,
+      "realClock": true,
+      "calculationAndConfirmationMs": 15478,
+      "sequence": 56,
+      "requestCount": 70,
+      "sourceCalls": {
+        "ticker": 1,
+        "book": 1,
+        "history": 1
+      },
+      "productionTouched": false,
+      "hostedRuntimeCapacityApproved": false
+    },
+    {
+      "kind": "REAL_AUTH_SQL_QA",
+      "caseName": "large-1",
+      "eventCount": 5000,
+      "maxCycles": 1,
+      "requiredCompletion": true,
+      "outcome": "completed",
+      "fullResultsEqual": true,
+      "selectedNewCycles": 1,
+      "configuredCycles": 1,
+      "candidateCount": 2,
+      "roundTrips": {
+        "state": {
+          "requests": 4,
+          "maximumMs": 213.55913800000008,
+          "totalMs": 444.02118400000154
+        },
+        "calculations/enqueue": {
+          "requests": 3,
+          "maximumMs": 1076.7277029999968,
+          "totalMs": 2239.733975999996
+        },
+        "calculations/advance": {
+          "requests": 17,
+          "maximumMs": 879.805927999998,
+          "totalMs": 11620.665212
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 39.266553999999815,
+          "totalMs": 39.266553999999815
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 468.9045100000003,
+          "totalMs": 468.9045100000003
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 1367.2015229999997,
+          "totalMs": 1367.2015229999997
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 1727.0225699999974,
+          "totalMs": 1842.6732609999963
+        }
+      },
+      "sql": {
+        "other": {
+          "queries": 393,
+          "totalMs": 448.7410289999807,
+          "maximumMs": 165.64865199999986,
+          "checkpointRows": 0
+        },
+        "session": {
+          "queries": 60,
+          "totalMs": 37.225771000006716,
+          "maximumMs": 1.261978000000454,
+          "checkpointRows": 0
+        },
+        "source": {
+          "queries": 106,
+          "totalMs": 690.8179920000148,
+          "maximumMs": 33.549229999998715,
+          "checkpointRows": 0
+        },
+        "jobs": {
+          "queries": 70,
+          "totalMs": 3737.0730610000173,
+          "maximumMs": 160.89214399999946,
+          "checkpointRows": 19
+        }
+      },
+      "processCpu": {
+        "calculations/enqueue": {
+          "requests": 2,
+          "maximumMs": 1216.949
+        },
+        "calculations/advance": {
+          "requests": 16,
+          "maximumMs": 766.96
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 3.798
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 506.989
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 1330.447
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 1785.734
+        }
+      },
+      "accounts": 2,
+      "workers": 2,
+      "realClock": true,
+      "calculationAndConfirmationMs": 16273,
+      "sequence": 15,
+      "requestCount": 29,
+      "sourceCalls": {
+        "ticker": 1,
+        "book": 1,
+        "history": 1
+      },
+      "productionTouched": false,
+      "hostedRuntimeCapacityApproved": false
+    },
+    {
+      "kind": "REAL_AUTH_SQL_QA",
+      "caseName": "baseline",
+      "eventCount": 3,
+      "maxCycles": 1,
+      "requiredCompletion": true,
+      "outcome": "completed",
+      "fullResultsEqual": true,
+      "selectedNewCycles": 0,
+      "configuredCycles": 1,
+      "candidateCount": 1,
+      "roundTrips": {
+        "state": {
+          "requests": 4,
+          "maximumMs": 62.40049299999998,
+          "totalMs": 157.1775719999996
+        },
+        "calculations/enqueue": {
+          "requests": 3,
+          "maximumMs": 83.66823199999999,
+          "totalMs": 197.74794999999904
+        },
+        "calculations/advance": {
+          "requests": 10,
+          "maximumMs": 89.37808799999948,
+          "totalMs": 593.2786190000006
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 41.52164100000118,
+          "totalMs": 41.52164100000118
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 50.1213489999991,
+          "totalMs": 50.1213489999991
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 74.03186300000016,
+          "totalMs": 74.03186300000016
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 73.7113960000006,
+          "totalMs": 115.91925000000083
+        }
+      },
+      "sql": {
+        "other": {
+          "queries": 267,
+          "totalMs": 103.15978199997517,
+          "maximumMs": 6.236032999999225,
+          "checkpointRows": 0
+        },
+        "session": {
+          "queries": 39,
+          "totalMs": 24.18183599999429,
+          "maximumMs": 2.0165370000013354,
+          "checkpointRows": 0
+        },
+        "source": {
+          "queries": 71,
+          "totalMs": 32.270907999989504,
+          "maximumMs": 1.9389309999987745,
+          "checkpointRows": 0
+        },
+        "jobs": {
+          "queries": 42,
+          "totalMs": 73.60859600000185,
+          "maximumMs": 6.242452000000412,
+          "checkpointRows": 12
+        }
+      },
+      "processCpu": {
+        "calculations/enqueue": {
+          "requests": 2,
+          "maximumMs": 47.405
+        },
+        "calculations/advance": {
+          "requests": 9,
+          "maximumMs": 40.215
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 4.984
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 13.864
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 33.331
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 45.219
+        }
+      },
+      "accounts": 2,
+      "workers": 2,
+      "realClock": true,
+      "calculationAndConfirmationMs": 918,
+      "sequence": 8,
+      "requestCount": 22,
+      "sourceCalls": {
+        "ticker": 1,
+        "book": 1,
+        "history": 1
+      },
+      "productionTouched": false,
+      "hostedRuntimeCapacityApproved": false
+    },
+    {
+      "kind": "REAL_AUTH_SQL_QA",
+      "caseName": "large-12",
+      "eventCount": 5000,
+      "maxCycles": 12,
+      "requiredCompletion": true,
+      "outcome": "completed",
+      "fullResultsEqual": true,
+      "selectedNewCycles": 6,
+      "configuredCycles": 12,
+      "candidateCount": 13,
+      "roundTrips": {
+        "state": {
+          "requests": 4,
+          "maximumMs": 216.3068119999998,
+          "totalMs": 448.07907799999793
+        },
+        "calculations/enqueue": {
+          "requests": 3,
+          "maximumMs": 1116.078662,
+          "totalMs": 2301.968204000008
+        },
+        "calculations/advance": {
+          "requests": 58,
+          "maximumMs": 901.9914599999993,
+          "totalMs": 42658.858439000025
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 39.34664300000077,
+          "totalMs": 39.34664300000077
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 472.3847009999954,
+          "totalMs": 472.3847009999954
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 1439.3698970000041,
+          "totalMs": 1439.3698970000041
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 1746.0155960000047,
+          "totalMs": 1862.9794790000014
+        }
+      },
+      "sql": {
+        "other": {
+          "queries": 1131,
+          "totalMs": 888.5281650000925,
+          "maximumMs": 180.72645300000295,
+          "checkpointRows": 0
+        },
+        "session": {
+          "queries": 183,
+          "totalMs": 112.11112799992952,
+          "maximumMs": 2.6851059999971767,
+          "checkpointRows": 0
+        },
+        "source": {
+          "queries": 311,
+          "totalMs": 1945.5490470000368,
+          "maximumMs": 50.6477109999978,
+          "checkpointRows": 0
+        },
+        "jobs": {
+          "queries": 234,
+          "totalMs": 14005.582103999974,
+          "maximumMs": 181.70075899999938,
+          "checkpointRows": 60
+        }
+      },
+      "processCpu": {
+        "calculations/enqueue": {
+          "requests": 2,
+          "maximumMs": 1263.837
+        },
+        "calculations/advance": {
+          "requests": 57,
+          "maximumMs": 785.976
+        },
+        "calculations/status": {
+          "requests": 1,
+          "maximumMs": 3.333
+        },
+        "calculations/result": {
+          "requests": 1,
+          "maximumMs": 502.852
+        },
+        "prepare": {
+          "requests": 1,
+          "maximumMs": 1379.752
+        },
+        "commit": {
+          "requests": 2,
+          "maximumMs": 1835.679
+        }
+      },
+      "accounts": 2,
+      "workers": 2,
+      "realClock": true,
+      "calculationAndConfirmationMs": 47446,
+      "sequence": 56,
+      "requestCount": 70,
+      "sourceCalls": {
+        "ticker": 1,
+        "book": 1,
+        "history": 1
+      },
+      "productionTouched": false,
+      "hostedRuntimeCapacityApproved": false
+    }
+  ]
+}

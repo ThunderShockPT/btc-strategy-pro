@@ -1,0 +1,325 @@
+{
+  "kind": "hosted-real-public-prices-auth-sql",
+  "caseName": "large-12",
+  "variant": "floor-room-v2",
+  "runId": "1d9d70236992",
+  "startedAt": "2026-10-24T09:06:04.702Z",
+  "rules": "synthetic-not-Kraken-verification",
+  "history": "invented-QA-fixture",
+  "prices": "real-public-Kraken-endpoints",
+  "emailDeliveryTested": false,
+  "publicReleaseApproved": false,
+  "requestedRegion": "eu-west-1",
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 6397,
+      "worker": null,
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-0",
+      "status": 200,
+      "wallMs": 637,
+      "worker": null,
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-1",
+      "status": 200,
+      "wallMs": 476,
+      "worker": null,
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 830,
+      "worker": null,
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 1512,
+      "worker": "c49c6e36-9f90-430a-8172-aa9391ca09eb",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 25990696
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 462,
+      "worker": "659e8abc-8de9-4028-b6c2-7666c81cff4b",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 15875528,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 425,
+      "wallMs": 1778,
+      "worker": "6b8d1fc4-c532-4da9-bfd1-230f20a8dec2",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 29550720,
+      "code": "CALCULATION_WINDOW_TOO_SHORT",
+      "reason": "WAIT_FOR_CLOSED_HISTORY",
+      "serverTime": "2026-10-24T09:06:16.733Z",
+      "expiresAt": "2026-10-24T09:07:00.000Z",
+      "minimumRemainingMs": 45000,
+      "retryAt": "2026-10-24T09:07:00.000Z"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 200,
+      "wallMs": 7856,
+      "worker": "b3b233d1-b6f7-4112-897b-3062bc6ee011",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 22867384
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1832,
+      "worker": "61dfd2d7-896b-4298-8dcb-a315fd8600db",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31885368
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6768,
+      "worker": "8952b741-30ec-4dd4-9420-32b7064b8442",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 32877384
+    },
+    {
+      "label": "api/calculations/status",
+      "status": 200,
+      "wallMs": 5965,
+      "worker": "03467e42-46b3-417f-b469-a50de51b8d5d",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 16202272
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6934,
+      "worker": "e5723877-232a-4452-81f5-b1dd1fc8352a",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 35122152
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1595,
+      "worker": "26fa3962-57c5-4883-8583-41cccde797cf",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31107288
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1964,
+      "worker": "80802647-cc08-4490-91ca-1e8bbf9be753",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 32252368
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2496,
+      "worker": "b6fe6f84-e615-42a6-bcf4-48ed10fd6cf1",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 32783024
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2043,
+      "worker": "f025f34e-36a6-488e-bfa6-e933ac93d6c3",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 36135032
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1898,
+      "worker": "abb5869a-74a4-49d8-a3fd-47fe6310bbfc",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 36697208
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2145,
+      "worker": "a64b1e7f-9ec1-4c91-8675-7dd6e921917c",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 37054008
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2376,
+      "worker": "1d19e901-4b4d-4893-b8a7-80267ff84151",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 32513000
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1922,
+      "worker": "0f2b6b29-6972-440c-b3e8-d30bfe2c88c4",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31316928
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1850,
+      "worker": "0f4f9386-2297-401d-b81b-cb8cc42bfd89",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31731136
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1731,
+      "worker": "47f418e2-33ff-43e4-99d5-2c4f3c4c2aea",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 38006496
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2245,
+      "worker": "8f7a70f9-dc6c-44d1-bc0a-5c6ff27e960e",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31873488
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2030,
+      "worker": "34b510a8-e674-411f-be33-10e7146136a5",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 20009352
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1943,
+      "worker": "ba9bcb55-ce3f-4e1a-92ae-ec8c0ce29e10",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 20250896
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1613,
+      "worker": "da8ec521-f012-4903-a3d7-d242d41c741e",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 38302704
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 409,
+      "wallMs": 1649,
+      "worker": "66b319bb-5fd5-4736-904e-3aaf3533b271",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 44690632,
+      "code": "CALCULATION_EXPIRED"
+    },
+    {
+      "label": "api/calculations/status",
+      "status": 200,
+      "wallMs": 1595,
+      "worker": "fb7043d3-248b-4314-81ce-c24ac4528500",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 16528912
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 704,
+      "worker": "ee948ed0-94cd-46bb-be4a-1f712d19a4fd",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 25973384
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 237,
+      "worker": null,
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 5792,
+      "worker": null,
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 6102,
+      "worker": null,
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    }
+  ],
+  "bundleSHA256": "6b537197c45042ad8a5ae4ece14c966d6b0f4c2d1fcfe4d8075e316ecb687a70",
+  "eventCount": 5000,
+  "beforeHead": "61e402b2bc68a27fbd78c75d6cd34d661241a01cd5c838ec5c22a5517c3479b6",
+  "admissionRejected": true,
+  "retryWaitMs": 46177,
+  "jobId": "d3ceac07-fa2a-418c-9d2e-ab43294f1677",
+  "originalDeadline": "2026-10-24T09:08:00.000Z",
+  "calculationStartedAt": "2026-10-24T09:07:10.874Z",
+  "concurrentAdvanceChecked": true,
+  "failureCode": "CALCULATION_EXPIRED",
+  "status": "blocked-before-completion",
+  "jobStatus": "blocked",
+  "financialStateUnchanged": true,
+  "accountsDisabled": 2
+}

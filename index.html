@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+<html lang="pt-PT" class="btc-landing-active"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/><meta content="#0B1018" name="theme-color"/><meta name="application-name" content="BTC Strategy Pro"/><meta name="mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><link rel="manifest" href="./manifest.webmanifest"/><link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png"/><link rel="apple-touch-icon" href="./icons/icon-192.png"/><meta name="robots" content="noindex,nofollow"/><meta name="description" content="BTC Strategy Pro: simulador de estratégias Bitcoin, risco, níveis e registos fictícios. Beta demonstrativa; sem preços reais ou execução de ordens."/><title>BTC Strategy Pro · Beta</title><style>
+:root{--bg:#0B1018;--surface:#131B27;--card:#1A2534;--border:#2A3545;--text:#F3F6FB;--muted:#94A3B8;--cyan:#18B8E6;--green:#20C997;--red:#F05D64;--amber:#F4B740;--shadow:0 12px 48px #0005}*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}body{min-width:320px}button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.35}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}main{max-width:1630px;margin:auto;padding:18px 22px 100px}.shell{display:grid;grid-template-columns:218px minmax(0,1fr);min-height:100dvh}.sidebar{position:sticky;top:0;height:100dvh;background:#0D1520;border-right:1px solid var(--border);padding:24px 12px}.brand{display:flex;gap:10px;align-items:center;padding:6px 10px 22px}.brandmark{width:39px;height:39px;flex-shrink:0}.brandtext{font-weight:860;letter-spacing:-.5px;line-height:1.03;font-size:17px}.brandtext span{color:var(--cyan)}.brandtext small{display:block;font-size:9px;letter-spacing:2px;color:var(--muted);font-weight:500;margin-top:6px}.navtitle{font-size:10px;letter-spacing:2px;color:#64748b;margin:25px 14px 10px;font-weight:700}.navbtn{width:100%;display:flex;gap:10px;align-items:center;text-align:left;background:transparent;border:0;color:var(--muted);padding:13px 14px;border-radius:10px;margin:3px 0;font-weight:650;font-size:13px}.navbtn:hover,.navbtn.on{background:#193349;color:#c9f4ff}.navbtn.on{border-left:3px solid var(--cyan)}.navsymbol{display:inline-flex;width:22px;justify-content:center;font-size:17px}.asidebottom{position:absolute;bottom:20px;left:17px;right:17px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:11px;color:var(--muted);line-height:1.6}.asidebottom strong{color:var(--amber)}.mast{display:flex;gap:12px;justify-content:space-between;align-items:center;margin-bottom:17px}.mastleft{display:flex;gap:9px;align-items:center}.project{display:flex;gap:9px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 13px;font-size:12px}.project strong{font-size:12px}.tiny{font-size:11px;color:var(--muted)}.online{display:inline-flex;gap:6px;align-items:center}.dot{background:var(--amber);width:6px;height:6px;border-radius:50%;box-shadow:0 0 9px #f4b74077}.mast-actions{display:flex;gap:9px}.iconbtn{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:11px;min-width:39px;height:39px;display:flex;align-items:center;justify-content:center;font-size:18px}.demo{background:#362c17;border:1px solid #655224;color:var(--amber);padding:6px 9px;border-radius:8px;font-size:10px;font-weight:800;letter-spacing:1.2px}.eyebrow{font-size:11px;font-weight:760;letter-spacing:1.6px;color:var(--muted)}.heading{font-size:clamp(21px,2.3vw,29px);letter-spacing:-.9px;font-weight:850;margin:0}.topline{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:15px}.topline p{color:var(--muted);font-size:12px;margin:6px 0 0}.notice{border:1px solid #4c4229;background:#211e19;border-radius:10px;color:#e9d4a0;padding:9px 12px;font-size:11px;display:flex;align-items:center;gap:10px;margin-bottom:15px}.notice b{color:var(--amber)}.grid-top{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.85fr);gap:14px}.panel{background:var(--surface);border:1px solid var(--border);border-radius:15px;box-shadow:var(--shadow);min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:17px 18px 0}.btc-head{display:flex;justify-content:space-between;gap:10px;align-items:start;padding:22px 21px 3px}.btcsymbol{display:inline-flex;justify-content:center;align-items:center;width:38px;height:38px;border-radius:50%;background:#ec9f13;color:#101722;font-size:23px;font-weight:900}.btc-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px}.bigprice{font:800 clamp(28px,3.1vw,39px)/1.15 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:-2px;margin:8px 0 3px}.diff{font-size:12px;font-weight:750;color:var(--green)}.infochips{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.chip{font-size:10px;background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--muted);padding:6px 8px}.charttoolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:13px 18px 4px}.timeframes{display:flex;gap:3px;background:#101825;padding:3px;border-radius:8px}.tf{border:0;background:transparent;color:var(--muted);border-radius:6px;padding:6px 8px;font-size:11px;font-weight:750}.tf.active{background:#234357;color:#86e7fa}.chartWrap{position:relative;height:275px;margin:4px 8px 0;touch-action:pan-y}.chartWrap canvas{display:block;width:100%;height:100%;border-radius:9px}.chart-caption{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 17px 17px;font-size:10px;color:var(--muted)}.chart-caption span{display:inline-flex;align-items:center;gap:4px}.key{display:inline-block;width:12px;height:3px;border-radius:5px}.rightstack{display:flex;flex-direction:column;gap:13px}.radar{padding:17px}.sectiontitle{font-size:14px;font-weight:850;display:flex;align-items:center;gap:7px}.sectiontitle .spark{color:var(--cyan)}.subline{font-size:11px;color:var(--muted);margin-top:5px}.radar-top{display:flex;justify-content:space-between;align-items:start}.radarplot{position:relative;height:80px;margin:15px 8px 11px;background:linear-gradient(90deg,#20c99718,#18b8e60e,#f4b74014);border:1px solid #223449;border-radius:11px;padding:8px;overflow:hidden}.radarplot::before{content:'';position:absolute;top:39px;left:14px;right:14px;height:2px;background:linear-gradient(90deg,var(--green),var(--cyan),var(--amber));opacity:.72}.level{position:absolute;top:10px;transform:translateX(-50%);text-align:center;font-size:9px;color:var(--muted);white-space:nowrap;min-width:70px}.level i{display:block;width:9px;height:9px;background:var(--cyan);border:2px solid #07121d;border-radius:50%;margin:19px auto 3px;position:relative}.level.price{color:#daf9ff;font-weight:850}.level.price i{width:13px;height:13px;background:var(--amber);margin-top:16px;box-shadow:0 0 10px var(--amber)}.actionrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.actiontile{background:#172434;border:1px solid #29384a;border-radius:11px;padding:10px 7px;min-width:0}.actiontile .title{font-size:10px;color:var(--muted)}.actiontile .value{font:850 15px/1.6 ui-monospace,monospace;letter-spacing:-.5px;white-space:nowrap}.actiontile .desc{font-size:9px;color:var(--muted)}.quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 17px 17px}.btn{border:1px solid #2c5462;background:#193548;color:#b0efff;font-weight:780;border-radius:10px;padding:11px 11px;font-size:12px;text-align:center}.btn.primary{background:var(--cyan);color:#051722;border-color:var(--cyan)}.btn.sell{background:#3b252f;color:#ffbfc4;border-color:#683b49}.btn.neutral{background:#192432;border-color:var(--border);color:#dae5f1}.btn:hover{filter:brightness(1.1)}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:14px 0}.metric{padding:15px 16px}.metric .m-title{font-size:10px;color:var(--muted);letter-spacing:.3px}.metric .m-val{font:820 20px ui-monospace,monospace;letter-spacing:-.75px;margin:8px 0 4px;white-space:nowrap}.metric .m-sub{font-size:10px;color:var(--muted)}.area-lower{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,.85fr);gap:14px}.tablepanel{padding-bottom:6px}.pillgroup{display:flex;gap:3px;background:#0c1621;padding:3px;border-radius:8px}.pill{background:transparent;border:0;color:var(--muted);font-weight:800;font-size:11px;padding:7px 12px;border-radius:6px}.pill.sel{background:#28495c;color:#bdeeff}.tableScroll{overflow-x:auto;padding:0 14px;margin-top:12px}.strategyTable{width:100%;border-collapse:collapse;min-width:515px;text-align:right;font-size:11px}.strategyTable th{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.55px;padding:11px 9px;border-bottom:1px solid var(--border);white-space:nowrap}.strategyTable th:first-child,.strategyTable td:first-child{text-align:left}.strategyTable td{padding:11px 9px;border-bottom:1px solid #283547;color:#d8e3ed;white-space:nowrap}.strategyTable tr{cursor:pointer}.strategyTable tbody tr:hover,.strategyTable tr.selected{background:#123449}.letter{display:inline-flex;width:23px;height:23px;border-radius:7px;background:#1a5969;color:#7be7f7;align-items:center;justify-content:center;font-weight:900;margin-right:6px}.state{font-size:9px;padding:4px 6px;border-radius:6px;background:#263245;color:#aebcd2}.state.active{color:#93f2d3;background:#114239}.profit{color:var(--green)!important;font-weight:850}.cashlabel{display:block;font-size:9px;color:#6f8497;margin-top:2px}.lowerstack{display:flex;flex-direction:column;gap:14px}.cyclelist{padding:15px}.cyclebtn{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid transparent;background:#182432;border-radius:9px;width:100%;padding:9px 11px;text-align:left;color:var(--text);margin-top:7px}.cyclebtn.sel{border-color:#33758d;background:#123747}.cyc-name{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:780}.cletter{height:26px;width:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:#254858;color:#a2ebff;font-weight:850}.cmeta{font-size:10px;color:var(--muted)}.riskbox{padding:16px}.riskline{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:11px}.riskline span{color:var(--muted)}.riskbar{height:7px;background:#28394a;border-radius:30px;overflow:hidden;margin:10px 0}.riskbar div{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));width:65%;border-radius:20px}.warning{color:var(--amber);font-size:10px;line-height:1.6}.bottomnav{display:none}.overlay{display:none;position:fixed;inset:0;background:#03090edb;z-index:10;align-items:center;justify-content:center;padding:14px}.overlay.open{display:flex}.dialog{width:min(440px,100%);max-height:90dvh;overflow-y:auto;background:var(--surface);border:1px solid #426078;border-radius:16px;padding:20px;box-shadow:0 20px 80px #000b}.dialogtop{display:flex;justify-content:space-between;align-items:start;margin-bottom:16px}.dialog h3{margin:4px 0 0;font-size:21px}.dialog p{font-size:12px;color:var(--muted);line-height:1.6}.formrow{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:12px 0}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label{font-size:11px;color:var(--muted);font-weight:750}.field input,.field select{width:100%;background:#0e1824;border:1px solid #32485c;color:var(--text);border-radius:9px;padding:11px 10px;min-width:0}.preview{background:#0c1e28;border:1px solid #285c6f;border-radius:11px;padding:12px;margin:12px 0;font-size:12px;line-height:1.7}.preview strong{color:var(--cyan)}.dialogfoot{display:flex;gap:9px;margin-top:15px}.dialogfoot button{flex:1}.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#164a4e;border:1px solid #277f89;color:#e8fdff;padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);font-size:12px;display:none;z-index:22;max-width:min(420px,93vw);text-align:center}.toast.show{display:block}.nomarket{text-align:center;color:var(--muted);font-size:14px;padding:50px 10px}.miniTop{display:none}.cycleId{color:var(--cyan);font-weight:900}.footer{color:#687a8a;font-size:10px;padding:24px 0 6px;text-align:center}
+@media(min-width:1350px){main{padding-left:30px;padding-right:30px}.chartWrap{height:300px}.actiontile .value{font-size:17px}.actionrow{gap:9px}}
+@media(max-width:1200px){.shell{grid-template-columns:75px minmax(0,1fr)}.sidebar{padding:23px 9px}.brand{padding:6px 9px 23px}.brand .brandtext,.navbtn .navlabel,.navtitle,.asidebottom{display:none}.navbtn{justify-content:center;padding:13px 8px}.navsymbol{width:24px}.grid-top,.area-lower{grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){.shell{display:block}.sidebar{display:none}main{padding:12px 11px 92px}.miniTop{display:flex;align-items:center;gap:7px}.miniTop .brandmark{width:31px;height:31px}.miniTop .brandtext{font-size:13px}.miniTop .brandtext small{font-size:7px}.mast{margin-bottom:11px}.project{padding:7px 8px;font-size:10px}.project strong{font-size:10px}.mast-actions .iconbtn{min-width:32px;height:34px}.mast-actions .demo{display:none}.topline{align-items:start}.grid-top,.area-lower{display:flex;flex-direction:column}.metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:6;background:#0d1520f5;border-top:1px solid #263647;display:flex;justify-content:space-around;padding:9px 3px max(11px,env(safe-area-inset-bottom));backdrop-filter:blur(12px)}.tab{background:transparent;border:0;color:#879aaf;min-width:58px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;font-weight:700}.tab.on{color:var(--cyan)}.tab i{font-style:normal;font-size:18px}.chartWrap{height:235px}.rightstack{flex-direction:column}.radar{padding:14px}.actiontile .value{font-size:15px}.grid-top{gap:10px}.bigprice{font-size:30px}.riskbox{margin-top:0}.miniTop .brandtext small{white-space:nowrap}}
+@media(max-width:400px){.project .online{display:none}.project strong{font-size:10px}.project{border:0;background:none;padding:0}.panel-head{padding:14px 13px 0}.btc-head{padding:15px 15px 0}.bigprice{font-size:27px}.metric{padding:12px}.metric .m-val{font-size:18px}.actiontile .value{font-size:13px}.radarplot .level{font-size:8px}.formrow{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style><style id="block3css">
+[hidden]{display:none!important}
+main,.strat-wrap,.section-b3split,.panel-b3{min-width:0}main{width:100%;max-width:100%}
+.strat-wrap{display:flex;flex-direction:column;gap:16px;padding-bottom:18px}
+.strat-titlebar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:start}
+.strat-titlebar h1{margin:5px 0;font-size:clamp(23px,2.5vw,33px);letter-spacing:-.8px}
+.strat-titlebar p{color:var(--muted);font-size:12px;margin:5px 0 0;max-width:720px;line-height:1.65}
+.strat-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.strat-hero{background:radial-gradient(ellipse at 90% 10%,#14516b55,transparent 52%),var(--surface);border:1px solid #2b4a5d;border-radius:16px;padding:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(225px,.6fr);gap:15px}
+.eyetext{font-size:10px;color:#9db5c6;letter-spacing:1.8px;font-weight:750}
+.verse-tabs{display:inline-flex;background:#0d1a27;padding:4px;gap:3px;border-radius:11px;border:1px solid var(--border)}
+.verse-tabs button{font-size:12px;font-weight:800;border:0;border-radius:8px;padding:10px 16px;background:transparent;color:var(--muted)}
+.verse-tabs button.is-on{background:#1b5169;color:#d0f7ff;box-shadow:inset 0 0 0 1px #2c708a}
+.strat-lead{margin:10px 0 2px;font-size:18px;font-weight:780}
+.strat-lead-desc{font-size:11px;color:var(--muted);line-height:1.7;max-width:500px}
+.strat-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.strat-kpi{background:#0c1925b8;border:1px solid #2a4658;padding:12px;border-radius:11px;min-width:0}
+.strat-kpi small{color:var(--muted);display:block;font-size:9px;letter-spacing:.5px;margin-bottom:7px}
+.strat-kpi b{font:800 16px/1.4 ui-monospace,monospace;white-space:nowrap}
+.panel-b3{background:var(--surface);border:1px solid var(--border);border-radius:15px;overflow:hidden}
+.panel-b3header{padding:17px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.panel-b3header h2{font-size:15px;margin:0;font-weight:850}
+.panel-b3header p{margin:6px 0 0;color:var(--muted);font-size:11px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.tbl-b3scroll{overflow-x:auto;overscroll-behavior-x:contain;max-width:100%}
+.b3table{border-collapse:separate;border-spacing:0;white-space:nowrap;width:100%;min-width:1210px;font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace}
+.b3table th{padding:13px 12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;text-align:right;font:760 10px/1.5 Inter,system-ui,sans-serif;background:#0f1d2b;position:sticky;top:0;border-bottom:1px solid var(--border)}
+.b3table td{padding:13px 12px;text-align:right;color:#dce7f1;border-bottom:1px solid #243447}
+.b3table th:first-child,.b3table td:first-child{text-align:left;position:sticky;left:0;z-index:2;background:#101e2c;border-right:1px solid #30435a}
+.b3table tbody tr:hover td,.b3table tr.highlight td{background:#1b3748}.b3table tbody tr:hover td:first-child,.b3table tr.highlight td:first-child{background:#1b3748}
+.b3table tr:last-child td{border-bottom:0}
+.b3table .buy-col{color:#8dcdef}.b3table .buy-amt{display:block;font:650 10px/1.4 Inter;color:#7e9ab0}
+.b3table .sell-col{color:#f5cf7e}.b3table .net-profit{display:block;color:#6ee3b6;font:800 11px/1.6 ui-monospace,monospace}
+.b3table .avg-col{color:#b9d7e7}
+.b3table button{border:1px solid #34586e;background:#183e51;color:#a3e6ff;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:800;cursor:pointer}
+.b3table button:hover{background:#265774}
+.section-b3split{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(290px,.7fr);gap:14px}
+.cycle-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:15px 17px 0}
+.cycle-tabs button{border:1px solid var(--border);background:#172739;border-radius:8px;padding:9px 14px;color:#afc6d9;font-weight:800;font-size:12px}
+.cycle-tabs button.is-on{color:#7ae7ff;background:#184157;border-color:#3683a5}
+.detail-layout{padding:17px;display:grid;grid-template-columns:minmax(0,1fr);gap:13px}
+.detail-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.detail-hdr h3{margin:0;font-size:19px}.detail-hdr small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.pill-state{border-radius:7px;padding:5px 8px;background:#235e5050;border:1px solid #327762;color:#83e4bd;font-size:10px;font-weight:750}
+.stage-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stage-card{background:#101e2c;border:1px solid #2d4054;border-radius:11px;padding:13px;min-width:0}
+.stage-card.complete{border-color:#28785e;background:#12332f}
+.stage-card .step{font-size:11px;font-weight:800;color:var(--cyan)}
+.stage-card .usd{font:800 18px/1.5 ui-monospace,monospace;margin-top:5px}
+.stage-card .stage-price{font:770 13px ui-monospace,monospace;color:#d8e9f3}
+.stage-card .stage-status{font-size:10px;color:var(--muted);margin-top:5px}
+.b3submetrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.b3submetric{background:#101d2b;border:1px solid #293e51;border-radius:9px;padding:12px;min-width:0}
+.b3submetric small{font-size:9px;color:var(--muted);display:block;margin-bottom:5px}
+.b3submetric strong{font:850 14px ui-monospace,monospace;word-break:break-word}
+.alt-layout{display:flex;gap:8px;flex-wrap:wrap}
+.b3-risknote{border:1px solid #59492a;background:#2c261b;padding:12px 14px;border-radius:11px;color:#e5c58e;font-size:11px;line-height:1.7}
+.exp-card{padding:16px 17px}
+.exp-card h3{font-size:15px;margin:0 0 5px}
+.exp-card p{color:var(--muted);font-size:11px;line-height:1.7}
+.exp-pairs{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #293849;font-size:12px}
+.exp-pairs span{color:var(--muted)}.exp-pairs strong{font-family:ui-monospace,monospace}
+.b3-stephelp{margin-top:13px;border:1px solid #2f5164;background:#102432;border-radius:10px;padding:12px;font-size:11px;line-height:1.7;color:#bdd3e2}
+.b3footer{color:var(--muted);font-size:10px;text-align:center;padding:6px 0 12px}
+.b3-hint{background:#13283a;padding:11px 16px;border-top:1px solid #2c4657;font-size:11px;color:#aac9d9;line-height:1.7}
+@media(max-width:1200px){.section-b3split{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:860px){.strat-hero{grid-template-columns:minmax(0,1fr)}.strat-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.strat-kpi b{font-size:13px}.stage-track{gap:5px}.stage-card{padding:10px 8px}.stage-card .usd{font-size:15px}.stage-card .stage-price{font-size:11px}.b3submetrics{gap:5px}.b3submetric{padding:10px 7px}.b3submetric strong{font-size:12px}.verse-tabs button{font-size:11px;padding:9px 12px}}
+@media(max-width:380px){.strat-kpi{padding:9px 6px}.strat-kpi b{font-size:12px}.stage-card .stage-price{font-size:10px}}
+</style><style id="block4css">
+.b4-wrap{display:flex;flex-direction:column;gap:15px;padding-bottom:22px;min-width:0}
+.b4-hero{background:radial-gradient(ellipse at 96% 6%,#0f4c6560,transparent 49%),var(--surface);border:1px solid #2b4a5d;border-radius:16px;padding:20px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center}
+.b4-hero h1{font-size:clamp(22px,2.5vw,32px);letter-spacing:-.7px;margin:5px 0}
+.b4-hero p{font-size:12px;color:var(--muted);line-height:1.7;margin:0;max-width:820px}
+.b4-btnrow{display:flex;gap:8px;flex-wrap:wrap}
+.b4-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.b4-stat{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:16px;min-width:0}
+.b4-stat span{font-size:10px;letter-spacing:.8px;color:var(--muted);display:block;margin-bottom:9px}
+.b4-stat strong{display:block;font:750 clamp(14px,1.7vw,20px)/1.3 ui-monospace,monospace;white-space:normal;overflow-wrap:anywhere}
+.b4-toolbar{display:grid;grid-template-columns:1fr 1fr 1fr minmax(130px,1.4fr) auto;gap:8px;align-items:end;padding:13px 16px;border-bottom:1px solid var(--border)}
+.b4-toolbar label,.b4-field label{display:block;font-size:10px;letter-spacing:.3px;color:var(--muted);margin-bottom:6px;font-weight:750}
+.b4-toolbar select,.b4-toolbar input,.b4-field input,.b4-field select,.b4-field textarea{width:100%;min-width:0;background:#0d1825;border:1px solid #304054;color:var(--text);border-radius:9px;padding:10px 11px;font-size:13px;outline-offset:2px}
+.b4-field textarea{resize:vertical;min-height:65px}
+.b4-tablewrap{width:100%;max-width:100%;overflow-x:auto}
+.b4-table{border-collapse:collapse;width:100%;min-width:960px;text-align:left;font-size:12px}
+.b4-table th{color:var(--muted);letter-spacing:.6px;text-transform:uppercase;font-size:10px;background:#0e1c2b;padding:12px;border-bottom:1px solid var(--border)}
+.b4-table td{border-bottom:1px solid #24374b;padding:12px;white-space:nowrap}
+.b4-table tr:hover td{background:#1a2b3d}.b4-table tr.b4-void td{opacity:.5;text-decoration:line-through}.b4-table button{border:1px solid #34526b;border-radius:7px;padding:7px 9px;background:#172e3f;color:#b6f0ff;font-size:11px}
+.b4-type{padding:4px 7px;border-radius:6px;font-size:10px;font-weight:800}
+.b4-type.buy{background:#164c42;color:#72f5ce}.b4-type.sell{background:#4d2a34;color:#ff9ba7}
+.b4-small{font-size:10px;color:var(--muted);margin-top:3px}
+.b4-panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.b4-panel-title h2{font-size:15px;margin:0}.b4-panel-title p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.b4-bottom{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(240px,.6fr);gap:13px}
+.b4-note{padding:16px;font-size:11px;color:var(--muted);line-height:1.8}.b4-note strong{color:var(--text)}
+.b4-matrix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.b4-kpi{padding:10px;border:1px solid var(--border);border-radius:10px;background:#101e2b}.b4-kpi small{font-size:9px;color:var(--muted);display:block;margin-bottom:6px}.b4-kpi b{font:750 12px/1.5 ui-monospace,monospace}
+.b4-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.b4-field{min-width:0}
+.b4-pop-actions{display:flex;gap:7px;margin-top:7px;flex-wrap:wrap}.b4-pop-actions button{background:#1b3549;border:1px solid #35546a;color:#b5ecfd;border-radius:7px;padding:8px 12px;font-size:11px}
+.b4-preview{background:#101e2c;border:1px solid #2e4a5b;border-radius:11px;padding:13px;margin-top:10px;font-size:12px;line-height:2;color:#c5d4e4}
+.b4-preview strong{color:var(--cyan)}.b4-err{color:#ffc1c5;font-size:11px;min-height:14px;margin-top:6px}
+.b4-mode{display:flex;gap:12px;flex-wrap:wrap}.b4-mode label{display:flex;align-items:center;gap:5px;color:var(--text);font-size:12px}
+.b4-foot{text-align:center;color:var(--muted);font-size:10px;margin-top:4px}
+@media (max-width:1100px){.b4-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.b4-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.b4-toolbar>.b4-toolbar-last{grid-column:span 2}.b4-bottom{grid-template-columns:1fr}}
+@media (max-width:620px){.b4-hero{padding:16px}.b4-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.b4-stat{padding:12px}.b4-stats .b4-stat:last-child{grid-column:span 2}.b4-toolbar{grid-template-columns:1fr 1fr}.b4-toolbar>.b4-toolbar-last{grid-column:span 2}.b4-form-grid{grid-template-columns:1fr}.b4-panel-title{padding:13px}.b4-table td{padding:10px}.b4-pop-actions button{flex:1}.dialog{max-height:90dvh;overflow-y:auto}}
+</style><style id="block5css">
+#terminalView{width:100%;min-width:0}.b5-root{display:flex;flex-direction:column;gap:14px;padding:0 0 26px;min-width:0}
+.b5-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.b5-header h1{font-size:clamp(24px,3vw,33px);margin:4px 0}.b5-header p{color:var(--muted);font-size:11px;line-height:1.7;margin:4px 0}.b5-actions{display:flex;gap:8px;flex-wrap:wrap}
+.b5-chip{background:#143144;border:1px solid #275473;border-radius:8px;padding:8px 11px;font-size:11px;color:#a8e9fa;font-weight:800}.b5-chip.warning{border-color:#61472b;background:#31251b;color:#edc58c}
+.b5-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 15px;background:var(--surface);border:1px solid var(--border);border-radius:12px}.b5-control{display:flex;flex-direction:column;gap:5px;min-width:0}.b5-control label{color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.8px;font-weight:800}.b5-select{background:#0c1925;border:1px solid #324659;color:var(--text);border-radius:8px;padding:9px 11px;font-size:12px;min-height:37px;max-width:190px}.b5-timeframes,.b5-indicatorbuttons{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.b5-timeframes button,.b5-indicatorbuttons button,.b5-toolbarbtn{padding:8px 10px;border:1px solid #314457;border-radius:8px;background:#122437;color:#9dbacd;font-size:11px;font-weight:750;cursor:pointer;min-height:34px}.b5-timeframes button.active,.b5-indicatorbuttons button.active{background:#174359;color:#8de7ff;border-color:#2c809f}
+.b5-flexspace{flex:1}.b5-overview{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.b5-kpi{min-width:0;background:#131f2e;border:1px solid var(--border);border-radius:11px;padding:13px}.b5-kpi small{display:block;font-size:10px;letter-spacing:.7px;color:var(--muted);margin-bottom:9px}.b5-kpi strong{font:800 clamp(14px,1.7vw,19px)/1.35 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:nowrap}.b5-kpi span{display:block;margin-top:7px;color:var(--muted);font-size:10px}
+.b5-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,330px);gap:13px;align-items:start}.b5-chartpanel,.b5-sidepanel,.b5-below{min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}.b5-panelhead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid #2A3545;flex-wrap:wrap}.b5-panelhead h2{margin:0;font-size:14px}.b5-panelhead p{color:var(--muted);font-size:10px;margin:4px 0 0}.b5-chartactions{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.b5-chartareas{position:relative;padding:8px 11px 0}.b5-canvas{width:100%;height:clamp(410px,39vw,555px);display:block;border-radius:9px;touch-action:pan-y;cursor:crosshair;background:#0c1724}.b5-tooltip{position:absolute;top:16px;left:22px;pointer-events:none;color:#b9d1dd;font:10px ui-monospace,Consolas,monospace;background:#0b1725d9;border:1px solid #294257;border-radius:6px;padding:5px 8px;max-width:calc(100% - 90px);white-space:normal}.b5-indicators{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap}.b5-legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 15px 13px;color:var(--muted);font-size:10px}.b5-legend i{display:inline-block;width:8px;height:8px;margin-right:4px;border-radius:1px}
+.b5-sidebox{padding:14px;border-bottom:1px solid var(--border)}.b5-sidebox:last-child{border-bottom:0}.b5-eyebrow{font-size:10px;letter-spacing:.8px;color:var(--muted);text-transform:uppercase;font-weight:750}.b5-current{font:850 25px ui-monospace,Consolas,monospace;margin-top:6px;color:var(--cyan)}.b5-sidelist{display:flex;flex-direction:column;gap:9px;margin-top:12px}.b5-sideitem{display:flex;align-items:center;gap:9px;justify-content:space-between;font-size:11px;border-bottom:1px solid #26384a;padding-bottom:9px}.b5-sideitem:last-child{border-bottom:0;padding-bottom:0}.b5-sideitem span{color:var(--muted)}.b5-sideitem strong{font:750 12px ui-monospace,Consolas,monospace}.b5-cycbuttons{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}.b5-cycbuttons button{min-width:43px;border:1px solid #36536b;border-radius:8px;background:#112636;color:#b5cddb;padding:10px 5px;font-weight:850}.b5-cycbuttons button.active{background:#18526a;border-color:#28b2d2;color:#effaff}.b5-levelrow{display:grid;grid-template-columns:11px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #263b50}.b5-levelrow:last-child{border:0}.b5-dot{height:9px;width:9px;border-radius:3px}.b5-levelrow .title{font-size:11px;font-weight:750}.b5-levelrow small{display:block;font-size:9px;color:var(--muted);margin-top:3px}.b5-levelrow .value{font:750 12px ui-monospace,Consolas,monospace;white-space:nowrap;text-align:right}.b5-hint{font-size:10px;line-height:1.7;color:var(--muted)}.b5-btnfull{width:100%;margin-top:12px}
+.b5-bottom{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:13px}.b5-tablescroll{width:100%;overflow-x:auto}.b5-table{border-collapse:collapse;min-width:600px;width:100%}.b5-table th{text-align:left;color:var(--muted);font-size:9px;background:#0c1927;padding:10px 12px;letter-spacing:.6px}.b5-table td{font:12px ui-monospace,Consolas,monospace;padding:12px;border-bottom:1px solid #263447}.b5-table tbody tr:hover td{background:#1b3345}.b5-table tr{cursor:pointer}.b5-marketbadge{display:inline-block;border:1px solid #1b6763;background:#123634;border-radius:6px;font-size:9px;color:#68deb6;padding:3px 7px}.b5-footer{text-align:center;color:var(--muted);font-size:10px;padding:8px 4px 10px}.b5-demoalert{background:#272419;border:1px solid #59452a;color:#f0d29b;font-size:11px;padding:10px 13px;border-radius:9px;line-height:1.55}
+.b5-canvas:focus{outline:2px solid var(--cyan)}#homeOpenTerminal{margin:0}.b5-mininote{padding:11px 14px;font-size:10px;color:var(--muted);border-top:1px solid var(--border);line-height:1.65}
+@media(max-width:1240px){.b5-layout{grid-template-columns:minmax(0,1fr)}.b5-sidepanel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.b5-sidebox{border-right:1px solid var(--border)}.b5-sidebox:nth-child(2n){border-right:0}}
+@media(max-width:860px){.b5-overview{grid-template-columns:repeat(3,minmax(0,1fr))}.b5-chartareas{padding:6px}.b5-canvas{height:400px}.b5-header{align-items:flex-start}}
+@media(max-width:640px){.b5-overview{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.b5-kpi{padding:11px}.b5-kpi strong{font-size:14px}.b5-kpi:nth-child(5){grid-column:span 2}.b5-sidepanel{display:block}.b5-sidebox{border-right:0}.b5-bottom{grid-template-columns:1fr}.b5-canvas{height:395px}.b5-bar{gap:7px;padding:10px}.b5-select{max-width:165px;font-size:11px}.b5-panelhead{padding:11px}.b5-header h1{font-size:24px}.b5-timeframes button{padding:7px 9px}.b5-tooltip{top:10px;left:12px;font-size:9px;line-height:1.5}.b5-chartactions button{padding:7px 9px}}
+@media(max-width:390px){.b5-kpi strong{font-size:12px}.b5-canvas{height:365px}}
+@media(max-width:350px){.mast{gap:4px}.mastleft{min-width:0;gap:3px}.miniTop .brandtext{display:none}.project{padding:4px;gap:3px;max-width:105px;min-width:0}.project strong{font-size:9px;white-space:nowrap}.mast-actions{gap:3px;flex-shrink:0}.mast-actions .iconbtn{min-width:32px;width:32px;height:32px}.mast-actions .demo{display:none}}
+</style>
+<style id="block6css">
+#riskView{min-width:0;width:100%}.risk-root{display:flex;flex-direction:column;gap:14px;padding-bottom:35px;font-variant-numeric:tabular-nums}.r6-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.r6-header h1{font-size:clamp(23px,3vw,32px);margin:4px 0 5px;letter-spacing:-.6px}.r6-header p{margin:0;font-size:12px;color:var(--muted);line-height:1.6;max-width:690px}.r6-btnrow{display:flex;gap:7px;flex-wrap:wrap}.r6-btn{border:1px solid var(--border);background:#172637;color:var(--text);padding:9px 12px;border-radius:9px;font-size:11px;font-weight:750}.r6-btn:hover,.r6-btn:focus-visible{border-color:var(--cyan)}.r6-btn.main{background:var(--cyan);color:#08141d;border-color:var(--cyan)}.r6-warning{font-size:11px;line-height:1.65;border:1px solid #675026;border-radius:11px;color:#ecd6a5;background:#282317;padding:10px 13px}.r6-warning strong{color:var(--amber)}.r6-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.r6-kpi{background:linear-gradient(150deg,#1a2b3c,#131e2b);border:1px solid #2e455a;border-radius:12px;padding:13px 12px;min-width:0}.r6-kpi small{display:block;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.5px;margin-bottom:9px}.r6-kpi strong{display:block;font-size:clamp(15px,1.45vw,22px);line-height:1.3;overflow-wrap:anywhere}.r6-kpi em{display:block;font-style:normal;font-size:10px;color:var(--muted);margin-top:6px}.r6-grid{display:grid;grid-template-columns:minmax(280px,.84fr) minmax(0,1.5fr);gap:14px;align-items:start}.r6-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;min-width:0;overflow:hidden}.r6-cardhead{padding:16px 17px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.r6-cardhead strong{font-size:14px}.r6-cardhead span{font-size:10px;color:var(--muted)}.r6-controls{padding:15px 16px;display:flex;flex-direction:column;gap:15px}.r6-field{display:flex;flex-direction:column;gap:6px;min-width:0}.r6-field label{font-size:11px;color:#a8b8c9;font-weight:700}.r6-field select,.r6-field input{background:#0d1724;border:1px solid #34475a;color:var(--text);border-radius:9px;min-height:40px;padding:8px 10px;width:100%;min-width:0;font-size:13px}.r6-field select:focus-visible,.r6-field input:focus-visible{outline:2px solid var(--cyan)}.r6-field input[type=range]{accent-color:var(--cyan);min-height:25px;padding:0;border:0;background:transparent}.r6-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.r6-toggles{display:flex;gap:6px;background:#0b1522;border:1px solid var(--border);padding:4px;border-radius:10px}.r6-choice{flex:1;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:11px;font-weight:760;padding:10px 6px;cursor:pointer}.r6-choice.active{background:#173c51;color:#b3edff;box-shadow:inset 0 0 0 1px #218bb7}.r6-scenarios{display:flex;gap:6px;flex-wrap:wrap}.r6-scenarios button{background:var(--card);border:1px solid var(--border);border-radius:7px;color:#c4d4e4;font-size:11px;padding:7px 10px}.r6-scenarios button.active{background:#16495a;color:#b8f6ff;border-color:#1bb0d6}.r6-help{color:var(--muted);font-size:11px;line-height:1.7}.r6-plot{padding:16px}.r6-chart{display:block;width:100%;height:285px;touch-action:pan-y}.r6-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 16px 16px}.r6-result{background:#0f1d2d;border:1px solid #273e53;border-radius:10px;padding:12px;min-width:0}.r6-result small{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}.r6-result strong{display:block;font-size:clamp(14px,1.6vw,20px);overflow-wrap:anywhere}.r6-result span{font-size:10px;color:#a3b2c2}.r6-legend{display:flex;align-items:center;gap:13px;color:var(--muted);font-size:10px;margin:0 16px 10px;flex-wrap:wrap}.r6-key{display:inline-block;width:13px;height:3px;border-radius:3px;margin-right:4px;vertical-align:middle}.r6-bottom{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:14px}.r6-tablewrap{overflow-x:auto;max-width:100%}.r6-table{border-collapse:collapse;width:100%;min-width:610px;font-size:11px}.r6-table th{color:var(--muted);text-align:right;font-weight:750;letter-spacing:.3px;font-size:10px;background:#0f1e2c;padding:11px 10px}.r6-table td{text-align:right;border-top:1px solid var(--border);padding:10px;color:#d8e5f1}.r6-table th:first-child,.r6-table td:first-child{text-align:left}.r6-table tr.selected{background:#143047}.r6-note{padding:14px 17px;font-size:11px;line-height:1.7;color:#b7c4d2}.r6-note p{margin:7px 0}.r6-heat{display:flex;align-items:stretch;min-height:10px;border-radius:20px;overflow:hidden;background:#253141;margin:10px 0}.r6-heat span{display:block;background:linear-gradient(90deg,#ffb84a,#21d9b2);width:60%}.r6-separator{border-top:1px solid var(--border);margin:4px 0}.r6-nodanger{color:var(--green)}.r6-bad{color:var(--red)}.r6-amber{color:var(--amber)}.r6-small-label{font-weight:760;font-size:11px;color:var(--muted)}.r6-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.r6-step{border-radius:8px;border:1px solid var(--border);background:#0e1d2b;padding:9px 6px;text-align:center;font-size:10px;color:var(--muted)}.r6-step strong{font-size:14px;color:var(--text);display:block;margin:5px 0}.r6-hint{border:1px solid #305775;background:#102738;border-radius:10px;padding:11px 12px;color:#a9cfdf;font-size:11px;line-height:1.6}.r6-mobile-shortcut{display:inline-flex;gap:5px;align-items:center;color:var(--cyan);border:1px solid #2d5b73;background:#0d2837;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:800}.r6-negative{color:var(--red)}.r6-positive{color:var(--green)}.r6-details{padding:13px 16px;font-size:11px;color:var(--muted);line-height:1.75}.r6-details strong{color:var(--text)}
+@media(max-width:1200px){.r6-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.r6-grid{grid-template-columns:minmax(280px,.9fr) minmax(0,1.1fr)}}
+@media(max-width:940px){.r6-grid,.r6-bottom{grid-template-columns:1fr}.r6-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.r6-chart{height:260px}}
+@media(max-width:580px){.r6-header{align-items:flex-start}.r6-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.r6-kpi{padding:11px 10px}.r6-kpi strong{font-size:15px}.r6-kpi:nth-child(5){grid-column:span 2}.r6-two{grid-template-columns:repeat(2,minmax(0,1fr))}.r6-plot{padding:10px}.r6-chart{height:230px}.r6-results{padding:0 10px 10px;gap:7px}.r6-result{padding:10px}.r6-result strong{font-size:14px}.r6-cardhead{padding:13px}.r6-controls{padding:12px}.r6-toggles .r6-choice{font-size:10px}.r6-legend{margin:0 12px 9px}}
+@media(max-width:350px){.r6-two{grid-template-columns:1fr}.r6-result strong{font-size:12px}}
+\n/* BLOCO 7: Contas e projetos — Midnight Exchange */
+.accountwrap{max-width:1220px;margin:0 auto 35px}.accounttop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin:0 0 18px}.accounttop h1{font-size:clamp(22px,3vw,34px);margin:7px 0}.accounttop p{color:var(--muted);font-size:13px;line-height:1.6;max-width:750px}.b7row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(290px,.9fr);gap:14px;margin:14px 0}.b7panel{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:18px;min-width:0}.b7panel h2{margin:0 0 12px;font-size:17px}.b7projectlist{display:grid;gap:9px;margin-top:16px}.b7project{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--border);background:#122030;padding:14px;border-radius:12px}.b7project.active{border-color:#18B8E6;box-shadow:inset 3px 0 #18B8E6}.b7project h3{font-size:14px;margin:0 0 5px}.b7project p{font-size:11px;color:var(--muted);margin:0}.b7btnrow{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.b7btnrow button,.b7small{background:#213346;border:1px solid #355068;color:#d5edfa;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:700}.b7small.negative{color:#ffabb1}.b7status{display:flex;align-items:center;gap:7px;color:#f4b740;background:#322917;border:1px solid #574422;border-radius:9px;padding:10px;font-size:12px;line-height:1.5}.b7status.cloud{color:#58e8bf;background:#122a27;border-color:#2b6c5d}.b7sub{font-size:12px;color:var(--muted);line-height:1.7}.b7tabs{display:flex;gap:4px;background:#0d1722;border-radius:10px;padding:4px;margin:12px 0}.b7tabs button{flex:1;background:transparent;border:0;color:var(--muted);border-radius:7px;padding:9px 5px;font-size:12px}.b7tabs button.active{color:#e2fbff;background:#24506a}.b7auth{display:grid;gap:12px}.b7auth label{display:grid;gap:6px;color:#9ab3c3;font-size:12px}.b7auth input,.b7auth select,.b7auth textarea,.b7input{background:#0f1a27;border:1px solid #355068;border-radius:9px;color:#eef9fd;padding:12px;width:100%;min-width:0}.b7auth input:disabled{opacity:.5}.b7auth button:disabled{opacity:.35}.b7warn{font-size:11px;color:#dfc994;line-height:1.6}.b7statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.b7stat{background:#101c29;border:1px solid var(--border);padding:12px;border-radius:10px}.b7stat label{color:var(--muted);font-size:11px}.b7stat strong{display:block;margin-top:8px;font-family:ui-monospace,monospace;font-size:17px}.b7divider{border:0;border-top:1px solid var(--border);margin:18px 0}.b7foot{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.b7toast{color:#20C997;font-size:12px;min-height:19px;margin-top:5px}.b7tag{color:#f4b740;border:1px solid #60512e;padding:4px 8px;border-radius:7px;font-size:10px;font-weight:700}.b7welcome{background:linear-gradient(105deg,#102c3b,#111c2a);border:1px solid #2d617b;border-radius:14px;padding:17px;margin:12px 0}.b7welcome p{font-size:12px;color:#a0bbcd;line-height:1.6}.b7empty{border:1px dashed #345267;border-radius:12px;padding:15px;color:var(--muted);font-size:12px}.b7project .name{min-width:140px;flex:1}.b7current{color:#18B8E6;font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800}
+@media(max-width:980px){.b7row{grid-template-columns:1fr}}
+@media(max-width:650px){.b7project{align-items:flex-start;flex-direction:column}.b7btnrow{justify-content:flex-start}.b7statgrid{grid-template-columns:repeat(2,1fr)}.accounttop{flex-direction:column}.b7panel{padding:13px}}
+</style>
+<script>/* Only publishable key allowed. Cloud auth stays off until a DEDICATED project is configured and hosted over HTTPS. */
+window.BTC_SUPABASE_CONFIG = { url: '', publishableKey: '' };</script><style id="block9pwa">#installAppBtn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid #18B8E658;background:#152C3C;color:#BEEFFD;border-radius:10px;font-size:12px;font-weight:750;padding:8px 10px;white-space:nowrap;min-height:35px}#installAppBtn[hidden]{display:none!important}#pwaOfflineBanner{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:99999;max-width:min(94vw,420px);text-align:center;border:1px solid #F4B74055;background:#302615;color:#FFDE99;padding:11px 16px;border-radius:12px;font-size:12px;box-shadow:0 5px 25px #0008}#pwaOfflineBanner[hidden]{display:none!important}@media(max-width:430px){#installAppBtn{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 70px);z-index:9998;padding:9px 12px;font-size:12px;box-shadow:0 8px 28px #0009}}</style><link rel="stylesheet" href="./responsive.css"/><link rel="stylesheet" href="./landing.css"/><link rel="stylesheet" href="./onboarding.css"/></head><body><div id="pwaOfflineBanner" role="status" aria-live="polite" hidden>Sem Internet. A versão Demo guardada neste dispositivo pode continuar a funcionar. Exporta um backup quando possível.</div>
+<section id="btcLanding" role="region" aria-labelledby="btcLandingTitle">
+<div class="landing-inner">
+  <nav class="landing-nav" aria-label="Entrada na BTC Strategy Pro">
+    <div class="landing-brand"><span class="landing-symbol" aria-hidden="true">₿</span><span>BTC STRATEGY <span style="color:#52d3e8">PRO</span><small>BETA DEMONSTRATIVA</small></span></div>
+    <div class="landing-links"><button type="button" class="landing-button secondary" data-entry-action="login">Entrar</button><button type="button" class="landing-button primary" data-entry-action="signup">Criar conta</button></div>
+  </nav>
+  <div class="landing-hero">
+    <div class="landing-copy">
+      <span class="landing-eyebrow"><span class="landing-pulse" aria-hidden="true"></span> ESTRATÉGIA · SIMULAÇÃO · CONTROLO</span>
+      <h1 id="btcLandingTitle">O teu centro de comando para <em>estratégias Bitcoin.</em></h1>
+      <p class="landing-lede">Organiza ciclos de compras e vendas, acompanha cenários de risco e regista operações num único espaço. Experimenta primeiro com valores totalmente fictícios.</p>
+      <div class="landing-ctas">
+        <button type="button" class="landing-button primary" data-entry-action="signup">Criar conta <span aria-hidden="true">↗</span></button>
+        <button type="button" class="landing-button secondary" data-entry-action="login">Já tenho conta</button>
+        <button type="button" class="landing-button" data-entry-action="demo">Experimentar Demo <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="landing-pending" id="btcLandingAuthNotice"><strong>Contas em preparação.</strong> Registo e login já têm formulários próprios, mas continuam desativados enquanto validamos o email e a segurança. A Demo pode ser utilizada agora.</div>
+      <div class="landing-trust"><span>✓ Sem ordens reais</span><span>✓ Projetos com backup JSON</span><span>✓ Adaptado a telemóveis</span></div>
+    </div>
+    <div class="landing-preview" aria-label="Pré-visualização ilustrativa do dashboard">
+      <div class="landing-preview-top"><div class="landing-preview-title"><i aria-hidden="true"></i> BTC / USD · Painel estratégico</div><span class="landing-faux-badge">DADOS SIMULADOS</span></div>
+      <div class="landing-price">PREÇO HIPOTÉTICO DE REFERÊNCIA<b>82 000,00 $</b><small>↗ +1,34% · Exemplo fictício</small></div>
+      <svg class="landing-chart" viewBox="0 0 540 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfico decorativo ilustrativo, não representa o preço real do Bitcoin">
+        <defs><linearGradient id="btcLandingChartFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#18d3d1" stop-opacity=".32"/><stop offset="100%" stop-color="#18d3d1" stop-opacity="0"/></linearGradient></defs>
+        <path class="axis" d="M 0 36 H 540 M 0 90 H 540 M 0 145 H 540 M 0 200 H 540"/>
+        <path class="fill" d="M 0 178 L 23 167 L 45 181 L 65 153 L 85 164 L 107 139 L 127 149 L 148 113 L 168 127 L 186 122 L 207 135 L 228 105 L 247 119 L 270 83 L 289 94 L 308 67 L 331 90 L 349 72 L 372 79 L 389 58 L 407 64 L 430 43 L 451 66 L 470 48 L 490 36 L 512 42 L 540 23 V 225 H 0 Z"/>
+        <path class="line" d="M 0 178 L 23 167 L 45 181 L 65 153 L 85 164 L 107 139 L 127 149 L 148 113 L 168 127 L 186 122 L 207 135 L 228 105 L 247 119 L 270 83 L 289 94 L 308 67 L 331 90 L 349 72 L 372 79 L 389 58 L 407 64 L 430 43 L 451 66 L 470 48 L 490 36 L 512 42 L 540 23"/>
+        <circle cx="540" cy="23" r="6" fill="#43f0e0" stroke="#245a65" stroke-width="3"/>
+      </svg>
+      <div class="landing-kpis"><div class="landing-kpi"><small>ESTRATÉGIAS</small><strong>5 ciclos A–E</strong></div><div class="landing-kpi"><small>SIMULADOR</small><strong>Risco & margem</strong></div><div class="landing-kpi"><small>HISTÓRICO</small><strong>Backup local</strong></div></div>
+    </div>
+  </div>
+  <div class="landing-features">
+    <article class="landing-feature"><span class="feature-icon" aria-hidden="true">▥</span><h2>Planeia as estratégias</h2><p>Acompanha níveis de entrada, reforços e objetivos sem perder o contexto de cada ciclo.</p></article>
+    <article class="landing-feature"><span class="feature-icon" aria-hidden="true">◈</span><h2>Simula o risco</h2><p>Explora cenários de preço, margem, alavancagem e custos com pressupostos explícitos.</p></article>
+    <article class="landing-feature"><span class="feature-icon" aria-hidden="true">▤</span><h2>Organiza os projetos</h2><p>Mantém registos separados e exporta os dados Demo em ficheiro JSON.</p></article>
+  </div>
+  <footer class="landing-footer"><span>© 2026 BTC Strategy Pro · Beta Demo · Não constitui aconselhamento financeiro.</span><span class="landing-footer-links"><a href="./privacidade.html">Privacidade</a><a href="./termos-demo.html">Termos da Demo</a><button type="button" class="landing-button secondary" data-entry-action="demo">Abrir Demo</button></span></footer>
+</div></section>
+<div class="shell"><aside class="sidebar"><div class="brand" id="bigBrand"></div><div class="navtitle">MERCADO</div><button class="navbtn on" data-nav="Início"><span class="navsymbol">▦</span><span class="navlabel">Dashboard</span></button><button class="navbtn" data-nav="Terminal"><span class="navsymbol">⌁</span><span class="navlabel">Trading Terminal</span></button><div class="navtitle">ESTRATÉGIAS</div><button class="navbtn" data-nav="Estratégias"><span class="navsymbol">▤</span><span class="navlabel">Estratégias</span></button><button class="navbtn" data-nav="Registos"><span class="navsymbol">⇅</span><span class="navlabel">Operações</span></button><button class="navbtn" data-nav="Risco"><span class="navsymbol">◈</span><span class="navlabel">Risco e Simulador</span></button><button class="navbtn" data-nav="Alertas"><span class="navsymbol">♧</span><span class="navlabel">Alertas</span></button><div class="navtitle">UTILIZADOR</div><button class="navbtn" data-nav="Projetos"><span class="navsymbol">▣</span><span class="navlabel">Projetos</span></button><button class="navbtn" data-nav="Conta"><span class="navsymbol">◉</span><span class="navlabel">Conta</span></button><div class="asidebottom"><strong>● DEMONSTRAÇÃO</strong><div>Sem preços ao vivo.<br/>Sem ligação à corretora.<br/>Sem negociação real.</div></div></aside>
+<main><header class="mast"><div class="mastleft"><div class="miniTop" id="smallBrand"></div><button class="project" id="projectBtn"><strong>BTC Futures</strong> <span class="tiny">▾</span><span class="online"><span class="dot"></span><span class="tiny">Dados fictícios</span></span></button></div><div class="mast-actions"><span class="demo">MODO DEMO</span><button type="button" id="installAppBtn" aria-label="Instalar BTC Strategy Pro">⬇ Instalar</button><button aria-label="Notificações" class="iconbtn" id="alertBtn">♧</button><button aria-label="Perfil" class="iconbtn" id="profileBtn">◉</button></div></header>
+<div id="homeView"><section class="topline"><div><div class="eyebrow">BTC STRATEGY PRO · BETA DEMONSTRATIVA</div><h1 class="heading">Trading Command Center</h1><p>Os teus níveis, operações e risco, num só lugar.</p></div><button class="btn neutral" id="resetDemo">↺ <span class="resetText">Repor demo</span></button></section>
+<div class="notice"><b>ⓘ</b><span>Simulação visual. Preços, gráficos e resultados são fictícios; a app não executa ordens.</span></div>
+<section class="grid-top"><div class="panel"><div class="btc-head"><div><div class="btc-label"><span class="btcsymbol">₿</span><span>Bitcoin <span style="color:var(--muted);font-weight:500">BTC / USD</span></span></div><div class="bigprice" id="btcPrice">82 000,00 $</div><div class="diff" id="btcChange">+1,34% · últimas 24h (simulado)</div></div><div class="infochips"><span class="chip">SIMULADO</span><button class="chip" id="marketStatus" title="Alternar modo sem cotação">● Dados fictícios</button></div></div><div class="charttoolbar"><div class="timeframes"><button class="tf" data-tf="15m">15m</button><button class="tf active" data-tf="1h">1h</button><button class="tf" data-tf="4h">4h</button><button class="tf" data-tf="1D">1D</button></div><div class="tiny">Gráfico de demonstração · <span id="hoverOhlc">OHLC ilustrativo</span></div></div><div class="chartWrap" id="chartbox"><canvas aria-label="Gráfico candlestick de demonstração" id="chart"></canvas><div class="nomarket" id="nomarket" style="display:none">Feed de preços desativado.<p>Esta é uma simulação local. Não são consultadas cotações reais.</p></div></div><div class="chart-caption"><span><b class="key" style="background:var(--cyan)"></b> Entrada</span><span><b class="key" style="background:var(--amber)"></b> Objetivo</span><span><b class="key" style="background:var(--green)"></b> Reforço</span><span>Fonte: Demo local</span></div></div>
+<div class="rightstack"><div class="panel radar"><div class="radar-top"><div><div class="sectiontitle"><span class="spark">◈</span> Radar de Estratégias</div><div class="subline">Conjunto <span class="cycleId" id="activeCycle">A</span> · Níveis e objetivos</div></div><span class="chip">20 / 30 / 50</span></div><div class="radarplot" id="radarPlot"><div class="level" style="left:15%">Reforço 50%<i></i><span id="radarFifty">66 000</span></div><div class="level" style="left:39%">Reforço 30%<i></i><span id="radarThirty">74 000</span></div><div class="level price" style="left:63%">BTC agora<i></i><span id="radarPrice">82 000</span></div><div class="level" style="left:85%">Venda<i></i><span id="radarSell">83 500</span></div></div><div class="actionrow"><div class="actiontile"><div class="title">Próxima compra</div><div class="value" id="nextEntry" style="color:var(--cyan)">81 000 $</div><div class="desc" id="nextEntryDesc">Novo conjunto</div></div><div class="actiontile"><div class="title">Próx. reforço</div><div class="value" id="nextBoost" style="color:var(--green)">74 000 $</div><div class="desc" id="nextBoostDesc">300 $ nominais</div></div><div class="actiontile"><div class="title">Próx. venda</div><div class="value" id="nextSell" style="color:var(--amber)">83 538 $</div><div class="desc" id="nextSellDesc">Média +1 500</div></div></div></div><div class="panel"><div class="panel-head" style="padding-bottom:12px"><div class="sectiontitle">Ações rápidas</div><span class="tiny">Apenas Demo</span></div><div class="quick"><button class="btn primary" id="buyBtn">＋ Registar compra</button><button class="btn sell" id="sellBtn">↗ Registar venda</button><button class="btn neutral" id="tableBtn">▤ Tabela Chaves</button><button class="btn neutral" id="simBtn">◎ Simular BTC</button></div></div></div></section>
+<section class="metrics"><div class="panel metric"><div class="m-title">CAPITAL DA DEMO</div><div class="m-val" id="metricCapital">2 000,00 $</div><div class="m-sub">Capital inicial simulado</div></div><div class="panel metric"><div class="m-title">PNL NÃO REALIZADO</div><div class="m-val" id="metricPnl" style="color:var(--red)">−0,09 $</div><div class="m-sub">Antes de funding</div></div><div class="panel metric"><div class="m-title">EXPOSIÇÃO NOMINAL</div><div class="m-val" id="metricNotional">197,00 $</div><div class="m-sub">Não confundir com margem</div></div><div class="panel metric"><div class="m-title">PNL REALIZADO</div><div class="m-val" id="metricRealized" style="color:var(--green)">0,00 $</div><div class="m-sub" id="metricFees">Taxas acumuladas: 0,10 $</div></div></section>
+<section class="area-lower"><div class="panel tablepanel" id="tablePanel"><div class="panel-head"><div><div class="sectiontitle">▤ Tabela Chaves</div><div class="subline">Compras de 200 $ / 300 $ / 500 $ com reforços de −8 000 $</div></div><div class="pillgroup"><button class="pill sel" data-side="descida">↓ Descida</button><button class="pill" data-side="subida">↑ Subida</button></div></div><div class="tableScroll"><table class="strategyTable"><thead><tr><th>Ciclo</th><th>20% · 200 $</th><th>30% · 300 $</th><th>50% · 500 $</th><th>Alvo atual</th><th>Estado</th></tr></thead><tbody id="strategyRows"></tbody></table></div><div style="padding:9px 17px;font-size:10px;color:var(--muted)">Toque num conjunto para atualizar o Radar e as linhas do gráfico. Os preços de venda são recalculados após compras registadas.</div></div><div class="lowerstack"><div class="panel cyclelist"><div class="sectiontitle">◉ Conjuntos de estratégia</div><div class="subline" style="margin-bottom:8px">Escolhe A–E para examinar os níveis</div><div id="cycleList"></div></div><div class="panel riskbox"><div class="sectiontitle" style="margin-bottom:8px">♧ Margem e risco <span class="chip">Estimativas Demo</span></div><div class="riskline"><span>Margem atribuída (hipótese 5x)</span><strong id="marginAssigned">39,40 $</strong></div><div class="riskline"><span>Capital livre estimado</span><strong id="marginFree">1 960,60 $</strong></div><div class="riskline"><span>Exposição / capital</span><strong id="marginEff">0,10x</strong></div><div class="riskbar"><div id="riskBar" style="width:12%"></div></div><div class="warning">⚠ O preço de liquidação não é calculado nesta Demo. A Kraken poderá agregar todas as compras BTC Perp numa única posição real.</div></div></div></section>
+<div class="footer">BTC Strategy Pro · Beta Demo · Preços e resultados fictícios · Sem ligação a corretoras · Exporta backups dos projetos<div style="margin-top:9px;display:flex;justify-content:center;gap:15px;flex-wrap:wrap"><a href="./privacidade.html" target="_blank" rel="noopener">Privacidade</a><a href="./termos-demo.html" target="_blank" rel="noopener">Termos da Demo</a></div></div></div><div hidden="" id="strategiesView"></div><div hidden="" id="journalView"></div><div hidden="" id="terminalView"></div><div hidden="" id="riskView"></div><div aria-live="polite" hidden="" id="accountView"></div></main></div>
+<nav class="bottomnav"><button class="tab on" data-nav="Início"><i>▦</i>Início</button><button class="tab" data-nav="Estratégias"><i>▤</i>Estratégias</button><button class="tab" data-nav="Registos"><i>⇅</i>Registos</button><button class="tab" data-nav="Alertas"><i>♧</i>Alertas</button><button class="tab" data-nav="Conta"><i>◉</i>Conta</button></nav>
+<div class="overlay" id="overlay" role="presentation"><div aria-labelledby="dialogTitle" aria-modal="true" class="dialog" role="dialog"><div class="dialogtop"><div><div class="eyebrow" id="dialogEyebrow">DEMONSTRAÇÃO</div><h3 id="dialogTitle">Ação</h3></div><button aria-label="Fechar" class="iconbtn" id="closeDialog">×</button></div><div id="dialogBody"></div><div class="dialogfoot" id="dialogFoot"></div></div></div><div class="toast" id="toast" role="status"></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),money=(n,d=2)=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)+' $',num=n=>new Intl.NumberFormat('pt-PT',{maximumFractionDigits:0}).format(n),color=(v)=>v>=0?'var(--green)':'var(--red)',P=82000;let AM=[200,300,500],off=[1500,2500,3500],GAP=8000,GRID_STEP=1000,FEE=.0005;
+let CAPITAL_DEMO=2000;let current=P,side='descida',sel='A',tf='1h',marketOn=true,realized=0,totalFees=197*FEE,modalAction='',toastTimer;
+const initial=()=>({descida:Object.fromEntries('ABCDE'.split('').map((id,i)=>[id,{id,entry:82000-GRID_STEP*i,fills:[]}])),subida:Object.fromEntries('ABCDE'.split('').map((id,i)=>[id,{id,entry:82000+GRID_STEP*i,fills:[]}]))});let sets=initial();
+function logo(){return `<svg class="brandmark" viewBox="0 0 64 64" aria-label="Candle Grid"><circle cx="32" cy="32" r="28" stroke="#18B8E6" stroke-width="2" fill="#102333"/><path d="M11 42C21 44 31 39 38 34S47 22 55 20" stroke="#18B8E6" fill="none" stroke-width="3" stroke-linecap="round"/><g stroke-linecap="round" stroke-width="2"><path d="M17 23v22M28 17v25M39 12v25M49 18v20" stroke="#adf8e3"/></g><rect x="14" y="26" width="6" height="13" rx="1" fill="#20C997"/><rect x="25" y="22" width="6" height="13" rx="1" fill="#F05D64"/><rect x="36" y="17" width="6" height="13" rx="1" fill="#20C997"/><rect x="46" y="21" width="6" height="12" rx="1" fill="#20C997"/></svg>`}
+$('bigBrand').innerHTML=logo()+`<div class="brandtext">BTC STRATEGY <span>PRO</span><small>CANDLE GRID · DEMO</small></div>`;$('smallBrand').innerHTML=logo()+`<div class="brandtext">BTC <span>STRATEGY PRO</span><small>TRADING COMMAND CENTER</small></div>`;
+function get(){return sets[side][sel]}function qcyc(s){return typeof s.openQty==='number'?s.openQty:s.fills.reduce((a,f)=>a+f.usd/f.price,0)}function qty(s){return qcyc(s)}function cost(s){return typeof s.openBasis==='number'?s.openBasis:s.fills.reduce((a,f)=>a+f.usd,0)}function avg(s){let q=qcyc(s);return q?cost(s)/q:s.entry}function target(s){return avg(s)+off[Math.max(0,s.fills.length-1)]}function next(s){return s.entry-(s.fills.length)*GAP}function st(s){if(s.fills.length===0)return 'Planeado';if(current>=target(s))return 'Vender';if(current<avg(s)*.85)return 'Atenção';return 'Ativa'}
+function all(){return Object.values(sets[side])}function exposure(){return all().reduce((a,s)=>a+cost(s),0)}function unreal(){return all().reduce((a,s)=>a+qcyc(s)*current-cost(s),0)}
+function render(){let s=get();$('btcPrice').textContent=marketOn?money(current):'— — —';$('btcChange').textContent=marketOn?'+'+((current/80900-1)*100).toFixed(2).replace('.',',')+'% · variação simulada':'Cotação indisponível';$('btcChange').style.color=marketOn?color(current-80900):'var(--muted)';$('marketStatus').textContent=marketOn?'● Simulado':'● Sem dados';$('chart').style.display=marketOn?'block':'none';$('nomarket').style.display=marketOn?'none':'block';$('activeCycle').textContent=sel;$('radarFifty').textContent=num(s.entry-2*GAP);$('radarThirty').textContent=num(s.entry-GAP);$('radarPrice').textContent=marketOn?num(current):'—';$('radarSell').textContent=num(target(s));
+let nextBuy=all().filter(c=>!c.fills.length).sort((a,b)=>Math.abs(a.entry-current)-Math.abs(b.entry-current))[0];$('nextEntry').textContent=nextBuy?num(nextBuy.entry)+' $':'—';$('nextEntryDesc').textContent=nextBuy?'Conjunto '+nextBuy.id:'Sem entradas';$('nextBoost').textContent=s.fills.length>=3?'—':num(next(s))+' $';$('nextBoostDesc').textContent=s.fills.length===0?'1.ª entrada 200 $':s.fills.length===1?'300 $ nominais':s.fills.length===2?'500 $ nominais':'Concluído';$('nextSell').textContent=num(target(s))+' $';$('nextSellDesc').textContent=s.fills.length?('Média +'+num(off[s.fills.length-1])):'Vender após entrada';
+$('metricPnl').textContent=money(unreal());$('metricPnl').style.color=color(unreal());$('metricNotional').textContent=money(exposure());$('metricRealized').textContent=money(realized);$('metricRealized').style.color=color(realized);$('metricFees').textContent='Comissões Demo acumuladas: '+money(totalFees);$('marginAssigned').textContent=money(exposure()/5);$('marginFree').textContent=money(Math.max(0,2000-exposure()/5+realized));$('marginEff').textContent=(exposure()/2000).toFixed(2).replace('.',',')+'x';$('riskBar').style.width=Math.min(100,exposure()/2000*100)+'%';
+$('strategyRows').innerHTML=all().map(x=>`<tr data-row="${x.id}" class="${sel===x.id?'selected':''}"><td><span class="letter">${x.id}</span></td><td>${num(x.entry)}<small class="cashlabel">200 $</small></td><td>${num(x.entry-GAP)}<small class="cashlabel">300 $</small></td><td>${num(x.entry-2*GAP)}<small class="cashlabel">500 $</small></td><td class="profit">${num(target(x))}</td><td><span class="state ${x.fills.length?'active':''}">${st(x)}</span></td></tr>`).join('');document.querySelectorAll('[data-row]').forEach(e=>e.onclick=()=>{sel=e.dataset.row;render()});
+$('cycleList').innerHTML=all().map(x=>`<button class="cyclebtn ${sel===x.id?'sel':''}" data-cycle="${x.id}"><span class="cyc-name"><span class="cletter">${x.id}</span><span><strong>${x.fills.length?'Entrada registada':'Entrada planeada'}</strong><span class="cashlabel">${x.fills.length}/3 compras · ${st(x)}</span></span></span><span class="cmeta">${num(target(x))} $　›</span></button>`).join('');document.querySelectorAll('[data-cycle]').forEach(e=>e.onclick=()=>{sel=e.dataset.cycle;render()});document.querySelectorAll('[data-side]').forEach(e=>e.classList.toggle('sel',e.dataset.side===side));draw();if(typeof window.renderStrategyCenter==='function')window.renderStrategyCenter();if(typeof window.renderTradeJournal==='function')window.renderTradeJournal();}
+function candles(n=48){let r=[],v=80600,seed=9147;for(let i=0;i<n;i++){seed=(seed*1664525+1013904223)>>>0;let u=seed/4294967296;let o=v;v=Math.max(76400,Math.min(84800,v+(u-.49)*1000+(i>n*.62?50:-18)));r.push({o,c:v,h:Math.max(o,v)+150+u*300,l:Math.min(o,v)-100-(1-u)*300,volume:40+u*70})}let shift=current-r.at(-1).c;return r.map(c=>({...c,o:c.o+shift,c:c.c+shift,h:c.h+shift,l:c.l+shift}));}
+let crossX=-1;function draw(){let canvas=$('chart');if(!marketOn)return;let rect=canvas.getBoundingClientRect();if(!rect.width||!rect.height)return;let ratio=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*ratio);canvas.height=Math.round(rect.height*ratio);let cx=canvas.getContext('2d');cx.scale(ratio,ratio);let w=rect.width,h=rect.height;cx.fillStyle='#101a27';cx.fillRect(0,0,w,h);let s=get(),prices=[current,s.entry,s.entry-GAP,s.entry-2*GAP,target(s)],cs=candles(tf==='15m'?72:tf==='1h'?52:tf==='4h'?44:32);let lows=cs.map(v=>v.l),highs=cs.map(v=>v.h);let min=Math.min(...lows,current-850, ...prices.filter(x=>Math.abs(x-current)<6200)),max=Math.max(...highs,current+850,...prices.filter(x=>Math.abs(x-current)<6200));let span=Math.max(max-min,6500);min=(min+max)/2-span*.54;max=min+span*1.08;let gridW=w-72,top=16,bottom=h-40,plotH=bottom-top;let y=p=>top+(max-p)/(max-min)*plotH,x=i=>15+i*(gridW-20)/cs.length;cx.font='10px ui-monospace,monospace';cx.textAlign='left';for(let j=0;j<=5;j++){let yy=top+(plotH*j)/5;cx.strokeStyle='#2a35455c';cx.beginPath();cx.moveTo(10,yy);cx.lineTo(gridW,yy);cx.stroke();cx.fillStyle='#7a8a9a';cx.fillText(num(max-(max-min)*j/5),gridW+6,yy+3)}for(let i=0;i<cs.length;i++){let c=cs[i],xx=x(i),yy1=y(c.o),yy2=y(c.c),hi=y(c.h),lo=y(c.l),g=c.c>=c.o;cx.strokeStyle=g?'#20C997':'#F05D64';cx.lineWidth=1;cx.beginPath();cx.moveTo(xx,hi);cx.lineTo(xx,lo);cx.stroke();cx.fillStyle=cx.strokeStyle;cx.fillRect(xx-2,Math.min(yy1,yy2),4,Math.max(1,Math.abs(yy2-yy1)));cx.globalAlpha=.3;cx.fillRect(xx-2,bottom+7,4,c.volume/5);cx.globalAlpha=1;}
+const levels=[{p:s.entry,name:'Entrada',color:'#18B8E6'},{p:s.entry-GAP,name:'R30',color:'#20C997'},{p:s.entry-2*GAP,name:'R50',color:'#20C997'},{p:target(s),name:'Venda',color:'#F4B740'}];for(let l of levels){if(l.p<min||l.p>max)continue;let yy=y(l.p);cx.setLineDash([4,5]);cx.strokeStyle=l.color+'bb';cx.beginPath();cx.moveTo(10,yy);cx.lineTo(gridW,yy);cx.stroke();cx.setLineDash([]);cx.fillStyle=l.color;cx.fillRect(gridW-54,yy-8,54,14);cx.font='9px sans-serif';cx.fillStyle='#07101a';cx.fillText(l.name+' '+(l.p/1000).toFixed(1)+'k',gridW-52,yy+2)}let yy=y(current);cx.strokeStyle='#d5edff88';cx.setLineDash([2,3]);cx.beginPath();cx.moveTo(10,yy);cx.lineTo(gridW,yy);cx.stroke();cx.setLineDash([]);cx.fillStyle='#9defff';cx.fillRect(gridW,yy-10,66,20);cx.fillStyle='#041520';cx.font='bold 10px monospace';cx.fillText(num(current),gridW+5,yy+4);cx.fillStyle='#506679';cx.font='9px sans-serif';for(let i=0;i<5;i++){cx.fillText(['−48h','−36h','−24h','−12h','Agora'][i],15+i*(gridW-70)/4,h-5)}if(crossX>=0&&crossX<gridW){let index=Math.min(cs.length-1,Math.max(0,Math.round((crossX-15)/(gridW-20)*cs.length))),c=cs[index];cx.strokeStyle='#9ab2c16c';cx.beginPath();cx.moveTo(x(index),top);cx.lineTo(x(index),bottom);cx.stroke();$('hoverOhlc').textContent=`O ${num(c.o)} H ${num(c.h)} L ${num(c.l)} C ${num(c.c)}`;}else $('hoverOhlc').textContent='Passe o cursor sobre as velas';}
+function info(msg){clearTimeout(toastTimer);$('toast').textContent=msg;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3900)}
+function dialog(title,eyebrow,body,buttons){$('dialogTitle').textContent=title;$('dialogEyebrow').textContent=eyebrow;$('dialogBody').innerHTML=body;$('dialogFoot').innerHTML=buttons;$('overlay').classList.add('open')}
+function close(){$('overlay').classList.remove('open')};$('closeDialog').onclick=close;$('overlay').addEventListener('click',e=>{if(e.target.id==='overlay')close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+function previewFill(){let s=get(),usd=Number($('usdInput')?.value),price=Number($('priceInput')?.value),out=$('previewBuy');if(!out)return;if(!(usd>0&&price>0)){out.innerHTML='Introduz valores positivos';return}let f=[...s.fills,{usd,price}],Q=f.reduce((a,v)=>a+v.usd/v.price,0),C=f.reduce((a,v)=>a+v.usd,0),newAvg=C/Q,stage=Math.min(3,f.length);out.innerHTML=`BTC adquirido: <strong>${(usd/price).toFixed(8)}</strong><br>Preço médio atualizado: <strong>${money(newAvg)}</strong><br>Objetivo após compra: <strong>${money(newAvg+off[stage-1])}</strong><br>Comissão estimada: ${money(usd*FEE,3)}`}
+function openBuy(){window.BTCBlock4?.openBuy()}
+function openSell(){window.BTCBlock4?.openSell()}
+function openSim(){dialog('Simular preço do BTC','CENÁRIO HIPOTÉTICO',`<p>Este controlo altera apenas o preço exibido na Demo; não consulta nenhuma exchange.</p><div class="field"><label for="simRange">Preço BTC simulado: <strong id="simLabel">${money(current)}</strong></label><input type="range" id="simRange" min="50000" max="105000" step="250" value="${current}" style="accent-color:var(--cyan)"></div><div class="formrow"><button class="btn neutral" data-sim="60000">60.000 $</button><button class="btn neutral" data-sim="90000">90.000 $</button></div><div class="preview" id="simPreview"></div>`,`<button class="btn neutral" id="cancelAct">Voltar</button><button class="btn primary" id="applySim">Aplicar simulação</button>`);function calc(){let p=+$('simRange').value;$('simLabel').textContent=money(p);$('simPreview').innerHTML=`PNL não realizado: <strong style="color:${p>=avg(get())?'#20C997':'#F05D64'}">${money(all().reduce((z,s)=>z+qty(s)*p-cost(s),0))}</strong><br>Nenhuma operação será executada.`}$('simRange').oninput=calc;document.querySelectorAll('[data-sim]').forEach(b=>b.onclick=()=>{$('simRange').value=b.dataset.sim;calc()});calc();$('cancelAct').onclick=close;$('applySim').onclick=()=>{current=+$('simRange').value;close();render();info('Preço BTC fictício atualizado para '+money(current))}}
+function notReady(name){dialog(name,'PRÓXIMO BLOCO',`<p>O módulo <strong>${name}</strong> será desenvolvido nos próximos blocos da BTC Strategy Pro. Nesta etapa está disponível apenas a Home interativa.</p><p>Nenhuma operação financeira real foi executada.</p>`,`<button class="btn primary" id="okay" style="width:100%">Voltar à Home</button>`);$('okay').onclick=close}
+$('buyBtn').onclick=openBuy;$('sellBtn').onclick=openSell;$('simBtn').onclick=openSim;$('tableBtn').onclick=()=>$('tablePanel').scrollIntoView({behavior:'smooth',block:'center'});$('marketStatus').onclick=()=>{marketOn=!marketOn;render();info(marketOn?'Cotação Demo restabelecida':'Simulação de ausência de cotação ativada')};$('alertBtn').onclick=()=>notReady('Alertas');$('profileBtn').onclick=()=>notReady('Conta');$('projectBtn').onclick=()=>notReady('Projetos');$('resetDemo').onclick=()=>{window.BTCBlock4?.resetConfirm()};
+document.querySelectorAll('[data-nav]').forEach(e=>e.onclick=()=>{let n=e.dataset.nav;if(n==='Início'){scrollTo({top:0,behavior:'smooth'})}else notReady(n)});document.querySelectorAll('[data-side]').forEach(e=>e.onclick=()=>{side=e.dataset.side;sel='A';realized=window.BTCBlock4?.metrics()?.realized[side]||0;totalFees=window.BTCBlock4?.metrics()?.fees[side]||0;render()});document.querySelectorAll('[data-tf]').forEach(e=>e.onclick=()=>{tf=e.dataset.tf;document.querySelectorAll('[data-tf]').forEach(b=>b.classList.toggle('active',b.dataset.tf===tf));draw()});let can=$('chart');can.addEventListener('mousemove',e=>{crossX=e.clientX-can.getBoundingClientRect().left;draw()});can.addEventListener('mouseleave',()=>{crossX=-1;draw()});let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(draw,90)});
+window.BTCPro = {
+ money, num,
+ state:()=>({sets,side,selected:sel,current,capital:CAPITAL_DEMO,realized,totalFees,marketOn}),
+ settings:()=>({amounts:[...AM],targets:[...off],gap:GAP,step:GRID_STEP,fee:FEE}),
+ choose:(newSide,newId)=>{if(newSide==='subida'||newSide==='descida')side=newSide;if('ABCDE'.includes(newId))sel=newId;realized=window.BTCBlock4?.metrics()?.realized[side]||0;totalFees=window.BTCBlock4?.metrics()?.fees[side]||0;render()},
+ buy:(newId)=>{if(newId&&'ABCDE'.includes(newId))sel=newId;render();openBuy()},
+ sell:(newId)=>{if(newId&&'ABCDE'.includes(newId))sel=newId;render();openSell()},
+ simulate:()=>openSim(),
+ message:(txt)=>info(txt),
+ modal:(title,kicker,html,buttons)=>dialog(title,kicker,html,buttons),
+ close:()=>close(),
+ applyJournal:(fresh,metrics)=>{sets=fresh;realized=metrics.realized[side]||0;totalFees=metrics.fees[side]||0;render()},
+ setCapital:(amount)=>{let v=Number(amount);if(Number.isFinite(v)&&v>=100&&v<=1000000000){CAPITAL_DEMO=v;const el=document.getElementById('metricCapital');if(el)el.textContent=money(v);render()}},
+ journalSync:()=>{realized=window.BTCBlock4?.metrics()?.realized[side]||0;totalFees=window.BTCBlock4?.metrics()?.fees[side]||0;render()},
+ setDemoPrice:(p)=>{if(Number.isFinite(p)&&p>=1000&&p<=250000){current=p;render()}},
+ setSettings:(value)=>{
+  if(Array.isArray(value.amounts)&&value.amounts.length===3)AM=value.amounts.map(Number);
+  if(Array.isArray(value.targets)&&value.targets.length===3)off=value.targets.map(Number);
+  if(value.gap)GAP=Number(value.gap);
+  if(value.step)GRID_STEP=Number(value.step);
+  if(value.fee>=0)FEE=Number(value.fee);
+  for(const typ of ['descida','subida'])for(let i=0;i<5;i++){
+    const cy=sets[typ]['ABCDE'[i]];
+    if(!cy.fills.length)cy.entry=82000+(typ==='subida'?1:-1)*GRID_STEP*i;
+  }
+  render();
+ },
+ reset:()=>{window.BTCBlock4?.reset();current=P;side='descida';sel='A';marketOn=true;render();}
+};
+render();})();
+</script><script id="block3js">
+(()=>{'use strict';
+const api=window.BTCPro, el=id=>document.getElementById(id);
+const labels={descida:'BTC a descer',subida:'BTC a subir'};
+const snap=()=>api.state(),opt=()=>api.settings();
+const usd=(n,d=2)=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)+' $';
+const num=n=>new Intl.NumberFormat('pt-PT',{maximumFractionDigits:0}).format(n);
+const btc=n=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:8,maximumFractionDigits:8}).format(n);
+const esc=str=>String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+function hypot(c,stage,o){
+ let p=[c.entry,c.entry-o.gap,c.entry-2*o.gap],total=0,q=0;
+ for(let i=0;i<stage;i++){total+=o.amounts[i];q+=o.amounts[i]/p[i]}
+ let avg=total/q,price=avg+o.targets[stage-1];
+ let gross=(price-avg)*q,fees=(total+q*price)*o.fee;
+ return {avg,price,gross,fees,net:gross-fees,qty:q,nom:total};
+}
+function actual(c,o,p){let q=typeof c.openQty==='number'?c.openQty:c.fills.reduce((s,f)=>s+f.usd/f.price,0),nom=typeof c.openBasis==='number'?c.openBasis:c.fills.reduce((s,f)=>s+f.usd,0),avg=q?nom/q:0, stage=Math.min(3,c.fills.length),target=stage?avg+o.targets[stage-1]:null, unreal=q*p-nom;
+ let closedTarget=target? q*(target-avg)-o.fee*(nom+q*target):0;
+ return {q,nom,avg,stage,target,unreal,closedTarget};}
+function cycleLabel(c,o){return c.fills.length ? `${c.fills.length}/3 executadas · DEMO` : '0/3 · Por executar'}
+function statusLabel(c,o){let p=snap().current;let a=actual(c,o,p);return a.stage?(a.target!==null&&p>=a.target?'Nível de venda atingido':'Em acompanhamento'):'Planeada';}
+function setNav(active){document.querySelectorAll('[data-nav]').forEach(n=>{let x=n.dataset.nav; n.classList.toggle('on',x===active);});}
+function switchView(to){let isStrategy=to==='Estratégias',isJournal=to==='Registos',isTerminal=to==='Terminal';el('homeView').hidden=isStrategy||isJournal||isTerminal;el('strategiesView').hidden=!isStrategy;el('journalView').hidden=!isJournal;el('terminalView').hidden=!isTerminal;setNav(to);window.scrollTo(0,0);if(isStrategy)render();else if(isJournal)window.renderTradeJournal?.();else if(isTerminal)window.renderTradeTerminal?.();else window.dispatchEvent(new Event('resize'));}
+function findNearest(s){let arr=Object.values(s.sets[s.side]).filter(c=>!c.fills.length).sort((a,b)=>Math.abs(a.entry-s.current)-Math.abs(b.entry-s.current));return arr[0]?.entry??null;}
+function render(){
+ if(!el('strategiesView')||el('strategiesView').hidden)return;
+ let s=snap(),o=opt(),cycles=s.sets[s.side],all=Object.values(cycles),total=all.reduce((v,c)=>v+actual(c,o,s.current).nom,0),unreal=all.reduce((v,c)=>v+actual(c,o,s.current).unreal,0),active=all.filter(c=>c.fills.length).length;
+ const h=`<div class="strat-wrap">
+ <header class="strat-titlebar"><div><div class="eyebrow">BTC STRATEGY PRO / BLOCO 3</div><h1>Centro de Estratégias <span style="color:var(--cyan)">20/30/50</span></h1><p>A Tabela Chaves completa, os objetivos condicionais e as compras efetivamente registadas. Todos os valores são fictícios.</p></div><div class="strat-actions"><span class="demo">MODO DEMO</span><button class="btn neutral" id="b3Config">⚙ Configurar regras</button><button class="btn primary" id="b3GoHome">↖ Home</button></div></header>
+ <section class="strat-hero"><div><div class="eyetext">ESCOLHE UM CENÁRIO DE MERCADO</div><div class="verse-tabs" style="margin-top:12px"><button id="b3Down" class="${s.side==='descida'?'is-on':''}">↓ BTC a descer</button><button id="b3Up" class="${s.side==='subida'?'is-on':''}">↑ BTC a subir</button></div><div class="strat-lead">${s.side==='descida'?'Entradas faseadas nas descidas':'Novos conjuntos a cada subida'}</div><div class="strat-lead-desc">Cada linha é um conjunto de ${usd(o.amounts.reduce((a,b)=>a+b,0),0)} nominais. Reforços separados por ${usd(o.gap,0).replace(' $','')} USD. Alvos recalculados pelo preço médio ponderado. Os dois cenários são alternativos e não devem ser somados.</div></div>
+ <div class="strat-kpis"><div class="strat-kpi"><small>BTC FICTÍCIO</small><b style="color:var(--cyan)">${usd(s.current,0)}</b></div><div class="strat-kpi"><small>CONJUNTOS ATIVOS</small><b>${active} / 5</b></div><div class="strat-kpi"><small>EXPOSIÇÃO DEMO</small><b>${usd(total,0)}</b></div><div class="strat-kpi"><small>PNL ABERTO</small><b style="color:${unreal>=0?'var(--green)':'var(--red)'}">${usd(unreal)}</b></div><div class="strat-kpi"><small>NOVA ENTRADA</small><b>${findNearest(s)===null?'—':usd(findNearest(s),0)}</b></div><div class="strat-kpi"><small>TAXAS TAKER</small><b>${(o.fee*100).toFixed(2).replace('.',',')}%</b></div></div></section>
+ <section class="panel-b3"><div class="panel-b3header"><div><h2>▤ Tabela Chaves — ${labels[s.side]}</h2><p>Arrasta horizontalmente para ver as médias, as vendas e os lucros líquidos estimados.</p></div><div class="legend"><span><i style="background:var(--cyan)"></i>Compras</span><span><i style="background:var(--amber)"></i>Vendas</span><span><i style="background:var(--green)"></i>Lucro estimado</span></div></div><div class="tbl-b3scroll"><table class="b3table" aria-label="Tabela Chaves com preços de compra venda e lucros líquidos"><thead><tr><th>Estratégia</th><th>20%<br>Compra ${usd(o.amounts[0],0)}</th><th>30%<br>Reforço ${usd(o.amounts[1],0)}</th><th>50%<br>Reforço ${usd(o.amounts[2],0)}</th><th>Média 50%</th><th>Média 100%</th><th>Venda 20%<br>Lucro líquido</th><th>Venda 50%<br>Lucro líquido</th><th>Venda 100%<br>Lucro líquido</th><th>Ver</th></tr></thead><tbody>${all.map(c=>{let a=hypot(c,1,o),b=hypot(c,2,o),d=hypot(c,3,o);return `<tr class="${s.selected===c.id?'highlight':''}"><td><span class="letter">${c.id}</span><span style="font-size:10px;color:var(--muted)">${c.fills.length?'● Demo':'○ Plano'}</span></td><td class="buy-col">${usd(c.entry,0)}<span class="buy-amt">${usd(o.amounts[0],0)}</span></td><td class="buy-col">${usd(c.entry-o.gap,0)}<span class="buy-amt">${usd(o.amounts[1],0)}</span></td><td class="buy-col">${usd(c.entry-2*o.gap,0)}<span class="buy-amt">${usd(o.amounts[2],0)}</span></td><td class="avg-col">${usd(b.avg,0)}</td><td class="avg-col">${usd(d.avg,0)}</td><td class="sell-col">${usd(a.price,0)}<span class="net-profit">+${usd(a.net)}</span></td><td class="sell-col">${usd(b.price,0)}<span class="net-profit">+${usd(b.net)}</span></td><td class="sell-col">${usd(d.price,0)}<span class="net-profit">+${usd(d.net)}</span></td><td><button data-b3cycle="${c.id}">Abrir →</button></td></tr>`}).join('')}</tbody></table></div><div class="b3-hint">Os lucros incluem taxa de compra e venda de ${(o.fee*100).toFixed(2).replace('.',',')}% cada, mas excluem funding, spread e slippage. As três vendas são <strong>alternativas</strong>, não lucros acumulados. Estes cálculos partem de compras planeadas aos preços indicados; a posição real Demo pode ter montantes/preços diferentes.</div></section>
+ <div class="section-b3split"><section class="panel-b3"><div class="panel-b3header"><div><h2>◈ Detalhe do conjunto</h2><p>Compras planeadas e executadas, médias e próximos objetivos</p></div><span class="chip">Cenário ${labels[s.side]}</span></div><div class="cycle-tabs">${all.map(c=>`<button data-b3cycle="${c.id}" class="${c.id===s.selected?'is-on':''}">${c.id}</button>`).join('')}</div><div id="b3Selected"></div></section>
+ <aside class="panel-b3 exp-card"><h3>◎ Motor Tabela Chaves</h3><p>Regras atuais e orçamento do cenário selecionado.</p><div class="exp-pairs"><span>Montantes</span><strong>${o.amounts.join(' / ')} USD</strong></div><div class="exp-pairs"><span>Distância reforços</span><strong>${usd(o.gap,0)}</strong></div><div class="exp-pairs"><span>Novos conjuntos</span><strong>${usd(o.step,0)}</strong></div><div class="exp-pairs"><span>Alvos de venda</span><strong>+${o.targets.map(num).join(' / +')}</strong></div><div class="exp-pairs"><span>Capital Demo</span><strong>${usd(s.capital,0)}</strong></div><div class="exp-pairs"><span>Exposição total possível</span><strong>${usd(o.amounts.reduce((v,n)=>v+n,0)*5,0)}</strong></div><div class="b3-stephelp"><strong>Importante:</strong> a exposição nominal não é dinheiro de margem. A mesma conta Kraken pode agregar posições LONG num único contrato BTC Perpetual. Um preço de liquidação não pode ser garantido por esta simulação.</div><div style="display:flex;flex-direction:column;gap:8px;margin-top:13px"><button class="btn primary" id="b3Simulate">◉ Simular preço BTC</button><button class="btn neutral" id="b3Reset">↺ Repor dados Demo</button></div></aside></div>
+ <div class="b3-risknote">⚠ Estes dois planos são cenários alternativos da Tabela Chaves. Não existem cotações em tempo real, ligação à corretora ou ordens automáticas. O histórico é apenas Demo nesta sessão; exporta o CSV antes de fechar ou atualizar a página.</div><div class="b3footer">BTC Strategy Pro · Blocos 2–5 · Terminal, Estratégias, Registos e Histórico · Preview autónomo</div></div>`;
+ el('strategiesView').innerHTML=h;
+ el('b3Down').onclick=()=>api.choose('descida',s.selected);
+ el('b3Up').onclick=()=>api.choose('subida',s.selected);
+ el('b3Config').onclick=openConfig;
+ el('b3GoHome').onclick=()=>switchView('Início');
+ el('b3Simulate').onclick=api.simulate;
+ el('b3Reset').onclick=()=>{api.reset();render()};
+ document.querySelectorAll('[data-b3cycle]').forEach(b=>b.onclick=()=>api.choose(null,b.dataset.b3cycle));
+ renderSelected();
+}
+function renderSelected(){let s=snap(),o=opt(),c=s.sets[s.side][s.selected],a=actual(c,o,s.current),steps=[c.entry,c.entry-o.gap,c.entry-2*o.gap];
+ let p=a.stage ? a.target:hypot(c,1,o).price;
+ const html=`<div class="detail-layout"><div class="detail-hdr"><div><h3>Conjunto ${c.id} <span style="color:var(--cyan)">· ${labels[s.side]}</span></h3><small>${cycleLabel(c,o)}</small></div><span class="pill-state">${statusLabel(c,o)}</span></div><div class="stage-track">${steps.map((price,i)=>{let f=c.fills[i],amount=f?f.usd:o.amounts[i];return `<div class="stage-card ${f?'complete':''}"><div class="step">${f?'✓':'○'} ${Math.round(100*o.amounts[i]/o.amounts.reduce((v,n)=>v+n,0))}%</div><div class="usd">${usd(amount,0)}</div><div class="stage-price">${usd(f?f.price:price,0)}</div><div class="stage-status">${f?'Registada · Demo':'Planeada'}</div></div>`}).join('')}</div><div class="b3submetrics"><div class="b3submetric"><small>MÉDIA ${a.stage?'EFETIVA':'PLANEADA'}</small><strong>${usd(a.stage?a.avg:c.entry,0)}</strong></div><div class="b3submetric"><small>PRÓX. VENDA ${a.stage?'DEMO':'SE COMPRAR 20%'}</small><strong style="color:var(--amber)">${usd(p,0)}</strong></div><div class="b3submetric"><small>LUCRO LÍQUIDO ALVO</small><strong style="color:var(--green)">+${usd(a.stage?a.closedTarget:hypot(c,1,o).net)}</strong></div></div><div class="b3submetrics"><div class="b3submetric"><small>EXPOSIÇÃO REGISTADA</small><strong>${usd(a.nom)}</strong></div><div class="b3submetric"><small>QUANTIDADE BTC</small><strong>${btc(a.q)}</strong></div><div class="b3submetric"><small>PNL NÃO REALIZADO</small><strong style="color:${a.unreal>=0?'var(--green)':'var(--red)'}">${usd(a.unreal)}</strong></div></div><div class="alt-layout"><button class="btn primary" id="b3Buy">+ Registar compra Demo</button><button class="btn sell" id="b3Sell" ${a.stage?'':'disabled'}>↗ Vender / Fechar Demo</button><button class="btn neutral" id="b3DetailInfo">ⓘ Ver cálculo</button></div><div style="color:var(--muted);font-size:10px;line-height:1.7">A média e o objetivo efetivos baseiam-se nos valores registados. As compras registadas podem ter montantes e preços distintos dos níveis teóricos da Tabela Chaves.</div></div>`;
+ el('b3Selected').innerHTML=html;el('b3Buy').onclick=()=>api.buy(c.id);el('b3Sell').onclick=()=>api.sell(c.id);el('b3DetailInfo').onclick=()=>showMath(c);}
+function showMath(c){let s=snap(),o=opt(),body=`<p>O preço médio é ponderado pela quantidade BTC comprada, não pela média aritmética dos preços.</p><div class="preview">${[1,2,3].map(i=>{let v=hypot(c,i,o);return `<strong>Após ${i} compra${i>1?'s':''} (${usd(v.nom,0)}):</strong><br>Quantidade: ${btc(v.qty)} BTC<br>Média: ${usd(v.avg)}<br>Alvo: ${usd(v.price)}<br>Lucro bruto: ${usd(v.gross)}<br>Taxas estimadas: ${usd(v.fees)}<br><strong>Lucro líquido: +${usd(v.net)}</strong><br><br>`}).join('')}</div><p>As vendas são alternativas. Não inclui funding, spread ou slippage.</p>`;
+ api.modal('Como são calculadas as vendas','FÓRMULAS DA TABELA CHAVES',body,'<button class="btn primary" id="b3MathClose">Entendido</button>');el('b3MathClose').onclick=api.close;
+}
+function openConfig(){let o=opt();let body=`<p>Altera os parâmetros do cenário Demo. As compras que já foram registadas conservam os seus preços e montantes históricos.</p><div class="formrow"><div class="field"><label>20% · USD</label><input id="cf1" type="number" min="1" step="1" value="${o.amounts[0]}"></div><div class="field"><label>30% · USD</label><input id="cf2" type="number" min="1" step="1" value="${o.amounts[1]}"></div></div><div class="formrow"><div class="field"><label>50% · USD</label><input id="cf3" type="number" min="1" step="1" value="${o.amounts[2]}"></div><div class="field"><label>Reforços · USD</label><input id="cfgap" type="number" min="1" step="100" value="${o.gap}"></div></div><div class="formrow"><div class="field"><label>Novos conjuntos · USD</label><input id="cfstep" type="number" min="1" step="100" value="${o.step}"></div><div class="field"><label>Taxa por operação (%)</label><input id="cffee" type="number" min="0" max="3" step="0.01" value="${(o.fee*100).toFixed(2)}"></div></div><p>Objetivos de venda acima da média por etapa (USD):</p><div class="formrow"><div class="field"><label>Após 20%</label><input id="cft1" type="number" min="1" value="${o.targets[0]}"></div><div class="field"><label>Após 20% + 30%</label><input id="cft2" type="number" min="1" value="${o.targets[1]}"></div></div><div class="field"><label>Após 100%</label><input id="cft3" type="number" min="1" value="${o.targets[2]}"></div><div class="preview" id="configPreview">Exposição máxima nominal por conjunto: ${usd(o.amounts.reduce((a,b)=>a+b,0))}. Os cenários de subida e descida permanecem separados.</div>`;
+ api.modal('Configurar Tabela Chaves','PARÂMETROS DA DEMO',body,'<button class="btn neutral" id="cfCancel">Cancelar</button><button class="btn primary" id="cfSave">Guardar regras</button>');el('cfCancel').onclick=api.close;el('cfSave').onclick=()=>{let amounts=['cf1','cf2','cf3'].map(id=>Number(el(id).value)),gap=Number(el('cfgap').value),step=Number(el('cfstep').value),fee=Number(el('cffee').value)/100,targets=['cft1','cft2','cft3'].map(id=>Number(el(id).value));if(amounts.some(x=>!Number.isFinite(x)||x<=0)||!Number.isFinite(gap)||gap<=0||!Number.isFinite(step)||step<=0||!Number.isFinite(fee)||fee<0||fee>.03||targets.some(x=>!Number.isFinite(x)||x<=0)){el('configPreview').textContent='Corrige os campos: montantes e distâncias positivos; taxa entre 0% e 3%.';return}if(snap().sets.descida.A.fills.length||snap().sets.subida.A.fills.length){/* no history is rewritten */}api.setSettings({amounts,gap,step,fee,targets});api.close();api.message('Tabela Chaves Demo atualizada (operações antigas preservadas)');render()};}
+function attach(){document.querySelectorAll('[data-nav]').forEach(b=>{let n=b.dataset.nav;if(n==='Estratégias'||n==='Início'||n==='Registos'||n==='Terminal')b.onclick=()=>switchView(n)});
+ const old=document.getElementById('tableBtn');if(old)old.onclick=()=>switchView('Estratégias');
+ window.renderStrategyCenter=render;
+ const id=new URLSearchParams(location.search).get('page');if(id==='estrategias'){switchView('Estratégias')}else{setNav('Início')};
+}
+attach();
+window.BTCBlock3Tests={hypot,actual,options:opt,snapshot:snap};
+})();
+</script><script id="block4js">
+(()=>{'use strict';
+const api=window.BTCPro, $=id=>document.getElementById(id);
+const fmt=(n,d=2)=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n)+' $';
+const fx=n=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:8,maximumFractionDigits:8}).format(n);
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isoLocal=iso=>{let d=iso?new Date(iso):new Date();return Number.isNaN(d.getTime())?'':new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)};
+let seq=0,ledger=[],audit=[];
+let filters={kind:'all',cycle:'all',side:'current',query:''};
+const ids='ABCDE';
+function seed(){seq=0;return ['descida','subida'].map(side=>({id:'op_'+(++seq),seq,kind:'buy',side,cycle:'A',price:82038,usd:197,fee:0.0985,date:'2026-10-20T07:15:00.000Z',notes:'Entrada inicial ilustrativa do Bloco 3',seed:true,voided:false,createdAt:'2026-10-20T07:15:00.000Z'}));}
+function defaultSets(){let step=api.settings().step;return Object.fromEntries(['descida','subida'].map(side=>[side,Object.fromEntries(ids.split('').map((id,i)=>[id,{id,entry:82000+(side==='descida'?-1:1)*step*i,fills:[],openQty:0,openBasis:0,openFee:0}]))]));}
+function replay(items){
+ const sets=defaultSets(), metrics={fees:{descida:0,subida:0},realized:{descida:0,subida:0},buys:{descida:0,subida:0},sells:{descida:0,subida:0}}, rows=[];
+ for(const e of [...items].sort((a,b)=>a.seq-b.seq)){
+  let record={...e,pnl:null,allocBasis:0,allocEntryFee:0,qty:e.kind==='buy'?(e.usd||0)/e.price:(e.qty||0),nominal:e.kind==='buy'?e.usd:(e.qty||0)*e.price};
+  if(e.voided){rows.push(record);continue}
+  if(!['descida','subida'].includes(e.side)||!ids.includes(e.cycle)||!(e.price>0)||!(e.fee>=0)||!Number.isFinite(e.price)||!Number.isFinite(e.fee))throw new Error('Operação inválida: preço, taxa ou conjunto.');
+  const c=sets[e.side][e.cycle];
+  if(e.kind==='buy'){
+   if(!(e.usd>0)||!Number.isFinite(e.usd))throw new Error('Montante de compra inválido.');
+   if(c.fills.length>=3)throw new Error(`Conjunto ${e.cycle}: o máximo é 3 compras antes do fecho total.`);
+   const q=e.usd/e.price;
+   c.fills.push({usd:e.usd,price:e.price,fee:e.fee,qty:q,date:e.date,sourceId:e.id});
+   c.openQty+=q;c.openBasis+=e.usd;c.openFee+=e.fee;
+   metrics.buys[e.side]++;record.qty=q;record.nominal=e.usd;
+  }else if(e.kind==='sell'){
+   if(!(e.qty>0)||!Number.isFinite(e.qty))throw new Error('Quantidade BTC de venda inválida.');
+   if(e.qty>c.openQty+1e-8)throw new Error(`Venda ${e.id}: quantidade excede BTC disponível no conjunto ${e.cycle}.`);
+   const soldQty=Math.min(e.qty,c.openQty),ratio=Math.min(1,soldQty/c.openQty),basis=c.openBasis*ratio,entryFees=c.openFee*ratio;
+   const saleAmount=soldQty*e.price,net=saleAmount-basis-e.fee-entryFees;
+   c.openQty-=soldQty;c.openBasis-=basis;c.openFee-=entryFees;
+   metrics.sells[e.side]++;metrics.realized[e.side]+=net;
+   record.qty=soldQty;record.nominal=saleAmount;record.pnl=net;record.allocBasis=basis;record.allocEntryFee=entryFees;
+   if(c.openQty<1e-10){c.openQty=0;c.openBasis=0;c.openFee=0;c.fills=[];}
+  }else throw new Error('Tipo de operação desconhecido.');
+  metrics.fees[e.side]+=e.fee;
+  rows.push(record);
+ }
+ return {sets,metrics,rows};
+}
+function safeUpdate(mutator){let old=ledger.map(e=>({...e})),oldAudit=audit.slice();try{mutator();let x=replay(ledger);api.applyJournal(x.sets,x.metrics);queueMicrotask(()=>window.dispatchEvent(new Event('btc-b7-changed')));return true}catch(e){ledger=old;audit=oldAudit;notify('Não foi possível guardar: '+e.message);return false}}
+function sync(){let x=replay(ledger);api.applyJournal(x.sets,x.metrics)}
+function notify(t){api.message(t)}
+function add(o){let event={...o,id:'op_'+(++seq),seq,voided:false,createdAt:new Date().toISOString()};let ok=safeUpdate(()=>{ledger.push(event);audit.push({action:'criação',at:event.createdAt,id:event.id,after:{...event}})});if(ok)notify('Operação Demo registada e posição atualizada.');return ok?event.id:null}
+function revise(id,o){let target=ledger.find(e=>e.id===id);if(!target)return false;let updated={...target,...o,editedAt:new Date().toISOString()};if(!safeUpdate(()=>{let i=ledger.findIndex(e=>e.id===id);ledger[i]=updated;audit.push({action:'correção',id,at:updated.editedAt,before:{...target},after:{...updated}})}))return false;notify('Registo corrigido com auditoria e cálculos recalculados.');return true}
+function flip(id){let e=ledger.find(x=>x.id===id);if(!e)return false;let next=!e.voided;if(!safeUpdate(()=>{e.voided=next;audit.push({action:next?'anulação':'reposição',id,at:new Date().toISOString()})}))return false;notify(next?'Operação anulada, histórico preservado.':'Operação reposta e posição recalculada.');return true}
+function snapshot(){return replay(ledger)}
+function clear(){ledger=seed();audit=[];filters={kind:'all',cycle:'all',side:'current',query:''};sync();notify('Histórico Demo reposto aos dados iniciais.');queueMicrotask(()=>window.dispatchEvent(new Event('btc-b7-changed')))}
+function stats(x,side){let open=Object.values(x.sets[side]),q=open.reduce((a,c)=>a+c.openQty,0),basis=open.reduce((a,c)=>a+c.openBasis,0),entryFee=open.reduce((a,c)=>a+c.openFee,0),px=api.state().current;return {q,basis,entryFee,openGross:q*px-basis,openNet:q*px-basis-entryFee,realized:x.metrics.realized[side],fees:x.metrics.fees[side],buys:x.metrics.buys[side],sells:x.metrics.sells[side]};}
+function visit(){let tab=api.state().side;if(filters.side!=='current')return filters.side;return tab;}
+function render(){let root=$('journalView');if(!root||root.hidden)return;
+ const x=snapshot(),v=visit(),ss=stats(x,v),rows=x.rows.filter(r=>r.side===v && (filters.kind==='all'||r.kind===filters.kind)&&(filters.cycle==='all'||r.cycle===filters.cycle)&&(filters.query===''||`${r.id} ${r.notes} ${r.price} ${r.cycle}`.toLowerCase().includes(filters.query.toLowerCase()))).sort((a,b)=>b.seq-a.seq);
+ root.innerHTML=`<div class="b4-wrap">
+ <header class="b4-hero"><div><div class="eyebrow">BTC STRATEGY PRO / BLOCO 4</div><h1>Registos <span style="color:var(--cyan)">& Histórico</span></h1><p>Livro de operações fictícias. Regista compras, vendas parciais ou totais, corrige erros e acompanha os resultados líquidos. Nenhuma ordem é enviada para uma exchange.</p></div><div class="b4-btnrow"><span class="demo">MODO DEMO</span><button class="btn primary" id="b4AddBuy">＋ Compra</button><button class="btn sell" id="b4AddSell">↗ Venda</button><button class="btn neutral" id="b4Export">↓ Exportar CSV</button></div></header>
+ <div class="b4-stats"><div class="b4-stat"><span>BTC EM ABERTO</span><strong>${fx(ss.q)}</strong></div><div class="b4-stat"><span>EXPOSIÇÃO / BASE RESTANTE</span><strong>${fmt(ss.basis)}</strong></div><div class="b4-stat"><span>PNL REALIZADO LÍQUIDO</span><strong style="color:${ss.realized>=0?'var(--green)':'var(--red)'}">${fmt(ss.realized)}</strong></div><div class="b4-stat"><span>PNL ABERTO BRUTO</span><strong style="color:${ss.openGross>=0?'var(--green)':'var(--red)'}">${fmt(ss.openGross)}</strong></div><div class="b4-stat"><span>COMISSÕES ACUMULADAS</span><strong style="color:var(--amber)">${fmt(ss.fees)}</strong></div></div>
+ <section class="panel"><div class="b4-panel-title"><div><h2>▤ Diário de operações</h2><p>Registos Demo em ordem de introdução · horários e notas preservados · retificações auditáveis</p></div><span class="chip">${rows.length} registos exibidos</span></div>
+ <div class="b4-toolbar"><div><label>Cenário</label><select id="b4Side"><option value="current">Cenário atual</option><option value="descida">BTC a descer</option><option value="subida">BTC a subir</option></select></div><div><label>Tipo</label><select id="b4Kind"><option value="all">Todos</option><option value="buy">Compras</option><option value="sell">Vendas</option></select></div><div><label>Conjunto</label><select id="b4Cycle"><option value="all">Todos A–E</option>${ids.split('').map(id=>`<option value="${id}">${id}</option>`).join('')}</select></div><div><label>Pesquisar ID, nota ou preço</label><input id="b4Query" placeholder="Pesquisar operações" value="${escape(filters.query)}"></div><div class="b4-toolbar-last"><button class="btn neutral" id="b4Clear" style="width:100%">↺ Repor Demo</button></div></div>
+ <div class="b4-tablewrap"><table class="b4-table"><thead><tr><th>Operação</th><th>Data / hora</th><th>Ciclo</th><th>BTC / quantidade</th><th>Preço BTC</th><th>Nominal</th><th>Taxa</th><th>PNL líquido realizado</th><th>Estado</th><th>Opções</th></tr></thead><tbody>${rows.length?rows.map(r=>`<tr class="${r.voided?'b4-void':''}"><td><span class="b4-type ${r.kind}">${r.kind==='buy'?'COMPRA':'VENDA'}</span><div class="b4-small">${escape(r.id)}${r.seed?' · inicial':''}</div></td><td>${escape(new Date(r.date).toLocaleString('pt-PT',{dateStyle:'short',timeStyle:'short'}))}<div class="b4-small">${escape(r.notes?.slice(0,30)||'Sem notas')}</div></td><td><span class="letter">${r.cycle}</span></td><td class="num">${fx(r.qty||r.qty0||0)}</td><td class="num">${fmt(r.price)}</td><td class="num">${fmt(r.nominal||r.usd||0)}</td><td class="num">${fmt(r.fee,4)}</td><td class="num" style="color:${r.pnl===null?'var(--muted)':r.pnl>=0?'var(--green)':'var(--red)'}">${r.pnl===null?'—':fmt(r.pnl)}</td><td>${r.voided?'Anulada':r.editedAt?'Corrigida':'Registada'}</td><td><div style="display:flex;gap:5px"><button data-b4edit="${r.id}">Editar</button><button data-b4void="${r.id}">${r.voided?'Repor':'Anular'}</button></div></td></tr>`).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:28px">Sem operações para estes filtros.</td></tr>'}</tbody></table></div></section>
+ <div class="b4-bottom"><section class="panel"><div class="b4-panel-title"><div><h2>◈ Exposição remanescente por conjunto</h2><p>Valores após vendas parciais · média ponderada da exposição ainda aberta</p></div></div><div style="padding:14px"><div class="b4-matrix">${Object.values(x.sets[v]).map(c=>`<div class="b4-kpi"><small>Conjunto ${c.id} · ${c.fills.length}/3 compras</small><b>${fx(c.openQty)} BTC</b><div class="b4-small">Base: ${fmt(c.openBasis)} · Média: ${c.openQty?fmt(c.openBasis/c.openQty):'—'}</div></div>`).join('')}</div></div></section><section class="panel b4-note"><strong>Acerca dos resultados</strong><p>Os lucros realizados descontam as taxas efetivamente registadas de compra e venda. Nas vendas parciais, a base de custo e as taxas de entrada são atribuídas proporcionalmente à quantidade BTC vendida (método do custo médio).</p><p><strong>Não inclui automaticamente funding, spread ou impostos.</strong> O PNL aberto apresentado é bruto. O histórico fica apenas na memória desta página e perde-se ao atualizar; exporta um CSV para guardar uma cópia. Os cenários Subida e Descida são alternativos.</p><button class="btn neutral" id="b4Audit">◴ Histórico de correções</button></section></div>
+ <div class="b4-foot">BTC Strategy Pro · Blocos 2–4 · Pré-visualização autónoma sem conta, sincronização ou negociação real</div></div>`;
+ $('b4Side').value=filters.side;$('b4Kind').value=filters.kind;$('b4Cycle').value=filters.cycle;
+ [['b4Side','side'],['b4Kind','kind'],['b4Cycle','cycle']].forEach(([id,key])=>$(id).onchange=e=>{filters[key]=e.target.value;render()});$('b4Query').oninput=e=>{let v=e.target.value;filters.query=v;let pos=e.target.selectionStart;render();$('b4Query').focus();try{$('b4Query').setSelectionRange(pos,pos)}catch(_){};};
+ $('b4AddBuy').onclick=()=>openForm('buy');$('b4AddSell').onclick=()=>openForm('sell');$('b4Export').onclick=exportCsv;$('b4Clear').onclick=resetConfirm;$('b4Audit').onclick=openAudit;
+ document.querySelectorAll('[data-b4edit]').forEach(b=>b.onclick=()=>openForm(null,b.dataset.b4edit));document.querySelectorAll('[data-b4void]').forEach(b=>b.onclick=()=>confirmVoid(b.dataset.b4void));
+}
+function netSale(c,qty,p,fee){let fraction=Math.min(1,qty/c.openQty);return {basis:c.openBasis*fraction,entryFees:c.openFee*fraction,proceeds:Math.min(qty,c.openQty)*p,exitFee:fee,pnl:Math.min(qty,c.openQty)*p-c.openBasis*fraction-c.openFee*fraction-fee};}
+function openForm(kind,id){let orig=id?ledger.find(e=>e.id===id):null;if(orig)kind=orig.kind;let snap=api.state(),side=orig?.side||visit(),cycle=orig?.cycle||snap.selected;
+ let c=snapshot().sets[side][cycle];let px=orig?.price||snap.current, initialUsd=orig?.usd||api.settings().amounts[Math.min(c.fills.length,2)],initialQ=orig?.qty||c.openQty;
+ let readonly=!!orig;
+ let body=`<p>${orig?'Corrigir os valores mantendo o histórico da operação. O sistema recalcula todas as posições seguintes.':'Adicionar um registo fictício, sem enviar ordens para uma corretora.'}</p>
+ <div class="b4-form-grid"><div class="b4-field"><label>Cenário</label><select id="b4FSide" ${readonly?'disabled':''}><option value="descida">BTC a descer</option><option value="subida">BTC a subir</option></select></div><div class="b4-field"><label>Estratégia</label><select id="b4FCycle" ${readonly?'disabled':''}>${ids.split('').map(x=>`<option value="${x}">${x}</option>`).join('')}</select></div>
+ <div class="b4-field"><label>Preço real ou simulado BTC/USD</label><input id="b4FPrice" type="number" min="0.01" step="0.01" value="${px}"></div><div class="b4-field"><label>Data e hora</label><input id="b4FDate" type="datetime-local" value="${isoLocal(orig?.date)}"></div></div>
+ ${kind==='buy'?`<div class="b4-form-grid"><div class="b4-field"><label>Montante nominal comprado (USD)</label><input id="b4FUsd" type="number" min="0.01" step="0.01" value="${initialUsd}"></div><div class="b4-field"><label>Comissão da compra (USD)</label><input id="b4FFee" type="number" min="0" step="0.0001" value="${(orig?.fee??initialUsd*api.settings().fee).toFixed(4)}"></div></div>`:
+ `<div class="b4-mode"><label><input type="radio" name="b4SellMode" value="btc" checked> Quantidade BTC</label><label><input type="radio" name="b4SellMode" value="usd"> Valor nominal USD</label></div><div class="b4-form-grid"><div class="b4-field"><label id="b4FQtyLabel">Quantidade BTC a vender</label><input id="b4FQty" type="number" min="0.000000000001" step="0.000000000001" value="${initialQ.toFixed(12)}"><div class="b4-pop-actions"><button id="b4Half" type="button">50%</button><button id="b4Full" type="button">100%</button></div></div><div class="b4-field"><label>Comissão da venda (USD)</label><input id="b4FFee" type="number" min="0" step="0.0001" value="${(orig?.fee??initialQ*px*api.settings().fee).toFixed(4)}"></div></div>`}
+ <div class="b4-field"><label>Notas pessoais (Demo)</label><textarea id="b4FNotes" maxlength="400" placeholder="Porquê esta operação?">${escape(orig?.notes||'')}</textarea></div>
+ <div class="b4-preview" id="b4FPreview"></div><div class="b4-err" id="b4FError" role="alert"></div>`;
+ api.modal(kind==='buy'?'Registar compra':'Registar venda',orig?'CORRIGIR OPERAÇÃO · DEMO':'NOVA OPERAÇÃO · DEMO',body,'<button class="btn neutral" id="b4FCancel">Cancelar</button><button class="btn primary" id="b4FSave">'+(orig?'Guardar correção':'Registar Demo')+'</button>');
+ $('b4FSide').value=side;$('b4FCycle').value=cycle;
+ let manualFee=!!orig;let lastFeeAuto=kind==='buy'?initialUsd*api.settings().fee:initialQ*px*api.settings().fee;
+ function currentData(){let m=kind==='sell'?(document.querySelector('input[name="b4SellMode"]:checked')?.value||'btc'):'usd',p=Number($('b4FPrice').value),usd=Number($('b4FUsd')?.value),qField=Number($('b4FQty')?.value);return {m,p,usd,qty:kind==='sell'?(m==='usd'?qField/p:qField):usd/p,notional:kind==='sell'?(m==='usd'?qField:qField*p):usd};}
+ function updateFee(){let d=currentData();if(!manualFee&&Number.isFinite(d.notional)){$('b4FFee').value=(d.notional*api.settings().fee).toFixed(4);lastFeeAuto=d.notional*api.settings().fee;}}
+ function preview(){let d=currentData(),fee=Number($('b4FFee').value),notes=$('b4FNotes').value,selected=snapshot().sets[$('b4FSide').value][$('b4FCycle').value];let err='';if(!(d.p>0)||!(d.notional>0)||!(d.qty>0)||!(fee>=0)||!Number.isFinite(d.qty)||!Number.isFinite(fee))err='Introduz valores positivos e uma comissão válida.';
+ if(!orig&&kind==='buy'&&selected.fills.length>=3)err='Este conjunto já atingiu 3 compras.';
+ if(!orig&&kind==='sell'&&d.qty>selected.openQty+1e-8)err='A venda ultrapassa a quantidade BTC disponível.';
+ let html='';if(!err&&kind==='buy'&&orig){html='Esta correção recalculará toda a posição e os resultados posteriores quando for guardada.';}if(!err&&kind==='buy'&&!orig){const q=selected.openQty+d.qty,basis=selected.openBasis+d.usd,avg=basis/q,stage=Math.min(3,selected.fills.length+1);html=`Quantidade adquirida: <strong>${fx(d.qty)} BTC</strong><br>Nova exposição: <strong>${fmt(basis)}</strong><br>Média ponderada (sem taxas): <strong>${fmt(avg)}</strong><br>Próxima venda de referência: <strong>${fmt(avg+api.settings().targets[stage-1])}</strong><br>Taxa da compra: ${fmt(fee,4)}`;}
+ if(!err&&kind==='sell'){let quantity=orig?d.qty:Math.min(d.qty,selected.openQty),open=selected.openQty;if(orig)html='A venda editada será validada contra todo o histórico ao guardar.';else if(open){const v=netSale(selected,quantity,d.p,fee);html=`BTC a fechar: <strong>${fx(quantity)}</strong><br>Valor de venda: <strong>${fmt(v.proceeds)}</strong><br>Base atribuída: ${fmt(v.basis)} · Taxa de entrada atribuída: ${fmt(v.entryFees,4)}<br>Taxa de saída: ${fmt(fee,4)}<br>PNL líquido realizado: <strong style="color:${v.pnl>=0?'var(--green)':'var(--red)'}">${fmt(v.pnl)}</strong><br>BTC restante: ${fx(Math.max(0,open-quantity))}`;}else html='Não existe quantidade aberta neste conjunto.';}
+ $('b4FPreview').innerHTML=err?'Verifica os campos antes de guardar.':html;$('b4FError').textContent=err;return {d,fee,notes,err};}
+ for(let id of ['b4FPrice','b4FUsd','b4FQty'])if($(id))$(id).oninput=()=>{updateFee();preview()};$('b4FFee').oninput=()=>{manualFee=true;preview()};
+ for(let id of ['b4FSide','b4FCycle'])$(id).onchange=()=>{let n=snapshot().sets[$('b4FSide').value][$('b4FCycle').value];if(kind==='sell'&&!orig){$('b4FQty').value=n.openQty.toFixed(12);updateFee();}preview()};
+ if(kind==='sell'){
+   const quantityInput=$('b4FQty');document.querySelectorAll('input[name="b4SellMode"]').forEach(x=>x.onchange=()=>{let n=currentData(),mode=document.querySelector('input[name="b4SellMode"]:checked').value;let c=snapshot().sets[$('b4FSide').value][$('b4FCycle').value];$('b4FQtyLabel').textContent=mode==='usd'?'Valor nominal a vender (USD)':'Quantidade BTC a vender';quantityInput.step=mode==='usd'?'0.01':'0.000000000001';quantityInput.value=mode==='usd'?(c.openQty*n.p).toFixed(2):c.openQty.toFixed(12);updateFee();preview()});
+   for(let [id,part] of [['b4Half',.5],['b4Full',1]])$(id).onclick=()=>{let c=snapshot().sets[$('b4FSide').value][$('b4FCycle').value],d=currentData();$('b4FQty').value=(d.m==='usd'?c.openQty*Number($('b4FPrice').value)*part:c.openQty*part).toFixed(d.m==='usd'?2:12);updateFee();preview()};
+ }
+ $('b4FCancel').onclick=api.close;$('b4FSave').onclick=()=>{let v=preview();if(v.err)return;let date=$('b4FDate').value;if(!date||Number.isNaN(new Date(date).getTime())){$('b4FError').textContent='Indica uma data válida.';return}let side=$('b4FSide').value,cycle=$('b4FCycle').value,common={kind,side,cycle,price:v.d.p,fee:v.fee,date:new Date(date).toISOString(),notes:v.notes};let data=kind==='buy'?{...common,usd:v.d.usd}:{...common,qty:v.d.qty};let ok=orig?revise(orig.id,data):add(data);if(ok)api.close();};
+ updateFee();preview();
+}
+function confirmVoid(id){let e=ledger.find(x=>x.id===id);if(!e)return;api.modal(e.voided?'Repor operação':'Anular operação','CONFIRMAÇÃO DE HISTÓRICO',`<p>${e.voided?'Repor':'Anular'} a ${e.kind==='buy'?'compra':'venda'} <strong>${escape(e.id)}</strong> do conjunto ${e.cycle}?</p><p>As posições e o PNL serão recalculados, e a operação permanecerá visível no histórico para auditoria. A anulação não é uma ordem real.</p>`,'<button class="btn neutral" id="b4VCancel">Cancelar</button><button class="btn sell" id="b4VConfirm">Confirmar</button>');$('b4VCancel').onclick=api.close;$('b4VConfirm').onclick=()=>{if(flip(id))api.close()};}
+function openAudit(){let recent=audit.slice().reverse();api.modal('Histórico de correções','AUDITORIA · DEMO',`<p>As alterações são registadas sem apagar silenciosamente eventos anteriores.</p><div class="b4-preview" style="max-height:340px;overflow-y:auto">${recent.length?recent.map(a=>`<div style="border-bottom:1px solid #345;margin-bottom:10px;padding-bottom:7px"><strong>${escape(a.action)} · ${escape(a.id)}</strong><br>${escape(new Date(a.at).toLocaleString('pt-PT'))}${a.before?`<br>Valor anterior: ${escape(JSON.stringify({price:a.before.price,usd:a.before.usd,qty:a.before.qty,fee:a.before.fee}))}`:''}</div>`).join(''):'Ainda não há alterações.'}</div>`,'<button class="btn primary" id="b4AuditClose">Fechar</button>');$('b4AuditClose').onclick=api.close;}
+function csvCell(v){return '"'+String(v??'').replaceAll('"','""')+'"'}
+function exportCsv(){let x=snapshot().rows;let cols=['ID','Tipo','Cenario','Conjunto','DataHoraISO','PrecoBTCUSD','BTC','NominalUSD','ComissaoUSD','BaseAlocadaUSD','ComissaoEntradaAlocadaUSD','PNLRealizadoLiquidoUSD','Estado','Notas'];let rows=x.map(r=>[r.id,r.kind,r.side,r.cycle,r.date,r.price,r.qty||'',r.nominal||r.usd||'',r.fee,r.allocBasis,r.allocEntryFee,r.pnl??'',r.voided?'Anulado':r.editedAt?'Corrigido':'Ativo',r.notes].map(csvCell).join(';'));let csv='\ufeff'+cols.map(csvCell).join(';')+'\n'+rows.join('\n');let a=document.createElement('a'),href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.href=href;a.download='BTC_Strategy_Pro_Demo_Historico.csv';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(href),1000);notify('CSV Demo preparado para transferência; guarda o ficheiro localmente.');}
+function resetConfirm(){api.modal('Repor dados de demonstração','APAGAR DADOS DA SESSÃO','<p>Isto repõe todos os registos e preços do exemplo original (197 USD a 82.038 USD no conjunto A de cada cenário).</p><p>As operações adicionadas ou corrigidas nesta sessão serão perdidas. Exporta um CSV primeiro, se necessário.</p>','<button class="btn neutral" id="b4RCancel">Cancelar</button><button class="btn sell" id="b4RConfirm">Repor Demo</button>');$('b4RCancel').onclick=api.close;$('b4RConfirm').onclick=()=>{clear();api.close();};}
+ledger=seed();sync();
+window.BTCBlock4={exportState:()=>({ledger:structuredClone(ledger),audit:structuredClone(audit),seq}),importState:(input)=>{if(!input||!Array.isArray(input.ledger))throw Error('Histórico de projeto inválido');if(input.ledger.length>5000)throw Error('Limite do histórico excedido');const prior={ledger,audit,seq};try{ledger=structuredClone(input.ledger);audit=structuredClone(input.audit||[]);seq=Math.max(Number(input.seq)||0,...ledger.map(e=>Number(e.seq)||0),0);sync();window.renderTradeJournal?.();}catch(e){({ledger,audit,seq}=prior);sync();throw e;}},openBuy:()=>openForm('buy'),openSell:()=>openForm('sell'),resetConfirm,reset:clear,metrics:()=>snapshot().metrics,entries:()=>ledger.map(e=>({...e})),get:()=>snapshot(),add,revise,flip,render,exportCsv};
+window.renderTradeJournal=render;
+window.BTCBlock4Tests={replay,calc:netSale,ledger:()=>ledger.map(x=>({...x})),snapshot};
+// Refresh the already rendered Home after baseline Demo operations are in place.
+api.journalSync();
+})();
+</script>
+<script id="block5js">
+(()=>{'use strict';
+const api=window.BTCPro, ledger=window.BTCBlock4, E=id=>document.getElementById(id);
+const fmt=(n,d=2)=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number(n)||0)+' $';
+const num=(n,d=0)=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number(n)||0);
+const btc=n=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:8,maximumFractionDigits:8}).format(Number(n)||0);
+const color={positive:'#20C997',negative:'#F05D64',cyan:'#18B8E6',amber:'#F4B740',white:'#F3F6FB',grid:'#273A4D',muted:'#8DA4B9'};
+let tf='1h',visible=59,offset=0,hover=-1,drag=null,opts={sma20:true,sma50:false,ema20:false,boll:false,volume:true,rsi:true,levels:true},chartData=[],lastWidth=0,raf=0,first=true;
+let view='';
+function state(){return api.state()}function settings(){return api.settings()}
+function series(n,frame,price){ // deterministic synthetic candles, not exchange data
+ let seed=194743 + {'15m':11,'1h':23,'4h':37,'1D':59}[frame],v=79100,rows=[];
+ for(let i=0;i<n;i++){seed=(Math.imul(seed,1664525)+1013904223)>>>0;let r=seed/4294967296;let open=v;let drift=Math.sin(i/17)*55+Math.cos(i/31)*20;let close=Math.max(60000,Math.min(108000,open+(r-.49)*420+drift));let high=Math.max(open,close)+55+r*225,low=Math.min(open,close)-60-(1-r)*170;
+ rows.push({o:open,h:high,l:low,c:close,v:28+r*110,t:i});v=close;}
+ // steer the last part towards current synthetic quote smoothly; OHLC remains consistent
+ let shift=price-rows.at(-1).c;
+ rows=rows.map((x,i)=>{let v=(i/(n-1))**1.7*shift;return {...x,o:x.o+v,h:x.h+v,l:x.l+v,c:x.c+v}});
+ for(let x of rows){x.h=Math.max(x.h,x.o,x.c);x.l=Math.min(x.l,x.o,x.c)}
+ return rows;
+}
+function sma(data,period){let out=[];let acc=0;for(let i=0;i<data.length;i++){acc+=data[i].c;if(i>=period)acc-=data[i-period].c;out[i]=i>=period-1?acc/period:null}return out}
+function ema(data,period){let out=[],k=2/(period+1);for(let i=0;i<data.length;i++)out[i]=i?data[i].c*k+out[i-1]*(1-k):data[i].c;return out}
+function rsi(data,period=14){let res=Array(data.length).fill(null),gain=0,loss=0;for(let i=1;i<data.length;i++){let d=data[i].c-data[i-1].c;if(i<=period){gain+=Math.max(0,d);loss+=Math.max(0,-d);if(i===period){gain/=period;loss/=period;res[i]=loss===0?(gain===0?50:100):100-100/(1+gain/loss)}}else{gain=(gain*(period-1)+Math.max(d,0))/period;loss=(loss*(period-1)+Math.max(-d,0))/period;res[i]=loss===0?(gain===0?50:100):100-100/(1+gain/loss)}}return res}
+function boll(data,n=20){let out=[];for(let i=0;i<data.length;i++){if(i<n-1){out.push(null);continue}let a=data.slice(i-n+1,i+1).map(x=>x.c),m=a.reduce((s,v)=>s+v,0)/n,v=Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/n);out.push([m+v*2,m-v*2])}return out}
+function getCycle(){return state().sets[state().side][state().selected]}
+function calcCycle(c){let q=typeof c.openQty==='number'?c.openQty:c.fills.reduce((x,f)=>x+f.usd/f.price,0),basis=typeof c.openBasis==='number'?c.openBasis:c.fills.reduce((x,f)=>x+f.usd,0),avg=q?basis/q:0,n=c.fills.length;
+ let t=n&&q?avg+settings().targets[Math.min(n,3)-1]:null,pnl=q*state().current-basis;
+ return {q,basis,avg,target:t,pnl,n,entry:c.entry,reinforce:c.entry-settings().gap*n,next:n<3?c.entry-settings().gap*n:null}}
+function barPrice(m){return m.c}
+function cashLabel(){return 'Dados sintéticos · Demo local · Nenhuma ordem real'}
+function rootMarkup(){return `<div class="b5-root"><button type="button" id="r6TerminalShortcut" class="r6-mobile-shortcut" onclick="BTCBlock6.open()">◈ Simular risco e liquidação</button><div class="b5-header"><div><div class="eyebrow">BTC STRATEGY PRO / BLOCO 5</div><h1>Trading <span style="color:var(--cyan)">Terminal</span></h1><p>Gráfico profissional de demonstração · Posições virtuais e níveis da Tabela Chaves em conjunto.</p></div><div class="b5-actions"><span class="demo">MODO DEMO</span><button id="b5GoHome" class="btn neutral">← Home</button><button id="b5SimBTC" class="btn primary">◇ Simular BTC</button></div></div>
+<div class="b5-demoalert">ⓘ Gráfico OHLC, indicadores e volume gerados localmente. <b>Não são cotações históricas ou em tempo real.</b> Os níveis das estratégias e operações registadas são Demo e não executam ordens.</div>
+<div class="b5-bar"><div class="b5-control"><label>Mercado</label><select class="b5-select" id="b5Market"><option>BTC/USD · Demo</option></select></div><div class="b5-control"><label>Cenário</label><select class="b5-select" id="b5Side"><option value="descida">↓ BTC a descer</option><option value="subida">↑ BTC a subir</option></select></div><div class="b5-control"><label>Conjunto A–E</label><select class="b5-select" id="b5Cycle">${'ABCDE'.split('').map(c=>`<option value="${c}">Estratégia ${c}</option>`).join('')}</select></div><div class="b5-flexspace"></div><div class="b5-control"><label>Intervalo temporal fictício</label><div class="b5-timeframes">${['15m','1h','4h','1D'].map(t=>`<button data-b5tf="${t}" class="${t===tf?'active':''}">${t}</button>`).join('')}</div></div></div>
+<div class="b5-overview" id="b5Overview"></div>
+<div class="b5-layout"><section class="b5-chartpanel"><div class="b5-panelhead"><div><h2>▥ BTC / USD · Gráfico Candlestick</h2><p id="b5Subtitle">Velas simuladas · Movimenta, aproxima e seleciona um conjunto</p></div><div class="b5-chartactions"><button class="b5-toolbarbtn" title="Aproximar gráfico" id="b5ZoomIn">＋</button><button class="b5-toolbarbtn" title="Afastar gráfico" id="b5ZoomOut">−</button><button class="b5-toolbarbtn" title="Ir para os dados mais recentes" id="b5ResetChart">⟲</button><button class="b5-toolbarbtn" title="Ampliar gráfico" id="b5FullChart">⤢</button></div></div>
+<div class="b5-chartareas"><canvas id="b5Canvas" class="b5-canvas" tabindex="0" aria-label="Gráfico interativo de velas e indicadores em modo Demo"></canvas><div class="b5-tooltip" id="b5OHLC">Aponta para uma vela para consultar os valores OHLC · Sintéticos</div></div>
+<div class="b5-indicators"><span class="b5-eyebrow">Indicadores</span><div class="b5-indicatorbuttons">${[['sma20','SMA 20'],['sma50','SMA 50'],['ema20','EMA 20'],['boll','Bollinger'],['volume','Volume'],['rsi','RSI 14'],['levels','Níveis A–E']].map(([k,n])=>`<button data-ind="${k}" class="${opts[k]?'active':''}">${n}</button>`).join('')}</div></div>
+<div class="b5-legend"><span><i style="background:var(--positive,#20C997)"></i>Alta</span><span><i style="background:var(--negative,#F05D64)"></i>Baixa</span><span><i style="background:var(--cyan)"></i>Compra / média</span><span><i style="background:var(--amber)"></i>Venda</span></div><div class="b5-mininote">Roda do rato ou usa +/− para zoom. Arrasta na horizontal para consultar outras velas. No mobile utiliza os controlos +/−; deslizar verticalmente continua a funcionar.</div></section>
+<aside class="b5-sidepanel"><section class="b5-sidebox"><div class="b5-eyebrow">Cotação sintética BTC/USD</div><div class="b5-current" id="b5Current">—</div><div class="b5-hint">Variação do gráfico não representa mercado real.</div><div class="b5-cycbuttons" id="b5CycleButtons"></div></section>
+<section class="b5-sidebox"><div class="b5-eyebrow">Radar · Conjunto <span id="b5CycleTitle">A</span></div><div id="b5Radar" class="b5-sidelist"></div><div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap"><button class="btn primary" id="b5QuickBuy">＋ Compra Demo</button><button class="btn neutral" id="b5QuickSell">↗ Venda Demo</button></div></section>
+<section class="b5-sidebox"><div class="b5-eyebrow">Níveis da estratégia</div><div id="b5Levels"></div></section>
+<section class="b5-sidebox"><div class="b5-eyebrow">Gestão de risco · ilustrativo</div><div id="b5Risk" class="b5-sidelist"></div><p class="b5-hint">* O PNL líquido estimado desconta comissões de compra ainda atribuídas e taxa de venda projetada; exclui funding e spread. A liquidação real depende das posições e da exchange.</p></section></aside></div>
+<div class="b5-bottom"><section class="b5-below"><div class="b5-panelhead"><div><h2>▤ Níveis de compra e venda A–E</h2><p>Seleciona uma linha para ver os seus níveis no gráfico.</p></div><span class="b5-chip">20 / 30 / 50</span></div><div class="b5-tablescroll"><table class="b5-table"><thead><tr><th>Conjunto</th><th>Compra 20%</th><th>Reforço 30%</th><th>Reforço 50%</th><th>Venda aplicável</th></tr></thead><tbody id="b5GridRows"></tbody></table></div></section>
+<section class="b5-below"><div class="b5-panelhead"><div><h2>⇅ Operações registadas · Demo</h2><p>Partilhadas com o histórico do Bloco 4</p></div><button class="b5-toolbarbtn" id="b5GoJournal">Abrir histórico →</button></div><div class="b5-tablescroll"><table class="b5-table"><thead><tr><th>Tipo</th><th>Conjunto</th><th>BTC</th><th>Preço</th><th>Nominal</th></tr></thead><tbody id="b5JournalRows"></tbody></table></div></section></div>
+<div class="b5-footer">BTC Strategy Pro · Bloco 5 · Terminal e indicadores em Demo offline · Sem API de mercado, sem login e sem ordens reais</div></div>`}
+function line(ctx,seq,toX,toY,stroke,w=1.6,dash=[]){ctx.strokeStyle=stroke;ctx.lineWidth=w;ctx.setLineDash(dash);ctx.beginPath();let begun=false;for(let i=0;i<seq.length;i++){let v=seq[i];if(v==null||!Number.isFinite(v))continue;let x=toX(i),y=toY(v);if(!begun){ctx.moveTo(x,y);begun=true}else ctx.lineTo(x,y)}if(begun)ctx.stroke();ctx.setLineDash([])}
+function draw(){let canvas=E('b5Canvas');if(!canvas||E('terminalView')?.hidden||!canvas.getBoundingClientRect().width)return;
+ let rect=canvas.getBoundingClientRect(),ratio=Math.min(2,devicePixelRatio||1),w=rect.width,h=rect.height;lastWidth=w;canvas.width=Math.floor(w*ratio);canvas.height=Math.floor(h*ratio);let g=canvas.getContext('2d');g.scale(ratio,ratio);g.clearRect(0,0,w,h);g.fillStyle='#0B1724';g.fillRect(0,0,w,h);
+ let left=14,right=Math.min(82,w*.19),plotW=w-left-right,top=42, bottom=opts.rsi?100:32,volH=opts.volume?66:0,pH=h-top-bottom-volH-15;
+ let n=Math.min(visible,chartData.length),end=Math.min(chartData.length,chartData.length-offset),start=Math.max(0,end-n),bars=chartData.slice(start,end);if(!bars.length)return;
+ let max=Math.max(...bars.map(x=>x.h)),min=Math.min(...bars.map(x=>x.l)),delta=Math.max(450,max-min);min-=delta*.18;max+=delta*.18;
+ const px=p=>top+(max-p)/(max-min)*pH,barW=plotW/bars.length,toX=i=>left+barW*(i+.5);
+ const labels=[];g.strokeStyle='#22364A';g.fillStyle='#91A9BB';g.lineWidth=.8;g.textAlign='left';g.font='10px ui-monospace,monospace';
+ for(let i=0;i<=5;i++){let p=max-(max-min)*i/5,y=px(p);g.strokeStyle='#213349';g.setLineDash([2,5]);g.beginPath();g.moveTo(left,y);g.lineTo(w-right+5,y);g.stroke();g.setLineDash([]);g.fillStyle='#92ABBE';g.fillText(num(p),w-right+10,y+3)}
+ const base=opts.volume?top+pH+10:0;
+ bars.forEach((bar,i)=>{let x=toX(i),up=bar.c>=bar.o,col=up?'#20C997':'#F05D64';g.strokeStyle=col;g.lineWidth=1.2;g.beginPath();g.moveTo(x,px(bar.h));g.lineTo(x,px(bar.l));g.stroke();g.fillStyle=col;let y=Math.min(px(bar.o),px(bar.c)),bh=Math.max(1.8,Math.abs(px(bar.c)-px(bar.o)));g.fillRect(x-Math.max(1,barW*.32),y,Math.max(2,barW*.64),bh);
+ if(opts.volume){g.fillStyle=up?'#1b876a88':'#a3465488';g.fillRect(x-Math.max(1,barW*.32),base+volH*(1-bar.v/150),Math.max(2,barW*.64),volH*bar.v/150)}});
+ const arr=a=>a.slice(start,end),m20=sma(chartData,20),m50=sma(chartData,50),e20=ema(chartData,20),BB=boll(chartData,20);const X=i=>toX(i);
+ if(opts.sma20)line(g,arr(m20),X,px,'#F4B740',1.7);
+ if(opts.sma50)line(g,arr(m50),X,px,'#ad96ff',1.5);
+ if(opts.ema20)line(g,arr(e20),X,px,'#18B8E6',1.7);
+ if(opts.boll){line(g,arr(BB).map(x=>x?.[0]),X,px,'#668ed5',1.1,[5,3]);line(g,arr(BB).map(x=>x?.[1]),X,px,'#668ed5',1.1,[5,3])}
+ const st=state(),cycle=getCycle(),c=calcCycle(cycle),offsetSell=settings().targets[0],baseLevels=[
+ {p:cycle.entry,label:'Compra 20%',c:color.cyan},{p:cycle.entry-settings().gap,label:'Reforço 30%',c:color.positive},{p:cycle.entry-2*settings().gap,label:'Reforço 50%',c:color.positive},{p:c.target||cycle.entry+offsetSell,label:'Venda',c:color.amber}];
+ if(c.q)baseLevels.push({p:c.avg,label:'Média',c:'#b9a0ff'});
+ if(opts.levels){for(let item of baseLevels){let pos=px(item.p);if(pos<top||pos>top+pH)continue;g.strokeStyle=item.c;g.setLineDash([5,4]);g.lineWidth=1.25;g.beginPath();g.moveTo(left,pos);g.lineTo(w-right+2,pos);g.stroke();g.setLineDash([]);g.fillStyle=item.c;g.fillRect(w-right+3,pos-9,right-5,18);g.fillStyle='#071523';g.font='bold 9px ui-monospace,monospace';g.textAlign='left';g.fillText(num(item.p),w-right+7,pos+3)} }
+ let curr=state().current,markY=px(curr);if(markY>=top&&markY<=top+pH){g.strokeStyle='#FFFFFF99';g.lineWidth=1;g.setLineDash([2,5]);g.beginPath();g.moveTo(left,markY);g.lineTo(w-right,markY);g.stroke();g.setLineDash([])}
+ // vertical guides and fake time spacing
+ g.fillStyle='#7e9bad';g.font='9px ui-monospace,monospace';g.textAlign='center';for(let i=0;i<bars.length;i+=Math.max(1,Math.floor(bars.length/6))){let x=toX(i);g.fillText('T−'+(chartData.length-1-(start+i))*({'15m':15,'1h':60,'4h':240,'1D':1440}[tf]===15?1:1)+({ '15m':'×15m','1h':'h','4h':'×4h','1D':'d'}[tf]),x,top+pH+volH+19)}
+ if(opts.rsi){let ry=h-72,rh=51;g.fillStyle='#a6b6c9';g.font='10px ui-monospace,monospace';g.textAlign='left';g.fillText('RSI (14)',left,ry-7);g.strokeStyle='#254457';g.beginPath();g.moveTo(left,ry+rh*.3);g.lineTo(w-right,ry+rh*.3);g.moveTo(left,ry+rh*.7);g.lineTo(w-right,ry+rh*.7);g.stroke();line(g,arr(rsi(chartData)),X,v=>ry+rh*(1-v/100),'#b89cfa',1.65);g.fillStyle='#91a5bc';g.fillText('70',w-right+12,ry+rh*.3+3);g.fillText('30',w-right+12,ry+rh*.7+3)}
+ if(hover>=0&&hover<bars.length){let item=bars[hover],x=toX(hover),y=px(item.c);g.strokeStyle='#7E9BAA';g.lineWidth=1;g.setLineDash([3,4]);g.beginPath();g.moveTo(x,top);g.lineTo(x,top+pH);g.moveTo(left,y);g.lineTo(w-right,y);g.stroke();g.setLineDash([]);
+ E('b5OHLC').textContent=`VELA SINTÉTICA · O ${num(item.o,2)} H ${num(item.h,2)} L ${num(item.l,2)} C ${num(item.c,2)} · V ${num(item.v,0)}`;
+ }else E('b5OHLC').textContent=`BTC/USD · ${tf} · velas geradas localmente · ${bars.length} visíveis`;
+ canvas._layout={left,plotW,barW,len:bars.length,start,end};
+}
+function schedule(){cancelAnimationFrame(raf);raf=requestAnimationFrame(draw)}
+function keyValue(v){return v==null?'—':fmt(v)}
+function render(){let root=E('terminalView');if(!root||root.hidden)return;let st=state(),sc=settings(),c=calcCycle(getCycle()),price=st.current;
+ if(!root.querySelector('#b5Canvas')){root.innerHTML=rootMarkup();bind();}
+ E('b5Side').value=st.side;E('b5Cycle').value=st.selected;
+ chartData=series(190,tf,price);
+ let change=chartData.at(-1).c/chartData.at(-25).c-1;
+ let margin=c.basis/5; // 5x demo modeling assumption, NOT a liquidation estimate
+ E('b5Overview').innerHTML=[['PREÇO BTC · DEMO',fmt(price),`${change>=0?'+':''}${num(change*100,2)} % · sintético`],['EXPOSIÇÃO ABERTA',fmt(c.basis),`${btc(c.q)} BTC`],['PREÇO MÉDIO',c.q?fmt(c.avg):'—',c.q?'Compras registadas':'Ainda não comprado'],['PNL NÃO REALIZADO',fmt(c.pnl),`Sem funding futuro · bruto`],['OBJETIVO DO CONJUNTO',fmt(c.target||c.entry+sc.targets[0]),c.q?'Venda após compras executadas':'Venda após 20% · condicional']].map(([k,v,sub],i)=>`<div class="b5-kpi"><small>${k}</small><strong style="color:${i===0?'var(--cyan)':i===3?(c.pnl>=0?'var(--green)':'var(--red)'):'var(--text)'}">${v}</strong><span>${sub}</span></div>`).join('');
+ E('b5Current').textContent=fmt(price);E('b5CycleTitle').textContent=st.selected;
+ E('b5CycleButtons').innerHTML='ABCDE'.split('').map(id=>`<button data-b5cy="${id}" class="${id===st.selected?'active':''}">${id}</button>`).join('');E('b5CycleButtons').querySelectorAll('button').forEach(b=>b.onclick=()=>{api.choose(st.side,b.dataset.b5cy);render()});
+ const toBuy=c.n<3?(c.n?c.entry-sc.gap*c.n:c.entry):null, toSell=c.target||(c.entry+sc.targets[0]);
+ E('b5Radar').innerHTML=[['Fase do conjunto',c.n+'/3 compras'],['Próxima compra/reforço',keyValue(toBuy)],['Objetivo de venda',keyValue(toSell)],['Distância até venda',fmt(toSell-price)],['PNL bruto ao preço atual',fmt(c.pnl)],['PNL estimado após comissões*',c.q?fmt(c.pnl-(c.q*price*sc.fee)-(getCycle().openFee||0)): '—']].map(([lab,v])=>`<div class="b5-sideitem"><span>${lab}</span><strong>${v}</strong></div>`).join('');
+ let levels=[{title:'20% · entrada',price:c.entry,col:color.cyan,tag:fmt(sc.amounts[0],0)},{title:'30% · reforço',price:c.entry-sc.gap,col:color.positive,tag:fmt(sc.amounts[1],0)},{title:'50% · reforço',price:c.entry-sc.gap*2,col:color.positive,tag:fmt(sc.amounts[2],0)},{title:'Objetivo de venda',price:toSell,col:color.amber,tag:c.q?'Sobre média real':'Se executar 20%'}];
+ if(c.q)levels.push({title:'Preço médio em aberto',price:c.avg,col:'#b89cfa',tag:'Após operações registadas'});
+ E('b5Levels').innerHTML=levels.map(l=>`<div class="b5-levelrow"><i class="b5-dot" style="background:${l.col}"></i><div><div class="title">${l.title}</div><small>${l.tag}</small></div><div class="value" style="color:${l.col}">${fmt(l.price)}</div></div>`).join('');
+ E('b5Risk').innerHTML=[['Margem hipotética atribuída (5x)',fmt(margin)],['Alavancagem ilustrativa','5x · NÃO verificada'],['Capital Demo da carteira',fmt(st.capital)],['Distância até 60.000 $',fmt(price-60000)],['Liquidação real','Não disponível']].map(([label,v])=>`<div class="b5-sideitem"><span>${label}</span><strong>${v}</strong></div>`).join('');
+ E('b5GridRows').innerHTML=Object.values(st.sets[st.side]).map(x=>{let z=calcCycle(x);return `<tr data-b5row="${x.id}" style="background:${x.id===st.selected?'#17384b':''}"><td><span class="b5-chip">${x.id}</span></td><td>${fmt(x.entry,0)}</td><td>${fmt(x.entry-sc.gap,0)}</td><td>${fmt(x.entry-2*sc.gap,0)}</td><td style="color:#f6c879">${fmt(z.target||x.entry+sc.targets[0],0)}</td></tr>`}).join('');E('b5GridRows').querySelectorAll('tr').forEach(row=>row.onclick=()=>{api.choose(st.side,row.dataset.b5row);render()});
+ let entries=ledger.entries().filter(e=>!e.voided&&e.side===st.side).slice(-7).reverse();
+ E('b5JournalRows').innerHTML=entries.length?entries.map(e=>`<tr><td style="color:${e.kind==='buy'?'var(--green)':'var(--red)'}">${e.kind==='buy'?'Compra':'Venda'}</td><td>${e.cycle}</td><td>${btc(e.qty||e.usd/e.price)}</td><td>${fmt(e.price)}</td><td>${fmt(e.kind==='buy'?e.usd:e.qty*e.price)}</td></tr>`).join(''):'<tr><td colspan="5" style="padding:24px;color:var(--muted)">Sem operações Demo</td></tr>';
+ E('b5Subtitle').textContent=`Velas fictícias ${tf} · ${num(price)} $ · Conjunto ${st.selected} · seletores e indicadores interativos`;
+ if(first){first=false;setTimeout(schedule,80)}else schedule();}
+function bind(){let setTf=t=>{tf=t;offset=0;hover=-1;E('terminalView').querySelectorAll('[data-b5tf]').forEach(b=>b.classList.toggle('active',b.dataset.b5tf===t));render()};
+ E('b5Side').onchange=e=>{api.choose(e.target.value,state().selected);render()};E('b5Cycle').onchange=e=>{api.choose(state().side,e.target.value);render()};
+ document.querySelectorAll('[data-b5tf]').forEach(btn=>btn.onclick=()=>setTf(btn.dataset.b5tf));
+ document.querySelectorAll('[data-ind]').forEach(b=>b.onclick=()=>{opts[b.dataset.ind]=!opts[b.dataset.ind];b.classList.toggle('active',opts[b.dataset.ind]);schedule()});
+ E('b5ZoomIn').onclick=()=>{visible=Math.max(18,visible-11);schedule()};E('b5ZoomOut').onclick=()=>{visible=Math.min(160,visible+11);schedule()};E('b5ResetChart').onclick=()=>{offset=0;visible=59;hover=-1;schedule()};
+ E('b5FullChart').onclick=()=>{let box=E('b5Canvas');let h=box.style.height;box.style.height=h?'':'min(80vh,740px)';schedule()};
+ E('b5GoHome').onclick=()=>go('Início');E('b5GoJournal').onclick=()=>go('Registos');E('b5SimBTC').onclick=()=>openDemoPrice();E('b5QuickBuy').onclick=()=>ledger.openBuy();E('b5QuickSell').onclick=()=>ledger.openSell();
+ let canvas=E('b5Canvas');
+ canvas.addEventListener('mousemove',e=>{if(drag&&drag.active){let d=e.clientX-drag.x;if(Math.abs(d)>12){offset=Math.max(0,Math.min(190-visible,drag.original+Math.round(d/(canvas._layout?.barW||6))));schedule()};return}let a=canvas._layout;if(!a)return;hover=Math.min(a.len-1,Math.max(0,Math.floor((e.clientX-canvas.getBoundingClientRect().left-a.left)/a.barW)));schedule()});
+ canvas.addEventListener('mouseleave',()=>{hover=-1;drag=null;schedule()});canvas.addEventListener('wheel',e=>{e.preventDefault();visible=Math.max(18,Math.min(160,visible+(e.deltaY>0?7:-7)));offset=Math.min(190-visible,offset);schedule()},{passive:false});
+ canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,original:offset,active:true};if(e.pointerType==='mouse')canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointerup',()=>drag=null);canvas.addEventListener('pointercancel',()=>drag=null);
+ canvas.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){offset=Math.min(190-visible,offset+3);schedule()}if(e.key==='ArrowRight'){offset=Math.max(0,offset-3);schedule()}if(e.key==='+'){visible=Math.max(18,visible-5);schedule()}if(e.key==='-'){visible=Math.min(160,visible+5);schedule()}});
+}
+function openDemoPrice(){let p=state().current;api.modal('Simular cotação BTC','APENAS DEMO',`<p>Escolhe um preço hipotético. O gráfico será recalculado com candles sintéticos e o PNL será atualizado; nenhuma ordem é enviada a uma exchange.</p><div class="field"><label>Preço simulado BTC/USD</label><input id="b5PriceInput" type="number" min="1000" max="250000" step="100" value="${p}"></div><p id="b5PreviewPrice" class="b5-hint"></p>`, '<button class="btn neutral" id="b5CancelPrice">Cancelar</button><button class="btn primary" id="b5SetPrice">Aplicar Demo</button>');let update=()=>{let p=Number(E('b5PriceInput').value);E('b5PreviewPrice').textContent=Number.isFinite(p)&&p>1000?'Nova cotação: '+fmt(p):'Introduz um preço positivo válido'};E('b5PriceInput').oninput=update;update();E('b5CancelPrice').onclick=api.close;E('b5SetPrice').onclick=()=>{let p=Number(E('b5PriceInput').value);if(Number.isFinite(p)&&p>=1000&&p<=250000){api.setDemoPrice(p);api.close();render()}else E('b5PreviewPrice').textContent='Preço inválido (1000–250000).'}}
+function go(where){let all=['Início','Estratégias','Registos','Terminal'];if(!all.includes(where))return;E('homeView').hidden=where!=='Início';E('strategiesView').hidden=where!=='Estratégias';E('journalView').hidden=where!=='Registos';E('terminalView').hidden=where!=='Terminal';document.querySelectorAll('[data-nav]').forEach(btn=>btn.classList.toggle('on',btn.dataset.nav===where));window.scrollTo(0,0);if(where==='Terminal')render();if(where==='Estratégias')window.renderStrategyCenter?.();if(where==='Registos')window.renderTradeJournal?.();if(where==='Início')window.dispatchEvent(new Event('resize'));view=where;}
+function init(){document.querySelectorAll('[data-nav="Terminal"]').forEach(b=>b.onclick=()=>go('Terminal'));
+ let top=E('homeView')?.querySelector('.topline');if(top&&!E('homeOpenTerminal')){let b=document.createElement('button');b.id='homeOpenTerminal';b.className='btn primary';b.textContent='▥ Abrir Trading Terminal';b.onclick=()=>go('Terminal');top.appendChild(b)}
+ let header=E('strategiesView');if(header){let b=document.createElement('button');b.id='b5StratShortcut';b.className='btn neutral';b.textContent='▥ Terminal';b.onclick=()=>go('Terminal');let ob=new MutationObserver(()=>{if(header.hidden)return;let actions=header.querySelector('.strat-actions');if(actions&&!actions.contains(b))actions.append(b)});ob.observe(header,{childList:true,subtree:false})}
+ // Keep nav lifecycle intact: route links set by Block 3 still handle other tabs, including from this page.
+ let btcPrice=E('btcPrice');if(btcPrice)new MutationObserver(()=>{if(!E('terminalView').hidden){render()}}).observe(btcPrice,{childList:true,characterData:true,subtree:true});
+ window.addEventListener('resize',()=>{if(!E('terminalView').hidden)schedule()});
+ let search=new URLSearchParams(location.search).get('page');if(search==='terminal')go('Terminal');
+}
+window.renderTradeTerminal=render;window.BTCBlock5={open:()=>go('Terminal'),render,sma,ema,rsi,boll,series,opts,go,viewState:()=>({tf,visible,offset,hover,canvas:!!E('b5Canvas'),selected:state().selected,side:state().side,price:state().current})};document.addEventListener('DOMContentLoaded',init);if(document.readyState!=='loading')init();
+})();
+</script>
+<script id="block6js">
+(()=>{'use strict';
+const E=id=>document.getElementById(id),api=window.BTCPro,ledger=window.BTCBlock4;
+const F=(n,d=2)=>new Intl.NumberFormat('pt-PT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(Number(n)||0), money=(n,d=2)=>F(n,d)+' $',pct=n=>F(n*100,2)+'%',esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ids='ABCDE';let settings={mode:'isolated',situation:'open',margin:1500,capital:2000,leverage:10,maintenance:5,execFee:0.05,funding8h:0.01,days:14,target:60000};let selectedRisk='A',visible=false;
+const params=()=>api.settings();
+function state(){return api.state();}
+function finite(v,other=0){return Number.isFinite(+v)?+v:other}
+function actualState(){let s=state(),x=ledger.get(),side=s.side;return {s,x,side,sets:x.sets[side],metrics:x.metrics,price:s.current,rs:x.metrics.realized[side]||0};}
+function calcPositions(target=settings.target,situation=settings.situation){
+ const {s,sets,side,rs}=actualState(), sc=params(), price=s.current, out=[],feeRate=sc.fee||.0005;
+ let q=0,basis=0,feesAlready=0,feesNew=0,adds=0,addingCount=0;
+ for(const [id,c] of Object.entries(sets)){
+   let cq=c.openQty||0,cb=c.openBasis||0,cf=c.openFee||0;
+   const prior=c.fills.length,amt=sc.amounts;
+   let assumed=[];
+   if(situation==='reinforcements'&&cq>0 && target<price){
+     for(let leg=prior;leg<3;leg++){let at=c.entry-sc.gap*leg;if(at<=price&&at>=target){let v=amt[leg];assumed.push({at,v,leg});}}
+   }else if(situation==='full'){
+     for(let leg=prior;leg<3;leg++){
+       let at=leg===0?c.entry:c.entry-sc.gap*leg;
+       // Pure counterfactual: all planned legs assumed filled even if not on the historical price path.
+       assumed.push({at,v:amt[leg],leg});
+     }
+   }
+   for(const a of assumed){cq+=a.v/a.at;cb+=a.v;feesNew+=a.v*feeRate;adds+=a.v;addingCount++;}
+   q+=cq;basis+=cb;feesAlready+=cf;
+   out.push({id,q:cq,basis:cb,avg:cq?cb/cq:0,unreal:cq*target-cb,filled:prior,assumed:assumed.length,entry:c.entry});
+ }
+ return {q,basis,feesAlready,feesNew,adds,addingCount,out,realized:rs,currentPrice:price,side};
+}
+function compute(price=settings.target,situation=settings.situation){
+ const p=calcPositions(price,situation),mRate=settings.maintenance/100,liquidationFee=settings.execFee/100,fr=settings.funding8h/100*settings.days*3;
+ const collateral=settings.mode==='isolated'?settings.margin:settings.capital;
+ const fund=p.q*price*fr,unreal=p.q*price-p.basis,maint=p.q*price*mRate,estimatedExitFee=p.q*price*liquidationFee;
+ const marginEquity=collateral+p.realized-p.feesAlready-p.feesNew+unreal-fund;
+ const buffer=marginEquity-maint-estimatedExitFee;
+ const currentNotional=p.q*price,initialMargin=p.basis/settings.leverage;
+ const denom=p.q*(1-mRate-liquidationFee-fr);
+ let liq=null, note='';
+ if(p.q>0&&denom>0){const raw=(p.basis-collateral-p.realized+p.feesAlready+p.feesNew)/denom;liq=raw>0?raw:null;note=raw<=0?'O modelo não estima liquidação acima de 0 $ para estes pressupostos. Não elimina o risco real.':'';}
+ else note=p.q===0?'Não existem posições abertas neste cenário.':'Dados insuficientes para estimar liquidação.';
+ const projectedLoss=unreal-fund-p.feesAlready-p.feesNew;
+ return {...p,price,collateral,unreal,maint,fund,buffer,marginEquity,initialMargin,liq,note,projectedLoss,estimatedExitFee,fr};
+}
+function render(){let el=E('riskView');if(!el||!visible)return;let s=state(),sc=params(),actual=compute(s.current,'open'),c=compute(),lowMode=c.buffer<0;
+ const viewVal= c.q>0&&c.liq?money(c.liq,0):c.q>0?'Não estimado':'—';
+ const markup=`<div class="risk-root">
+  <header class="r6-header"><div><div class="eyebrow">BTC STRATEGY PRO / BLOCO 6</div><h1>Risco <span style="color:var(--cyan)">& Simulador</span></h1><p>Explora cenários de BTC, reforços, margem e funding utilizando o registo Demo real do teu projeto. A estimativa não reproduz o motor de liquidação da Kraken.</p></div><div class="r6-btnrow"><button class="r6-btn" id="r6OpenTerminal">▥ Trading Terminal</button><button class="r6-btn" id="r6Home">▦ Home</button><span class="demo">DEMO · SEM EXECUÇÃO</span></div></header>
+  <div class="r6-warning"><strong>⚠ Atenção:</strong> todos os preços e posições são demonstrativos. O financiamento é uma hipótese configurável e a margem de manutenção é aproximada. Uma posição Isolada protege apenas o capital fora da posição; ao adicionar margem, aumentas o montante que pode ser perdido. <strong>Liquidação real = valor apresentado pela exchange, não por este simulador.</strong></div>
+  <section class="r6-stats">
+    ${[
+      ['CAPITAL DO PROJETO',money(settings.capital,0),'Valor Demo definido'],
+      ['POSIÇÃO ABERTA',money(actual.q*s.current),'Exposição ao preço simulado'],
+      ['MARGEM DISPONIBILIZADA',money(settings.mode==='isolated'?settings.margin:settings.capital),'Para o cenário selecionado'],
+      ['ALAVANCAGEM EFETIVA',F(actual.q*s.current/Math.max(1,settings.mode==='isolated'?settings.margin:settings.capital),2)+'x','Exposição / garantia'],
+      ['PNL ATUAL BRUTO',money(actual.unreal),'Antes de custos estimados']
+    ].map(([lab,val,sub])=>`<div class="r6-kpi"><small>${lab}</small><strong>${val}</strong><em>${sub}</em></div>`).join('')}
+  </section>
+  <section class="r6-grid">
+    <div class="r6-card"><header class="r6-cardhead"><strong>⚙ Configurar o cenário</strong><span>Simulação independente</span></header><div class="r6-controls">
+      <div class="r6-field"><label>Cenário de preços · ${esc(s.side==='subida'?'Tabela Chaves SUBIDA':'Tabela Chaves DESCIDA')}</label><div class="r6-scenarios">${[90000,82000,75000,70000,65000,60000,55000].map(p=>`<button data-r6price="${p}" class="${p===settings.target?'active':''}">${F(p,0)}</button>`).join('')}</div></div>
+      <div class="r6-field"><label for="r6Price">Preço BTC/USD hipotético do cenário</label><input id="r6Price" type="number" min="1000" max="250000" step="100" value="${settings.target}"></div>
+      <div class="r6-field"><label>Posições consideradas</label><select id="r6Situation"><option value="open">Apenas compras já registadas</option><option value="reinforcements">Abertas + reforços cruzados na descida</option><option value="full">Stress: todas as 5 estratégias completas</option></select><div class="r6-help" id="r6MethodText">${methodText()}</div></div>
+      <div class="r6-field"><label>Tipo de margem</label><div class="r6-toggles"><button class="r6-choice ${settings.mode==='isolated'?'active':''}" data-r6mode="isolated">Isolada</button><button class="r6-choice ${settings.mode==='cross'?'active':''}" data-r6mode="cross">Transversal</button></div></div>
+      <div class="r6-two"><div class="r6-field"><label for="r6Capital">Capital na carteira Futures ($)</label><input id="r6Capital" type="number" min="1" max="100000" step="50" value="${settings.capital}"></div><div class="r6-field"><label for="r6Margin">Garantia atribuída à posição ($)</label><input id="r6Margin" type="number" min="1" max="${settings.capital}" step="10" ${settings.mode==='cross'?'disabled':''} value="${settings.margin}"></div></div>
+      <div class="r6-two"><div class="r6-field"><label for="r6Leverage">Alavancagem para margem inicial</label><select id="r6Leverage">${[1,2,3,5,10].map(x=>`<option value="${x}" ${settings.leverage===x?'selected':''}>${x}x</option>`).join('')}</select></div><div class="r6-field"><label for="r6Maint">Manutenção assumida (%)</label><input id="r6Maint" type="number" min="0.5" max="30" step="0.5" value="${settings.maintenance}"></div></div>
+      <div class="r6-two"><div class="r6-field"><label for="r6Fee">Taxa de fecho (%)</label><input id="r6Fee" type="number" min="0" max="2" step="0.01" value="${settings.execFee}"></div><div class="r6-field"><label for="r6Funding">Funding assumido por 8h (%)</label><input id="r6Funding" type="number" min="-1" max="1" step="0.005" value="${settings.funding8h}"></div></div>
+      <div class="r6-two"><div class="r6-field"><label for="r6Days">Dias hipotéticos em posição</label><input id="r6Days" type="number" min="0" max="365" step="1" value="${settings.days}"></div><div class="r6-field"><label for="r6Cycle">Ver conjunto</label><select id="r6Cycle">${ids.split('').map(x=>`<option value="${x}" ${x===selectedRisk?'selected':''}>Estratégia ${x}</option>`).join('')}</select></div></div>
+      <div class="r6-hint">A alavancagem indicada serve para estimar a margem mínima de abertura. <strong>A liquidação depende sobretudo da garantia efetivamente atribuída</strong>, do PNL e das regras reais da exchange.</div>
+      <button class="r6-btn main" id="r6Reset" style="width:100%">↺ Repor parâmetros de risco</button>
+    </div></div>
+    <div class="r6-card"><header class="r6-cardhead"><strong>◈ Projeção da garantia</strong><span>Horizonte: ${settings.days} dias · BTC ${money(settings.target,0)}</span></header>
+      <div class="r6-plot"><svg viewBox="0 0 760 290" preserveAspectRatio="none" class="r6-chart" role="img" aria-label="Gráfico do saldo de garantia acima ou abaixo da manutenção para vários preços BTC" id="r6Chart">${graphSvg()}</svg></div>
+      <div class="r6-legend"><span><i class="r6-key" style="background:var(--cyan)"></i> Folga à manutenção</span><span><i class="r6-key" style="background:var(--amber)"></i> Linha de zero</span><span><i class="r6-key" style="background:var(--red)"></i> Preço de stress</span></div>
+      <div class="r6-results">
+        ${[
+         ['PNL bruto no cenário',money(c.unreal),'Quantidade × preço − custo',c.unreal<0?'r6-negative':'r6-positive'],
+         ['Funding projetado',money(c.fund),'Paga se positivo; recebe se negativo',c.fund>0?'r6-negative':'r6-positive'],
+         ['Margem de manutenção',money(c.maint),'Assumida: '+F(settings.maintenance)+'%', ''],
+         ['Folga à manutenção',money(c.buffer),'Após custos e reserva de fecho',c.buffer<0?'r6-negative':'r6-positive'],
+         ['Liquidação ilustrativa',viewVal,c.note||'Não confirmada por corretora',c.liq&&c.liq>=60000?'r6-negative':'r6-amber'],
+         ['Margem inicial mínima',money(c.initialMargin),'Exposição comprada ÷ '+settings.leverage+'x','']
+        ].map(([lab,val,sub,color])=>`<div class="r6-result"><small>${lab}</small><strong class="${color}">${val}</strong><span>${sub}</span></div>`).join('')}
+      </div>
+      <div class="r6-details"><strong>Resumo de cenário:</strong> ${F(c.q,8)} BTC · nominal comprado ${money(c.basis)} · ${c.addingCount} compras adicionais simuladas (${money(c.adds)}) · comissões de entradas futuras ${money(c.feesNew)}. ${c.buffer<0?'<strong style="color:var(--red)">O cenário ultrapassa a margem disponível segundo este modelo.</strong>':'A folga positiva neste modelo não garante que a posição sobreviva numa exchange real.'}<br><strong>Observação:</strong> ${settings.mode==='isolated'?'Simulação Isolada agregada, margem disponível apenas para o mesmo contrato BTC Perp.':'Simulação Transversal assume que TODO o capital do projeto está disponível como garantia para este contrato; outras posições reduziriam essa folga.'}</div>
+    </div>
+  </section>
+  <section class="r6-bottom">
+    <div class="r6-card"><header class="r6-cardhead"><strong>▤ Impacto por estratégia A–E</strong><span>${settings.situation==='full'?'Plano completo hipotético':settings.situation==='reinforcements'?'Reforços que cruzariam o preço':'Operações existentes'}</span></header><div class="r6-tablewrap"><table class="r6-table"><thead><tr><th>Conjunto</th><th>BTC em aberto</th><th>Custo nominal</th><th>Média</th><th>PNL a ${F(settings.target,0)}</th><th>Reforços novos</th></tr></thead><tbody>${c.out.map(x=>`<tr class="${selectedRisk===x.id?'selected':''}" data-r6row="${x.id}"><td><strong>${x.id}</strong></td><td>${F(x.q,8)}</td><td>${money(x.basis)}</td><td>${x.q?money(x.avg,0):'—'}</td><td style="color:${x.unreal<0?'var(--red)':'var(--green)'}">${money(x.unreal)}</td><td>${x.assumed}</td></tr>`).join('')}</tbody></table></div></div>
+    <div class="r6-card"><header class="r6-cardhead"><strong>◉ Reservas e reforços</strong><span>Sem ordens reais</span></header><div class="r6-note">
+     <div class="r6-small-label">PLANO 20 / 30 / 50</div><div class="r6-steps"><div class="r6-step">Primeira compra<strong>${money(sc.amounts[0],0)}</strong>20%</div><div class="r6-step">Reforço 1<strong>${money(sc.amounts[1],0)}</strong>BTC −${money(sc.gap,0)}</div><div class="r6-step">Reforço 2<strong>${money(sc.amounts[2],0)}</strong>BTC −${money(sc.gap,0)}</div></div>
+     <p>Garantia não atribuída à posição: <strong>${money(settings.mode==='isolated'?Math.max(0,settings.capital-settings.margin):0)}</strong>. Na margem Transversal, o dinheiro elegível da carteira pode suportar perdas.</p>
+     <p>O cenário selecionado pressupõe <strong>${money(c.adds)}</strong> em reforços nominais adicionais. São compras hipotéticas, não débito integral da carteira.</p>
+     <p>Margem mínima estimada para abrir todo o nominal (${settings.leverage}x): <strong>${money(c.initialMargin)}</strong>. Esta não representa margem suficiente para suportar descidas.</p>
+     <div class="r6-separator"></div><p><strong>Recomendação de segurança do modelo:</strong> não utilizar um preço de liquidação como ponto de apoio garantido. O funding pode variar de sinal, o preço de marcação pode diferir da cotação exibida e a corretora pode liquidar antes da projeção.</p>
+    </div></div>
+  </section>
+  <div class="r6-warning"><strong>Limites desta Demo:</strong> sem feed da Kraken, sem manutenção escalonada, sem taxas dinâmicas, sem slippage, sem spreads, sem posições adicionais na conta e sem sequência intrabar de liquidações. O cenário «plano completo» é contrafactual. O financiamento supõe taxa constante por 8h. <strong>Não são instruções de compra ou venda.</strong></div>
+</div>`;
+ el.innerHTML=markup;bind();}
+function methodText(){return {open:'Inclui apenas as compras ativas do histórico. Nenhuma compra futura é assumida.',reinforcements:'Se o BTC descer, inclui somente reforços de conjuntos que já tenham uma compra registada e cujos níveis sejam cruzados entre o preço atual e o alvo. Não cria novas primeiras entradas.',full:'Teste extremo contrafactual: assume as cinco estratégias A–E totalmente compradas aos preços planeados, mesmo que o mercado não tenha seguido esse percurso. Não significa que todas as ordens seriam executadas.'}[settings.situation]}
+function graphSvg(){let X0=64,X1=740,Y0=24,Y1=242,prices=[];let lowest=35000,highest=105000,n=65;
+ for(let i=0;i<n;i++){let p=lowest+(highest-lowest)*i/(n-1),z=compute(p);prices.push({p,b:z.buffer})}
+ let values=prices.map(z=>z.b),mi=Math.min(0,...values),ma=Math.max(0,...values),range=(ma-mi)||1;
+ const xp=p=>X0+(p-lowest)/(highest-lowest)*(X1-X0),yp=y=>Y1-(y-mi)/range*(Y1-Y0);
+ let line=prices.map((z,i)=>`${i?'L':'M'}${xp(z.p).toFixed(1)} ${yp(z.b).toFixed(1)}`).join(' ');
+ let y0=yp(0),t=settings.target,v=compute(t).buffer;
+ let hTicks=[];for(let i=0;i<=4;i++){let num=mi+(ma-mi)*i/4;hTicks.push(`<line x1="${X0}" y1="${yp(num)}" x2="${X1}" y2="${yp(num)}" stroke="#294052" stroke-width="1" stroke-dasharray="3 5"/><text x="${X0-8}" y="${yp(num)+4}" text-anchor="end" font-size="11" fill="#a8b9c9">${Math.round(num)}$</text>`)}
+ let xTicks=[40000,50000,60000,70000,80000,90000,100000].map(p=>`<text x="${xp(p)}" y="${Y1+22}" fill="#a8b9c9" font-size="11" text-anchor="middle">${Math.round(p/1000)}k</text>`).join('');
+ return `<rect x="0" y="0" width="760" height="290" rx="8" fill="#0b1825"/>${hTicks.join('')}${xTicks}<line x1="${X0}" y1="${y0}" x2="${X1}" y2="${y0}" stroke="#e8b964" stroke-width="1.8" stroke-dasharray="5 5"/><path d="${line}" stroke="#18B8E6" fill="none" stroke-width="3" stroke-linejoin="round"/><line x1="${xp(Math.min(highest,Math.max(lowest,t)))}" y1="${Y0}" x2="${xp(Math.min(highest,Math.max(lowest,t)))}" y2="${Y1}" stroke="#f05d64" stroke-width="1.6" stroke-dasharray="5 4"/><circle cx="${xp(Math.min(highest,Math.max(lowest,t)))}" cy="${yp(v)}" r="6" fill="${v<0?'#F05D64':'#20C997'}" stroke="#0b1825" stroke-width="2"/><text x="${X1}" y="14" text-anchor="end" font-size="12" fill="#c8dfed">Folga no cenário: ${F(v,0)} $</text>`}
+function queueRender(){setTimeout(render,0)}
+function bind(){
+ E('r6Home').onclick=()=>navigate('Início');E('r6OpenTerminal').onclick=()=>navigate('Terminal');E('r6Reset').onclick=()=>{settings={mode:'isolated',situation:'open',margin:1500,capital:2000,leverage:10,maintenance:5,execFee:0.05,funding8h:0.01,days:14,target:60000};queueRender()};
+ E('r6Situation').value=settings.situation;E('r6Situation').onchange=e=>{settings.situation=e.target.value;queueRender()};
+ E('r6Price').onchange=e=>{let n=+e.target.value;if(n>=1000&&n<=250000){settings.target=n;queueRender()}else{api.message('Preço BTC inválido');queueRender()}};
+ E('r6Capital').onchange=e=>{let n=+e.target.value;if(n>=1&&n<=100000){settings.capital=n;settings.margin=Math.min(settings.margin,n);queueRender()}else queueRender()};
+ E('r6Margin').onchange=e=>{let n=+e.target.value;if(n>=1&&n<=settings.capital){settings.margin=n;queueRender()}else{api.message('A garantia não pode ultrapassar o capital do projeto.');queueRender()}};
+ [['Leverage','leverage',1,10],['Maint','maintenance',.5,30],['Fee','execFee',0,2],['Funding','funding8h',-1,1],['Days','days',0,365]].forEach(([s,k,a,b])=>{E('r6'+s).onchange=e=>{let v=+e.target.value;if(v>=a&&v<=b&&Number.isFinite(v)){settings[k]=v;queueRender()}else{api.message('Valor fora do intervalo permitido.');queueRender()}}});
+ E('r6Cycle').onchange=e=>{selectedRisk=e.target.value;api.choose(state().side,selectedRisk);queueRender()};
+ elAll('[data-r6price]').forEach(b=>b.onclick=()=>{settings.target=+b.dataset.r6price;queueRender()});
+ elAll('[data-r6mode]').forEach(b=>b.onclick=()=>{settings.mode=b.dataset.r6mode;queueRender()});
+ elAll('[data-r6row]').forEach(b=>b.onclick=()=>{selectedRisk=b.dataset.r6row;api.choose(state().side,selectedRisk);queueRender()});
+}
+function elAll(q){return Array.from(E('riskView').querySelectorAll(q))}
+function navigate(where){if(where==='Risco'){open();return;}visible=false;E('riskView').hidden=true;window.BTCBlock5.go(where);}
+function open(){visible=true;['homeView','strategiesView','journalView','terminalView'].forEach(id=>E(id).hidden=true);E('riskView').hidden=false;document.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav==='Risco'));window.scrollTo({top:0});render()}
+function init(){
+ document.querySelectorAll('[data-nav]').forEach(b=>{
+   b.addEventListener('click',ev=>{
+     const dest=b.dataset.nav;
+     if(dest==='Risco'){ev.preventDefault();ev.stopImmediatePropagation();open()}
+     else if(visible){visible=false;E('riskView').hidden=true;}
+   },true)
+ });
+ let panel=E('homeView')?.querySelector('.topline');if(panel&&!E('r6Shortcut')){let b=document.createElement('button');b.id='r6Shortcut';b.className='r6-mobile-shortcut';b.textContent='◈ Simulador de risco';b.onclick=open;panel.appendChild(b)}
+ // Terminal shortcut is included in the terminal's render template to survive rerenders.
+ document.addEventListener('keydown',e=>{if(visible&&e.key==='Escape')navigate('Início')});
+ window.addEventListener('btc-demo-updated',()=>{if(visible)render()});
+ // Update the risk output after BUY/SELL and when the simulated price is changed by external modules.
+ let price=E('btcPrice');if(price)new MutationObserver(()=>{if(visible)render()}).observe(price,{childList:true,characterData:true,subtree:true});
+ const originApply=api.applyJournal;api.applyJournal=(fresh,metrics)=>{originApply(fresh,metrics);if(visible)render()};
+ window.addEventListener('resize',()=>{});
+}
+window.BTCBlock6={open,navigate,compute,calcPositions,render,config:()=>({...settings}),settings,tests:{compute,calcPositions}};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<script>
+/* Supabase public client configuration. Publishable key only (not a service role credential). */
+window.BTC_SUPABASE_CONFIG={url:'https://oftzqqjbwonngubihrsd.supabase.co',publishableKey:'sb_publishable_7LJzBDZZWgXbkTi8QVD0Tw_c421lnyQ'}; window.BTC_BETA_AUTH_ENABLED=false; // Re-enable only after SMTP and redirect-URL QA.
+</script>
+<script src="./wallet-planner.js"></script><script src="./auth-guard.js"></script><script src="./cloud-sync.js"></script>
+<script>
+(()=>{'use strict';
+/* BTC STRATEGY PRO Bloco 7 — Local DEMO Workspace Manager + cloud-ready Auth Adapter.
+   No fake credentials. Password login is disabled unless a dedicated Supabase project is configured. */
+const STORAGE_KEY='btc_strategy_pro_bloc7_local_v1';
+const BACKEND=window.BTC_SUPABASE_CONFIG||{url:'',publishableKey:''}; // publishable / anon key only; NEVER service role.
+const $=id=>document.getElementById(id);
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const randomId=()=>crypto.randomUUID?crypto.randomUUID():'local_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+const newProj=(name,mode='demo',capital=2000)=>({capital:Number(capital),id:randomId(),name:String(name).trim(),mode,archived:false,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),snapshot:null});
+let model={version:1,projects:[],activeId:null},pageOpen=false,authTab='entrar',client=null,user=null,cloudEngine=null,syncWarning='',busy=false,suspendSave=false;
+function saveLocal(){if(user)return true;try{localStorage.setItem(STORAGE_KEY,JSON.stringify(model));return true}catch(e){status('Falha ao gravar no navegador. Exporta a cópia de segurança.');return false}}
+function initLocal(){try{const txt=localStorage.getItem(STORAGE_KEY);if(txt){const parsed=JSON.parse(txt);if(parsed.version===1&&Array.isArray(parsed.projects)&&parsed.projects.length<1000){model=parsed}}}catch(e){console.warn('Estado local ignorado',e)}
+ if(!model.projects.length){const seed=newProj('BTC Futures · Demo');model.projects=[seed];model.activeId=seed.id;saveLocal();}
+ if(!model.projects.some(p=>p.id===model.activeId))model.activeId=model.projects[0].id;
+ // The baseline snapshot of a brand-new project is the same seeded Demo as prior blocks.
+ apply(model.projects.find(p=>p.id===model.activeId));if(!active().snapshot)saveActive();updateHeader();}
+function active(){return model.projects.find(p=>p.id===model.activeId)||model.projects[0]}
+function getSnapshot(){return {schema:1,ledger:window.BTCBlock4.exportState(),settings:window.BTCPro.settings(),price:window.BTCPro.state().current,risk:window.BTCBlock6?.config?.()||{},view:{side:window.BTCPro.state().side,selected:window.BTCPro.state().selected},onboarding:active()?.snapshot?.onboarding||null}}
+function saveActive(){if(suspendSave)return;const p=active();if(!p)return;p.snapshot=getSnapshot();p.updatedAt=new Date().toISOString();saveLocal();if(user&&client)queueCloudSave(p)}
+function completeOnboarding(plan){
+ const p=active();
+ if(!p)throw Error('Nenhum projeto ativo.');
+ if(!plan||!Array.isArray(plan.amounts)||plan.amounts.length!==3||!plan.safeUnderAssumptions||!Number.isFinite(plan.capital)||!Number.isFinite(plan.protectPrice)||!Number.isFinite(plan.margin))throw Error('Configuração inválida.');
+ const verified=window.BTCWalletPlanner.estimate({
+  capital:plan.capital,protectPrice:plan.protectPrice,referencePrice:window.BTCPro.state().current,
+  entries:'ABCDE'.split('').map(id=>window.BTCPro.state().sets.descida[id].entry),
+  gap:window.BTCPro.settings().gap,entryFeeRate:window.BTCPro.settings().fee
+ });
+ if(!verified.safeUnderAssumptions||verified.amounts.some((v,i)=>Math.abs(v-plan.amounts[i])>.02)||Math.abs(verified.margin-plan.margin)>.02)throw Error('O plano mudou. Volta a calcular a sugestão.');
+ const previous={capital:p.capital,snapshot:structuredClone(p.snapshot),settings:window.BTCPro.settings(),risk:window.BTCBlock6?.config?.()};
+ suspendSave=true;
+ try{
+  p.capital=verified.capital;
+  window.BTCPro.setCapital(verified.capital);
+  window.BTCPro.setSettings({...previous.settings,amounts:[...verified.amounts]});
+  Object.assign(window.BTCBlock6.settings,{
+   capital:verified.capital,margin:verified.margin,mode:'isolated',
+   target:verified.protectPrice,situation:'full',
+   maintenance:5,execFee:.05,funding8h:.01,days:14
+  });
+  const marker={version:1,acceptedAt:typeof plan.acceptedAt==='string'?plan.acceptedAt:new Date().toISOString(),
+   updatedAt:new Date().toISOString(),capital:verified.capital,protectPrice:verified.protectPrice,
+   amounts:[...verified.amounts],margin:verified.margin,reserve:verified.reserve,
+   model:'5-cycles-all-legs-margin70-reserve30-buffer30'};
+  p.snapshot={...getSnapshot(),onboarding:marker};
+ }catch(e){
+  p.capital=previous.capital;p.snapshot=previous.snapshot;
+  window.BTCPro.setCapital(previous.capital);
+  window.BTCPro.setSettings(previous.settings);
+  Object.assign(window.BTCBlock6.settings,previous.risk||{});
+  throw e;
+ }finally{suspendSave=false}
+ saveActive();
+ window.BTCBlock6.render?.();render();updateHeader();
+ return true;
+}
+function seedJournal(){let p=window.BTCBlock4.exportState();const ledger=p.ledger.filter(e=>e.seed);return {ledger,seq:Math.max(0,...ledger.map(e=>e.seq)),audit:[]}}
+function apply(p){suspendSave=true;try{window.BTCPro.setCapital(p.capital||2000);if(window.BTCBlock6?.settings)window.BTCBlock6.settings.capital=p.capital||2000;
+ let data=p.snapshot;
+ if(!data){window.BTCBlock4.importState(seedJournal());window.BTCPro.setSettings({amounts:[200,300,500],targets:[1500,2500,3500],gap:8000,step:1000,fee:0.0005});window.BTCPro.setDemoPrice(82000);}
+ else {if(data.settings)window.BTCPro.setSettings(data.settings);window.BTCBlock4.importState(data.ledger);if(data.price)window.BTCPro.setDemoPrice(data.price);if(data.risk){Object.assign(window.BTCBlock6.settings,data.risk);window.BTCBlock6.render?.()}}
+ if(data?.view)window.BTCPro.choose(data.view.side,data.view.selected);else window.BTCPro.choose('descida','A');
+ }catch(e){console.error(e);status('Não foi possível restaurar os dados deste projeto. Mantidos para recuperação.');}finally{suspendSave=false}updateHeader()}
+function updateHeader(){const p=active();if(!p)return;const btn=$('projectBtn');if(btn){const strong=btn.querySelector('strong');if(strong)strong.textContent=p.name;const small=btn.querySelector('.tiny:last-child');if(small)small.textContent=user?'Conta cloud':'Demo local';}if(pageOpen)render()}
+function status(m){let t=$('b7Message');if(t){t.textContent=m;setTimeout(()=>{if(t.textContent===m)t.textContent=''},5500)}else console.info(m)}
+function select(id){if(id===model.activeId){open();return;}const p=model.projects.find(p=>p.id===id);if(!p)return;saveActive();model.activeId=id;saveLocal();apply(p);window.BTCBlock6.navigate('Início');open();status('Projeto selecionado: '+p.name)}
+function create(){window.BTCPro.modal('Criar projeto','BLOCO 7 · PROJETOS',`<div class="b7auth"><label>Nome do projeto<input id="b7ProjectName" maxlength="65" placeholder="Ex.: Estratégia BTC Outubro"></label><label>Capital inicial (USD)<input id="b7Capital" type="number" step="100" min="100" max="1000000000" value="2000"></label><label>Ambiente<select id="b7Mode"><option value="demo">Demo — sem dinheiro real</option><option value="real">Registo manual — operações reais declaradas, sem integração à exchange</option></select></label></div><p>${user?'Projeto privado sincronizável com a conta.':'Os dados ficam apenas neste navegador enquanto não iniciares sessão num site HTTPS.'}</p>`,'<button class="btn neutral" id="b7Cancel">Cancelar</button><button class="btn primary" id="b7Create">Criar projeto</button>');$('b7Cancel').onclick=window.BTCPro.close;$('b7Create').onclick=()=>{const name=$('b7ProjectName').value.trim(),mode=$('b7Mode').value,capital=Number($('b7Capital').value);if(!(capital>=100&&capital<=1000000000)){status('Capital inválido.');return;}if(name.length<2){status('Indica pelo menos dois caracteres.');return}saveActive();const p=newProj(name,mode,capital);p.snapshot={...getSnapshot(),ledger:seedJournal(),price:82000};model.projects.push(p);model.activeId=p.id;saveLocal();apply(p);window.BTCPro.close();open();status(user?'Projeto criado; a sincronizar.':'Projeto criado localmente.');if(user&&client)queueCloudSave()}}
+function rename(id){const p=model.projects.find(x=>x.id===id);if(!p)return;window.BTCPro.modal('Alterar nome do projeto','DADOS GUARDADOS NESTE DISPOSITIVO',`<label class="field">Nome<input id="b7RenameInput" maxlength="65" value="${escapeHTML(p.name)}"></label>`,'<button class="btn neutral" id="b7Cancel">Cancelar</button><button class="btn primary" id="b7Okay">Guardar</button>');$('b7Cancel').onclick=window.BTCPro.close;$('b7Okay').onclick=()=>{let v=$('b7RenameInput').value.trim();if(v.length<2)return;p.name=v;p.updatedAt=new Date().toISOString();saveLocal();window.BTCPro.close();render();updateHeader();if(user&&client)queueCloudSave(p)}}
+function duplicate(id){const p=model.projects.find(x=>x.id===id);if(!p)return;saveActive();let copy=newProj(p.name+' — Cópia',p.mode,p.capital||2000);copy.snapshot=structuredClone(p.snapshot);model.projects.push(copy);saveLocal();render();status('Projeto duplicado.');if(user&&client)queueCloudSave()}
+function toggleArchive(id){const p=model.projects.find(x=>x.id===id);if(!p)return;p.archived=!p.archived;saveLocal();render();status(p.archived?'Projeto arquivado.':'Projeto restaurado.');if(user&&client)queueCloudSave(p)}
+function remove(id){const p=model.projects.find(x=>x.id===id);if(!p||model.projects.length<2){status('É necessário manter pelo menos um projeto.');return;}window.BTCPro.modal('Eliminar projeto','AÇÃO IRREVERSÍVEL',`<p>Eliminar <strong>${escapeHTML(p.name)}</strong> e todas as suas operações guardadas localmente? Faz primeiro uma exportação JSON se precisares de uma cópia.</p>`,'<button class="btn neutral" id="b7Cancel">Cancelar</button><button class="btn sell" id="b7Confirm">Eliminar</button>');$('b7Cancel').onclick=window.BTCPro.close;$('b7Confirm').onclick=async()=>{if(user&&client){const ok=await saveCloud();if(!ok){status('Sincronização pendente. Exporta backup antes de tentar eliminar.');return;}try{await cloudEngine.deleteRemote(id)}catch(e){status('Eliminação cancelada: '+e.message);return;}}model.projects=model.projects.filter(x=>x.id!==id);if(model.activeId===id){model.activeId=model.projects[0].id;apply(active())}saveLocal();window.BTCPro.close();render();status('Projeto eliminado.')}}
+function eraseLocalDemoData(){
+ if(user){status('Termina sessão primeiro. Esta opção elimina apenas os dados Demo deste navegador, não os dados da conta cloud.');return false}
+ if(!confirm('Isto elimina definitivamente todos os projetos Demo guardados NESTE navegador. Primeiro exporta o backup JSON. Queres continuar?'))return false;
+ const typed=prompt('Para confirmar, escreve APAGAR em maiúsculas. Os dados apagados não podem ser recuperados sem um backup.');
+ if(typed!=='APAGAR'){status('Eliminação cancelada. Os teus projetos foram preservados.');return false}
+ try{localStorage.removeItem(STORAGE_KEY)}catch(e){status('Não foi possível limpar os dados locais: '+String(e.message||e));return false}
+ model={version:1,projects:[],activeId:null};
+ initLocal();
+ render();updateHeader();
+ status('Os projetos locais foram apagados. Foi criada uma Demo inicial vazia.');
+ return true;
+}
+function download(){saveActive();const payload={app:'BTC Strategy Pro',kind:'b7-demo-local-backup',exportedAt:new Date().toISOString(),data:model};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download='BTC_Strategy_Pro_Projetos_Demo_Backup.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);status('Backup JSON exportado. Protege o ficheiro, pois contém o histórico dos projetos.')}
+function importBackup(file){if(!file)return;if(user){status("Termina sessão antes de importar um backup local. Exporta os teus dados cloud separadamente.");return;}const rd=new FileReader();rd.onload=()=>{try{const txt=String(rd.result);if(txt.length>1500000)throw Error('Ficheiro demasiado grande.');const v=JSON.parse(txt);if(v.app!=='BTC Strategy Pro'||v.kind!=='b7-demo-local-backup'||v.data?.version!==1||!Array.isArray(v.data.projects))throw Error('Formato inválido.');if(v.data.projects.length>50)throw Error('Número excessivo de projetos.');if(new Set(v.data.projects.map(p=>p.id)).size!==v.data.projects.length)throw Error('IDs de projetos duplicados.');for(const p of v.data.projects){if(typeof p.name!=='string'||p.name.trim().length<2||p.name.length>65||typeof p.id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(p.id)||!Number.isFinite(Date.parse(p.updatedAt||''))||!['demo','real'].includes(p.mode)||!(p.capital===undefined||(Number.isFinite(p.capital)&&p.capital>=100&&p.capital<=1000000000)))throw Error('Projeto inválido.');if(p.snapshot?.ledger?.ledger?.length>5000)throw Error('Demasiadas operações.');}
+ if(!confirm('Substituir todos os projetos locais pelos do backup? Este processo não pode ser desfeito.'))return;model=structuredClone(v.data);if(!model.projects.some(p=>p.id===model.activeId))model.activeId=model.projects[0]?.id||null;if(!model.projects.length){const p=newProj('BTC Futures · Demo');model.projects=[p];model.activeId=p.id;}saveLocal();apply(active());render();status('Backup importado com sucesso.');if(user&&client)queueCloudSave();}catch(e){status('Falha a importar: '+e.message)}};rd.readAsText(file)}
+function open(){pageOpen=true;['homeView','strategiesView','journalView','terminalView','riskView'].forEach(id=>{if($(id))$(id).hidden=true});$('accountView').hidden=false;document.querySelectorAll('[data-nav]').forEach(x=>x.classList.toggle('on',['Conta','Projetos'].includes(x.dataset.nav)));window.scrollTo(0,0);render()}
+function leave(to='Início'){pageOpen=false;$('accountView').hidden=true;window.BTCBlock6.navigate(to)}
+const hasCloud=Boolean(window.BTC_BETA_AUTH_ENABLED)&&!!(BACKEND.url&&BACKEND.publishableKey&&(/^(https:)$/.test(location.protocol)||location.hostname==='localhost'));
+function authForm(){let disabled=hasCloud?'':'disabled';let title={entrar:'Entrar na minha conta',registar:'Criar conta segura',recuperar:'Recuperar password',reenviar:'Reenviar confirmação',nova:'Definir nova password'}[authTab];return `<h2>${title}</h2>${hasCloud?'':'<div class="b7status">⚠ Beta pública demonstrativa: criação de contas temporariamente desativada até validarmos emails e URLs do Supabase. Podes testar os projetos em modo Demo e exportar backup JSON.</div>'}<div class="b7tabs"><button class="${authTab==='entrar'?'active':''}" data-auth-tab="entrar">Entrar</button><button class="${authTab==='registar'?'active':''}" data-auth-tab="registar">Registar</button><button class="${authTab==='recuperar'?'active':''}" data-auth-tab="recuperar">Recuperar</button><button class="${authTab==='reenviar'?'active':''}" data-auth-tab="reenviar">Reenviar email</button></div><form id="b7AuthForm" class="b7auth"><label>Email<input type="email" autocomplete="email" id="b7Email" placeholder="email@exemplo.com" ${authTab==='nova'?'':'required'} ${disabled}></label>${(authTab==='recuperar'||authTab==='reenviar')?'':`<label>Password<input type="password" minlength="${authTab==='entrar'?8:10}" required autocomplete="${authTab==='entrar'?'current-password':'new-password'}" id="b7Password" placeholder="••••••••" ${disabled}></label>`}${(authTab==='registar'||authTab==='nova')?`<label>Confirmar password<input id="b7PasswordConfirm" type="password" required minlength="10" autocomplete="new-password" placeholder="Repetir password" ${disabled}></label>`:''}<button class="btn primary" type="submit" ${disabled}>${authTab==='entrar'?'Entrar':authTab==='registar'?'Criar conta':authTab==='nova'?'Guardar nova password':authTab==='reenviar'?'Reenviar confirmação':'Enviar email de recuperação'}</button></form><p class="b7sub">A confirmação de email e a recuperação de password são geridas pelo Supabase Auth num endereço HTTPS configurado. Nenhuma password é armazenada no HTML.</p>`}
+function render(){if(!pageOpen)return;const p=active();let list=model.projects.map(x=>`<article class="b7project ${p?.id===x.id?'active':''}"><div class="name"><h3>${escapeHTML(x.name)} ${p?.id===x.id?'<span class="b7current">· Atual</span>':''}</h3><p>${x.mode==='demo'?'DEMO':'REGISTO MANUAL'} · ${x.archived?'Arquivado · ':''}${x.snapshot?.ledger?.ledger?.filter(e=>!e.voided).length||0} operações · Guardado: ${escapeHTML(new Date(x.updatedAt).toLocaleDateString('pt-PT'))}</p></div><div class="b7btnrow"><button data-paction="select" data-id="${escapeHTML(x.id)}">Abrir</button><button data-paction="duplicate" data-id="${escapeHTML(x.id)}">Copiar</button><button data-paction="rename" data-id="${escapeHTML(x.id)}">Editar</button><button data-paction="archive" data-id="${escapeHTML(x.id)}">${x.archived?'Restaurar':'Arquivar'}</button><button data-paction="delete" data-id="${escapeHTML(x.id)}" class="b7small negative">Apagar</button></div></article>`).join('');let entries=p?.snapshot?.ledger?.ledger?.filter(e=>!e.voided).length||0;
+$('accountView').innerHTML=`<div class="accountwrap"><div class="accounttop"><div><div class="eyebrow">BTC STRATEGY PRO / BLOCO 13</div><h1>Conta <span style="color:var(--cyan)">& Projetos</span></h1><p>Organiza as tuas estratégias em vários projetos. No modo offline, os dados ficam neste navegador. O acesso privado na cloud está disponível quando a aplicação for alojada em HTTPS e a autenticação estiver configurada.</p></div><button class="btn neutral" id="b7Back">← Voltar ao Dashboard</button></div><div class="b7status ${user?'cloud':''}">${syncWarning&&user?`⚠ ${escapeHTML(syncWarning)}`:user?'● Conta Supabase autenticada':'● MODO LOCAL — sem conta online. Os dados podem perder-se se limpares o navegador; não são privados num dispositivo partilhado.'}</div><div class="b7welcome"><div class="eyebrow">WORKSPACE ATUAL</div><h2 style="margin:10px 0 4px">${escapeHTML(p?.name||'Demo')}</h2><p>${p?.mode==='demo'?'Operações fictícias e simulações.':'Operações declaradas manualmente: nenhum movimento é enviado a corretoras.'} Guarda cópias JSON antes de limpares os dados do navegador.</p><div class="b7statgrid"><div class="b7stat"><label>Projetos</label><strong>${model.projects.length}</strong></div><div class="b7stat"><label>Operações</label><strong>${entries}</strong></div><div class="b7stat"><label>Capital de referência</label><strong>${new Intl.NumberFormat('pt-PT',{maximumFractionDigits:0}).format(p?.capital||2000)} $</strong></div></div></div><div class="b7row"><section class="b7panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><h2>Os meus projetos</h2><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn neutral" id="b7PlanSetup" type="button">⚙ Configurar carteira</button><button class="btn primary" id="b7New">+ Novo projeto</button></div></div><p class="b7sub">Projetos separados por histórico e parâmetros da Tabela Chaves. Podes criar, duplicar, arquivar e exportar.</p><div class="b7projectlist">${list}</div><hr class="b7divider"><div class="b7foot"><button class="btn neutral" id="b7Export">↓ Exportar backup JSON</button><button class="btn neutral" id="b7Import">↑ Importar backup JSON</button><button class="btn sell" id="b7DeleteLocalData" ${user?'disabled title="Só podes apagar projetos locais depois de terminares sessão"':''}>Apagar dados locais</button><input type="file" id="b7ImportFile" accept="application/json,.json" style="display:none"></div><p class="b7warn">A cópia JSON contém valores e notas dos teus projetos. Não a partilhes publicamente.</p></section><section class="b7panel"><h2>Identificação e segurança</h2>${user?`<div class="b7status cloud">● Conta autenticada: ${escapeHTML(user.email||'')}</div><button class="btn sell" id="b7Logout" style="margin-top:15px">Terminar sessão</button><p class="b7sub">Os projetos deste dispositivo não são enviados automaticamente para a tua conta.</p><button class="btn neutral" id="b7MigrateLocal">Copiar projetos locais para a conta</button><div class="b7foot" style="margin-top:10px"><button class="btn neutral" id="b7SyncNow">Sincronizar agora</button><button class="btn neutral" id="b7CloudReload">Recarregar da cloud</button></div>`:authForm()}<hr class="b7divider"><h2>Sobre a versão atual</h2><p class="b7sub">✓ Guarda projetos e operações localmente<br>✓ Recupera-os após atualizar a página<br>✓ Permite exportar e importar backups<br>✓ Mantém os cálculos e o Terminal dos blocos anteriores<br>◇ Backend Supabase: configurado. Login ativado apenas depois dos testes de email, URLs de retorno e isolamento de dados</p><p class="b7warn">Nunca introduzas credenciais de Kraken ou passwords financeiras em protótipos Demo. A autenticação em HTTPS utilizará Supabase Auth num projeto isolado.</p><p class="b7sub" style="margin-top:12px"><a href="./privacidade.html" target="_blank" rel="noopener">Privacidade e gestão de dados</a> · <a href="./termos-demo.html" target="_blank" rel="noopener">Termos da Beta Demo</a></p></section></div><div id="b7Message" class="b7toast" role="status"></div></div>`;
+$('b7Back').onclick=()=>leave('Início');$('b7New').onclick=create;$('b7PlanSetup').onclick=()=>window.BTCOnboarding?.open({force:true,initialStep:2,source:'settings'});$('b7Export').onclick=download;$('b7Import').onclick=()=>$('b7ImportFile').click();$('b7DeleteLocalData').onclick=eraseLocalDemoData;$('b7ImportFile').onchange=e=>importBackup(e.target.files[0]);document.querySelectorAll('[data-paction]').forEach(b=>b.onclick=()=>{const id=b.dataset.id;({select,duplicate,rename,archive:toggleArchive,delete:remove}[b.dataset.paction])(id)});document.querySelectorAll('[data-auth-tab]').forEach(b=>b.onclick=()=>{authTab=b.dataset.authTab;render()});const form=$('b7AuthForm');if(form)form.onsubmit=async(e)=>{e.preventDefault();await authenticate()};if($('b7Logout'))$('b7Logout').onclick=logout;if($('b7MigrateLocal'))$('b7MigrateLocal').onclick=migrateLocalToCloud;if($('b7SyncNow'))$('b7SyncNow').onclick=()=>saveCloud();if($('b7CloudReload'))$('b7CloudReload').onclick=refreshCloud;}
+// Once connected to a dedicated Supabase instance, use its standard auth + RLS.
+async function makeClient(){if(!hasCloud)return null;if(location.protocol==='file:')throw Error('Login cloud requer alojamento HTTPS, não abrir file://.');if(!client){const mod=await import('https://esm.sh/@supabase/supabase-js@2.57.0');client=mod.createClient(BACKEND.url,BACKEND.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}return client}
+async function authenticate(){
+ if(!hasCloud){status('Autenticação online ainda não disponível.');return;}
+ if(busy)return;
+ const tab=authTab,email=$('b7Email')?.value?.trim().toLowerCase(),password=$('b7Password')?.value,
+ confirmation=$('b7PasswordConfirm')?.value,form=$('b7AuthForm'),button=form?.querySelector('[type="submit"]');
+ if(tab!=='nova'&&(!email||!email.includes('@'))){status('Indica um endereço de email válido.');return;}
+ if(tab==='registar'||tab==='nova'){
+  if(typeof password!=='string'||password.length<10||password.length>128){status('A password deve ter entre 10 e 128 caracteres.');return;}
+  if(password!==confirmation){status('As duas passwords não coincidem.');return;}
+ }
+ busy=true;if(button)button.disabled=true;
+ try{
+  const c=await makeClient(),redirect=window.BTCAuthGuard.redirect(location);
+  let res;
+  if(tab==='entrar')res=await c.auth.signInWithPassword({email,password});
+  else if(tab==='registar')res=await c.auth.signUp({email,password,options:{emailRedirectTo:redirect}});
+  else if(tab==='recuperar')res=await c.auth.resetPasswordForEmail(email,{redirectTo:redirect});
+  else if(tab==='reenviar')res=await c.auth.resend({type:'signup',email,options:{emailRedirectTo:redirect}});
+  else if(tab==='nova')res=await c.auth.updateUser({password});
+  else throw Error('Operação desconhecida.');
+  if(res?.error)throw res.error;
+  if(tab==='registar'){
+   if(res?.data?.session){await c.auth.signOut();throw Error('O Supabase tem a confirmação de email desativada. O registo foi interrompido por segurança.');}
+   status('Confirma o teu endereço através do email recebido. Se necessário, utiliza Reenviar email.');
+  }else if(tab==='recuperar'||tab==='reenviar'){
+   status('Se o email estiver registado, receberás uma mensagem. Confirma também a pasta Spam.');
+  }else if(tab==='nova'){
+   const out=await c.auth.signOut();if(out.error)throw out.error;
+   authTab='entrar';render();status('Password alterada. Inicia sessão com a nova password.');
+  }else{
+   if(!await restoreActiveSession(c)){
+    authTab='reenviar';render();status('Confirma o email antes de iniciar sessão.');return;
+   }
+   status('Sessão iniciada com o email confirmado.');
+  }
+ }catch(e){
+  const code=String(e?.code||'').toLowerCase();
+  if(code==='email_not_confirmed'){authTab='reenviar';render();status('Email ainda não confirmado. Utiliza Reenviar email.');}
+  else if(code==='invalid_credentials')status('Email ou password incorretos.');
+  else if(code.includes('rate_limit')||code.includes('over_email'))status('Demasiadas tentativas. Volta a tentar mais tarde.');
+  else status(window.BTCAuthGuard.errorText(e));
+ }finally{busy=false;if(button?.isConnected)button.disabled=false;}
+}
+async function logout(){if(!client)return;clearTimeout(syncHandle);const ok=await saveCloud();if(ok===false&&!confirm('A última sincronização falhou. Terminar sessão na mesma? Os dados remotos podem estar desatualizados.'))return;const {error}=await client.auth.signOut();if(error){status('Não foi possível terminar sessão: '+error.message);return;}user=null;cloudEngine=null;syncWarning='';model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();window.BTCLanding?.open()}
+async function migrateLocalToCloud(){
+ if(!user||!client){status('Inicia sessão antes de sincronizar os projetos locais.');return}
+ let cached;try{cached=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')}catch(e){status('Não foi possível ler os projetos locais. Exporta um backup primeiro.');return}
+ if(!cached||cached.version!==1||!Array.isArray(cached.projects)){status('Não existem projetos locais para importar.');return}
+ const validId=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+ const used=new Set(model.projects.map(p=>p.id));
+ const incoming=cached.projects.filter(p=>p&&validId.test(p.id)&&!used.has(p.id)&&typeof p.name==='string'&&p.name.trim().length>=2&&p.name.length<=65&&['demo','real'].includes(p.mode)&&Number.isFinite(p.capital)&&p.capital>=100&&p.capital<=1000000000&&(!p.snapshot||JSON.stringify(p.snapshot).length<=1000000));
+ if(!incoming.length){status('Não existem projetos locais novos para copiar.');return}
+ if(model.projects.length+incoming.length>50){status('Limite de 50 projetos por conta. Arquiva ou elimina alguns antes de importar.');return}
+ if(!confirm('Copiar '+incoming.length+' projeto(s) deste dispositivo para a tua conta? Os dados locais originais serão preservados. Antes, exporta um backup JSON.'))return;
+ const prior=structuredClone(model);const copied=incoming.map(p=>({id:p.id,name:p.name.trim(),mode:p.mode,capital:p.capital,archived:!!p.archived,createdAt:p.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString(),snapshot:structuredClone(p.snapshot||null)}));
+ model.projects.push(...copied);
+ const ok=await saveCloud();
+ if(!ok){render();status('A cópia na cloud ficou incompleta. Mantivemos os projetos locais originais. Exporta um backup, verifica a rede e tenta Sincronizar agora.');return}
+ render();status(copied.length+' projeto(s) copiado(s) para a conta; dados Demo locais mantidos.');
+}
+async function loadCloudProjects(){
+ if(!client||!user)throw Error('É necessária uma sessão autenticada.');
+ const {data,error}=await client.from('projects')
+  .select('id,name,mode,capital,archived,created_at,updated_at,project_snapshots(payload,version)')
+  .eq('owner_id',user.id).order('created_at',{ascending:true});
+ if(error)throw Error('Não foi possível carregar os projetos privados: '+error.message);
+ if(!window.BTCCloudSync)throw Error('Módulo de sincronização indisponível.');
+ cloudEngine=window.BTCCloudSync.create(client,user.id);
+ syncWarning='';
+ if(!data?.length){
+   const p=newProj('Meu BTC — Demo');model={version:1,projects:[p],activeId:p.id};
+   apply(p);const ok=await saveCloud(true);if(!ok)throw Error('Não foi possível criar o primeiro projeto na cloud.');
+   return true;
+ }
+ model.projects=data.map(row=>({
+  id:row.id,name:row.name,mode:row.mode,capital:Number(row.capital)||2000,
+  archived:!!row.archived,createdAt:row.created_at,updatedAt:row.updated_at,
+  snapshot:(Array.isArray(row.project_snapshots)?row.project_snapshots[0]:row.project_snapshots)?.payload||null
+ }));
+ model.activeId=model.projects[0].id;
+ for(let i=0;i<model.projects.length;i++)cloudEngine.seed(model.projects[i],data[i]);
+ apply(active());updateHeader();return true;
+}
+let syncHandle=null,syncChain=Promise.resolve();
+function queueCloudSave(){if(!user||!client)return;clearTimeout(syncHandle);syncHandle=setTimeout(()=>saveCloud(),850)}
+async function saveCloud(){
+ if(!user||!client)return false;
+ const task=syncChain.then(async()=>{
+  if(!user||!client)return false;
+  saveActiveLocalOnly();
+  try{
+   if(!cloudEngine)cloudEngine=window.BTCCloudSync.create(client,user.id);
+   const account=user.id;
+   for(const p of model.projects){
+    if(!user||user.id!==account)throw Error('A sessão mudou durante a sincronização.');
+    if(!cloudEngine.pending(p))continue;
+    const copy=structuredClone(p);
+    if(!copy.snapshot)copy.snapshot={schema:1,ledger:seedJournal(),settings:window.BTCPro.settings(),price:82000};
+    await cloudEngine.persist(copy);
+   }
+   syncWarning='';
+   if(pageOpen)status('Projetos sincronizados com a cloud.');
+   return true;
+  }catch(e){
+   const conflict=e?.code==='CLOUD_VERSION_CONFLICT';
+   syncWarning=conflict?'Conflito detetado: outra sessão alterou o projeto. Exporta um backup e recarrega da cloud.':'Sincronização falhou: '+String(e.message||e)+'. Os dados não foram confirmados na cloud.';
+   if(pageOpen)render();
+   status(syncWarning);
+   return false;
+  }
+ });
+ syncChain=task.catch(()=>false);
+ return task;
+}
+async function refreshCloud(){
+ if(!user||!client)return;
+ const dirty=!cloudEngine||model.projects.some(p=>cloudEngine.pending(p));
+ if(!confirm((dirty?'Existem alterações ainda não confirmadas na cloud. Exporta já um backup JSON antes de continuar.\n\n':'')+'Recarregar os projetos a partir da cloud? As alterações não sincronizadas podem perder-se.'))return;
+ clearTimeout(syncHandle);
+ try{await syncChain;await loadCloudProjects();render();status('Projetos atualizados a partir da cloud.');}
+ catch(e){status('Não foi possível recarregar: '+e.message)}
+}
+
+function saveActiveLocalOnly(){if(suspendSave)return;let p=active();if(p){p.snapshot=getSnapshot();saveLocal()}}
+async function restoreActiveSession(c){
+ // getUser() verifies the identity with Supabase Auth rather than trusting a
+ // potentially stale browser session/user object. PostgreSQL RLS remains authoritative.
+ const result=await c.auth.getUser();
+ if(result.error)throw result.error;
+ const verified=result.data?.user;
+ if(!window.BTCAuthGuard.verified(verified)){
+  await c.auth.signOut();
+  return false;
+ }
+ if(user?.id===verified.id)return true;
+ clearTimeout(syncHandle);
+ user=verified;cloudEngine=null;syncWarning='';
+ model={version:1,projects:[],activeId:null};
+ try{
+  await loadCloudProjects();
+  render();updateHeader();
+  window.dispatchEvent(new CustomEvent('btc-auth-session-changed',{detail:{authenticated:true}}));
+  return true;
+ }catch(e){
+  user=null;cloudEngine=null;syncWarning='';
+  model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();
+  await c.auth.signOut();
+  throw e;
+ }
+}
+async function initCloud(){
+ if(!hasCloud)return;
+ try{
+  const c=await makeClient();
+  c.auth.onAuthStateChange((event,session)=>{
+   // Do not await Supabase Auth operations inside onAuthStateChange.
+   if(event==='SIGNED_OUT'&&user){
+    clearTimeout(syncHandle);user=null;cloudEngine=null;syncWarning='';
+    model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();
+    window.dispatchEvent(new CustomEvent('btc-auth-session-changed',{detail:{authenticated:false}}));
+   }
+   if(event==='PASSWORD_RECOVERY'){
+    authTab='nova';open();status('Link de recuperação confirmado. Define uma nova password.');
+   }
+   // Different-user sessions from other tabs must never retain the previous
+   // account's project list. Defer Auth calls to avoid lock re-entrancy.
+   if(event==='SIGNED_IN'&&!busy&&user&&session?.user?.id!==user.id){
+    clearTimeout(syncHandle);
+    user=null;cloudEngine=null;syncWarning='';
+    model={version:1,projects:[],activeId:null};initLocal();render();updateHeader();
+    setTimeout(()=>restoreActiveSession(c).catch(e=>status(window.BTCAuthGuard.errorText(e))),0);
+   }
+  });
+  const ses=await c.auth.getSession();
+  if(ses?.error)throw ses.error;
+  const cb=window.BTCAuthGuard.callback(location);
+  if(ses.data.session&&authTab!=='nova'){
+   const ok=await restoreActiveSession(c);
+   if(!ok){authTab='reenviar';open();status('Confirma o teu email antes de entrar.');}
+  }
+  if(cb.error){open();status('O link de confirmação ou recuperação expirou. Solicita outro email.');}
+ }catch(e){console.warn('Serviço de autenticação indisponível.');if(pageOpen)status(window.BTCAuthGuard.errorText(e));}
+}
+function wire(){window.addEventListener('online',()=>{if(user&&cloudEngine&&model.projects.some(p=>cloudEngine.pending(p)))queueCloudSave()});window.addEventListener('beforeunload',event=>{if(user&&cloudEngine&&model.projects.some(p=>cloudEngine.pending(p))){event.preventDefault();event.returnValue=''}});document.querySelectorAll('[data-nav]').forEach(b=>{const to=b.dataset.nav;if(to==='Conta'||to==='Projetos')b.onclick=open;else if(['Início','Estratégias','Registos','Terminal','Risco'].includes(to))b.onclick=()=>leave(to);});$('profileBtn').onclick=open;$('projectBtn').onclick=open;window.addEventListener('btc-b7-changed',()=>{saveActive();updateHeader()});const oldSet=window.BTCPro.setSettings;window.BTCPro.setSettings=(v)=>{oldSet(v);saveActive()};const oldPrice=window.BTCPro.setDemoPrice;window.BTCPro.setDemoPrice=(v)=>{oldPrice(v);saveActive()};
+ let pendingSave=null;const delayedSave=()=>{clearTimeout(pendingSave);pendingSave=setTimeout(()=>saveActive(),300)};new MutationObserver(delayedSave).observe($('btcPrice'),{childList:true,characterData:true,subtree:true});$('riskView').addEventListener('change',delayedSave,true);$('riskView').addEventListener('input',delayedSave,true);
+ const obs=new MutationObserver(()=>{if(pageOpen){$('accountView').hidden=false;['homeView','strategiesView','journalView','terminalView','riskView'].forEach(id=>$(id).hidden=true)}});obs.observe($('accountView'),{attributes:true,attributeFilter:['hidden']});
+ initLocal();initCloud();}
+window.BTCBlock7={open,leave,save:saveActive,projects:()=>structuredClone(model),active:()=>structuredClone(active()),getSnapshot,create,select,cloudEnabled:hasCloud,migrateLocalToCloud,syncNow:saveCloud,refreshCloud,eraseLocalDemoData,completeOnboarding,authSelect:(tab)=>{authTab=tab;open();render()},accountSession:()=>({authenticated:!!user,confirmed:!!user?.email_confirmed_at,cloudEnabled:hasCloud})};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',wire);else wire();
+})();
+</script><script id="block9-pwa-script">(()=>{'use strict';const installButton=document.getElementById('installAppBtn');const offlineBanner=document.getElementById('pwaOfflineBanner');let installPrompt=null;const inStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;function showInstall(){installButton.hidden=inStandalone()}function showNetwork(){offlineBanner.hidden=navigator.onLine}window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;showInstall()});window.addEventListener('appinstalled',()=>{installPrompt=null;showInstall()});installButton.addEventListener('click',async()=>{if(inStandalone()){installButton.hidden=true;return}if(installPrompt){const event=installPrompt;installPrompt=null;try{await event.prompt();await event.userChoice}catch(e){console.warn('Instalação não disponível',e)}}else{window.alert('No Chrome Android: abre o menu ⋮ e escolhe "Instalar app" ou "Adicionar ao ecrã principal".')}});window.addEventListener('online',showNetwork);window.addEventListener('offline',showNetwork);showNetwork();showInstall();if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).catch(e=>console.warn('Offline não disponível:',e)))}})();</script><script defer src="./pwa-controller.js"></script><script defer src="./adaptive-viewport.js"></script><script defer src="./landing.js"></script><script defer src="./onboarding.js"></script></body></html>

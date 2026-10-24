@@ -1,0 +1,13 @@
+# 12L — Afinidade regional do ensaio máximo
+
+A inspeção posterior ao 12K confirmou a base de dados BTC em `eu-west-1` e os workers do ensaio automático em `us-east-2`. Foram obtidos 15 registos de encerramento da versão 18: CPU máxima de worker de 1693 ms e maior memória total no encerramento de 76861457 bytes. Estes registos podem abranger várias operações e não medem memória de pico; não justificam aumentar passos por pedido.
+
+O Supabase permite selecionar a região com `x-region`; o cabeçalho de resposta `x-sb-edge-region` permite verificá-la. Referência: https://supabase.com/docs/guides/functions/regional-invocation . A opção foi acrescentada exclusivamente ao runner QA, com valor permitido `eu-west-1`; o frontend e a API de produção não foram alterados por este passo.
+
+A versão temporária 20 repetiu a mesma fixture de 5000 movimentos/12 ciclos, sem alterar a origem financeira ou os limites de passos. Os cabeçalhos confirmaram Irlanda em todos os pedidos à função. O trabalho novo utilizou novas observações públicas e o prazo original destas; não retomou ou prolongou o trabalho expirado do 12K. Conseguiu guardar sequência 16, contra 5 no ensaio automático americano, mas voltou a expirar. São amostras únicas com observações e condições de rede diferentes, não uma garantia de aceleração fixa.
+
+SQL mediu no checkpoint americano 3085034 bytes de JSON transportado e no irlandês 3036978; o input da pesquisa ocupa 2652337 bytes em ambos. O armazenamento comprimido interno de PostgreSQL é muito menor (454595 e 451759 bytes), mas a ligação transporta a representação JSON completa. A região reduz parte da latência, sem resolver o custo do percurso completo. O próximo trabalho é medir e reduzir transporte/revalidação repetida, conservando autenticação SQL, deteção de origem alterada, assinatura, fencing e prazo. Nenhuma dessas otimizações foi aplicada neste ensaio.
+
+O estado financeiro manteve-se igual: 5000 factos, uma versão de plano e zero recibos no projeto grande. O trabalho regional foi reconciliado para `blocked`/`CALCULATION_EXPIRED`. A função foi encerrada na versão 21. As duas contas deste run estão bloqueadas, sem sessões, e o total auditável continua em 5006 factos fictícios e um recibo. A verificação HTTP de encerramento está no SUMMARY.
+
+A implementação da recusa explícita e do ensaio 12K passou as sete tarefas da CI 40077269358 no commit 68a0bb1ab21ad50e24582d0dfe0e7eb13b43a97a, incluindo navegador, PostgreSQL nativo e quatro cargas Auth/SQL. A repetição regional continua a falhar o critério alojado máximo, mesmo com a CI verde. Ingresso/múltiplas contas, memória de pico, todas as janelas, regras atuais Kraken, frontend alojado, SMTP, privacidade, restauro e S25 não ficam aprovados.

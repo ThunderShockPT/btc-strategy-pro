@@ -1,0 +1,140 @@
+{
+  "scope": "function-version-18-workers-not-per-operation-or-peak-memory",
+  "workers": [
+    {
+      "cpu_ms": "1207",
+      "event_message": "shutdown",
+      "execution_id": "5f5bf90d-ef63-4b08-8340-7d972a3bd40b",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "20950973",
+      "timestamp": "2026-10-24T08:08:21.961000"
+    },
+    {
+      "cpu_ms": "1236",
+      "event_message": "shutdown",
+      "execution_id": "3135900f-8837-4c7c-ae4f-70afbf36cca3",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "32623244",
+      "timestamp": "2026-10-24T08:09:14.148000"
+    },
+    {
+      "cpu_ms": "577",
+      "event_message": "shutdown",
+      "execution_id": "5c0a44e7-162e-4219-a226-7304bfe0f0f6",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "19657029",
+      "timestamp": "2026-10-24T08:09:20.673000"
+    },
+    {
+      "cpu_ms": "1259",
+      "event_message": "shutdown",
+      "execution_id": "0b3b0333-1880-4939-a829-ad7726d354db",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "35348849",
+      "timestamp": "2026-10-24T08:09:20.946000"
+    },
+    {
+      "cpu_ms": "441",
+      "event_message": "shutdown",
+      "execution_id": "16f64678-326e-4b83-9304-b3cd5a6e6177",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "20100509",
+      "timestamp": "2026-10-24T08:09:22.941000"
+    },
+    {
+      "cpu_ms": "449",
+      "event_message": "shutdown",
+      "execution_id": "e0fb32bb-50d0-4fdb-b440-d2eefa8ee692",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "20346485",
+      "timestamp": "2026-10-24T08:09:26.017000"
+    },
+    {
+      "cpu_ms": "1090",
+      "event_message": "shutdown",
+      "execution_id": "400e527d-57af-430f-90f6-9abc01aa80f2",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "35662745",
+      "timestamp": "2026-10-24T08:09:26.106000"
+    },
+    {
+      "cpu_ms": "446",
+      "event_message": "shutdown",
+      "execution_id": "a83b8ea5-2955-495b-8171-4ab7bd1d9350",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "20238101",
+      "timestamp": "2026-10-24T08:09:29.443000"
+    },
+    {
+      "cpu_ms": "1693",
+      "event_message": "shutdown",
+      "execution_id": "d9d1000e-23bf-4f56-8faa-a364e932c826",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "76861457",
+      "timestamp": "2026-10-24T08:09:39.370000"
+    },
+    {
+      "cpu_ms": "1080",
+      "event_message": "shutdown",
+      "execution_id": "39460c64-b4bd-4013-99bf-3fe2098f035e",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "36009781",
+      "timestamp": "2026-10-24T08:09:46.484000"
+    },
+    {
+      "cpu_ms": "1138",
+      "event_message": "shutdown",
+      "execution_id": "2ba90fea-dc9e-4384-a1c3-8dfd56987441",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "36187260",
+      "timestamp": "2026-10-24T08:09:54.879000"
+    },
+    {
+      "cpu_ms": "1057",
+      "event_message": "shutdown",
+      "execution_id": "b857e38c-024f-4a58-891a-b60fe970908f",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "24323567",
+      "timestamp": "2026-10-24T08:10:01.178000"
+    },
+    {
+      "cpu_ms": "431",
+      "event_message": "shutdown",
+      "execution_id": "173f246b-f5b6-40b7-ab89-1cf8dfe20d3b",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "20261093",
+      "timestamp": "2026-10-24T08:10:44.929000"
+    },
+    {
+      "cpu_ms": "657",
+      "event_message": "shutdown",
+      "execution_id": "94864db4-a4b6-4c01-ac2a-954454438e85",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "20339901",
+      "timestamp": "2026-10-24T08:11:17.124000"
+    },
+    {
+      "cpu_ms": "392",
+      "event_message": "shutdown",
+      "execution_id": "369e3c10-63a2-4ac8-b9c4-7b2900e3ac57",
+      "reason": "EarlyDrop",
+      "region": "us-east-2",
+      "shutdown_memory_bytes": "19664885",
+      "timestamp": "2026-10-24T08:11:29.422000"
+    }
+  ]
+}

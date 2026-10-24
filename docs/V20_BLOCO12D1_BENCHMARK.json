@@ -1,0 +1,131 @@
+{
+  "kind": "synthetic-local-node-benchmark",
+  "recordedAt": "2026-10-21T16:37:23.719Z",
+  "node": "v24.19.0",
+  "platform": "linux",
+  "arch": "x64",
+  "iterations": 5,
+  "includes": [
+    "decimal-engine",
+    "ledger-reconstruction",
+    "strict-cycle-search"
+  ],
+  "excludes": [
+    "hosted-Deno",
+    "SQL",
+    "Auth",
+    "HTTP",
+    "network",
+    "concurrent-users"
+  ],
+  "results": [
+    {
+      "name": "reconstruct-100-events",
+      "samples": [
+        {
+          "wallMs": 29.810757000000024,
+          "cpuMs": 30.505
+        },
+        {
+          "wallMs": 22.87109399999997,
+          "cpuMs": 23.746
+        },
+        {
+          "wallMs": 32.52452400000004,
+          "cpuMs": 37.437
+        },
+        {
+          "wallMs": 39.52316900000005,
+          "cpuMs": 41.397
+        },
+        {
+          "wallMs": 31.545664999999985,
+          "cpuMs": 30.906
+        }
+      ],
+      "maximumWallMs": 39.52316900000005,
+      "maximumCpuMs": 41.397
+    },
+    {
+      "name": "reconstruct-1000-events",
+      "samples": [
+        {
+          "wallMs": 66.92525899999998,
+          "cpuMs": 90.497
+        },
+        {
+          "wallMs": 68.58527800000002,
+          "cpuMs": 70.818
+        },
+        {
+          "wallMs": 65.407648,
+          "cpuMs": 71.421
+        },
+        {
+          "wallMs": 60.04107099999999,
+          "cpuMs": 59.722
+        },
+        {
+          "wallMs": 79.40329199999996,
+          "cpuMs": 84.334
+        }
+      ],
+      "maximumWallMs": 79.40329199999996,
+      "maximumCpuMs": 90.497
+    },
+    {
+      "name": "reconstruct-5000-events",
+      "samples": [
+        {
+          "wallMs": 454.5356300000001,
+          "cpuMs": 481.717
+        },
+        {
+          "wallMs": 340.2779830000004,
+          "cpuMs": 353.839
+        },
+        {
+          "wallMs": 272.4483559999999,
+          "cpuMs": 402.613
+        },
+        {
+          "wallMs": 496.36591,
+          "cpuMs": 509.447
+        },
+        {
+          "wallMs": 438.99041599999964,
+          "cpuMs": 464.516
+        }
+      ],
+      "maximumWallMs": 496.36591,
+      "maximumCpuMs": 509.447
+    },
+    {
+      "name": "strict-cycle-search-limit-12",
+      "samples": [
+        {
+          "wallMs": 7660.448351000001,
+          "cpuMs": 7903.018
+        },
+        {
+          "wallMs": 3814.199844999999,
+          "cpuMs": 4004.345
+        },
+        {
+          "wallMs": 3680.1533149999996,
+          "cpuMs": 3680.912
+        },
+        {
+          "wallMs": 3962.5821039999973,
+          "cpuMs": 3995.607
+        },
+        {
+          "wallMs": 3879.4836140000007,
+          "cpuMs": 3922.4
+        }
+      ],
+      "maximumWallMs": 7660.448351000001,
+      "maximumCpuMs": 7903.018
+    }
+  ]
+}

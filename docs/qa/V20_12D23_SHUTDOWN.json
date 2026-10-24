@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-10-23T11:53:10.529Z",
+  "httpStatus": 503,
+  "body": {
+    "code": "QA_COMPLETE_CLOSED",
+    "financialCloudEnabled": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "version": "public-liquidity-2026-10-21.1",
+  "status": "owner-approved",
+  "ownerDecision": {
+    "selectedOption": 1,
+    "source": "Conversation: user replied 1 to the displayed liquidity alternatives",
+    "date": "2026-10-21"
+  },
+  "symbol": "PF_XBTUSD",
+  "basis": "best-visible-ask-only",
+  "sizeMapping": "reported-size-times-verified-linear-contract-size-to-BTC",
+  "supportedContractSizeBTC": "1",
+  "profileParticipation": "Keep the approved profile percentages; never sum farther ask levels",
+  "limitations": [
+    "VISIBLE_BEST_ASK_CAN_CHANGE_OR_DISAPPEAR",
+    "NO_EXECUTION_OR_FUTURE_LIQUIDITY_GUARANTEE",
+    "NO_AUTOMATIC_ORDERS_OR_TRANSFERS"
+  ]
+}

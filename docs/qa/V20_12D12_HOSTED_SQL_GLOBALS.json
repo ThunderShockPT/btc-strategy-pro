@@ -1,0 +1,47 @@
+{
+  "kind": "hosted-synthetic-fixed-clock-runtime-diagnostic",
+  "startedAt": "2026-10-23T04:43:09.386Z",
+  "recordedAt": "2026-10-23T04:43:16.261Z",
+  "runId": "0a918b06ff5e",
+  "bundleSHA256": "2cd094fccec309a7bff350419c1139ccff4885ecc6d69781158ebb0ffecddf2b",
+  "sourceCommit": "91bf7f8aa050a608ba4e582918627b2757580034",
+  "results": [
+    {
+      "operation": "small-start",
+      "authorized": false,
+      "httpStatus": 401,
+      "clientWallMs": 5540.9552730000005,
+      "requestId": "01a16711-fcbe-7a67-a698-153d6a5c38de",
+      "body": {
+        "code": "QA_CAPABILITY_REQUIRED"
+      }
+    },
+    {
+      "operation": "sql-read-only",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1333.454702,
+      "requestId": "01a16711-fe7e-7f3f-9b6b-75635a970ea5",
+      "body": {
+        "runId": "0a918b06ff5e",
+        "operation": "sql-read-only",
+        "recordedAt": "2026-10-23T04:43:16.238Z",
+        "totalWallMs": 1067.9056879999998,
+        "result": {
+          "status": "passed",
+          "connectionAndTransactionWallMs": 1066.177015,
+          "readOnly": true,
+          "tlsUpgraded": true,
+          "certificateVerificationRequired": true,
+          "authenticatedFinancialSessionTested": false
+        },
+        "financialCloudEnabled": false
+      }
+    }
+  ],
+  "excludes": [
+    "financial-write-approval",
+    "valid-account-session-flow",
+    "end-to-end-job-deadline-approval"
+  ]
+}

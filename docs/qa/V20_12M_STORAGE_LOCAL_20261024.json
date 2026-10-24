@@ -1,0 +1,15 @@
+{
+  "kind": "fixed-QA-checkpoint-storage-transport",
+  "eventCount": 5000,
+  "maxCycles": 12,
+  "rawJSONBytes": 2644658,
+  "storedJSONBytes": 311236,
+  "reductionPercent": 88.23152180735656,
+  "encodeMs": 22.780889000000002,
+  "decodeMs": 17.393618999999944,
+  "fullRoundTripEqual": true,
+  "originalMACPreserved": true,
+  "originalDeadlinePreserved": true,
+  "searchHash": "dd04919aadd5df55886d6b70f4ac4a30d56fa82bc5707f5eb794369fef756a47",
+  "hostedCapacityApproved": false
+}

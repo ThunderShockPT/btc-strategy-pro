@@ -1,0 +1,457 @@
+{
+  "kind": "hosted-synthetic-fixed-clock-runtime-diagnostic",
+  "startedAt": "2026-10-23T11:45:31.908Z",
+  "recordedAt": "2026-10-23T11:45:54.133Z",
+  "runId": "ae40ea67a782",
+  "bundleSHA256": "186614916927b5333f4701db4cc1de68f8b73893e176a5e20741e523cb3b1e91",
+  "sourceCommit": "9df8d06aa6c16b4752be97f8919707caa13ce3f9",
+  "results": [
+    {
+      "operation": "small-start",
+      "authorized": false,
+      "httpStatus": 401,
+      "clientWallMs": 6387.0803829999995,
+      "requestId": "01a16894-b0db-76d3-a981-ee38242aecc9",
+      "body": {
+        "code": "QA_CAPABILITY_REQUIRED"
+      }
+    },
+    {
+      "operation": "small-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 742.5602150000004,
+      "requestId": "01a16894-b406-7de9-ba2f-1f770b3b2877",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "small-start",
+        "recordedAt": "2026-10-23T11:45:39.032Z",
+        "totalWallMs": 21.223274000000004,
+        "result": {
+          "operationWallMs": 19.457324999999997,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "small-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 130.1237119999996,
+      "requestId": "01a16894-b6ed-7564-b968-50d0d2b453c3",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "small-advance",
+        "recordedAt": "2026-10-23T11:45:39.163Z",
+        "totalWallMs": 18.749738,
+        "result": {
+          "operationWallMs": 15.959931000000005,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "small-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 136.47622899999988,
+      "requestId": "01a16894-b76f-7135-a5ab-ebbc42790928",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "small-result",
+        "recordedAt": "2026-10-23T11:45:39.298Z",
+        "totalWallMs": 9.397163999999997,
+        "result": {
+          "operationWallMs": 5.276765999999995,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 726.1641800000007,
+      "requestId": "01a16894-b7f5-78a2-8da1-867d7ce055d4",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "medium-start",
+        "recordedAt": "2026-10-23T11:45:40.025Z",
+        "totalWallMs": 605.418263,
+        "result": {
+          "operationWallMs": 593.52039,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 253.89792599999964,
+      "requestId": "01a16894-bace-7e0f-81da-88dba9383c10",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "medium-advance",
+        "recordedAt": "2026-10-23T11:45:40.278Z",
+        "totalWallMs": 134.25528599999998,
+        "result": {
+          "operationWallMs": 112.06306699999999,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 192.3175599999995,
+      "requestId": "01a16894-bbcc-7f60-9c5b-5c8d8cb1097b",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "medium-result",
+        "recordedAt": "2026-10-23T11:45:40.473Z",
+        "totalWallMs": 57.16386000000001,
+        "result": {
+          "operationWallMs": 33.446101,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1371.563775999999,
+      "requestId": "01a16894-bc8d-7ad3-a106-86184f71b991",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "large-start",
+        "recordedAt": "2026-10-23T11:45:41.833Z",
+        "totalWallMs": 1222.8850419999999,
+        "result": {
+          "operationWallMs": 1179.2355260000002,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 626.7901669999992,
+      "requestId": "01a16894-c1ea-7f8f-8f94-7b0c7ab6bd1d",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "large-advance",
+        "recordedAt": "2026-10-23T11:45:42.471Z",
+        "totalWallMs": 486.49252199999995,
+        "result": {
+          "operationWallMs": 413.179399,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 291.19588100000146,
+      "requestId": "01a16894-c458-7279-9b2f-7b3df6f8df13",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "large-result",
+        "recordedAt": "2026-10-23T11:45:42.761Z",
+        "totalWallMs": 158.107228,
+        "result": {
+          "operationWallMs": 85.529281,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-limit-start",
+      "authorized": true,
+      "httpStatus": 546,
+      "clientWallMs": 2825.6838179999995,
+      "requestId": "01a16894-c57c-7b86-9349-a7a72bcbcab4",
+      "body": {
+        "code": "WORKER_RESOURCE_LIMIT",
+        "message": "Function failed due to not having enough compute resources (please check logs)"
+      }
+    },
+    {
+      "operation": "large-limit-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 537.1979240000001,
+      "requestId": "01a16894-d087-7fa6-8a7b-1cb2b7ac8b9a",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "large-limit-advance",
+        "recordedAt": "2026-10-23T11:45:46.127Z",
+        "totalWallMs": 431.433961,
+        "result": {
+          "operationWallMs": 362.530461,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-limit-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 298.0516229999994,
+      "requestId": "01a16894-d2a1-7fd9-8fe6-7244d8728061",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "large-limit-result",
+        "recordedAt": "2026-10-23T11:45:46.425Z",
+        "totalWallMs": 180.130895,
+        "result": {
+          "operationWallMs": 97.851828,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-start",
+      "authorized": true,
+      "httpStatus": 546,
+      "clientWallMs": 3037.673471000002,
+      "requestId": "01a16894-d3cb-7fc3-b9de-2a65ee690f84",
+      "body": {
+        "code": "WORKER_RESOURCE_LIMIT",
+        "message": "Function failed due to not having enough compute resources (please check logs)"
+      }
+    },
+    {
+      "operation": "profile-large-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 748.3505330000007,
+      "requestId": "01a16894-dfa9-70a2-8e86-362238472cbb",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "profile-large-advance",
+        "recordedAt": "2026-10-23T11:45:50.211Z",
+        "totalWallMs": 630.355999,
+        "result": {
+          "operationWallMs": 538.835837,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 458.5185650000021,
+      "requestId": "01a16894-e298-72cb-b40e-4128a37baae6",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "profile-large-result",
+        "recordedAt": "2026-10-23T11:45:50.670Z",
+        "totalWallMs": 331.323332,
+        "result": {
+          "operationWallMs": 268.798801,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-review",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 388.55555599999934,
+      "requestId": "01a16894-e461-7be3-9003-22f5550f52be",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "profile-large-review",
+        "recordedAt": "2026-10-23T11:45:51.058Z",
+        "totalWallMs": 265.250865,
+        "result": {
+          "operationWallMs": 172.927909,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "reviewSource"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "public-3s",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 625.7031420000021,
+      "requestId": "01a16894-e5ee-7a03-afcd-16aaf40582d8",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "public-3s",
+        "recordedAt": "2026-10-23T11:45:51.690Z",
+        "totalWallMs": 491.60591999999997,
+        "result": {
+          "timeoutMs": 3000,
+          "totalWallMs": 491.42323,
+          "sources": [
+            {
+              "source": "mark-ticker",
+              "ok": true,
+              "observedAt": "2026-10-23T11:45:51.336Z"
+            },
+            {
+              "source": "book-and-closed-mark-candles",
+              "ok": true,
+              "bookObservedAt": "2026-10-23T11:45:51.309Z",
+              "historyObservedThrough": "2026-10-23T11:45:00.000Z",
+              "candles": 64
+            }
+          ]
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "sql-read-only",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 1812.0493089999982,
+      "requestId": "01a16894-e85c-7eab-bfed-f126efec7202",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "sql-read-only",
+        "recordedAt": "2026-10-23T11:45:53.502Z",
+        "totalWallMs": 1688.465233,
+        "result": {
+          "status": "passed",
+          "connectionAndTransactionWallMs": 1686.639108,
+          "readOnly": true,
+          "tlsUpgraded": true,
+          "certificateVerificationRequired": true,
+          "authenticatedFinancialSessionTested": false
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "invalid-auth",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 624.2156410000025,
+      "requestId": "01a16894-ef74-7fec-9544-37f41cd980df",
+      "body": {
+        "runId": "ae40ea67a782",
+        "operation": "invalid-auth",
+        "recordedAt": "2026-10-23T11:45:54.129Z",
+        "totalWallMs": 508.57306600000004,
+        "result": {
+          "status": "rejected-as-expected",
+          "httpStatus": 403,
+          "authWallMs": 508.49414899999994,
+          "validUserTested": false
+        },
+        "financialCloudEnabled": false
+      }
+    }
+  ],
+  "excludes": [
+    "financial-write-approval",
+    "valid-account-session-flow",
+    "end-to-end-job-deadline-approval"
+  ]
+}

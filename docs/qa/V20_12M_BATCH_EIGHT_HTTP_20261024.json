@@ -1,0 +1,409 @@
+{
+  "kind": "hosted-synthetic-fixed-clock-runtime-diagnostic",
+  "startedAt": "2026-10-24T09:02:27.766Z",
+  "recordedAt": "2026-10-24T09:02:41.990Z",
+  "runId": "66175e9f6a04",
+  "bundleSHA256": "a7446b2cd745c66da84444521874e6ea086f2370bf998d467b2d75ec89794f4a",
+  "sourceCommit": "4e40b0d3c3127ea31d480bf9eb5cb73623af6f87",
+  "results": [
+    {
+      "operation": "small-start",
+      "authorized": false,
+      "httpStatus": 401,
+      "clientWallMs": 6001.980692,
+      "requestId": "01a16d25-c19d-7f1d-b231-192d95b6308e",
+      "body": {
+        "code": "QA_CAPABILITY_REQUIRED"
+      }
+    },
+    {
+      "operation": "small-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 409.2979999999998,
+      "requestId": "01a16d25-c340-7d18-838d-8663b1592c3d",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "small-start",
+        "recordedAt": "2026-10-24T09:02:34.150Z",
+        "totalWallMs": 18.250748,
+        "result": {
+          "operationWallMs": 16.32418100000001,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "small-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 196.19893500000035,
+      "requestId": "01a16d25-c4d4-76de-834c-6e70e53494f8",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "small-advance",
+        "recordedAt": "2026-10-24T09:02:34.345Z",
+        "totalWallMs": 28.643959000000002,
+        "result": {
+          "operationWallMs": 26.268251,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "small-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 192.84172500000022,
+      "requestId": "01a16d25-c59a-7a10-a790-c474bf449def",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "small-result",
+        "recordedAt": "2026-10-24T09:02:34.538Z",
+        "totalWallMs": 9.423003999999992,
+        "result": {
+          "operationWallMs": 5.335704999999997,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 10,
+          "maxCycles": 1,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 313.2936380000001,
+      "requestId": "01a16d25-c65b-7b2a-84b0-9112666c8552",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "medium-start",
+        "recordedAt": "2026-10-24T09:02:34.852Z",
+        "totalWallMs": 153.063963,
+        "result": {
+          "operationWallMs": 142.10195900000002,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 409.0138109999998,
+      "requestId": "01a16d25-c79b-78e7-81d9-05fd8d619cfb",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "medium-advance",
+        "recordedAt": "2026-10-24T09:02:35.261Z",
+        "totalWallMs": 217.32551,
+        "result": {
+          "operationWallMs": 192.405958,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "medium-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 258.8591749999996,
+      "requestId": "01a16d25-c92d-728d-8a47-b09a9878c750",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "medium-result",
+        "recordedAt": "2026-10-24T09:02:35.519Z",
+        "totalWallMs": 57.924153,
+        "result": {
+          "operationWallMs": 34.484257,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 1000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 672.7454609999995,
+      "requestId": "01a16d25-ca33-732c-8252-b58670857167",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "large-start",
+        "recordedAt": "2026-10-24T09:02:36.192Z",
+        "totalWallMs": 486.351693,
+        "result": {
+          "operationWallMs": 443.288769,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 819.2953710000002,
+      "requestId": "01a16d25-ccd2-7d25-8756-2fec8e108d25",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "large-advance",
+        "recordedAt": "2026-10-24T09:02:37.013Z",
+        "totalWallMs": 658.176461,
+        "result": {
+          "operationWallMs": 572.277466,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 339.27030000000013,
+      "requestId": "01a16d25-d009-7d64-b8ec-c8ea7fe3a500",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "large-result",
+        "recordedAt": "2026-10-24T09:02:37.353Z",
+        "totalWallMs": 149.02946400000002,
+        "result": {
+          "operationWallMs": 76.10356900000001,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 1,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-limit-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 683.5546579999991,
+      "requestId": "01a16d25-d15b-777f-b242-0f8ca750c411",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "large-limit-start",
+        "recordedAt": "2026-10-24T09:02:38.037Z",
+        "totalWallMs": 504.33978399999995,
+        "result": {
+          "operationWallMs": 459.27995200000004,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-limit-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 743.1900589999987,
+      "requestId": "01a16d25-d403-70e9-bccb-115cb0a9788f",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "large-limit-advance",
+        "recordedAt": "2026-10-24T09:02:38.781Z",
+        "totalWallMs": 574.0698649999999,
+        "result": {
+          "operationWallMs": 482.81085399999995,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "large-limit-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 344.95232399999986,
+      "requestId": "01a16d25-d6ed-731e-bb23-a990db4626ff",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "large-limit-result",
+        "recordedAt": "2026-10-24T09:02:39.118Z",
+        "totalWallMs": 170.41467400000002,
+        "result": {
+          "operationWallMs": 89.93264199999999,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-start",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 854.1306490000006,
+      "requestId": "01a16d25-d84d-7d10-b713-6487f98c8348",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "profile-large-start",
+        "recordedAt": "2026-10-24T09:02:39.980Z",
+        "totalWallMs": 669.962732,
+        "result": {
+          "operationWallMs": 620.217882,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "start"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-advance",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 938.0907360000001,
+      "requestId": "01a16d25-dba1-7732-900a-8030973d34cc",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "profile-large-advance",
+        "recordedAt": "2026-10-24T09:02:40.916Z",
+        "totalWallMs": 756.748804,
+        "result": {
+          "operationWallMs": 659.4087679999999,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "advance"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-result",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 609.6349859999991,
+      "requestId": "01a16d25-df4c-7c48-8985-704c904bc2c2",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "profile-large-result",
+        "recordedAt": "2026-10-24T09:02:41.529Z",
+        "totalWallMs": 433.058023,
+        "result": {
+          "operationWallMs": 349.876845,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "result"
+        },
+        "financialCloudEnabled": false
+      }
+    },
+    {
+      "operation": "profile-large-review",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 431.19904700000006,
+      "requestId": "01a16d25-e1ac-7fc9-b7d4-dd6160809d46",
+      "body": {
+        "runId": "66175e9f6a04",
+        "operation": "profile-large-review",
+        "recordedAt": "2026-10-24T09:02:41.960Z",
+        "totalWallMs": 255.913567,
+        "result": {
+          "operationWallMs": 161.281227,
+          "expectedHashMatched": true,
+          "inputUnchanged": true,
+          "synthetic": true,
+          "fixedClock": "2026-10-20T23:40:00Z",
+          "eventCount": 5000,
+          "maxCycles": 12,
+          "method": "reviewSource"
+        },
+        "financialCloudEnabled": false
+      }
+    }
+  ],
+  "excludes": [
+    "financial-write-approval",
+    "valid-account-session-flow",
+    "end-to-end-job-deadline-approval"
+  ]
+}
