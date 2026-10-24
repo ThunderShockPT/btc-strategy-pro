@@ -81,7 +81,9 @@ await route.fulfill({status:response.status,headers:{...Object.fromEntries(respo
  await page.evaluate(id=>qaEmit('SIGNED_IN',id),f.B);
  await page.locator('[data-account-action="wallet-list"]').click();await page.locator('[data-wallet-id="'+f.PB+'"]').waitFor();
  assert.equal(await page.locator('[data-wallet-id="'+f.P+'"]').count(),0);
- assert.equal(await page.locator('[data-account-action="correction"]').count(),0);
+ // The current account now opens its first wallet automatically. Its own
+ // history may be visible, but no record from the previous owner may remain.
+ for(const event of before.state.input.events)assert.equal(await page.locator('[data-account-target="'+event.id+'"]').count(),0);
  await page.evaluate(()=>qaEmit('PASSWORD_RECOVERY'));
  await page.locator('[data-access-form="password"]').waitFor();
  assert.equal(await page.locator('[data-account-action]').count(),0);
