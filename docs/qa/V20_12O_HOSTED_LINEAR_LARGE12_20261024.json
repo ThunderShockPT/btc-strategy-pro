@@ -1,0 +1,360 @@
+{
+  "kind": "hosted-real-public-prices-auth-sql",
+  "caseName": "large-12",
+  "variant": "floor-room-v2",
+  "runId": "32ab25215972",
+  "startedAt": "2026-10-24T12:23:18.477Z",
+  "rules": "synthetic-not-Kraken-verification",
+  "history": "invented-QA-fixture",
+  "prices": "real-public-Kraken-endpoints",
+  "emailDeliveryTested": false,
+  "publicReleaseApproved": false,
+  "transport": "fresh-http-sockets-QA-only",
+  "requestedRegion": "eu-west-1",
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 8487,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddd-a377-7c9b-b469-a0f058dd88bb",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-0",
+      "status": 200,
+      "wallMs": 4788,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddd-bdce-7a4f-973e-02fec6bc3b07",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-1",
+      "status": 200,
+      "wallMs": 4417,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddd-d0df-74f9-9f36-d14e34e3dabd",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 6025,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddd-e25e-779c-abb9-74d77a642183",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 4931,
+      "worker": "1be1c732-9db0-474b-93b0-e0aa76234dd6",
+      "serverWallMs": 353,
+      "requestId": "01a16ddd-f9aa-754f-b7de-0fbd7eebf1ac",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 25979432
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 4758,
+      "worker": "0975a495-60df-4c43-b7e2-3e725264ac2a",
+      "serverWallMs": 110,
+      "requestId": "01a16dde-0d92-702c-8e52-56a3d1d5d9a8",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 15865272,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 425,
+      "wallMs": 6095,
+      "worker": "1a921000-ba19-4c32-b557-968b70a6aa30",
+      "serverWallMs": 1319,
+      "requestId": "01a16dde-1f9b-7111-94aa-0465f98425fb",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 29584432,
+      "code": "CALCULATION_WINDOW_TOO_SHORT",
+      "reason": "WAIT_FOR_CLOSED_HISTORY",
+      "serverTime": "2026-10-24T12:23:57.925Z",
+      "expiresAt": "2026-10-24T12:24:00.000Z",
+      "minimumRemainingMs": 45000,
+      "retryAt": "2026-10-24T12:24:00.000Z"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 200,
+      "wallMs": 6931,
+      "worker": "90ffbb25-ef0c-4800-83b5-f0455689eb42",
+      "serverWallMs": 2088,
+      "requestId": "01a16dde-4b11-7540-afe5-921e439126ca",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 22853560
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 5246,
+      "worker": "0a4bb874-002a-4c9a-bfaa-13717e776397",
+      "serverWallMs": 191,
+      "requestId": "01a16dde-6863-761f-b198-d546e8a2f3c4",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 16148568
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6947,
+      "worker": "b3d770fd-6554-4996-87b1-2ffd725d9024",
+      "serverWallMs": 1876,
+      "requestId": "01a16dde-6865-7b58-aab2-3f125aaf80e2",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31230736
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 7394,
+      "worker": "b13a7508-03a9-4872-9d4a-46f67247d4f3",
+      "serverWallMs": 1596,
+      "requestId": "01a16dde-8540-7b1f-9806-d617710d8d75",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 20170784
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6065,
+      "worker": "9746e7f5-b053-4a51-9993-cddaaf7562d8",
+      "serverWallMs": 1594,
+      "requestId": "01a16dde-9e45-7e29-b3b5-fb2865254838",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 32421504
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6887,
+      "worker": "ac6947f6-9e95-47e4-a51c-059f1479c186",
+      "serverWallMs": 2054,
+      "requestId": "01a16dde-b670-78e9-a89e-c9fadd81e051",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 31907880
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6653,
+      "worker": "7a06deb2-2076-4e27-b9ff-548c51b91e1e",
+      "serverWallMs": 1949,
+      "requestId": "01a16dde-d176-740c-98b6-d0ba25c4a4fe",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 33350600
+    },
+    {
+      "label": "api/prepare",
+      "status": 200,
+      "wallMs": 11003,
+      "worker": "cbb44298-f9c7-43d3-83d6-6717ddc82c49",
+      "serverWallMs": 2356,
+      "requestId": "01a16dde-faba-70cd-acdc-06b16849186d",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 25188400
+    },
+    {
+      "label": "api/commit",
+      "status": 409,
+      "wallMs": 6612,
+      "worker": "cffe3bd7-d823-41b7-8d87-4d520af63853",
+      "serverWallMs": 1879,
+      "requestId": "01a16ddf-16df-7f19-9f9c-da4f79ab1731",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 34256640,
+      "code": "COMMAND_REVIEW_EXPIRED"
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 4794,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddf-30e6-7460-9c5a-af735dd38e0c",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 4606,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddf-435d-751f-8083-e23ebb9eb238",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 4821,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16ddf-5540-7dd7-bd56-3211fa9c5eff",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    }
+  ],
+  "bundleSHA256": "f0a5238dd6cb62b688b1efe0ac2aec2f6b8c470bf10a353aec93521c27226096",
+  "eventCount": 5000,
+  "beforeHead": "f8370fbfd56412d360302048db433983ea6a28adfbd01bd2d30407c74134a99a",
+  "admissionRejected": true,
+  "retryWaitMs": 4935,
+  "jobId": "13e49474-d02c-484d-aec7-c2bb6d603a36",
+  "originalDeadline": "2026-10-24T12:25:00.000Z",
+  "calculationStartedAt": "2026-10-24T12:24:09.970Z",
+  "concurrentAdvanceChecked": true,
+  "resultIncludedWithCompletion": true,
+  "resultHash": "d99b9093e21f164d9dc1cecf93b94dee987dc2c4c6bee7caf75b02f3019d3af9",
+  "status": "failed",
+  "failure": {
+    "code": "ERR_ASSERTION",
+    "step": "api/commit",
+    "status": 409
+  },
+  "accountsDisabled": 2,
+  "calculationCompleted": true,
+  "fullSynchronousResultEquality": true,
+  "engineBuild": "32d41ecc89dd9a3991995cd62d3d21731ca0b378d09bf5a85303b8dad03e5fa3",
+  "sequence": 5,
+  "reconciliation": {
+    "events": 5000,
+    "plans": 1,
+    "receipts": 0,
+    "headUnchanged": true
+  },
+  "closure": {
+    "accountFunctionVersion": 33,
+    "runtimeFunctionVersion": 20,
+    "mode": "static-503",
+    "accountsBanned": 2,
+    "sessions": 0
+  },
+  "shutdownMetrics": [
+    {
+      "cpu_ms": "956",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-8540-7b1f-9806-d617710d8d75",
+      "shutdown_memory_bytes": "18665437"
+    },
+    {
+      "cpu_ms": "82",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-6863-761f-b198-d546e8a2f3c4",
+      "shutdown_memory_bytes": "18092149"
+    },
+    {
+      "cpu_ms": "60",
+      "reason": "EarlyDrop",
+      "request_id": "01a16ddf-5540-7dd7-bd56-3211fa9c5eff",
+      "shutdown_memory_bytes": "17444549"
+    },
+    {
+      "cpu_ms": "868",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-1f9b-7111-94aa-0465f98425fb",
+      "shutdown_memory_bytes": "18786221"
+    },
+    {
+      "cpu_ms": "85",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-0d92-702c-8e52-56a3d1d5d9a8",
+      "shutdown_memory_bytes": "18066869"
+    },
+    {
+      "cpu_ms": "264",
+      "reason": "EarlyDrop",
+      "request_id": "01a16ddd-f9aa-754f-b7de-0fbd7eebf1ac",
+      "shutdown_memory_bytes": "18189789"
+    },
+    {
+      "cpu_ms": "1449",
+      "reason": "EarlyDrop",
+      "request_id": "01a16ddf-16df-7f19-9f9c-da4f79ab1731",
+      "shutdown_memory_bytes": "37143724"
+    },
+    {
+      "cpu_ms": "645",
+      "reason": "EarlyDrop",
+      "request_id": "01a16ddd-e25e-779c-abb9-74d77a642183",
+      "shutdown_memory_bytes": "18162293"
+    },
+    {
+      "cpu_ms": "1526",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-faba-70cd-acdc-06b16849186d",
+      "shutdown_memory_bytes": "39878695"
+    },
+    {
+      "cpu_ms": "1124",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-d176-740c-98b6-d0ba25c4a4fe",
+      "shutdown_memory_bytes": "18751421"
+    },
+    {
+      "cpu_ms": "1017",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-9e45-7e29-b3b5-fb2865254838",
+      "shutdown_memory_bytes": "18746557"
+    },
+    {
+      "cpu_ms": "1289",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-b670-78e9-a89e-c9fadd81e051",
+      "shutdown_memory_bytes": "39109377"
+    },
+    {
+      "cpu_ms": "1246",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-6865-7b58-aab2-3f125aaf80e2",
+      "shutdown_memory_bytes": "38497505"
+    },
+    {
+      "cpu_ms": "1342",
+      "reason": "EarlyDrop",
+      "request_id": "01a16dde-4b11-7540-afe5-921e439126ca",
+      "shutdown_memory_bytes": "30043342"
+    },
+    {
+      "cpu_ms": "58",
+      "reason": "EarlyDrop",
+      "request_id": "01a16ddd-a377-7c9b-b469-a0f058dd88bb",
+      "shutdown_memory_bytes": "17441125"
+    }
+  ]
+}
