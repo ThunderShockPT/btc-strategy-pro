@@ -1,0 +1,270 @@
+{
+  "kind": "hosted-real-public-prices-auth-sql",
+  "caseName": "baseline",
+  "variant": "floor-room-v2",
+  "runId": "1d9d70236992",
+  "startedAt": "2026-10-24T08:05:34.197Z",
+  "rules": "synthetic-not-Kraken-verification",
+  "history": "invented-QA-fixture",
+  "prices": "real-public-Kraken-endpoints",
+  "emailDeliveryTested": false,
+  "publicReleaseApproved": false,
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 5601,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-0",
+      "status": 200,
+      "wallMs": 320,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-1",
+      "status": 200,
+      "wallMs": 452,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 2025,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 2204,
+      "worker": "7fb4d6a1-0b8c-4948-9415-af9d0c059fc6",
+      "contextError": null,
+      "heapBytes": 10568664
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 2136,
+      "worker": "c59b30ad-8616-425d-8bce-e3bcd7146111",
+      "contextError": null,
+      "heapBytes": 10346168,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 425,
+      "wallMs": 2902,
+      "worker": "116c8f01-fdee-4420-8d8b-df1da39f843a",
+      "contextError": null,
+      "heapBytes": 13345512,
+      "code": "CALCULATION_WINDOW_TOO_SHORT",
+      "reason": "WAIT_FOR_CLOSED_HISTORY",
+      "serverTime": "2026-10-24T08:05:49.817Z",
+      "expiresAt": "2026-10-24T08:06:00.000Z",
+      "minimumRemainingMs": 45000,
+      "retryAt": "2026-10-24T08:06:00.000Z"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 200,
+      "wallMs": 8238,
+      "worker": "13324cd5-f05e-4d93-8eb1-04798d2ac809",
+      "contextError": null,
+      "heapBytes": 13022560
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3508,
+      "worker": "06150aed-7f64-4fe1-8848-9ff872d03f89",
+      "contextError": null,
+      "heapBytes": 11269664
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 7782,
+      "worker": "f631faca-6290-49e5-812e-bdd6eacf5eea",
+      "contextError": null,
+      "heapBytes": 11368504
+    },
+    {
+      "label": "api/calculations/status",
+      "status": 200,
+      "wallMs": 6095,
+      "worker": "aca65326-de06-4f7a-83e8-2892a6d5a8a8",
+      "contextError": null,
+      "heapBytes": 10619224
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3549,
+      "worker": "40c3b104-9d27-406a-a288-5d4935374afb",
+      "contextError": null,
+      "heapBytes": 10843336
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3497,
+      "worker": "df30cc48-93c3-44b4-aba9-0961d0ef6ac8",
+      "contextError": null,
+      "heapBytes": 10831544
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3437,
+      "worker": "eeee8b06-0d10-455f-8906-2bebcff73db8",
+      "contextError": null,
+      "heapBytes": 10836600
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3667,
+      "worker": "0147955b-97f9-4320-8e7d-2c7711cd6a4d",
+      "contextError": null,
+      "heapBytes": 10979512
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3859,
+      "worker": "decb4517-d822-4cc9-ae3d-3a4215a708f4",
+      "contextError": null,
+      "heapBytes": 10746440
+    },
+    {
+      "label": "api/calculations/result",
+      "status": 200,
+      "wallMs": 2685,
+      "worker": "d8da6347-2ee2-408c-854b-5a15b0454e8d",
+      "contextError": null,
+      "heapBytes": 11161112
+    },
+    {
+      "label": "api/prepare",
+      "status": 200,
+      "wallMs": 5132,
+      "worker": "3dda8c37-2e64-4ae2-a5b9-94ae477f3c77",
+      "contextError": null,
+      "heapBytes": 11461496
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 3868,
+      "worker": "eb8e1da3-c79d-4722-b189-6f1c23476453",
+      "contextError": null,
+      "heapBytes": 12590184
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 2092,
+      "worker": "9130b9e3-6124-4299-8087-32926041f748",
+      "contextError": null,
+      "heapBytes": 10176864
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 2087,
+      "worker": "88998a85-59e3-40db-a56a-806ac427275f",
+      "contextError": null,
+      "heapBytes": 10831416
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 173,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 4461,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 5249,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 401,
+      "wallMs": 5622,
+      "worker": "37039a42-75a4-456f-8067-f7f8f7930a00",
+      "contextError": null,
+      "heapBytes": 10171968,
+      "code": "SESSION_NOT_VALID"
+    }
+  ],
+  "bundleSHA256": "429bbcba129f5ee27ae401d26925d523328b652feacf9234deeeb58adbf069eb",
+  "eventCount": 3,
+  "beforeHead": "097e8573f4cef8a55d72d31d9fcd91c823b8c629861f36d7a91a96f1d8580cf5",
+  "admissionRejected": true,
+  "retryWaitMs": 13156,
+  "jobId": "70543a10-5a1b-4368-8115-847e3cfe99b9",
+  "originalDeadline": "2026-10-24T08:07:00.000Z",
+  "calculationStartedAt": "2026-10-24T08:06:11.258Z",
+  "concurrentAdvanceChecked": true,
+  "resultHash": "e46e1739a83d997b1688b00a64ca240e8e28f91354b18c1c398636aa8f0950e9",
+  "status": "passed",
+  "originalDeadlinePreserved": true,
+  "financialFactsUnchanged": true,
+  "sequence": 7,
+  "finishedAt": "2026-10-24T08:06:59.030Z",
+  "accountsDisabled": 2,
+  "directFullResultEqual": true,
+  "directResultHash": "e46e1739a83d997b1688b00a64ca240e8e28f91354b18c1c398636aa8f0950e9",
+  "provenance": {
+    "bookSource": "https://futures.kraken.com/derivatives/api/v3/orderbook?symbol=PF_XBTUSD",
+    "limitations": [
+      "VISIBLE_BEST_ASK_CAN_CHANGE_OR_DISAPPEAR",
+      "NO_EXECUTION_OR_FUTURE_LIQUIDITY_GUARANTEE",
+      "NO_AUTOMATIC_ORDERS_OR_TRANSFERS",
+      "FIXED_REQUEST_SYMBOL_AND_TICK_TYPE_NO_RESPONSE_ECHO",
+      "ONE_MINUTE_OHLC_NOT_CONTINUOUS_TICKS",
+      "INTRAMINUTE_HIGH_LOW_ORDER_UNKNOWN",
+      "CANDLE_BOUNDARIES_NOT_INDIVIDUAL_TRADE_TIMESTAMPS",
+      "HISTORICAL_MARKS_NOT_EXECUTION_PRICES",
+      "NO_INTERPOLATION_OR_GAP_FILLING",
+      "CLOSE_SAMPLES_CAN_MISS_INTRAMINUTE_DRAWDOWN",
+      "OBSERVATIONS_ARE_NOT_A_VOLATILITY_FORECAST"
+    ],
+    "ruleVersion": "QA-SYNTHETIC-REAL-AUTH",
+    "tickerSource": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD",
+    "historySource": "https://futures.kraken.com/api/charts/v1/mark/PF_XBTUSD/1m?count=65",
+    "bookObservedAt": "2026-10-24T08:06:09.85Z",
+    "liquidityBasis": "best-visible-ask-only",
+    "contractSizeBTC": "1",
+    "observationKind": "closed-one-minute-mark-candle-closes",
+    "tickerObservedAt": "2026-10-24T08:06:10.178Z",
+    "bestAskQuantityBTC": "0.0388",
+    "bestAskReportedSize": "0.0388",
+    "historyObservedThrough": "2026-10-24T08:06:00.000Z",
+    "liquidityPolicyVersion": "public-liquidity-2026-10-21.1",
+    "eligibleVisibleNotionalUSD": "3128.5216"
+  },
+  "sourceValidityPreserved": true
+}

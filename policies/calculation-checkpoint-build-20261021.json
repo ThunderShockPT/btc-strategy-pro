@@ -6,7 +6,7 @@
   "files": {
     "backend/edge-runtime.cjs": "d00cae690dda3357e864636d012fa617a90c25df098cd8a8b07ab23d44d79a0f",
     "backend/calculation-window.cjs": "0d93f400b91d63b69b2a4e5a8c426dadf5da4c593cbdd22a35e646ff8aa81b8d",
-    "backend/http-api.cjs": "f3c1e13b07edfee47454a6e5ef4a364a1f67cd185916740ab1cf46b296b7df2a",
+    "backend/http-api.cjs": "a8f9db834f6b69ffccd2cd3ede7df4f67ec3297c3174224ee5cdf59cd16f6619",
     "backend/request-admission.cjs": "d1691d02610a00f2e802f09d9c54620b59c74964303f79df1760e63f517d15eb",
     "backend/public-profile-context.cjs": "5c8de2d176ce6dca092c4e9aa108ab20b7c8550d59f231fbc8fb1a56404df7be",
     "backend/public-market.cjs": "fdd4f92f0630c7e1538e1eef276d91b8fa681ca4336a694e9ce8f100976bc252",

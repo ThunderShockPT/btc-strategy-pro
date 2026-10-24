@@ -7,7 +7,8 @@ const ID=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/,PREFIX
 const reply=(status,value)=>Response.json(value,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 function connection(value){const u=new URL(value);if([...u.searchParams].length===1&&['disable','allow','prefer'].includes(u.searchParams.get('sslmode')))u.searchParams.set('sslmode','verify-full');return DB.validateConnection(u.toString());}
 async function read(request){const reader=request.body?.getReader();if(!reader)throw Error('QA_BODY_REQUIRED');const parts=[];let size=0;try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>96000)throw Error('QA_BODY_TOO_LARGE');parts.push(value);}}finally{await reader.cancel().catch(()=>{});}return JSON.parse(Buffer.concat(parts).toString('utf8'));}
-function create({config,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),runtimeFactory=Runtime.create,memory=()=>({})}){
+function create({config,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),runtimeFactory=Runtime.create,memory=()=>({}),scenarioKey='demo_long'}){
+ if(!['demo_long','manual_long'].includes(scenarioKey))throw Error('QA_SCOPE_REQUIRED');
  if(!/^[a-f0-9]{64}$/.test(config?.capHash)||!/^[a-f0-9]{12}$/.test(config.runId)||!Number.isFinite(Date.parse(config.expiresAt))||Date.parse(config.expiresAt)>now()+21*60000||!Array.isArray(config.accounts)||config.accounts.length!==2||!config.accounts.every((a,n)=>ID.test(a.id)&&ID.test(a.projectId)&&a.alias===['owner','other'][n]&&a.email===`btc-qa-${config.runId}-${a.alias}@btcsp-qa.invalid`)||new Set(config.accounts.flatMap(a=>[a.id,a.projectId])).size!==4)throw Error('QA_CONFIGURATION_REQUIRED');
  const workerId=randomUUID(),users=new Set(config.accounts.map(a=>a.id)),projects=new Set(config.accounts.map(a=>a.projectId));let runtime;
  const timestamp=()=>new Date(now()).toISOString();
@@ -39,7 +40,7 @@ function create({config,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),runtimeFa
   // Decoding only narrows the QA allowlist. Runtime still verifies the token
   // remotely and SQL checks its live session on every transaction.
   let sub;try{sub=JSON.parse(Buffer.from(request.headers.get('Authorization').split(' ')[1].split('.')[1],'base64url')).sub;}catch{return reply(401,{code:'SESSION_NOT_VALID'});}
-  if(!users.has(sub)||!projects.has(body.projectId)||body.scenarioKey!=='demo_long')return reply(403,{code:'QA_SCOPE_REQUIRED'});
+  if(!users.has(sub)||!projects.has(body.projectId)||body.scenarioKey!==scenarioKey)return reply(403,{code:'QA_SCOPE_REQUIRED'});
   if(body.request?.workflow==='wallet-create'&&body.request.command?.setup?.projectTitle!==`[QA ${config.runId}] ${config.accounts.find(a=>a.id===sub).alias}`)return reply(403,{code:'QA_TITLE_REQUIRED'});
   const url=new URL(Auth.URL_BASE+Runtime.PREFIX+path.slice(4)),headers=new Headers(request.headers);headers.delete('X-BTCSP-QA-Capability');headers.delete('content-length');
   const response=await live()(new Request(url,{method:'POST',headers,body:JSON.stringify(body)}),info);
