@@ -26,4 +26,10 @@ O esquema real também contém o limite V19 de capital inicial entre 100 e 1 000
 
 ## Resultado alojado
 
-Pendente da CI nativa e da verificação imediata anterior ao DDL. Nenhuma migração alojada foi executada na preparação descrita acima. Os projetos locais/Demo não foram convertidos nem substituídos.
+As sete migrações foram aplicadas e verificadas em 24/10/2026, depois do ensaio PostgreSQL 17.11 aprovado no job 120778823226 da CI 40062499559. A verificação alojada confirmou 14 tabelas com RLS, 14 políticas públicas, ausência de qualquer privilégio de escrita dos clientes nas tabelas V20 e ausência de acesso dos clientes ao schema privado. As três funções V19 conservam os mesmos hashes de definição. Contagens de utilizadores/projetos/snapshots continuam em zero. Os projetos locais/Demo não foram convertidos nem substituídos.
+
+O consultor não devolveu níveis WARN/ERROR. As seis observações INFO correspondem às seis tabelas privadas com RLS sem políticas, bloqueadas por defeito e sem grants para clientes; não se adicionaram políticas permissivas para ocultar esse resultado. Referência: [RLS enabled, no policy](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy).
+
+Uma colisão de versões do serviço de migrações no mesmo segundo ocorreu depois de o SQL de request_buckets já ter sido confirmado pelo COMMIT da fonte. O estado vazio, constraints, índice, RLS e permissões foram inspecionados antes do registo protegido dessa migração. Nas fontes seguintes foram removidos apenas os delimitadores BEGIN/COMMIT do payload, deixando a transação a cargo do serviço e separando os pedidos. Nenhuma tabela ou facto foi eliminado. A correspondência entre nomes de fonte, SHA-256 e versões alojadas está em `docs/qa/V20_12G_HOSTED_SCHEMA_RESULT_20261024.json`.
+
+O ponto de recuperação e o ensaio cobrem o esquema de aplicação vazio. Auth/Storage/configurações, retenção e chaves de backups, restauro integral, migração de projetos locais existentes e fluxo financeiro autenticado no alojamento continuam por validar. Não se alteraram as flags de aprovação cloud/SMTP/privacidade, nem se marcou o Bloco 12 como concluído.

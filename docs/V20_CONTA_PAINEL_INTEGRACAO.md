@@ -82,3 +82,8 @@ Renovação para o mesmo utilizador conserva o cliente, revisão e aceitação d
 Passaram 15 testes da composição de sessão. O novo teste Chromium percorre a página completa, o cliente real, a API HTTP e PGlite: entrada, diretório, seleção, comparação de depósito, confirmação explícita com um único evento, renovação preservando a revisão, logout com leitura pendente, troca de utilizador e alteração de password em recuperação. Usa identidades/Auth e preços sintéticos de QA; não é um ensaio de email real ou do alojamento. Verifica ausência de scroll horizontal em 280, 360, 393, 430 e 1280 px; a revisão em 393 px foi também inspecionada visualmente. Os campos de movimento e data usam a largura da linha para evitar truncar o seletor e a data no telemóvel.
 
 A suite de sessão e um job Chromium próprio passam a fazer parte da CI. A integração alojada, SMTP BTC, migração/restauro de produção, privacidade e QA no S25 continuam pendentes. O Bloco 12 permanece aberto.
+
+
+## Instalação do esquema em 24/10/2026
+
+As sete migrações V20 estão agora aplicadas no projeto BTC, com 14 tabelas/RLS verificadas e funções V19 preservadas. O ensaio de recuperação do esquema público vazio correu em PostgreSQL 17.11, com as permissões reais capturadas, antes da instalação. A criação da carteira também foi ensaiada sobre os constraints reais; capital inicial fora do intervalo legado é agora recusado antes da proposta com mensagem 422 explícita. Ver `V20_BLOCO12G_SCHEMA_ALOJADO.md` e os registos `V20_12G_*` em docs/qa. Isto retira a pendência de instalação do esquema, mas não aprova SMTP, privacidade, migração de projetos locais, restauro integral, fluxo autenticado alojado nem teste S25.
