@@ -1,3 +1,5 @@
+> Estado revisto: a experiencia completa da Demo original ainda nao esta integrada na conta V20. Ver [diagnostico do desvio visual](V20_DESVIO_VISUAL_DEMO_20261024.md). A evidencia funcional abaixo continua valida, mas nao demonstra equivalencia integral da interface.
+
 > Atualização posterior: versão 8 com correção do fecho dos formulários e clareza das unidades. Ver [relatório atual](V20_CORRECAO_JANELA_E_UNIDADES_20261024.md). A evidência da versão 7 abaixo é preservada.
 
 # V20 — páginas da Demo ligadas à conta privada
