@@ -1,0 +1,255 @@
+{
+  "version": "v20-private-account-pages-delivery-20261024.1",
+  "verifiedAt": "2026-10-24T17:55:49.258Z",
+  "github": {
+    "repository": "ThunderShockPT/btc-strategy-pro",
+    "branch": "qa/v20-block12-recovery-20261022",
+    "codeCommit": "16706ca657710d2647e90f87fa046c250e5f1467",
+    "pr": 34,
+    "draft": true,
+    "baseBranch": "perf/v20-bounded-risk-paths",
+    "baseCommit": "1177be0f7528ff83350c6e6e170e8b1886374304",
+    "mainCommit": "d26545f36acda2f2c464626fb93ce688d41309af"
+  },
+  "ci": {
+    "runId": 40117758286,
+    "jobs": [
+      {
+        "id": 120942534634,
+        "name": "account-browser",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": null
+      },
+      {
+        "id": 120942534728,
+        "name": "rules",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": null
+      },
+      {
+        "id": 120942534746,
+        "name": "real-auth-runtime (baseline)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": null
+      },
+      {
+        "id": 120942534766,
+        "name": "postgres-atomic",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": null
+      },
+      {
+        "id": 120942534770,
+        "name": "real-auth-runtime (large-12)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": null
+      },
+      {
+        "id": 120942534792,
+        "name": "real-auth-runtime (medium-12)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Wait for real Auth migrations and health",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Real password sessions and native SQL runtime lifecycle",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 9
+          }
+        ]
+      },
+      {
+        "id": 120942534795,
+        "name": "real-auth-runtime (large-1)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 40117758286,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Initialize containers",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 2
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "pending",
+            "conclusion": null,
+            "number": 3
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "pending",
+            "conclusion": null,
+            "number": 4
+          },
+          {
+            "name": "Run npm ci --ignore-scripts",
+            "status": "pending",
+            "conclusion": null,
+            "number": 5
+          },
+          {
+            "name": "Prepare disposable loopback Auth database",
+            "status": "pending",
+            "conclusion": null,
+            "number": 6
+          },
+          {
+            "name": "Start official Auth service in isolated CI",
+            "status": "pending",
+            "conclusion": null,
+            "number": 7
+          },
+          {
+            "name": "Wait for real Auth migrations and health",
+            "status": "pending",
+            "conclusion": null,
+            "number": 8
+          },
+          {
+            "name": "Real password sessions and native SQL runtime lifecycle",
+            "status": "pending",
+            "conclusion": null,
+            "number": 9
+          },
+          {
+            "name": "Sanitized Auth startup diagnostics",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10
+          },
+          {
+            "name": "Dispose Auth service and temporary configuration",
+            "status": "pending",
+            "conclusion": null,
+            "number": 11
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21
+          },
+          {
+            "name": "Stop containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23
+          }
+        ]
+      }
+    ]
+  },
+  "site": {
+    "version": 7,
+    "sourceCommit": "bd40a81860b6ac7ceba6319c33b9672f9d3aa136",
+    "deployment": {
+      "id": "appgdep_6adcf0a7142c8191a8db34907d20d121",
+      "project_id": "appgprj_6ad88188fbf88191896531870c23f213",
+      "title": "BTC Strategy Pro · Prévia V20",
+      "version_id": "appgprj_6ad88188fbf88191896531870c23f213~appgver_d81d0519222881918ca0a7fb159d2d7d",
+      "type": "publish",
+      "status": "succeeded",
+      "url": "https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site",
+      "has_mcp": false,
+      "screenshot_asset_pointer": null,
+      "provider_deployment_id": "site---6ad88188fbf88191896531870c23f213",
+      "failure_message": null,
+      "env_set_revision": 0,
+      "updated_at": "2026-10-24T17:53:55.017422+00:00"
+    },
+    "ownerOnlyAudiencePreserved": true,
+    "externalVisitors": 0
+  },
+  "hostedQA": "V20_ACCOUNT_PAGES_HOSTED_20261024.json",
+  "browserQA": {
+    "widths": [
+      393,
+      1280
+    ],
+    "syntheticAuth": true,
+    "inventedFacts": true,
+    "physicalS25Tested": false,
+    "screenshot": "V20_PRIVATE_ACCOUNT_CARDS_QA_20261024.jpg"
+  },
+  "cloud": {
+    "btcsp-v20-api": {
+      "status": 200,
+      "body": {
+        "cloudAvailable": false,
+        "requestId": "909632be-4a32-402c-bb51-715e2ba8f213"
+      }
+    },
+    "btcsp-v20-account-qa": {
+      "status": 503,
+      "body": {
+        "code": "QA_COMPLETE_CLOSED"
+      }
+    },
+    "btcsp-v20-runtime-qa": {
+      "status": 503,
+      "body": {
+        "code": "QA_COMPLETE_CLOSED"
+      }
+    },
+    "btcsp-v20-private-test": {
+      "status": 200,
+      "body": {
+        "cloudAvailable": true,
+        "requestId": "df0735bc-0a1f-4b82-9871-5eb9fd198853"
+      }
+    },
+    "btcsp-v20-private-provision": {
+      "status": 503,
+      "body": {
+        "code": "PRIVATE_PROVISION_CLOSED"
+      }
+    }
+  },
+  "ownerFinancialSnapshotUnchanged": true,
+  "qaAccounts": {
+    "qa_users": 22,
+    "qa_banned": 22,
+    "qa_sessions": 0
+  },
+  "productionApproved": false,
+  "block12Closed": false,
+  "blocks13To15Approved": false
+}

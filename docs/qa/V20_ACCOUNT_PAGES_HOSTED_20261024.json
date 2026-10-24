@@ -354,5 +354,40 @@
       "rules_observed_at": "2026-10-24T17:39:40.547Z",
       "recorded_at": "2026-10-24 17:39:48.967156+00"
     }
-  ]
+  ],
+  "requestTimings": {
+    "scope": "End-to-end curl/API/SQL from this executor, not isolated CPU time or S25 latency",
+    "wallet": {
+      "prepareMs": 8188,
+      "qaInteractionPauseMs": 0,
+      "commitMs": 8568,
+      "totalMeasuredMs": 16756
+    },
+    "margin": {
+      "prepareMs": 11560,
+      "qaInteractionPauseMs": 0,
+      "commitMs": 7483,
+      "totalMeasuredMs": 19043
+    },
+    "buy": {
+      "prepareMs": 8137,
+      "qaInteractionPauseMs": 5000,
+      "commitMs": 7735,
+      "totalMeasuredMs": 20872
+    },
+    "void": {
+      "prepareMs": 9947,
+      "qaInteractionPauseMs": 0,
+      "commitMs": 8206,
+      "totalMeasuredMs": 18153
+    },
+    "restore": {
+      "prepareMs": 8586,
+      "qaInteractionPauseMs": 0,
+      "commitMs": 7676,
+      "totalMeasuredMs": 16262
+    },
+    "calculationToUnacceptedReviewMs": 46227,
+    "humanPlanReadingApproved": false
+  }
 }

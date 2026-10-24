@@ -30,3 +30,13 @@ No fim: 22 identidades QA bloqueadas e zero sessões QA em SQL; função private
 ## Limites e sequência
 
 A prévia permanece no Site privado existente e o acesso público de produção continua fechado. O Bloco 12 permanece aberto: importação de posição existente, privacidade/eliminação/portabilidade integral, restauro operacional, capacidade e teste físico S25 mantêm critérios próprios. SMTP depende de domínio BTC e continua separado. Os Blocos 13–15 não ficam aprovados por esta integração.
+
+## Publicação verificada
+
+As sete tarefas do CI [40117758286](https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40117758286) passaram no commit `16706ca657710d2647e90f87fa046c250e5f1467`, incluindo os testes das cinco páginas, conversão, correção em lote, isolamento, sessão e Demo. Os testes usam Auth simulada no browser; o ensaio alojado de Auth/SQL reais é a evidência separada referida acima. A navegação da correção em lote foi também observada interativamente, com a aceitação inicialmente desmarcada.
+
+A versão 7 foi publicada com sucesso no [mesmo Site privado](https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site). O commit do artefacto no repositório Sites é `bd40a81860b6ac7ceba6319c33b9672f9d3aa136`; `version-v20.json` identifica o commit GitHub acima. O arquivo final foi verificado sem a sessão fictícia de QA nem o contacto administrativo. O acesso mantém um proprietário, sem visitantes externos, grupos ou editores adicionais. Ver [recibo de publicação e CI](qa/V20_ACCOUNT_PAGES_RELEASE_20261024.json).
+
+A preparação e gravação da compra fictícia demoraram 8,137 s e 7,735 s, com uma pausa QA adicional de 5 s: 20,872 s medidos neste executor. O percurso do cálculo até à proposta não aceite demorou 46,227 s em cinco pedidos. Estes tempos incluem transporte, processamento e SQL; não são tempos isolados de CPU nem latência medida no S25. Não se confirmou automaticamente o plano.
+
+Para verificar no S25, recarregar a página no Chrome e usar a carteira existente. Início mostra os saldos e a posição; Estratégias mostra o plano e o registo de execuções; Conta reúne o histórico e a exportação. Qualquer facto em falta continua a exigir dados efetivos, revisão nova e confirmação da pessoa. A aplicação não deve ser usada para inferir uma transferência de margem a partir de um depósito em caixa. O teste físico continua pendente.
