@@ -7,7 +7,7 @@ const reply=(status,body)=>Response.json(body,{status,headers:{'Cache-Control':'
 function create({config,fixture,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),memory=()=>({})}){
  if(![1,12].includes(config.maxCycles))throw Error('QA_CAPACITY_REQUIRED');
  const scope={ownerId:config.accounts[0].id,projectId:config.accounts[0].projectId,scenarioKey:'manual_long'};
- const source=P.stage(fixture,scope).payload.source;
+ const source=fixture;if(source?.input?.ownerId!==scope.ownerId||source.input.projectId!==scope.projectId||source.input.scenarioKey!==scope.scenarioKey||source?.plan?.ownerId!==scope.ownerId||source.plan.projectId!==scope.projectId||source.plan.scenarioKey!==scope.scenarioKey)throw Error('QA_FIXTURE_SCOPE_REQUIRED');
  if(source.input.events.length>5000||source.input.rules.qaFixture?.kind!=='synthetic-not-Kraken-verification')throw Error('QA_FIXTURE_REQUIRED');
  const rules=source.input.rules,clock=()=>new Date(now()).toISOString();
  let contextError=null;
@@ -17,7 +17,7 @@ function create({config,fixture,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),m
   const pair=publicPair();
   return Runtime.create({...options,contextProvider:observed(pair.contextProvider),planContextProvider:observed(pair.planContextProvider),setupContextProvider:async()=>{throw Error('QA_SETUP_NOT_SUPPORTED');}});
  }});
- async function initialize(){const db=Database.create({Pool,connectionString:Account.connection(getEnv('SUPABASE_DB_URL'))});try{return await db.transaction(async tx=>{
+ async function initialize(){P.stage(source,scope);const db=Database.create({Pool,connectionString:Account.connection(getEnv('SUPABASE_DB_URL'))});try{return await db.transaction(async tx=>{
   const user=(await tx.query("select id from auth.users where id=$1 and raw_app_meta_data->>'btcsp_qa_run'=$2 and (banned_until is null or banned_until <= now())",[scope.ownerId,config.runId])).rows;
   if(user.length!==1)throw Error('QA_ACCOUNT_SCOPE_MISMATCH');
   const old=await tx.query('select state_hash from btcsp_private.project_heads where project_id=$1 and owner_id=$2',[scope.projectId,scope.ownerId]);

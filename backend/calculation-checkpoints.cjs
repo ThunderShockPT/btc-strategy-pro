@@ -38,10 +38,10 @@ function create({key,loadSnapshot,loadBasis=null,contextProvider,policyProvider,
   const p={version:VERSION,engineBuild:ENGINE_BUILD,scope:clone(s),headHash:base.headHash,...(loadBasis?{sourceFingerprint:base.sourceFingerprint}:{}),createdAt,expiresAt:new Date(expiry).toISOString(),sequence:0,search,...(profileContext?{profileContext}: {})};fresh(p);admitWindow();return seal(p);
  }
  async function advance(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);if(p.search.done)return seal(p);
-  // Hosted Auth/SQL latency dominates small histories. Bound small requests by
-  // both source count and serialized search size; retain previous large bounds.
+  // Provisional request bound: one scenario and at most eight path steps for
+  // up to 5000 events/4 MB. Oversized searches retain single-step progress.
   const events=p.search.input.events.length,bytes=Buffer.byteLength(JSON.stringify(p.search),'utf8');
-  const batch=events<=100&&bytes<=256000?maxPathStepsPerUnit:events<=5000&&bytes<=4000000?Math.min(maxPathStepsPerUnit,2):1;
+  const batch=events<=5000&&bytes<=4000000?maxPathStepsPerUnit:1;
   const search=Cycles.advanceSearch(p.search,{maxScenarios:1,maxPathSteps:batch});fresh(p);return seal({...p,sequence:p.sequence+1,search});}
  async function result(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);const value=p.profileContext?Profiles.completePreview(p.search.input,p.profileContext.plan,p.profileContext.request,p.search):Cycles.searchResult(p.search);fresh(p);return value;}
  async function reviewSource(token,s,envelope){const p=verify(s,envelope);await current(token,s,p);Cycles.searchResult(p.search);fresh(p);return freeze(clone({headHash:p.headHash,engineBuild:p.engineBuild,createdAt:p.createdAt,expiresAt:p.expiresAt,search:p.search,...(p.profileContext?{profileContext:p.profileContext}: {})}));}

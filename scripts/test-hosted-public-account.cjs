@@ -7,6 +7,7 @@ test('fixed public-source fixtures require capability, expiry, server scope and 
  const c=config(f.uuid(8200)),scope={ownerId:f.A,projectId:c.accounts[0].projectId,scenarioKey:'manual_long'},fixture=Capacity.state('baseline',scope,new Date().toISOString());let calls=0;const h=H.create({config:c,fixture,getEnv:()=>{calls++;throw Error('unexpected configuration access');}});
  assert.equal((await h(request('{}','b'.repeat(64)))).status,401);assert.equal((await h(request('{"projectId":"caller-input"}'))).status,400);const old=H.create({config:c,fixture,getEnv:()=>{calls++;},now:()=>Date.parse(c.expiresAt)});assert.equal((await old(request())).status,503);assert.equal(calls,0);
  const other=structuredClone(fixture);other.input.ownerId=f.B;assert.throws(()=>H.create({config:c,fixture:other}),/SCOPE/);const unmarked=structuredClone(fixture);delete unmarked.input.rules.qaFixture;assert.throws(()=>H.create({config:c,fixture:unmarked}),/QA_FIXTURE_REQUIRED/);
+ const invalid=structuredClone(fixture);invalid.input.events[0].facts.amountUSD='invalid';const bad=H.create({config:c,fixture:invalid,getEnv:()=>{calls++;throw Error('NO_SQL_FOR_INVALID_FIXED_HISTORY');}});assert.equal((await bad(request())).status,503);assert.equal(calls,0);
 });
 test('public-source diagnosis preserves the fixed URLs, sends no account credentials and distinguishes failure before SQL',async()=>{
  const c=config(f.uuid(8205)),scope={ownerId:f.A,projectId:c.accounts[0].projectId,scenarioKey:'manual_long'},fixture=Capacity.state('baseline',scope,new Date().toISOString()),urls=[];
