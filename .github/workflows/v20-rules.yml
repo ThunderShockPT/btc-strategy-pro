@@ -28,6 +28,7 @@ jobs:
           node --test scripts/test-account-wallets.cjs
           node --test scripts/test-account-export.cjs
           node --test scripts/test-account-session.cjs
+          node --test scripts/test-hosted-schema-rehearsal.cjs
           node scripts/build-account-host.cjs
           node --test scripts/test-calculation-window.cjs
           node --test scripts/test-calculation-plan-review.cjs
@@ -131,7 +132,9 @@ jobs:
         env:
           BTCSP_TEST_PG_URL: postgresql://postgres:btcsp_local_qa_only@127.0.0.1:5432/postgres
           BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
-        run: node --test scripts/test-atomic-postgres.cjs
+        run: |
+          node --test scripts/test-atomic-postgres.cjs
+          node --test scripts/test-hosted-schema-rehearsal.cjs
 
   real-auth-runtime:
     strategy:

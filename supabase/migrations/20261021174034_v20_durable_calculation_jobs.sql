@@ -39,7 +39,7 @@ create index btcsp_calculation_jobs_pending on btcsp_private.calculation_jobs(st
 alter table btcsp_private.calculation_jobs enable row level security;
 revoke all on btcsp_private.calculation_jobs from public,anon,authenticated;
 grant select,insert,update on btcsp_private.calculation_jobs to service_role;
-create function btcsp_private.reject_calculation_job_rebase() returns trigger language plpgsql as $$
+create function btcsp_private.reject_calculation_job_rebase() returns trigger language plpgsql security invoker set search_path = '' as $$
 begin
  if row(new.id,new.owner_id,new.project_id,new.scenario_key,new.idempotency_key,new.basis_hash,new.expires_at,new.created_at)
   is distinct from row(old.id,old.owner_id,old.project_id,old.scenario_key,old.idempotency_key,old.basis_hash,old.expires_at,old.created_at)
