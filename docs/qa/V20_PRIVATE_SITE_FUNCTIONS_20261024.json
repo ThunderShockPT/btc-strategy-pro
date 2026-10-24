@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-24T16:40:25.839Z",
+  "functions": [
+    {
+      "name": "btcsp-v20-api",
+      "status": 200,
+      "cloudAvailable": false
+    },
+    {
+      "name": "btcsp-v20-account-qa",
+      "status": 503,
+      "code": "QA_COMPLETE_CLOSED"
+    },
+    {
+      "name": "btcsp-v20-runtime-qa",
+      "status": 503,
+      "code": "QA_COMPLETE_CLOSED"
+    },
+    {
+      "name": "btcsp-v20-private-provision",
+      "status": 503,
+      "code": "PRIVATE_PROVISION_CLOSED"
+    },
+    {
+      "name": "btcsp-v20-private-test",
+      "status": 200,
+      "cloudAvailable": true
+    }
+  ]
+}
