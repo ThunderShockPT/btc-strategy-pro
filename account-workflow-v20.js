@@ -34,7 +34,7 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
   }
   if(job.status!=='completed'){phase=job.status==='cancelled'?'cancelled':'blocked';error={code:job.errorCode||'CALCULATION_BLOCKED',message:messages[job.errorCode]||'O cálculo foi bloqueado. Atualiza a carteira e revê os dados.'};return copy(job);}
   if(pause||shouldPause()){phase='paused';return copy(job);}
-  result=await client.calculationResult();ensure(ticket);phase='calculated';return copy(result);
+  result=job.completedResult??await client.calculationResult();ensure(ticket);phase='calculated';return copy(result);
  }
  async function calculate(profileChange){return action(async ticket=>{
   if(client.state().hasPending||client.state().hasUncertainCalculationStart)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');

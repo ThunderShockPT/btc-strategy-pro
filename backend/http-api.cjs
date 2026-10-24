@@ -36,7 +36,8 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
    let count=0,parts=[];try{for(;;){const {done,value}=await reader.read();if(done)break;count+=value.byteLength;if(count>96000)return reply(413,{code:'REQUEST_TOO_LARGE'});parts.push(value);}}finally{await reader.cancel().catch(()=>{});}
    let body;try{body=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{return reply(400,{code:'INVALID_API_REQUEST'});}
    const required=jobRoute?['projectId','scenarioKey',jobAction==='enqueue'?'request':'jobId']:['/api/v20/state','/api/v20/wallets','/api/v20/export'].includes(url.pathname)?['projectId','scenarioKey']:url.pathname==='/api/v20/prepare'?['projectId','scenarioKey','request']:['projectId','scenarioKey','request','confirmation'];
-   if(!body||Array.isArray(body)||required.some(k=>!Object.hasOwn(body,k))||Object.keys(body).some(k=>!required.includes(k)&&!(url.pathname==='/api/v20/wallets'&&k==='afterProjectId'))||!ID.test(body.projectId)||!['manual_long','demo_long'].includes(body.scenarioKey))return reply(400,{code:'INVALID_API_REQUEST'});
+   if(!body||Array.isArray(body)||required.some(k=>!Object.hasOwn(body,k))||Object.keys(body).some(k=>!required.includes(k)&&!(url.pathname==='/api/v20/wallets'&&k==='afterProjectId')&&!(jobAction==='advance'&&k==='includeResult'))||!ID.test(body.projectId)||!['manual_long','demo_long'].includes(body.scenarioKey))return reply(400,{code:'INVALID_API_REQUEST'});
+   if(Object.hasOwn(body,'includeResult')&&typeof body.includeResult!=='boolean')return reply(400,{code:'INVALID_API_REQUEST'});
    if(jobRoute&&(jobAction==='enqueue'?(!body.request||Array.isArray(body.request)||Object.keys(body.request).some(k=>!['idempotencyKey','profileChange'].includes(k))||typeof body.request.idempotencyKey!=='string'||body.request.idempotencyKey.length<1||body.request.idempotencyKey.length>128):!ID.test(body.jobId)))return reply(400,{code:'INVALID_API_REQUEST'});
    // Owner is derived from a remotely validated identity, not from the JSON body.
    const user=await auth.authenticate(token),scope={ownerId:user.id,projectId:body.projectId,scenarioKey:body.scenarioKey};
@@ -47,7 +48,9 @@ function create({db,auth,contextProvider,planContextProvider=null,setupContextPr
     const jobs=options.calculationJobs;if(!jobs)return reply(503,{code:'CALCULATIONS_NOT_ENABLED'});
     const method=jobAction==='advance'?'runUnit':jobAction;
     const result=await jobs[method](token,scope,jobAction==='enqueue'?body.request:body.jobId);
-    return reply(200,{result});
+    // The result service still checks the live SQL session, source and expiry.
+    const completedResult=body.includeResult===true&&result.status==='completed'?await jobs.result(token,scope,body.jobId):undefined;
+    return reply(200,{result:completedResult===undefined?result:{...result,completedResult}});
    }
    if(url.pathname==='/api/v20/wallets'){if(body.afterProjectId!==undefined&&!ID.test(body.afterProjectId))return reply(400,{code:'INVALID_WALLET_CURSOR'});return reply(200,{result:await Wallet.create(options).list(token,scope,{afterProjectId:body.afterProjectId??null})});}
    const api=body.request?.workflow==='wallet-create'?Wallet.create(options):Store.create(options);

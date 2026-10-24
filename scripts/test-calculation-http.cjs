@@ -17,8 +17,13 @@ test('authenticated HTTP calculation lifecycle preserves financial state and iso
  const cancelled=await call('cancel',{jobId:id});assert.equal(cancelled.result.status,'cancelled');
  assert.equal((await call('advance',{jobId:id})).result.status,'cancelled');
  const second=await call('enqueue',{request:{idempotencyKey:'http-complete'}});let progress=second.result;
- for(let n=0;progress.status!=='completed';n++){assert(n<300);const step=await call('advance',{jobId:progress.id});assert.equal(step.status,200);progress=step.result;}
+ for(let n=0;progress.status!=='completed';n++){assert(n<300);const step=await call('advance',{jobId:progress.id,includeResult:true});assert.equal(step.status,200);progress=step.result;if(progress.status!=='completed')assert.equal(Object.hasOwn(progress,'completedResult'),false);}
  const completed=await call('result',{jobId:progress.id});assert.equal(completed.status,200);assert.equal(completed.result.plannerVersion,'v20-cycles-6.1');
+ assert.deepEqual(progress.completedResult,completed.result);assert(!JSON.stringify(progress).includes('envelope'));assert(!JSON.stringify(progress).includes('lease_id'));assert(!JSON.stringify(progress).includes('profileContext'));
+ assert.equal(Object.hasOwn((await call('advance',{jobId:progress.id})).result,'completedResult'),false);
+ for(const includeResult of [null,'true',1,{}])assert.equal((await call('advance',{jobId:progress.id,includeResult})).status,400);
+ assert.equal((await call('status',{jobId:progress.id,includeResult:true})).status,400);
+ assert.equal((await call('advance',{jobId:progress.id,includeResult:true},f.TB)).status,404);
  assert.deepEqual(await store.snapshot(f.TA,scope),before);
  assert(!JSON.stringify(created).includes('envelope'));assert(!JSON.stringify(created).includes('lease_id'));
  assert(buckets.includes('/api/v20/prepare'));assert(buckets.includes('/api/v20/state'));assert(buckets.includes('/api/v20/commit'));assert(buckets.includes('/api/v20/calculations/advance'));assert(buckets.every(p=>['/api/v20/prepare','/api/v20/state','/api/v20/commit','/api/v20/calculations/advance'].includes(p)));

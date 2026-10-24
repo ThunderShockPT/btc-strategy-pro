@@ -133,9 +133,10 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
   const history=[...base.state.planHistory];if(nextPlan.id!==base.state.plan.id)history.push(base.state.plan);
   const state={...base.state,input:next.nextInput,plan:nextPlan,planHistory:history};P.stage(state,s);
   const originals=new Map(base.state.input.events.map(e=>[e.id,e]));
-  need(state.input.events.filter(e=>originals.has(e.id)).every(e=>hash(e)===hash(originals.get(e.id))),'SOURCE_EVENT_MUTATION');
+  need(state.input.events.filter(e=>originals.has(e.id)).every(e=>P.canonical(e)===P.canonical(originals.get(e.id))),'SOURCE_EVENT_MUTATION');
   const events=state.input.events.filter(e=>!originals.has(e.id));need(planWorkflow?events.length===0&&nextPlan.id!==base.state.plan.id:events.length>0,'INVALID_WORKFLOW_EVENT_EFFECTS');
-  need(state.input.events.length===originals.size+events.length&&[...originals.keys()].every(id=>state.input.events.some(e=>e.id===id)),'SOURCE_EVENT_REMOVAL');
+  const nextEventIds=new Set(state.input.events.map(e=>e.id));
+  need(nextEventIds.size===state.input.events.length&&state.input.events.length===originals.size+events.length&&[...originals.keys()].every(id=>nextEventIds.has(id)),'SOURCE_EVENT_REMOVAL');
   const sorted=[...events].sort((a,b)=>BigInt(a.revision)<BigInt(b.revision)?-1:1);
   need(sorted.every((e,i)=>BigInt(e.revision)===BigInt(base.head.revision)+BigInt(i)+1n),'NON_CONTIGUOUS_REVISIONS');
   const {context,extras}=split(state),stateHash=sourceHash(state);

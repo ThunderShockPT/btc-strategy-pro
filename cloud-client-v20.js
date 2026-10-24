@@ -30,7 +30,7 @@ function create({baseURL,apiPath='/api/v20',projectId,scenarioKey,getSession,fet
   const enqueue=action==='enqueue'||action==='retry-enqueue';
   if(!enqueue&&!calculation)throw Error('CALCULATION_REQUIRED');
   try{
-   const result=await call('calculations/'+(enqueue?'enqueue':action),enqueue?{request:calculationRequest}:{jobId:calculation.id});ensure(seq);
+   const result=await call('calculations/'+(enqueue?'enqueue':action),enqueue?{request:calculationRequest}:{jobId:calculation.id,...(action==='advance'?{includeResult:true}:{})});ensure(seq);
    if(enqueue||action!=='result'){
     if(typeof result.id!=='string'||typeof result.status!=='string') {const e=Error('CLOUD_RESPONSE_UNCERTAIN');e.uncertain=true;throw e;}
     calculation=copy(result);
