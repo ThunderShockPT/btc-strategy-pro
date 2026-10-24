@@ -60,14 +60,22 @@ test('a two-step request completing after its original deadline cannot return pr
  await assert.rejects(x.service.advance('owner',scope,e),/CALCULATION_EXPIRED/);
 });
 
-test('two-scenario grouped requests preserve full results across worker resumes and reject late or oversized work',async()=>{
+test('three-scenario grouped requests preserve full results across worker resumes and reject late or oversized work',async()=>{
  for(const c of baseline.cases){
   const x=fixture(),v=example(c);v.input.valuation.kind="manual_mark";v.policy.requireFailedMarginSurvival=true;const options={...x.options,maxPathStepsPerUnit:32,loadSnapshot:async()=>({headHash:'a'.repeat(64),state:{input:v.input,plan:v.plan}}),contextProvider:async()=>({rules:v.input.rules,valuation:v.input.valuation}),policyProvider:async()=>v.policy};
   let e=await Checkpoints.create(options).start('owner',scope),original=json(e),calls=0;
-  while(!e.payload.search.done){const previous=e;e=await Checkpoints.create(options).advance('owner',scope,json(e));assert.equal(e.payload.sequence,previous.payload.sequence+1);assert(e.payload.search.unitsCompleted-previous.payload.search.unitsCompleted<=2);assert.equal(e.payload.expiresAt,original.payload.expiresAt);assert(++calls<200);}
+  while(!e.payload.search.done){const previous=e;e=await Checkpoints.create(options).advance('owner',scope,json(e));assert.equal(e.payload.sequence,previous.payload.sequence+1);assert(e.payload.search.unitsCompleted-previous.payload.search.unitsCompleted<=3);assert.equal(e.payload.expiresAt,original.payload.expiresAt);assert(++calls<200);}
   assert.deepEqual(await Checkpoints.create(options).result('owner',scope,e),Cycles.generate(v.input,v.plan,v.policy));assert.deepEqual(original.payload.search,Cycles.beginSearch(v.input,v.plan,v.policy));
  }
  const x=fixture(),e=await x.service.start('owner',scope);let ticks=0;const late=Checkpoints.create({...x.options,maxPathStepsPerUnit:32,now:()=>{if(++ticks===3)x.setTime(Date.parse(e.payload.expiresAt));return x.options.now();}});await assert.rejects(late.advance('owner',scope,e),/CALCULATION_EXPIRED/);
  for(const size of [5001]){const x=fixture(),input=require('./benchmark-large-checkpoints.cjs').fixture(size,'deposits'),options={...x.options,loadSnapshot:async()=>({headHash:'a'.repeat(64),state:{input,plan:f.plan()}}),contextProvider:async()=>({rules:input.rules,valuation:input.valuation})},initial=await Checkpoints.create(options).start('owner',scope);assert.deepEqual(await Checkpoints.create({...options,maxPathStepsPerUnit:32}).advance('owner',scope,initial),await Checkpoints.create({...options,maxPathStepsPerUnit:1}).advance('owner',scope,initial));}
  const y=fixture();y.state.input.events[0].qaPadding='x'.repeat(4100000);const large=await y.service.start('owner',scope);assert.deepEqual(await Checkpoints.create({...y.options,maxPathStepsPerUnit:32}).advance('owner',scope,large),await Checkpoints.create({...y.options,maxPathStepsPerUnit:1}).advance('owner',scope,large));
+});
+
+test('5000 mixed facts and twelve full cycles keep the complete result with three bounded 96-step requests',async()=>{
+ const input=require('./benchmark-large-checkpoints.cjs').fixture(5000,'trades'),plan=f.plan(),market=require('./helpers/onboarding-fixture.cjs').context().market;plan.protectionFloorUSD='60000';market.askDepthUSD='12270.2';
+ const options={key:Buffer.alloc(32,41),enabled:true,now:()=>f.now,loadSnapshot:async()=>({headHash:'a'.repeat(64),state:{input,plan}}),contextProvider:async()=>({rules:input.rules,valuation:input.valuation}),profileContextProvider:async()=>({market,baseCyclePolicy:{...f.policy(),maxCycles:12}}),policyProvider:async()=>{throw Error('UNEXPECTED_GENERIC_POLICY');}},selection={profile:'balanced',floorMode:'preserve',marginAdmission:'strict'};
+ let checkpoint=await Checkpoints.create(options).start('owner',scope,{profileChange:selection}),steps=0;const expiry=checkpoint.payload.expiresAt;
+ while(!checkpoint.payload.search.done){const units=checkpoint.payload.search.unitsCompleted;checkpoint=await Checkpoints.create(options).advance('owner',scope,json(checkpoint));assert(checkpoint.payload.search.unitsCompleted-units<=3);assert.equal(checkpoint.payload.expiresAt,expiry);assert(++steps<=3);}
+ const result=await Checkpoints.create(options).result('owner',scope,checkpoint),expected=require('../risk-profiles.js').preview(input,plan,{...selection,market,baseCyclePolicy:{...f.policy(),maxCycles:12}});assert.equal(result.cycles.newCycleCount,12);assert.deepEqual(result,expected);assert.equal(input.events.length,5000);
 });

@@ -34,3 +34,11 @@ test('job expiry is never renewed by preparing a review; altered signed payload 
 test('a stored payload changed without its MAC cannot become a server review',async t=>{
  const x=await setup(t),job=await x.finish('tampered-review'),row=(await x.db.query('select envelope from btcsp_private.calculation_jobs where id=$1',[job.id])).rows[0];row.envelope.payload.search.input.valuation.markPriceUSD='1';await x.db.query('update btcsp_private.calculation_jobs set envelope=$2 where id=$1',[job.id,row.envelope]);await assert.rejects(x.reviewStore.prepare(f.TA,scope,request(2104,job.id)),/INVALID_CALCULATION_SIGNATURE/);assert.equal((await x.jobs.status(f.TA,scope,job.id)).status,'blocked');
 });
+
+test('factored inputs retain their digest, reject corruption and read legacy full-input reviews without changing confirmation',async t=>{
+ const x=await setup(t),job=await x.finish('factored-review'),cmd=request(2110,job.id),p=await x.reviewStore.prepare(f.TA,scope,cmd),row=(await x.db.query('select * from btcsp_private.command_reviews where review_hash=$1',[p.reviewHash])).rows[0];
+ assert.equal(Object.hasOwn(row.payload.completedSearch,'input'),false);assert.match(row.payload.completedSearchInputHash,/^[a-f0-9]{64}$/);
+ async function replace(payload){await x.db.query('delete from btcsp_private.command_reviews where review_hash=$1',[p.reviewHash]);await x.db.query('insert into btcsp_private.command_reviews(project_id,owner_id,scenario_key,review_hash,request_hash,basis_hash,payload,expires_at,recorded_at) values($1,$2,$3,$4,$5,$6,$7,$8,$9)',[f.P,f.A,'demo_long',p.reviewHash,row.request_hash,row.basis_hash,payload,row.expires_at,row.recorded_at]);}
+ await replace({...row.payload,completedSearchInputHash:'0'.repeat(64)});await assert.rejects(x.reviewStore.commit(f.TA,scope,cmd,confirmation(p)),/REVIEW_CHANGED_OR_TAMPERED/);assert.equal((await x.db.query('select count(*)::int n from btcsp_private.command_receipts')).rows[0].n,0);
+ const legacy=JSON.parse(JSON.stringify(row.payload));legacy.completedSearch.input=legacy.state.input;delete legacy.completedSearchInputHash;await replace(legacy);assert.equal((await x.reviewStore.commit(f.TA,scope,cmd,confirmation(p))).planApplied,true);
+});

@@ -8,7 +8,8 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
  if(!client||typeof client.startCalculation!=='function')throw Error('ACCOUNT_CLIENT_REQUIRED');
  let generation=0,busy=false,pause=false,snapshot=null,result=null,review=null,receipt=null,error=null,phase='idle',movementDraft=null,movementRequest=null,calculationObsolete=false,executionDraft=null,executionRequest=null,journal=null,historyPage=0,receiptKind=null,wallets=[],nextWalletCursor=null,walletDraft=null,walletRequest=null,walletPreviousScope=null;
  const listeners=new Set([onChange]);
- function state(){const c=client.state();return {phase,busy,wallets:copy(wallets),nextWalletCursor,walletDraft:copy(walletDraft),tutorialCatalog:copy(tutorialCatalog),selectedProjectId:c.projectId,snapshot:copy(snapshot),job:calculationObsolete?null:copy(c.calculation),result:copy(result),review:copy(review),receipt:copy(receipt),receiptKind,error:copy(error),hasPending:c.hasPending,hasUncertainCalculationStart:c.hasUncertainCalculationStart,movementDraft:copy(movementDraft),executionDraft:copy(executionDraft),history:journal?copy(journal.records.slice().reverse().slice(historyPage*50,(historyPage+1)*50)):[],historyCount:journal?.records.length||0,historyPage,expired:!!review&&Date.parse(review.expiresAt)<=now()};}
+ function reviewClock(){const remainingMs=review?Math.max(0,Date.parse(review.expiresAt)-now()):null;return {reviewHash:review?.reviewHash??null,remainingMs,expired:review!==null&&remainingMs<=0,busy,canConfirm:review!==null&&applicable(review.review)&&phase!=='commit-uncertain'};}
+ function state(){const c=client.state();return {reviewRemainingMs:reviewClock().remainingMs,phase,busy,wallets:copy(wallets),nextWalletCursor,walletDraft:copy(walletDraft),tutorialCatalog:copy(tutorialCatalog),selectedProjectId:c.projectId,snapshot:copy(snapshot),job:calculationObsolete?null:copy(c.calculation),result:copy(result),review:copy(review),receipt:copy(receipt),receiptKind,error:copy(error),hasPending:c.hasPending,hasUncertainCalculationStart:c.hasUncertainCalculationStart,movementDraft:copy(movementDraft),executionDraft:copy(executionDraft),history:journal?copy(journal.records.slice().reverse().slice(historyPage*50,(historyPage+1)*50)):[],historyCount:journal?.records.length||0,historyPage,expired:!!review&&Date.parse(review.expiresAt)<=now()};}
  function emit(){const value=state();for(const listener of listeners)listener(copy(value));}
  function clear(){generation++;pause=true;client.clearSession();snapshot=result=review=receipt=error=movementDraft=movementRequest=executionDraft=executionRequest=journal=receiptKind=walletDraft=walletRequest=walletPreviousScope=null;wallets=[];nextWalletCursor=null;calculationObsolete=false;busy=false;phase='signed-out';emit();}
  function ensure(ticket){if(ticket!==generation)throw Error('SESSION_CHANGED');}
@@ -26,15 +27,16 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
  });}
  async function load(){return action(async ticket=>{const value=await client.read();ensure(ticket);if(snapshot&&snapshot.headHash!==value.headHash){review=result=movementRequest=executionRequest=executionDraft=null;calculationObsolete=true;}snapshot=value;journal=Journal.project(value.state.input.events);historyPage=0;phase=client.state().hasPending?'commit-uncertain':'ready';return copy(value);});}
  async function run(ticket,job){
-  let steps=0;
-  while(job.status==='queued'||job.status==='running'){
+  let steps=0;const reviewPlan=snapshot?{id:newId(),version:String(BigInt(snapshot.state.plan.version)+1n)}:undefined;
+  while(job.status==='queued'||job.status==='running'||job.reviewPending===true){
    if(pause||shouldPause()||job.busy===true||job.status==='running'&&job.canResume===false){phase='paused';return copy(job);}
    if(++steps>10000)throw Error('CALCULATION_PROGRESS_LIMIT');
-   job=await client.advanceCalculation();ensure(ticket);emit();
+   job=await client.advanceCalculation(reviewPlan,{prepareReview:job.reviewPending===true});ensure(ticket);emit();
   }
   if(job.status!=='completed'){phase=job.status==='cancelled'?'cancelled':'blocked';error={code:job.errorCode||'CALCULATION_BLOCKED',message:messages[job.errorCode]||'O cálculo foi bloqueado. Atualiza a carteira e revê os dados.'};return copy(job);}
   if(pause||shouldPause()){phase='paused';return copy(job);}
-  result=job.completedResult??await client.calculationResult();ensure(ticket);phase='calculated';return copy(result);
+  if(!job.completedResult&&reviewPlan){job=await client.advanceCalculation(reviewPlan,{prepareReview:true});ensure(ticket);}
+  result=job.completedResult??await client.calculationResult();ensure(ticket);review=job.completedReview??null;phase=review?'review':'calculated';return copy(result);
  }
  async function calculate(profileChange){return action(async ticket=>{
   if(client.state().hasPending||client.state().hasUncertainCalculationStart)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');
@@ -50,6 +52,7 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
  async function preparePlan(){return action(async ticket=>{
   const c=client.state();if(c.hasPending||c.hasUncertainCalculationStart)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');
   if(!snapshot||!result||c.calculation?.status!=='completed')throw Error('COMPLETED_CALCULATION_REQUIRED');
+  if(review?.request?.workflow==='plan-calculation'&&review.request.command.jobId===c.calculation.id){phase='review';return copy(review);}
   movementDraft=movementRequest=executionDraft=executionRequest=null;review=null;const version=String(BigInt(snapshot.state.plan.version)+1n);
   const value=await client.prepare({workflow:'plan-calculation',command:{mode:'recorded',jobId:c.calculation.id,change:{id:newId(),version}}});ensure(ticket);if(!Number.isFinite(Date.parse(value.expiresAt)))throw Error('INVALID_SERVER_REVIEW');review=value;phase='review';return copy(value);
  });}
@@ -116,7 +119,7 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
   const value=await client.confirm({reviewHash,acceptPlanLinkCleanup,...(review.review.type==='wallet-setup-review'?{tutorialAcknowledgment:acknowledgment()}:{})});ensure(ticket);applied(value);return copy(value);
  });}
  async function retryConfirmation(){return action(async ticket=>{const value=await client.retry();ensure(ticket);applied(value);return copy(value);});}
- return Object.freeze({state,load,exportWallet:()=>action(async ticket=>{requireReconciled();const result=await client.exportWallet();ensure(ticket);if(result.format!=='btcsp-wallet-export-v20.1'||result.projectRef!=='oftzqqjbwonngubihrsd'||result.automaticRestoreAllowed!==false)throw Error('INVALID_WALLET_EXPORT');return result;}),listWallets,selectWallet,editWallet,discardWallet,prepareWallet,calculate,resume,cancel,pause:pauseCalculation,preparePlan,editMovement,discardMovement,prepareMovement,editExecution,discardExecution,prepareExecution,confirm,retryConfirmation,clearSession:clear,pageHistory(delta){if(busy||!journal||![-1,1].includes(delta))return;historyPage=Math.max(0,Math.min(Math.max(0,Math.ceil(journal.records.length/50)-1),historyPage+delta));emit();},subscribe(fn){listeners.add(fn);fn(state());return ()=>listeners.delete(fn);}});
+ return Object.freeze({state,reviewClock,load,exportWallet:()=>action(async ticket=>{requireReconciled();const result=await client.exportWallet();ensure(ticket);if(result.format!=='btcsp-wallet-export-v20.1'||result.projectRef!=='oftzqqjbwonngubihrsd'||result.automaticRestoreAllowed!==false)throw Error('INVALID_WALLET_EXPORT');return result;}),listWallets,selectWallet,editWallet,discardWallet,prepareWallet,calculate,resume,cancel,pause:pauseCalculation,preparePlan,editMovement,discardMovement,prepareMovement,editExecution,discardExecution,prepareExecution,confirm,retryConfirmation,clearSession:clear,pageHistory(delta){if(busy||!journal||![-1,1].includes(delta))return;historyPage=Math.max(0,Math.min(Math.max(0,Math.ceil(journal.records.length/50)-1),historyPage+delta));emit();},subscribe(fn){listeners.add(fn);fn(state());return ()=>listeners.delete(fn);}});
 }
 return Object.freeze({create,messages,applicable});
 });

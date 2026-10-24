@@ -55,22 +55,23 @@ async function sourceFingerprint(tx,s){
  )::text,'UTF8')),'hex') as source_fingerprint from btcsp_private.project_heads h where h.project_id=$1 and h.owner_id=$2 and h.scenario_key=$3`,params(s))).rows[0];
  need(typeof r?.source_fingerprint==='string'&&/^[a-f0-9]{64}$/.test(r.source_fingerprint),'STORED_SOURCE_INTEGRITY_FAILURE');return r.source_fingerprint;
 }
-function create({db,authenticate,contextProvider,planContextProvider=null,calculationJobs=null,authorizeTransaction=null,enabled=false}){
+function create({db,authenticate,contextProvider,planContextProvider=null,calculationJobs=null,authorizeTransaction=null,observeTiming=null,enabled=false}){
  need(db&&typeof db.transaction==='function'&&typeof authenticate==='function'&&typeof contextProvider==='function','SERVER_DEPENDENCIES_REQUIRED');
  async function identity(token,s){need(enabled===true,'CLOUD_WRITE_GATE_CLOSED');scope(s);const user=await authenticate(token);need(user&&user.id===s.ownerId&&typeof user.email_confirmed_at==='string'&&Number.isFinite(Date.parse(user.email_confirmed_at))&&user.is_anonymous===false,'VERIFIED_OWNER_SESSION_REQUIRED');return user;}
  async function authorize(tx,user,s){if(authorizeTransaction)await authorizeTransaction(tx,user,s);}
- async function proposal(base,s,request,token){
+ async function proposal(base,s,request,token,mark=()=>{}){
   fields(request,['workflow','command']);need(['execution','movement','plan-reservations','plan-cycles','plan-profile','plan-calculation'].includes(request.workflow),'UNSUPPORTED_WORKFLOW');
   need(Buffer.byteLength(P.canonical(request),'utf8')<=64000,'COMMAND_TOO_LARGE');
   if(request.workflow==='plan-calculation'){
    fields(request.command,['mode','jobId','change']);need(request.command.mode==='recorded','ONLY_RECORDED_COMMANDS_ALLOWED');fields(request.command.change,['id','version']);need(ID.test(request.command.jobId),'INVALID_CALCULATION_JOB_ID');
    need(typeof calculationJobs?.reviewSource==='function','CALCULATION_REVIEW_NOT_ENABLED');
-   const source=await calculationJobs.reviewSource(token,s,request.command.jobId);need(source.headHash===base.head.state_hash,'STALE_CALCULATION_BASIS');need(source.engineBuild===REVIEW_BUILD,'CALCULATION_BUILD_CHANGED');
+   const source=await calculationJobs.reviewSource(token,s,request.command.jobId);mark('job-source');need(source.headHash===base.head.state_hash,'STALE_CALCULATION_BASIS');need(source.engineBuild===REVIEW_BUILD,'CALCULATION_BUILD_CHANGED');
    const state=clone(base.state),search=clone(source.search),expectedInput={...state.input,rules:search.input.rules,valuation:search.input.valuation};
-   need(hash(search.input)===hash(expectedInput)&&(source.profileContext?hash(source.profileContext.plan)===hash(state.plan):hash(search.plan)===hash(state.plan))&&search.input.bookkeepingOnly!==true,'COMPLETED_SEARCH_BASIS_MISMATCH');state.input=search.input;P.stage(state,s);
+   const completedSearchInputHash=hash(search.input);need(completedSearchInputHash===hash(expectedInput)&&(source.profileContext?hash(source.profileContext.plan)===hash(state.plan):hash(search.plan)===hash(state.plan))&&search.input.bookkeepingOnly!==true,'COMPLETED_SEARCH_BASIS_MISMATCH');state.input=search.input;P.stage(state,s);mark('source-validation');
    const review=source.profileContext?await Cash.prepareCompletedProfileChange(state.input,state.plan,{...clone(source.profileContext.request),...clone(request.command.change)},search):await Cash.prepareCompletedCyclePlanChange(state.input,state.plan,{...clone(request.command.change),policy:search.policy},search);
-   const calculationSource={jobId:request.command.jobId,createdAt:source.createdAt,expiresAt:source.expiresAt,engineBuild:source.engineBuild},result={version:VERSION,headHash:base.head.state_hash,basisRevision:base.head.revision,request:clone(request),review,calculationSource};
-   return {state,review,completedSearch:search,profileCalculation:!!source.profileContext,calculationSource,result:{...result,reviewHash:hash(result)}};
+   mark('domain-review');const calculationSource={jobId:request.command.jobId,createdAt:source.createdAt,expiresAt:source.expiresAt,engineBuild:source.engineBuild},result={version:VERSION,headHash:base.head.state_hash,basisRevision:base.head.revision,request:clone(request),review,calculationSource};
+   const {input:sharedInput,...completedSearch}=search;
+   return {state,review,completedSearch,completedSearchInputHash,profileCalculation:!!source.profileContext,calculationSource,result:{...result,reviewHash:hash(result)}};
   }
   const state=clone(base.state),context=await contextProvider(s,clone(state.input));
   fields(context,['rules','valuation'],['bookkeepingOnly']);
@@ -94,9 +95,10 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
   return {state,review,result:{...result,reviewHash:hash(result)}};
  }
  async function prepare(token,s,raw){
+  const timings=[],started=performance.now();let tick=started;const mark=phase=>{const at=performance.now();timings.push({phase,wallMs:Math.round(at-tick)});tick=at;};
   const request=clone(raw),user=await identity(token,s);
   const base=await db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);const clock=(await tx.query('select clock_timestamp() as at')).rows[0].at;return {...b,startedAt:new Date(clock).toISOString()};});
-  const p=await proposal(base,s,request,token);let expiry=Date.parse(base.startedAt)+60000,manualQuote=null;
+  mark('load');const p=await proposal(base,s,request,token,mark);mark('proposal');let expiry=Date.parse(base.startedAt)+60000,manualQuote=null;
   if(s.scenarioKey==='manual_long'&&p.state.input.bookkeepingOnly!==true){
    const quote=Date.parse(p.state.input.valuation.asOf),observed=Date.parse(p.state.input.rules.observedAt),age=p.state.input.rules.applicationPolicy.reviewMaxAgeSeconds;
    need(Number.isFinite(quote)&&Number.isFinite(observed)&&Number.isFinite(age),'CURRENT_MANUAL_CONTEXT_REQUIRED');
@@ -105,7 +107,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
   if(p.review.change?.market?.validUntil!==undefined){const deadline=Date.parse(p.review.change.market.validUntil);need(Number.isFinite(deadline),'INVALID_PROFILE_CONTEXT_TIME');expiry=Math.min(expiry,deadline);}
   if(p.calculationSource)expiry=Math.min(expiry,Date.parse(p.calculationSource.expiresAt));
   const {reviewHash:unused,...result}=p.result;p.result={...result,reviewBuild:REVIEW_BUILD,reviewedAt:base.startedAt,expiresAt:new Date(expiry).toISOString()};p.result.reviewHash=hash(p.result);
-  return db.transaction(async tx=>{
+  const prepared=await db.transaction(async tx=>{
    await authorize(tx,user,s);await tx.query('select pg_advisory_xact_lock(hashtextextended($1,0))',[s.ownerId]);const current=await load(tx,s);
    need(current.head.state_hash===base.head.state_hash&&current.head.generation===base.head.generation,'CONCURRENT_PROJECT_CHANGE');
    need((await tx.query('select $1::timestamptz>clock_timestamp() and ($2::timestamptz is null or $2::timestamptz<=clock_timestamp()) as fresh',[p.result.expiresAt,manualQuote])).rows[0].fresh,'COMMAND_REVIEW_EXPIRED');
@@ -114,6 +116,7 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
    await tx.query('insert into btcsp_private.command_reviews(project_id,owner_id,scenario_key,review_hash,request_hash,basis_hash,payload,expires_at) values($1,$2,$3,$4,$5,$6,$7,$8)',[...params(s),p.result.reviewHash,hash(request),base.head.state_hash,p,p.result.expiresAt]);
    return p.result;
   });
+  mark('persist');if(typeof observeTiming==='function')try{observeTiming({operation:'prepare',wallMs:Math.round(performance.now()-started),phases:timings});}catch{}return prepared;
  }
  async function commit(token,s,raw,rawConfirmation){
   const request=clone(raw),confirmation=clone(rawConfirmation);fields(confirmation,['headHash','reviewHash','idempotencyKey'],['acceptPlanLinkCleanup']);
@@ -126,6 +129,9 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
   need(confirmation.headHash===base.head.state_hash,'STALE_PROJECT_REVIEW');
   const saved=base.prepared;need(saved&&saved.request_hash===hash(request)&&saved.basis_hash===base.head.state_hash,'REVIEW_CHANGED_OR_TAMPERED');need(saved.fresh,'COMMAND_REVIEW_EXPIRED');
   const p=clone(saved.payload),{reviewHash,...reviewedResult}=p.result;need(reviewHash===confirmation.reviewHash&&hash(reviewedResult)===reviewHash&&p.result.version===VERSION&&p.result.reviewBuild===REVIEW_BUILD&&hash(p.result.request)===hash(request),'REVIEW_CHANGED_OR_TAMPERED');
+  // New reviews store the identical input once. Expanding this lossless
+  // reference preserves the old full-input hash and every domain revalidation.
+  if(Object.hasOwn(p,'completedSearchInputHash')){need(p.completedSearch&&!Object.hasOwn(p.completedSearch,'input')&&hash(p.state.input)===p.completedSearchInputHash,'REVIEW_CHANGED_OR_TAMPERED');p.completedSearch.input=p.state.input;}
   const planWorkflow=request.workflow.startsWith('plan-'),handlers={'plan-reservations':Cash.confirmPlanChange,'plan-cycles':Cash.confirmCyclePlanChange,'plan-profile':Cash.confirmProfileChange};
   const next=request.workflow==='plan-calculation'?await (p.profileCalculation?Cash.confirmCompletedProfileChange:Cash.confirmCompletedCyclePlanChange)(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash},p.completedSearch):request.workflow==='execution'?await W.confirm(p.state.input,p.state.plan,p.review,{confirmedReviewHash:p.review.reviewHash,acceptPlanLinkCleanup:confirmation.acceptPlanLinkCleanup===true}):planWorkflow?await handlers[request.workflow](p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash}):await Cash.confirmMovement(p.state.input,p.state.plan,p.review,{confirmed:true,reviewHash:p.review.reviewHash});
   const nextPlan=next.nextPlan||next.activePlan;

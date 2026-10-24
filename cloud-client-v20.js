@@ -19,7 +19,7 @@ function create({baseURL,apiPath='/api/v20',projectId,scenarioKey,getSession,fet
  async function sendPending(seq){try{const result=await call('commit',pending);ensure(seq);pending=null;review=null;snapshot=null;status='refresh-required';return copy(result);}catch(e){if(seq!==generation||status==='signed-out'||status==='session-changed')throw e;if(e.uncertain){status='uncertain';}else{pending=null;review=null;status=e.status===409?'conflict-review-required':'review-required';}throw e;}}
  async function confirm({reviewHash,acceptPlanLinkCleanup=false,tutorialAcknowledgment}={}){return exclusive(async seq=>{if(!review||pending||reviewHash!==review.result.reviewHash)throw Error('EXPLICIT_SERVER_REVIEW_REQUIRED');pending={request:copy(review.request),confirmation:{headHash:review.result.headHash,reviewHash:review.result.reviewHash,idempotencyKey:review.idempotencyKey,...(acceptPlanLinkCleanup?{acceptPlanLinkCleanup:true}:{}),...(tutorialAcknowledgment?{tutorialAcknowledgment:copy(tutorialAcknowledgment)}:{})}};return sendPending(seq);});}
  async function retry(){return exclusive(async seq=>{if(!pending||status!=='uncertain')throw Error('NO_UNCERTAIN_COMMAND');return sendPending(seq);});}
- async function calculate(action,request){return exclusive(async seq=>{
+ async function calculate(action,request,prepareReview=false){return exclusive(async seq=>{
   if(pending)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');
   if(action==='enqueue'){
    if(calculationRequest)throw Error('CALCULATION_RECONCILIATION_REQUIRED');
@@ -30,12 +30,17 @@ function create({baseURL,apiPath='/api/v20',projectId,scenarioKey,getSession,fet
   const enqueue=action==='enqueue'||action==='retry-enqueue';
   if(!enqueue&&!calculation)throw Error('CALCULATION_REQUIRED');
   try{
-   const result=await call('calculations/'+(enqueue?'enqueue':action),enqueue?{request:calculationRequest}:{jobId:calculation.id,...(action==='advance'?{includeResult:true}:{})});ensure(seq);
+   const result=await call('calculations/'+(enqueue?'enqueue':action),enqueue?{request:calculationRequest}:{jobId:calculation.id,...(action==='advance'?{includeResult:true,...(request===undefined?{}:{reviewPlan:copy(request),...(prepareReview?{prepareReview:true}:{})})}:{})});ensure(seq);
+   if(result.completedReview!==undefined){
+    const p=result.completedReview,r=p?.request,c=r?.command;
+    if(action!=='advance'||request===undefined||result.status!=='completed'||r?.workflow!=='plan-calculation'||c?.mode!=='recorded'||c.jobId!==calculation.id||c.change?.id!==request.id||c.change?.version!==request.version||typeof p.headHash!=='string'||typeof p.reviewHash!=='string'||!Number.isFinite(Date.parse(p.expiresAt)))throw Error('INVALID_SERVER_REVIEW');
+    review={request:copy(r),result:copy(p),idempotencyKey:newId()};
+   }
    if(enqueue||action!=='result'){
     if(typeof result.id!=='string'||typeof result.status!=='string') {const e=Error('CLOUD_RESPONSE_UNCERTAIN');e.uncertain=true;throw e;}
     calculation=copy(result);
    }
-   calculationRequest=null;status=action==='result'?'calculation-result':'calculation-'+calculation.status;return copy(result);
+   calculationRequest=null;status=result.completedReview?'review-required':action==='result'?'calculation-result':'calculation-'+calculation.status;return copy(result);
   }catch(e){
    if(seq===generation&&status!=='signed-out'&&status!=='session-changed'){
     if(enqueue&&!e.uncertain)calculationRequest=null;
@@ -50,7 +55,7 @@ function create({baseURL,apiPath='/api/v20',projectId,scenarioKey,getSession,fet
   if(typeof nextProjectId!=='string'||!(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/).test(nextProjectId)||!['manual_long','demo_long'].includes(nextScenarioKey))throw Error('INVALID_WALLET_ID');
   await session();ensure(seq);generation++;projectId=nextProjectId;scenarioKey=nextScenarioKey;review=snapshot=calculation=calculationRequest=null;status='wallet-selected';
  });}
- return Object.freeze({read,prepare,confirm,retry,clearSession,exportWallet:()=>exclusive(async seq=>{if(pending||calculationRequest)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');const result=await call('export',{});ensure(seq);return copy(result);}),listWallets,selectWallet,startCalculation:profileChange=>calculate('enqueue',profileChange),retryCalculationStart:()=>calculate('retry-enqueue'),calculationStatus:()=>calculate('status'),advanceCalculation:()=>calculate('advance'),calculationResult:()=>calculate('result'),cancelCalculation:()=>calculate('cancel'),state:()=>({projectId,scenarioKey,status,hasPending:!!pending,hasReview:!!review,snapshot:snapshot?copy(snapshot):null,calculation:calculation?copy(calculation):null,hasUncertainCalculationStart:!!calculationRequest})});
+ return Object.freeze({read,prepare,confirm,retry,clearSession,exportWallet:()=>exclusive(async seq=>{if(pending||calculationRequest)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');const result=await call('export',{});ensure(seq);return copy(result);}),listWallets,selectWallet,startCalculation:profileChange=>calculate('enqueue',profileChange),retryCalculationStart:()=>calculate('retry-enqueue'),calculationStatus:()=>calculate('status'),advanceCalculation:(reviewPlan,{prepareReview=false}={})=>calculate('advance',reviewPlan,prepareReview),calculationResult:()=>calculate('result'),cancelCalculation:()=>calculate('cancel'),state:()=>({projectId,scenarioKey,status,hasPending:!!pending,hasReview:!!review,snapshot:snapshot?copy(snapshot):null,calculation:calculation?copy(calculation):null,hasUncertainCalculationStart:!!calculationRequest})});
 }
 return Object.freeze({create});
 });

@@ -93,12 +93,17 @@
    const pool=resume.rulePool.map(r=>Rules.load(r));current.buyRulesByEvent={};
    for(const [id,index]of Object.entries(resume.buyRuleRefs)){need(Number.isInteger(index)&&index>=0&&index<pool.length,'INVALID_STRESS_RULE_REFERENCE');current.buyRulesByEvent[id]=pool[index];}
   }else current.buyRulesByEvent=JSON.parse(JSON.stringify(sourceBuyRules||{}));
+  // Pin the default purchase rules before the first replay. That replay must
+  // validate their historical scope too; adding the same defaults afterwards
+  // used to discard the validated journal and replay every historical fact a
+  // second time on the first mark. Rule changes and resumed requests still
+  // reconstruct independently, including all historical-rule checks.
+  for(const e of current.events||[])if(e?.event_type==='trade_buy'&&typeof e.id==='string'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;
   let valuationBasis=Core.prepareJournal(current);
   let state=ledgerSnapshot(current,valuationBasis.ledger,valuationBasis.effectiveEvents),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
   const history=resume?JSON.parse(JSON.stringify(resume.history)):[],hypotheticalIds=new Set(resume?resume.hypotheticalIds:[]),views=new WeakMap();
   function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
   for(const e of state.effectiveEvents)if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
-  for(const e of current.events)if(e.event_type==='trade_buy'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase())){current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;valuationBasis=null;}
   function fail(reason,index,phase,details={}){if(!firstFailure)firstFailure={reason,index,phase,...details};stopped=true;}
   function risk(index,phase,transition,prior,arrival){
    if(!firstRiskEvent){const root=boundary(prior);firstRiskEvent={index,phase,transition,boundary:root,arrivalMarkUSD:str(arrival),executionPriceUSD:null};}
