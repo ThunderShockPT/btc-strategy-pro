@@ -5,10 +5,13 @@
   },
   "files": {
     "backend/edge-runtime.cjs": "3a3db34a37db0410ca8876cb67b54733701dccbeb5dee90c2708f010caf32e94",
+    "backend/private-test-runtime.cjs": "6bda5386c2e7bcc7c09f5b10c7a698ec115bda7a0e4a4c27eab173e79ec693be",
+    "backend/public-rules.cjs": "a550b2b758c33a98b49dca523b1717a601220cc5b800dc1cdd648df649640bf7",
+    "policies/manual-cycle-base-20261024.json": "6a44f5e429023386b614d66988311b70018059721a9ce66609724e242072ed86",
     "backend/calculation-window.cjs": "0d93f400b91d63b69b2a4e5a8c426dadf5da4c593cbdd22a35e646ff8aa81b8d",
-    "backend/http-api.cjs": "a6141d7cd03a541ad9811cb6d92e139773e37d884aa3730183bdd2374a6749fd",
+    "backend/http-api.cjs": "fe9d6c12d63d3cc00b6aae17ca47e67e107bb969771fd3fb9e2e85bb83c437f4",
     "backend/request-admission.cjs": "d1691d02610a00f2e802f09d9c54620b59c74964303f79df1760e63f517d15eb",
-    "backend/public-profile-context.cjs": "5c8de2d176ce6dca092c4e9aa108ab20b7c8550d59f231fbc8fb1a56404df7be",
+    "backend/public-profile-context.cjs": "be8ac1ed07b162c856f6738d888f64f9f16ccd337c578b297495cca84fd9e109",
     "backend/public-market.cjs": "fdd4f92f0630c7e1538e1eef276d91b8fa681ca4336a694e9ce8f100976bc252",
     "backend/public-observations.cjs": "f179de50d53504bec5893e8c0e3059e8cadfdb9cc64fed089e47f5d3efe07864",
     "backend/financial-context.cjs": "a9973078780b33fd8797153fd0ada6bbccd324e851ad561741e914cde4768f64",
@@ -16,7 +19,7 @@
     "backend/calculation-checkpoints.cjs": "5e894a24f37891a4fbb69bef95b717a535c0ee5c9862f7445a608c4be8222fa2",
     "backend/calculation-jobs.cjs": "48cca39f8b36b028f01d3699a8dbd92085458e159c88b921c235a1f771469433",
     "backend/calculation-storage.cjs": "4c94606cf5552b9ced7e2d21e6400466aa7e10a3421fd25643c79cbbd45cc5d4",
-    "backend/atomic-store.cjs": "564c31e69a7ee2e9e2fe5f39684c74704952775b23207bf9b6cb39e3a184dd00",
+    "backend/atomic-store.cjs": "507c295dd6ca8d8d809c373b256ba9605653ec4245d7ccfcd5b13ed6ef99e8ef",
     "backend/persistence-contract.cjs": "a01cb3e0b74b653ad34db8ae979542e516b4bf97782a6d8dca62d7e43528ceab",
     "cash-workflow.js": "ec7d258a120e195c862407ded856e280381781e5e1736a68d02df9c19d63a689",
     "execution-workflow.js": "b1dd49b0b014394dfef2843a87ed8d846775dedbe945c886c53526813b927702",
@@ -29,6 +32,6 @@
     "financial-engine.js": "e5835e18947bb3446999536bb9c3adb6b9fb49060841fcb2041fc2be65b5c89c",
     "kraken-rules.js": "b1feec61a15fa29fd1b62e74f86ebaa15666c61b64b6f7e030e467add76a4843",
     "journal-projection.js": "a25608350ee367d6f453626196088fe97c735f3db127a7cbcccce39b724484d2",
-    "package-lock.json": "1652e48b42af02baff9174dd648e4e08fff45ac554f976f1772447edfbb70f95"
+    "package-lock.json": "14551f4011e29a333b7636e54006d188376d5723e2ecbc86d8e2e3f51a2489e0"
   }
 }

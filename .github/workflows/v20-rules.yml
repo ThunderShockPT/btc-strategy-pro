@@ -26,7 +26,7 @@ jobs:
           node --test scripts/test-cloud-calculations.cjs
           node --test scripts/test-account-workflow.cjs
           node --test scripts/test-account-movements.cjs
-          node --test scripts/test-account-executions.cjs
+          node --test scripts/test-account-executions.cjs scripts/test-account-batch-executions.cjs scripts/test-private-test.cjs
           node --test scripts/test-account-wallets.cjs
           node --test scripts/test-account-export.cjs
           node --test scripts/test-account-session.cjs

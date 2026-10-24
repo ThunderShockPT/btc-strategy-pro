@@ -76,6 +76,13 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
   const state=clone(base.state),context=await contextProvider(s,clone(state.input));
   fields(context,['rules','valuation'],['bookkeepingOnly']);
   state.input={...state.input,rules:context.rules,valuation:context.valuation};
+  if(s.scenarioKey==='manual_long'&&request.workflow==='execution'&&request.command.kind==='trade'&&request.command.type==='trade_buy'&&!state.input.events.some(e=>e.id===request.command.id)){
+   // The newly fetched source may be newer than the recorded fill. Preserve
+   // the real prior known rules for that fill; never backdate the new source.
+   const historical=base.state.input.rules,at=Date.parse(request.command.effectiveAt),observed=Date.parse(historical.observedAt),maxAge=historical.applicationPolicy.reviewMaxAgeSeconds*1000;
+   need(Number.isFinite(at)&&at>=observed&&at-observed<=maxAge,'HISTORICAL_RULES_REQUIRED');
+   state.input.buyRulesByEvent={...(state.input.buyRulesByEvent||{}),[request.command.id.toLowerCase()]:clone(historical)};
+  }
   if(context.bookkeepingOnly===true)state.input.bookkeepingOnly=true;else delete state.input.bookkeepingOnly;
   need(state.input.ruleScenario===undefined&&request.command.mode==='recorded','ONLY_RECORDED_COMMANDS_ALLOWED');
   P.stage(state,s);
