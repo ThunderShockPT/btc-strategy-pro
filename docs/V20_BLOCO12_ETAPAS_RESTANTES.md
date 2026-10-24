@@ -67,7 +67,7 @@ O ensaio no Edge encontrou HTTP 546 / CPU excedido nos inícios de 5000 moviment
 
 | Prioridade | Trabalho concreto | Situação verificável |
 | --- | --- | --- |
-| 1 | Fluxo completo no alojamento: sessão, fila, SQL, revisão e confirmação | CPU das unidades passou; fluxo completo apenas em CI com Auth/SQL real e fontes sintéticas. Última carga máxima: 45,819 s na CI 39949964653 |
+| 1 | Fluxo completo no alojamento: sessão, fila, SQL, revisão e confirmação | Fluxo completo alojado passou com Auth/SQL reais e fontes sintéticas numa carteira pequena, incluindo retoma entre versões. Carga máxima, fontes públicas e concorrência alojadas ainda pendentes; ver V20_BLOCO12I_CONTA_ALOJADA.md |
 | 2 | Validar admissão temporal, ingresso, concorrência e pico de memória | O mínimo provisório de 45 s é inferior a tempos máximos observados. Ainda não constitui garantia de conclusão; não aumentar validade das fontes |
 | 3 | Ligar interface de carteira/planos/movimentos/correções e cálculos à conta | Painel da conta liga leitura, cálculo, revisão e confirmação na prévia, com cliente fornecido pela composição autenticada. Movimentos, compras/vendas por ciclo e correções auditáveis com comparação/confirmação ligados em QA. Diretório e criação sem posição ligados em QA. Composição de login/recuperação/logout ligada e testada em Chromium com API/PGlite e identidades sintéticas. Bootstrap autenticado no alojamento, importação de posições, formulários de alocações e testes alojados completos pendentes |
 | 4 | Privacidade e ciclo de vida da conta | Backup financeiro autenticado por carteira implementado e validado em QA. Portabilidade integral, preferências, termos e eliminação da conta ainda pendentes |

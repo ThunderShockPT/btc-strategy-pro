@@ -68,7 +68,7 @@ O projeto BTC está ativo e saudável, sem branches de desenvolvimento. A inspe�
 - Privacidade, portabilidade, eliminação, restauro e migração/reconciliação V19.
 - Teste visual e ponta a ponta no S25 após disponibilizar o acesso de teste.
 
-O entrypoint financeiro, registo público e política de abertura permanecem fechados. Nenhum recurso de produção ou do Racing Horse Manager foi alterado.
+O entrypoint financeiro, registo público e política de abertura permanecem fechados. A política financeira e o frontend publicado continuam fechados; o histórico de alterações ao projeto BTC está documentado abaixo. Nenhum recurso do Racing Horse Manager foi alterado.
 
 
 ## Sessão e verificação no navegador — 23/10/2026
@@ -87,3 +87,7 @@ A suite de sessão e um job Chromium próprio passam a fazer parte da CI. A inte
 ## Instalação do esquema em 24/10/2026
 
 As sete migrações V20 estão agora aplicadas no projeto BTC, com 14 tabelas/RLS verificadas e funções V19 preservadas. O ensaio de recuperação do esquema público vazio correu em PostgreSQL 17.11, com as permissões reais capturadas, antes da instalação. A criação da carteira também foi ensaiada sobre os constraints reais; capital inicial fora do intervalo legado é agora recusado antes da proposta com mensagem 422 explícita. Ver `V20_BLOCO12G_SCHEMA_ALOJADO.md` e os registos `V20_12G_*` em docs/qa. Isto retira a pendência de instalação do esquema, mas não aprova SMTP, privacidade, migração de projetos locais, restauro integral, fluxo autenticado alojado nem teste S25.
+
+## Ensaio autenticado alojado — 24/10/2026
+
+Passou o percurso API com duas contas fictícias no Auth real do projeto BTC: criação de carteira, resposta perdida e repetição idempotente, cálculo retomado após redeploy, revisão/confirmação, depósito, exportação, isolamento e logout global. SQL confirmou duas contas bloqueadas, zero sessões, dois eventos e três recibos retidos. A função temporária foi substituída pela versão 10 fechada (503). São fontes sintéticas e carga pequena, sem SMTP ou navegador alojado. Ver V20_BLOCO12I_CONTA_ALOJADA.md. O Bloco 12 continua aberto.

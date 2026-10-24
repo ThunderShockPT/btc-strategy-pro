@@ -30,6 +30,17 @@ test('bounded two-step requests reduce round trips without changing reviewed res
  assert.deepEqual(runs[0].result,runs[1].result);assert(runs[1].calls<runs[0].calls);assert.deepEqual(initial,before);
  for(const maxPathStepsPerUnit of [0,3,1.5,'2',null])assert.throws(()=>Checkpoints.create({...x.options,maxPathStepsPerUnit}),/CALCULATION_DEPENDENCIES_REQUIRED/);
 });
+test('eight-step small-history requests preserve complete results, expiry and input with fewer network units',async()=>{
+ for(const size of [1,100,101]){
+  const x=fixture(),input=size===1?x.state.input:require('./benchmark-large-checkpoints.cjs').fixture(size,'deposits'),options={...x.options,loadSnapshot:async()=>({headHash:'a'.repeat(64),state:{input,plan:f.plan()}}),contextProvider:async()=>({rules:input.rules,valuation:input.valuation})},fast=Checkpoints.create(options),old=Checkpoints.create({...options,maxPathStepsPerUnit:2}),initial=await fast.start('owner',scope),unchanged=json(initial);
+  const runs=[];for(const service of [old,fast]){let e=json(initial),calls=0;while(!e.payload.search.done){e=await service.advance('owner',scope,e);assert.equal(e.payload.expiresAt,initial.payload.expiresAt);assert(++calls<400);}runs.push({calls,result:await service.result('owner',scope,e)});}
+  assert.deepEqual(runs[0].result,runs[1].result);assert.deepEqual(initial,unchanged);if(size<=100)assert(runs[1].calls<runs[0].calls);else assert.equal(runs[1].calls,runs[0].calls);
+ }
+});
+test('small-history grouping falls back to two steps above its byte bound and still rejects late completion',async()=>{
+ const x=fixture();x.state.input.events[0].qaPadding='x'.repeat(260000);const initial=await x.service.start('owner',scope),old=Checkpoints.create({...x.options,maxPathStepsPerUnit:2});assert.deepEqual(await x.service.advance('owner',scope,initial),await old.advance('owner',scope,initial));
+ const y=fixture(),e=await y.service.start('owner',scope);let ticks=0;const late=Checkpoints.create({...y.options,now:()=>{if(++ticks===3)y.setTime(Date.parse(e.payload.expiresAt));return y.options.now();}});await assert.rejects(late.advance('owner',scope,e),/CALCULATION_EXPIRED/);
+});
 test('two-step grouping stops above 5000 source events or a four-megabyte search',async()=>{
  for(const size of [1000,5000,5001]){
   const x=fixture(),input=require('./benchmark-large-checkpoints.cjs').fixture(size,'deposits');
