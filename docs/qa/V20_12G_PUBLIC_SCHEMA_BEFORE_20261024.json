@@ -1,0 +1,1600 @@
+{
+  "schema_acl": [
+    {
+      "owner": "pg_database_owner",
+      "grantee": "PUBLIC",
+      "privilege": "USAGE",
+      "grantable": false
+    },
+    {
+      "owner": "pg_database_owner",
+      "grantee": "anon",
+      "privilege": "USAGE",
+      "grantable": false
+    },
+    {
+      "owner": "pg_database_owner",
+      "grantee": "authenticated",
+      "privilege": "USAGE",
+      "grantable": false
+    },
+    {
+      "owner": "pg_database_owner",
+      "grantee": "pg_database_owner",
+      "privilege": "CREATE",
+      "grantable": false
+    },
+    {
+      "owner": "pg_database_owner",
+      "grantee": "pg_database_owner",
+      "privilege": "USAGE",
+      "grantable": false
+    },
+    {
+      "owner": "pg_database_owner",
+      "grantee": "postgres",
+      "privilege": "USAGE",
+      "grantable": false
+    },
+    {
+      "owner": "pg_database_owner",
+      "grantee": "service_role",
+      "privilege": "USAGE",
+      "grantable": false
+    }
+  ],
+  "migration_history": [
+    {
+      "version": "20261020095408",
+      "name": "btc_strategy_pro_auth_projects_snapshots_rls_v1"
+    },
+    {
+      "version": "20261020095657",
+      "name": "btcsp_snapshot_project_owner_cover_index"
+    },
+    {
+      "version": "20261020194325",
+      "name": "btcsp_atomic_cloud_save_v1"
+    },
+    {
+      "version": "20261020194843",
+      "name": "btcsp_safe_delete_with_version_v1"
+    }
+  ],
+  "counts": {
+    "projects": 0,
+    "auth_users": 0,
+    "project_snapshots": 0
+  },
+  "format": "btcsp-empty-public-schema-1",
+  "tables": [
+    {
+      "rls": true,
+      "name": "project_snapshots",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "project_id",
+          "type": "uuid",
+          "default": null,
+          "not_null": true
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "default": "auth.uid()",
+          "not_null": true
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "default": "'{}'::jsonb",
+          "not_null": true
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "default": "1",
+          "not_null": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "not_null": true
+        }
+      ],
+      "comment": null,
+      "force_rls": true
+    },
+    {
+      "rls": true,
+      "name": "projects",
+      "owner": "postgres",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "not_null": true
+        },
+        {
+          "name": "owner_id",
+          "type": "uuid",
+          "default": "auth.uid()",
+          "not_null": true
+        },
+        {
+          "name": "name",
+          "type": "text",
+          "default": null,
+          "not_null": true
+        },
+        {
+          "name": "mode",
+          "type": "text",
+          "default": "'demo'::text",
+          "not_null": true
+        },
+        {
+          "name": "capital",
+          "type": "numeric(18,2)",
+          "default": "2000",
+          "not_null": true
+        },
+        {
+          "name": "archived",
+          "type": "boolean",
+          "default": "false",
+          "not_null": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "not_null": true
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "not_null": true
+        }
+      ],
+      "comment": null,
+      "force_rls": true
+    }
+  ],
+  "indexes": [
+    {
+      "name": "btcsp_snapshots_project_owner_idx",
+      "definition": "CREATE INDEX btcsp_snapshots_project_owner_idx ON public.project_snapshots USING btree (project_id, owner_id)"
+    },
+    {
+      "name": "project_snapshots_owner_idx",
+      "definition": "CREATE INDEX project_snapshots_owner_idx ON public.project_snapshots USING btree (owner_id)"
+    },
+    {
+      "name": "projects_owner_updated_idx",
+      "definition": "CREATE INDEX projects_owner_updated_idx ON public.projects USING btree (owner_id, updated_at DESC)"
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "DELETE",
+      "qual": "(owner_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "project_snapshots",
+      "permissive": "PERMISSIVE",
+      "policyname": "snapshots_delete_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "project_snapshots",
+      "permissive": "PERMISSIVE",
+      "policyname": "snapshots_insert_own",
+      "schemaname": "public",
+      "with_check": "((owner_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM projects p\n  WHERE ((p.id = project_snapshots.project_id) AND (p.owner_id = ( SELECT auth.uid() AS uid))))))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "((owner_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM projects p\n  WHERE ((p.id = project_snapshots.project_id) AND (p.owner_id = ( SELECT auth.uid() AS uid))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "project_snapshots",
+      "permissive": "PERMISSIVE",
+      "policyname": "snapshots_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(owner_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "project_snapshots",
+      "permissive": "PERMISSIVE",
+      "policyname": "snapshots_update_own",
+      "schemaname": "public",
+      "with_check": "((owner_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM projects p\n  WHERE ((p.id = project_snapshots.project_id) AND (p.owner_id = ( SELECT auth.uid() AS uid))))))"
+    },
+    {
+      "cmd": "DELETE",
+      "qual": "(owner_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "projects",
+      "permissive": "PERMISSIVE",
+      "policyname": "projects_delete_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "projects",
+      "permissive": "PERMISSIVE",
+      "policyname": "projects_insert_own",
+      "schemaname": "public",
+      "with_check": "(owner_id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(owner_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "projects",
+      "permissive": "PERMISSIVE",
+      "policyname": "projects_select_own",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "UPDATE",
+      "qual": "(owner_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "projects",
+      "permissive": "PERMISSIVE",
+      "policyname": "projects_update_own",
+      "schemaname": "public",
+      "with_check": "(owner_id = ( SELECT auth.uid() AS uid))"
+    }
+  ],
+  "triggers": [
+    {
+      "name": "btcsp_projects_touch",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER btcsp_projects_touch BEFORE UPDATE ON projects FOR EACH ROW EXECUTE FUNCTION btcsp_touch_updated_at()"
+    },
+    {
+      "name": "btcsp_snapshots_touch",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER btcsp_snapshots_touch BEFORE UPDATE ON project_snapshots FOR EACH ROW EXECUTE FUNCTION btcsp_touch_updated_at()"
+    }
+  ],
+  "functions": [
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "btcsp_delete_project_v1",
+      "owner": "postgres",
+      "identity": "btcsp_delete_project_v1(uuid,timestamp with time zone,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.btcsp_delete_project_v1(p_id uuid, p_expected_meta_updated_at timestamp with time zone, p_expected_version integer)\n RETURNS boolean\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE\n v_uid uuid;\n v_existing record;\n v_snapshot record;\n v_current_version integer;\nBEGIN\n v_uid:=auth.uid();\n IF v_uid IS NULL THEN\n   RAISE EXCEPTION 'BTCSP_NOT_AUTHENTICATED' USING ERRCODE='28000';\n END IF;\n IF p_id IS NULL OR p_expected_meta_updated_at IS NULL THEN\n   RAISE EXCEPTION 'BTCSP_INVALID_DATA' USING ERRCODE='22023';\n END IF;\n SELECT * INTO v_existing FROM public.projects\n   WHERE id=p_id AND owner_id=v_uid FOR UPDATE;\n IF NOT FOUND OR v_existing.updated_at IS DISTINCT FROM p_expected_meta_updated_at THEN\n   RAISE EXCEPTION 'BTCSP_VERSION_CONFLICT' USING ERRCODE='P0001';\n END IF;\n SELECT * INTO v_snapshot FROM public.project_snapshots\n   WHERE project_id=p_id AND owner_id=v_uid FOR UPDATE;\n IF FOUND THEN v_current_version:=v_snapshot.version;\n ELSE v_current_version:=NULL; END IF;\n IF v_current_version IS DISTINCT FROM p_expected_version THEN\n   RAISE EXCEPTION 'BTCSP_VERSION_CONFLICT' USING ERRCODE='P0001';\n END IF;\n DELETE FROM public.projects WHERE id=p_id AND owner_id=v_uid;\n RETURN true;\nEND\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "btcsp_save_project_v1",
+      "owner": "postgres",
+      "identity": "btcsp_save_project_v1(uuid,text,text,numeric,boolean,jsonb,timestamp with time zone,integer)",
+      "definition": "CREATE OR REPLACE FUNCTION public.btcsp_save_project_v1(p_id uuid, p_name text, p_mode text, p_capital numeric, p_archived boolean, p_payload jsonb, p_expected_meta_updated_at timestamp with time zone DEFAULT NULL::timestamp with time zone, p_expected_version integer DEFAULT NULL::integer)\n RETURNS TABLE(meta_updated_at timestamp with time zone, snapshot_version integer)\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nDECLARE\n  v_uid uuid;\n  v_existing record;\n  v_snapshot record;\n  v_meta timestamptz;\n  v_version integer;\nBEGIN\n  v_uid := auth.uid();\n  IF v_uid IS NULL THEN\n    RAISE EXCEPTION 'BTCSP_NOT_AUTHENTICATED' USING ERRCODE='28000';\n  END IF;\n  IF p_id IS NULL OR p_name IS NULL OR char_length(btrim(p_name)) NOT BETWEEN 2 AND 65\n     OR p_mode NOT IN ('demo','real') OR p_mode IS NULL\n     OR p_capital IS NULL OR p_capital NOT BETWEEN 100 AND 1000000000\n     OR p_archived IS NULL OR p_payload IS NULL OR jsonb_typeof(p_payload) <> 'object'\n     OR octet_length(p_payload::text)>1500000 THEN\n     RAISE EXCEPTION 'BTCSP_INVALID_DATA' USING ERRCODE='22023';\n  END IF;\n\n  -- Lock project row: serialize same-project writes across clients, then check\n  -- both expected metadata timestamp and expected snapshot revision.\n  SELECT * INTO v_existing FROM public.projects\n    WHERE id=p_id AND owner_id=v_uid FOR UPDATE;\n  IF FOUND THEN\n    IF v_existing.updated_at IS DISTINCT FROM p_expected_meta_updated_at THEN\n      RAISE EXCEPTION 'BTCSP_VERSION_CONFLICT' USING ERRCODE='P0001';\n    END IF;\n    SELECT * INTO v_snapshot FROM public.project_snapshots\n      WHERE project_id=p_id AND owner_id=v_uid FOR UPDATE;\n    IF FOUND THEN\n      IF v_snapshot.version IS DISTINCT FROM p_expected_version THEN\n        RAISE EXCEPTION 'BTCSP_VERSION_CONFLICT' USING ERRCODE='P0001';\n      END IF;\n      IF v_snapshot.payload IS DISTINCT FROM p_payload THEN\n        UPDATE public.project_snapshots\n          SET payload=p_payload, version=v_snapshot.version+1\n          WHERE project_id=p_id AND owner_id=v_uid RETURNING version INTO v_version;\n      ELSE\n        v_version := v_snapshot.version;\n      END IF;\n    ELSE\n      IF p_expected_version IS NOT NULL THEN\n        RAISE EXCEPTION 'BTCSP_VERSION_CONFLICT' USING ERRCODE='P0001';\n      END IF;\n      INSERT INTO public.project_snapshots(project_id,owner_id,payload,version)\n        VALUES(p_id,v_uid,p_payload,1) RETURNING version INTO v_version;\n    END IF;\n    IF v_existing.name IS DISTINCT FROM p_name\n      OR v_existing.mode IS DISTINCT FROM p_mode\n      OR v_existing.capital IS DISTINCT FROM p_capital\n      OR v_existing.archived IS DISTINCT FROM p_archived THEN\n      UPDATE public.projects\n        SET name=btrim(p_name),mode=p_mode,capital=p_capital,archived=p_archived\n        WHERE id=p_id AND owner_id=v_uid\n        RETURNING updated_at INTO v_meta;\n    ELSE\n      v_meta := v_existing.updated_at;\n    END IF;\n  ELSE\n    -- A new project must not overwrite an existing or deleted one.\n    IF p_expected_meta_updated_at IS NOT NULL OR p_expected_version IS NOT NULL THEN\n      RAISE EXCEPTION 'BTCSP_VERSION_CONFLICT' USING ERRCODE='P0001';\n    END IF;\n    INSERT INTO public.projects(id,owner_id,name,mode,capital,archived)\n      VALUES(p_id,v_uid,btrim(p_name),p_mode,p_capital,p_archived)\n      RETURNING updated_at INTO v_meta;\n    INSERT INTO public.project_snapshots(project_id,owner_id,payload,version)\n      VALUES(p_id,v_uid,p_payload,1) RETURNING version INTO v_version;\n  END IF;\n  RETURN QUERY SELECT v_meta,v_version;\nEND\n$function$\n"
+    },
+    {
+      "acl": [
+        "=X/postgres",
+        "postgres=X/postgres",
+        "anon=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "btcsp_touch_updated_at",
+      "owner": "postgres",
+      "identity": "btcsp_touch_updated_at()",
+      "definition": "CREATE OR REPLACE FUNCTION public.btcsp_touch_updated_at()\n RETURNS trigger\n LANGUAGE plpgsql\n SET search_path TO ''\nAS $function$\nBEGIN NEW.updated_at = now(); RETURN NEW; END;\n$function$\n"
+    }
+  ],
+  "captured_at": "2026-10-24T04:17:32.846952+00:00",
+  "constraints": [
+    {
+      "name": "project_snapshots_version_check",
+      "type": "c",
+      "table": "project_snapshots",
+      "definition": "CHECK (version > 0)"
+    },
+    {
+      "name": "projects_capital_check",
+      "type": "c",
+      "table": "projects",
+      "definition": "CHECK (capital >= 100::numeric AND capital <= 1000000000::numeric)"
+    },
+    {
+      "name": "projects_mode_check",
+      "type": "c",
+      "table": "projects",
+      "definition": "CHECK (mode = ANY (ARRAY['demo'::text, 'real'::text]))"
+    },
+    {
+      "name": "projects_name_check",
+      "type": "c",
+      "table": "projects",
+      "definition": "CHECK (char_length(btrim(name)) >= 2 AND char_length(btrim(name)) <= 65)"
+    },
+    {
+      "name": "snapshot_payload_object",
+      "type": "c",
+      "table": "project_snapshots",
+      "definition": "CHECK (jsonb_typeof(payload) = 'object'::text)"
+    },
+    {
+      "name": "snapshot_size_limit",
+      "type": "c",
+      "table": "project_snapshots",
+      "definition": "CHECK (octet_length(payload::text) <= 1500000)"
+    },
+    {
+      "name": "projects_owner_id_fkey",
+      "type": "f",
+      "table": "projects",
+      "definition": "FOREIGN KEY (owner_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "name": "snapshot_owned_project_fk",
+      "type": "f",
+      "table": "project_snapshots",
+      "definition": "FOREIGN KEY (project_id, owner_id) REFERENCES projects(id, owner_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "project_snapshots_pkey",
+      "type": "p",
+      "table": "project_snapshots",
+      "definition": "PRIMARY KEY (project_id)"
+    },
+    {
+      "name": "projects_pkey",
+      "type": "p",
+      "table": "projects",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "name": "projects_id_owner_unique",
+      "type": "u",
+      "table": "projects",
+      "definition": "UNIQUE (id, owner_id)"
+    }
+  ],
+  "project_ref": "oftzqqjbwonngubihrsd",
+  "default_acls": [
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "supabase_admin",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "USAGE",
+      "object_type": "S"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "EXECUTE",
+      "object_type": "f"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "postgres",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "anon",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "authenticated",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "DELETE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "INSERT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "MAINTAIN",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "REFERENCES",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "SELECT",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRIGGER",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "TRUNCATE",
+      "object_type": "r"
+    },
+    {
+      "owner": "postgres",
+      "schema": "public",
+      "grantee": "service_role",
+      "grantable": false,
+      "privilege": "UPDATE",
+      "object_type": "r"
+    }
+  ],
+  "table_grants": [
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "project_snapshots",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "projects",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    }
+  ],
+  "server_version": "17.11",
+  "function_grants": [
+    {
+      "grantee": "postgres",
+      "identity": "btcsp_delete_project_v1(uuid,timestamp with time zone,integer)",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "authenticated",
+      "identity": "btcsp_delete_project_v1(uuid,timestamp with time zone,integer)",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "service_role",
+      "identity": "btcsp_delete_project_v1(uuid,timestamp with time zone,integer)",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "postgres",
+      "identity": "btcsp_save_project_v1(uuid,text,text,numeric,boolean,jsonb,timestamp with time zone,integer)",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "authenticated",
+      "identity": "btcsp_save_project_v1(uuid,text,text,numeric,boolean,jsonb,timestamp with time zone,integer)",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "service_role",
+      "identity": "btcsp_save_project_v1(uuid,text,text,numeric,boolean,jsonb,timestamp with time zone,integer)",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "PUBLIC",
+      "identity": "btcsp_touch_updated_at()",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "postgres",
+      "identity": "btcsp_touch_updated_at()",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "anon",
+      "identity": "btcsp_touch_updated_at()",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "authenticated",
+      "identity": "btcsp_touch_updated_at()",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    },
+    {
+      "grantee": "service_role",
+      "identity": "btcsp_touch_updated_at()",
+      "grantable": false,
+      "privilege": "EXECUTE"
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "kind": "synthetic-local-node-shared-reconstruction-5000",
+  "recordedAt": "2026-10-22T21:20:52.968Z",
+  "result": {
+    "eventCount": 5000,
+    "mix": "trades",
+    "maxCycles": 1,
+    "fixedValuationAt": "2026-10-20T23:40:00Z",
+    "fullResultsEqual": true,
+    "inputUnchanged": true,
+    "maximumCheckpointBytes": 2564549,
+    "maxRequestCpuMs": 1505.712,
+    "maxRequestWallMs": 1109.4078180000001,
+    "maximumRssBytes": 482033664,
+    "steps": [
+      {
+        "name": "reconstruct",
+        "cpuMs": 344.981,
+        "wallMs": 196.750945,
+        "rssBytes": 109076480
+      },
+      {
+        "name": "start",
+        "cpuMs": 1505.712,
+        "wallMs": 1109.4078180000001,
+        "rssBytes": 292691968
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1453.548,
+        "wallMs": 996.1196569999997,
+        "rssBytes": 331796480
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1175.979,
+        "wallMs": 957.6294890000004,
+        "rssBytes": 374874112
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1108.358,
+        "wallMs": 895.9348009999999,
+        "rssBytes": 444772352
+      },
+      {
+        "name": "advance",
+        "cpuMs": 553.14,
+        "wallMs": 434.51222400000006,
+        "rssBytes": 426582016
+      },
+      {
+        "name": "advance",
+        "cpuMs": 952.234,
+        "wallMs": 871.4543530000001,
+        "rssBytes": 435245056
+      },
+      {
+        "name": "advance",
+        "cpuMs": 471.316,
+        "wallMs": 439.96506600000066,
+        "rssBytes": 441729024
+      },
+      {
+        "name": "advance",
+        "cpuMs": 986.29,
+        "wallMs": 912.2408160000005,
+        "rssBytes": 452976640
+      },
+      {
+        "name": "advance",
+        "cpuMs": 550.576,
+        "wallMs": 434.7431069999993,
+        "rssBytes": 442662912
+      },
+      {
+        "name": "advance",
+        "cpuMs": 468.378,
+        "wallMs": 424.39365700000053,
+        "rssBytes": 452034560
+      },
+      {
+        "name": "advance",
+        "cpuMs": 948.131,
+        "wallMs": 855.3323360000004,
+        "rssBytes": 462774272
+      },
+      {
+        "name": "advance",
+        "cpuMs": 482.175,
+        "wallMs": 435.64325800000006,
+        "rssBytes": 471752704
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1026.928,
+        "wallMs": 881.5614069999992,
+        "rssBytes": 443371520
+      },
+      {
+        "name": "advance",
+        "cpuMs": 456.945,
+        "wallMs": 417.1584839999996,
+        "rssBytes": 450052096
+      },
+      {
+        "name": "advance",
+        "cpuMs": 455.68,
+        "wallMs": 411.48466799999915,
+        "rssBytes": 454504448
+      },
+      {
+        "name": "advance",
+        "cpuMs": 425.21,
+        "wallMs": 394.99704999999994,
+        "rssBytes": 463159296
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1016.067,
+        "wallMs": 939.1850110000014,
+        "rssBytes": 473731072
+      },
+      {
+        "name": "advance",
+        "cpuMs": 561.128,
+        "wallMs": 457.6748459999999,
+        "rssBytes": 450994176
+      },
+      {
+        "name": "advance",
+        "cpuMs": 655.504,
+        "wallMs": 598.0200759999989,
+        "rssBytes": 461078528
+      },
+      {
+        "name": "advance",
+        "cpuMs": 527.042,
+        "wallMs": 469.2530169999991,
+        "rssBytes": 467722240
+      },
+      {
+        "name": "advance",
+        "cpuMs": 504.773,
+        "wallMs": 452.4665189999996,
+        "rssBytes": 471990272
+      },
+      {
+        "name": "advance",
+        "cpuMs": 451.397,
+        "wallMs": 402.4072790000009,
+        "rssBytes": 480743424
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1129.98,
+        "wallMs": 976.5845669999999,
+        "rssBytes": 452128768
+      },
+      {
+        "name": "advance",
+        "cpuMs": 975.058,
+        "wallMs": 888.3426060000002,
+        "rssBytes": 462614528
+      },
+      {
+        "name": "advance",
+        "cpuMs": 1017.377,
+        "wallMs": 938.1233890000003,
+        "rssBytes": 473276416
+      },
+      {
+        "name": "advance",
+        "cpuMs": 488.427,
+        "wallMs": 450.21789600000193,
+        "rssBytes": 482033664
+      },
+      {
+        "name": "advance",
+        "cpuMs": 735.283,
+        "wallMs": 628.7330799999982,
+        "rssBytes": 458645504
+      },
+      {
+        "name": "advance",
+        "cpuMs": 465.582,
+        "wallMs": 431.07876000000033,
+        "rssBytes": 462741504
+      },
+      {
+        "name": "advance",
+        "cpuMs": 446.579,
+        "wallMs": 408.30244200000016,
+        "rssBytes": 466595840
+      },
+      {
+        "name": "advance",
+        "cpuMs": 461.834,
+        "wallMs": 428.22448799999984,
+        "rssBytes": 475422720
+      },
+      {
+        "name": "result",
+        "cpuMs": 45.859,
+        "wallMs": 44.68666099999973,
+        "rssBytes": 477941760
+      },
+      {
+        "name": "synchronous-equivalence",
+        "cpuMs": 11667.163,
+        "wallMs": 10421.673111,
+        "rssBytes": 450514944
+      }
+    ]
+  },
+  "excludes": [
+    "hosted-Deno",
+    "real-Auth",
+    "SQL",
+    "network",
+    "full-cycle-limit"
+  ]
+}

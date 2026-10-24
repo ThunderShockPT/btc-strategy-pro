@@ -1,0 +1,158 @@
+{
+  "kind": "hosted-synthetic-fixed-clock-runtime-diagnostic",
+  "startedAt": "2026-10-23T04:30:42.221Z",
+  "recordedAt": "2026-10-23T04:30:53.861Z",
+  "runId": "e9ec0868d73c",
+  "bundleSHA256": "c5f2396828d92b4d44cad232e7bd41c7427d61667644cef052608fe63c5bd856",
+  "sourceCommit": "91bf7f8aa050a608ba4e582918627b2757580034",
+  "results": [
+    {
+      "operation": "small-start",
+      "authorized": false,
+      "httpStatus": 500,
+      "clientWallMs": 6032.179555,
+      "requestId": "01a16706-946a-7cc8-9e6b-6ab8862ff3b0",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "small-start",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 669.7744990000001,
+      "requestId": "01a16706-9be3-7507-8d01-a23996c0487f",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "small-advance",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 681.8990549999999,
+      "requestId": "01a16706-9cb1-744d-9754-6917fe14160d",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "small-result",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 203.04354000000058,
+      "requestId": "01a16706-9f59-7553-afe2-ec009df44842",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "medium-start",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 408.25865800000065,
+      "requestId": "01a16706-a028-78bb-b44a-5fcddf065218",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "medium-advance",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 676.3549609999991,
+      "requestId": "01a16706-a1ba-78b8-a311-dcb8ae421777",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "medium-result",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 419.67073899999923,
+      "requestId": "01a16706-a462-7c7c-a764-13ce6f8b0560",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "large-start",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 662.9451789999985,
+      "requestId": "01a16706-a7ed-7616-9d8b-65353d846a3d",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "large-advance",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 261.9750530000001,
+      "requestId": "01a16706-a8a1-74ac-a10f-f4efbd854431",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "large-result",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 247.95606899999984,
+      "requestId": "01a16706-a9a7-73f5-9f43-6ecc6914a781",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "public-3s",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 646.2469740000015,
+      "requestId": "01a16706-aaae-702a-933a-53d75405355e",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "sql-read-only",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 277.85645400000067,
+      "requestId": "01a16706-ad7c-7428-adb4-517f85f9f443",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    },
+    {
+      "operation": "invalid-auth",
+      "authorized": true,
+      "httpStatus": 500,
+      "clientWallMs": 261.2384829999992,
+      "requestId": "01a16706-aebf-7187-b49f-ec581649429e",
+      "body": {
+        "code": "WORKER_ERROR",
+        "message": "Function exited due to an error (please check logs)"
+      }
+    }
+  ],
+  "excludes": [
+    "financial-write-approval",
+    "valid-account-session-flow",
+    "end-to-end-job-deadline-approval"
+  ]
+}

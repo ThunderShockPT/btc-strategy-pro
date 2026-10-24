@@ -1,0 +1,279 @@
+{
+  "checkedAt": "2026-10-24T16:40:47.926Z",
+  "head": "03ed430fb7e0908c454d3953503d0f09fde2823a",
+  "allAncestors": true,
+  "prs": [
+    {
+      "number": 1,
+      "head": "5a154544d19537435fa7abfe182652ae30a59204",
+      "branch": "feat/v20-kraken-rules",
+      "base": "main",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 2,
+      "head": "4f9bef1d2eb25679a48c9fda8e5a183fc87d3bde",
+      "branch": "feat/v20-data-model",
+      "base": "feat/v20-kraken-rules",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 3,
+      "head": "c5860afdf52ab110b4d7c29ec78e34e09ba0c940",
+      "branch": "feat/v20-financial-engine",
+      "base": "feat/v20-data-model",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 4,
+      "head": "7588dd425eb72b79cfca060f00a1bafe51bd51f3",
+      "branch": "feat/v20-liquidation-risk",
+      "base": "feat/v20-financial-engine",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 5,
+      "head": "70bef4c03a50a410163da37e6131c237a827a5f8",
+      "branch": "feat/v20-dynamic-cash",
+      "base": "feat/v20-liquidation-risk",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 6,
+      "head": "3acc411ae0b5617e42598a4be64eaf96be4aa41e",
+      "branch": "feat/v20-dynamic-cycles",
+      "base": "feat/v20-dynamic-cash",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 7,
+      "head": "1ba7549b7e2997434d0f63d0064d2d304fe7ef60",
+      "branch": "feat/v20-profiles-exits",
+      "base": "feat/v20-dynamic-cycles",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 8,
+      "head": "a7a5c730729dd2d5e187faf4b71680de4d88dcfc",
+      "branch": "feat/v20-strict-profile-policy",
+      "base": "feat/v20-profiles-exits",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 9,
+      "head": "60407081bbe116657e7ffdc54e94f9901eae0416",
+      "branch": "feat/v20-auditable-corrections",
+      "base": "feat/v20-strict-profile-policy",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 10,
+      "head": "1c8402f9b3fb1714faa4b4f7339f4506eb264dde",
+      "branch": "feat/v20-temporal-simulation",
+      "base": "feat/v20-auditable-corrections",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 11,
+      "head": "dec085c933843da1b4a9bbd964d4af7452987a2e",
+      "branch": "feat/v20-wallet-onboarding",
+      "base": "feat/v20-temporal-simulation",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 12,
+      "head": "61dbee4d47cdaad300b8adad95bcfe2b3361e405",
+      "branch": "fix/v20-buy-sequence-clarity",
+      "base": "feat/v20-wallet-onboarding",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 13,
+      "head": "e7da6a77308012de4c54184d50acf91d5baaad4e",
+      "branch": "feat/v20-app-navigation",
+      "base": "fix/v20-buy-sequence-clarity",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 14,
+      "head": "f7508b9fb43616e11445657ea7a4f096dd519eac",
+      "branch": "feat/v20-trade-journal-ui",
+      "base": "feat/v20-app-navigation",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 15,
+      "head": "d834a4cc0a34bf8ef18733af1a6a3046d7d6e49f",
+      "branch": "feat/v20-persistence-contract",
+      "base": "feat/v20-trade-journal-ui",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 16,
+      "head": "d7c2369fb6948be4dad9e1229aec07ac9a971f52",
+      "branch": "feat/v20-atomic-persistence",
+      "base": "feat/v20-persistence-contract",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 17,
+      "head": "34c11a89a6450808db8890f011060a404e7da14e",
+      "branch": "feat/v20-authenticated-api",
+      "base": "feat/v20-atomic-persistence",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 18,
+      "head": "be26c82a6733628c0d4d6804ddcc535e7c4c6965",
+      "branch": "feat/v20-edge-runtime",
+      "base": "feat/v20-authenticated-api",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 19,
+      "head": "8c3e5c9978110a855d3fd819439b2eefa3c8558a",
+      "branch": "feat/v20-wallet-plan-persistence",
+      "base": "feat/v20-edge-runtime",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 20,
+      "head": "d4731ee408dcd11ea20c043c499e7eb924aef88b",
+      "branch": "feat/v20-public-financial-context",
+      "base": "feat/v20-wallet-plan-persistence",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 21,
+      "head": "dddcf7690ebb0801c0e3e59b4a86f7c2ebd3acd8",
+      "branch": "perf/v20-immutable-rule-reuse",
+      "base": "feat/v20-public-financial-context",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 22,
+      "head": "b951209764df698716b11b41583a07da367fd1b7",
+      "branch": "feat/v20-resumable-cycle-search",
+      "base": "perf/v20-immutable-rule-reuse",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 23,
+      "head": "0bcfd6875f68dfd38d0b4ee9a2c93eca195bdb08",
+      "branch": "feat/v20-durable-calculation-jobs",
+      "base": "feat/v20-resumable-cycle-search",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 24,
+      "head": "cb5edd810904ea2cc1d9728607f518c5e3434089",
+      "branch": "feat/v20-calculation-http",
+      "base": "feat/v20-durable-calculation-jobs",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 25,
+      "head": "8d4c642ddeca8da3bfc425ca2990d8c6c32af940",
+      "branch": "feat/v20-frozen-command-reviews",
+      "base": "feat/v20-calculation-http",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 26,
+      "head": "959c784f54d8a617fc28cb6eb9f68f4bcb9285e3",
+      "branch": "feat/v20-calculation-plan-review",
+      "base": "feat/v20-frozen-command-reviews",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 27,
+      "head": "c98278a02be9964207aca3316bfc27feb8d19db3",
+      "branch": "feat/v20-resumable-profile-plans",
+      "base": "feat/v20-calculation-plan-review",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 28,
+      "head": "41760755e9ae589389399701e43a625674abbd0b",
+      "branch": "feat/v20-runtime-calculation-composition",
+      "base": "feat/v20-resumable-profile-plans",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 29,
+      "head": "8248cb9bf4c50a47be2236b8e7bf6a2ba601b10c",
+      "branch": "feat/v20-public-history-orderbook",
+      "base": "feat/v20-runtime-calculation-composition",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 30,
+      "head": "13e26b9c1cc8c8cec8649677b0a7230d0bcd6a9f",
+      "branch": "feat/v20-best-ask-profile-context",
+      "base": "feat/v20-public-history-orderbook",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 31,
+      "head": "27c8de8c8a0f87defed75b06b569cfb142a7efa6",
+      "branch": "perf/v20-public-observation-refresh",
+      "base": "feat/v20-best-ask-profile-context",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 32,
+      "head": "c7e13c2001f2bdd37b8ee16da9cf832969ead76a",
+      "branch": "perf/v20-large-history-capacity",
+      "base": "perf/v20-public-observation-refresh",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 33,
+      "head": "1177be0f7528ff83350c6e6e170e8b1886374304",
+      "branch": "perf/v20-bounded-risk-paths",
+      "base": "perf/v20-large-history-capacity",
+      "draft": true,
+      "ancestor": true
+    },
+    {
+      "number": 34,
+      "head": "03ed430fb7e0908c454d3953503d0f09fde2823a",
+      "branch": "qa/v20-block12-recovery-20261022",
+      "base": "perf/v20-bounded-risk-paths",
+      "draft": true,
+      "ancestor": true
+    }
+  ]
+}

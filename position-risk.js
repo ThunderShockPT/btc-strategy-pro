@@ -12,11 +12,15 @@
  const str=v=>v.toDecimalPlaces(24,D.ROUND_HALF_EVEN).toFixed();
  function instant(value){need(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(value),'INVALID_RISK_TIMESTAMP');const n=Date.parse(value);need(Number.isFinite(n)&&new Date(n).toISOString().slice(0,19)===value.slice(0,19),'INVALID_RISK_TIMESTAMP');return n;}
  function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
- function snapshot(input){
-  const ledger=Core.reconstruct(input);need(ledger.ruleAssessment.scopeReady,'RISK_RULES_UNAVAILABLE');
+ function snapshot(input,includeEvents=false){
+  const rebuilt=includeEvents?Core.reconstructWithEvents(input):null,ledger=rebuilt?rebuilt.ledger:Core.reconstruct(input);
+  return ledgerSnapshot(input,ledger,rebuilt?.effectiveEvents);
+ }
+ function ledgerSnapshot(input,ledger,effectiveEvents){
+  need(ledger.ruleAssessment.scopeReady,'RISK_RULES_UNAVAILABLE');
   const q=new D(ledger.position.quantityBTC),basis=new D(ledger.position.remainingBasisUSD),margin=new D(ledger.cash.isolatedMarginUSD),mark=new D(input.valuation.markPriceUSD);
   const req=Core.marginRequirements({basisUSD:ledger.position.remainingBasisUSD,rules:input.rules,platform:input.platform,clientType:input.clientType});
-  return {ledger,q,basis,margin,mark,mm:new D(req.maintenanceUSD),im:new D(req.initialUSD)};
+  return {ledger,q,basis,margin,mark,mm:new D(req.maintenanceUSD),im:new D(req.initialUSD),...(effectiveEvents?{effectiveEvents}:{})};
  }
  const buffer=(s,p)=>s.margin.add(s.q.mul(p)).sub(s.basis).sub(s.mm);
  function boundary(s){
@@ -35,6 +39,13 @@
   marginUSD:str(s.margin),maintenanceBufferUSD:str(buffer(s,s.mark)),atOrBelowMaintenance:s.q.gt(0)&&buffer(s,s.mark).lte(0),
   source:'local-model',syntheticFrozenRules:s.ledger.ruleAssessment.syntheticFrozenRules,ruleAssessmentAt:s.ledger.ruleAssessment.assessedAt,officialKrakenPrice:false,guaranteedProtection:false,recommendationsAllowed:false,
   limitations:['USD_LONG_ONLY','MANUAL_FACTS','ENTRY_NOTIONAL_MARGIN','NO_EXECUTION_PRICE_GUARANTEE','NO_FUNDING_FORECAST']};}
+ // Reconstruct once when a planner needs both validated facts and risk admission.
+ // No caller-supplied ledger or cached state is accepted here.
+ function reconstructContext(input){
+  const rebuilt=Core.reconstructWithEvents(input),ledger=rebuilt.ledger;
+  const state=ledger.ruleAssessment.scopeReady?ledgerSnapshot(input,ledger):null;
+  return freeze({ledger,effectiveEvents:rebuilt.effectiveEvents,atOrBelowMaintenance:state?state.q.gt(0)&&buffer(state,state.mark).lte(0):null});
+ }
  function estimate(input){return freeze(view(snapshot(input)));}
  function available(s,useReservedMargin){
   // Cap by actual wallet after other reservations, even if the plan is unfunded.
@@ -82,39 +93,49 @@
    const pool=resume.rulePool.map(r=>Rules.load(r));current.buyRulesByEvent={};
    for(const [id,index]of Object.entries(resume.buyRuleRefs)){need(Number.isInteger(index)&&index>=0&&index<pool.length,'INVALID_STRESS_RULE_REFERENCE');current.buyRulesByEvent[id]=pool[index];}
   }else current.buyRulesByEvent=JSON.parse(JSON.stringify(sourceBuyRules||{}));
-  let state=snapshot(current),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
+  // Pin the default purchase rules before the first replay. That replay must
+  // validate their historical scope too; adding the same defaults afterwards
+  // used to discard the validated journal and replay every historical fact a
+  // second time on the first mark. Rule changes and resumed requests still
+  // reconstruct independently, including all historical-rule checks.
+  for(const e of current.events||[])if(e?.event_type==='trade_buy'&&typeof e.id==='string'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;
+  let valuationBasis=Core.prepareJournal(current);
+  let state=ledgerSnapshot(current,valuationBasis.ledger,valuationBasis.effectiveEvents),previousTime=resume?resume.previousTime:instant(input.valuation.asOf),stopped=resume?resume.stopped:false,firstRiskEvent=resume?resume.firstRiskEvent:null,firstFailure=resume?resume.firstFailure:null;
   const history=resume?JSON.parse(JSON.stringify(resume.history)):[],hypotheticalIds=new Set(resume?resume.hypotheticalIds:[]),views=new WeakMap();
   function riskView(s){if(!views.has(s))views.set(s,view(s));return views.get(s);}
-  for(const e of Core.effectiveEvents(current))if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
-  for(const e of current.events)if(e.event_type==='trade_buy'&&!Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=current.rules;
+  for(const e of state.effectiveEvents)if(e.event_type==='trade_buy'&&Object.hasOwn(current.buyRulesByEvent,e.id.toLowerCase()))current.buyRulesByEvent[e.id.toLowerCase()]=Rules.load(current.buyRulesByEvent[e.id.toLowerCase()]);
   function fail(reason,index,phase,details={}){if(!firstFailure)firstFailure={reason,index,phase,...details};stopped=true;}
   function risk(index,phase,transition,prior,arrival){
    if(!firstRiskEvent){const root=boundary(prior);firstRiskEvent={index,phase,transition,boundary:root,arrivalMarkUSD:str(arrival),executionPriceUSD:null};}
   }
   function apply(events,index,{liquidation=false}={}){
    need(Array.isArray(events)&&events.length>0&&events.length<=50,'INVALID_ACTION_EVENTS');
-   // Journal/valuation are copied. Active rules are validated/frozen; unused metadata
-   // is detached from caller input and never mutated inside this simulation.
-   const {rules,buyRulesByEvent,...mutable}=current;
-   let candidate={...JSON.parse(JSON.stringify(mutable)),rules,buyRulesByEvent:{...buyRulesByEvent}};
+   // The source journal was detached on entry. Actions append to a new array;
+   // existing facts are read-only; each new event checks the exact ledger state.
+   const {rules,buyRulesByEvent,events:journal,...mutable}=current;
+   let candidate={...JSON.parse(JSON.stringify(mutable)),events:journal.slice(),rules,buyRulesByEvent:{...buyRulesByEvent}};
    const startRevision=candidate.events.reduce((v,e)=>BigInt(e.revision)>v?BigInt(e.revision):v,0n);
-   let evaluated;
-   for(let j=0;j<events.length;j++){
-    const e=events[j];need(e&&['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(e.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION');need(e&&e.effective_at===candidate.valuation.asOf&&typeof e.id==='string'&&!hypotheticalIds.has(e.id.toLowerCase()),'INVALID_HYPOTHETICAL_EVENT');
-    need(e.revision===(startRevision+BigInt(j)+1n).toString(),'NON_SEQUENTIAL_HYPOTHETICAL_REVISION');
-    if(liquidation)need(['trade_sell','fee','funding'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
-    candidate.events.push(e);
-    if(e.event_type==='trade_buy')candidate.buyRulesByEvent[e.id.toLowerCase()]=candidate.rules;
-    try{evaluated=snapshot(candidate);}catch(error){fail(error.code||'INVALID_ACTION',index,'action');return false;}
-    const equity=evaluated.margin.add(evaluated.q.mul(evaluated.mark)).sub(evaluated.basis);
-    if(e.event_type==='trade_buy'&&equity.lt(evaluated.im)){fail('INSUFFICIENT_INITIAL_EQUITY',index,'action');return false;}
-    if(e.event_type==='margin_remove'&&evaluated.q.gt(0)&&equity.lt(evaluated.im)){fail('INITIAL_EQUITY_REQUIRED_AFTER_WITHDRAWAL',index,'action');return false;}
-    if(!liquidation&&evaluated.q.gt(0)&&buffer(evaluated,evaluated.mark).lte(0)){risk(index,'after-event','event',evaluated,evaluated.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
-   }
-   // The final event already rebuilt this exact candidate; retain every post-action check.
-   const next=evaluated;
-   if(!liquidation&&next.q.gt(0)&&buffer(next,next.mark).lte(0)){risk(index,'after-action','event',state,next.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
-   current=candidate;state=next;for(const e of events)hypotheticalIds.add(e.id.toLowerCase());return true;
+   let evaluated,accepted=false;
+   valuationBasis??=Core.prepareJournal(current);
+   const action=valuationBasis.beginAction(current.valuation);
+   try{
+    for(let j=0;j<events.length;j++){
+     const e=events[j];need(e&&['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(e.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION');need(e&&e.effective_at===candidate.valuation.asOf&&typeof e.id==='string'&&!hypotheticalIds.has(e.id.toLowerCase()),'INVALID_HYPOTHETICAL_EVENT');
+     need(e.revision===(startRevision+BigInt(j)+1n).toString(),'NON_SEQUENTIAL_HYPOTHETICAL_REVISION');
+     if(liquidation)need(['trade_sell','fee','funding'].includes(e.event_type),'INVALID_LIQUIDATION_ACTION');
+     candidate.events.push(e);
+     if(e.event_type==='trade_buy')candidate.buyRulesByEvent[e.id.toLowerCase()]=candidate.rules;
+     try{evaluated=ledgerSnapshot(candidate,action.append(e));}catch(error){fail(error.code||'INVALID_ACTION',index,'action');return false;}
+     const equity=evaluated.margin.add(evaluated.q.mul(evaluated.mark)).sub(evaluated.basis);
+     if(e.event_type==='trade_buy'&&equity.lt(evaluated.im)){fail('INSUFFICIENT_INITIAL_EQUITY',index,'action');return false;}
+     if(e.event_type==='margin_remove'&&evaluated.q.gt(0)&&equity.lt(evaluated.im)){fail('INITIAL_EQUITY_REQUIRED_AFTER_WITHDRAWAL',index,'action');return false;}
+     if(!liquidation&&evaluated.q.gt(0)&&buffer(evaluated,evaluated.mark).lte(0)){risk(index,'after-event','event',evaluated,evaluated.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
+    }
+    // Retain every post-action check on the final exact candidate.
+    const next=evaluated;
+    if(!liquidation&&next.q.gt(0)&&buffer(next,next.mark).lte(0)){risk(index,'after-action','event',state,next.mark);fail('MAINTENANCE_AFTER_ACTION',index,'action');return false;}
+    action.commit();accepted=true;current=candidate;state=next;for(const e of events)hypotheticalIds.add(e.id.toLowerCase());return true;
+   }finally{if(!accepted)action.rollback();}
   }
   if(!resume&&state.q.gt(0)&&buffer(state,state.mark).lte(0)){risk(-1,'initial','initial',state,state.mark);fail('MAINTENANCE_ALREADY_REACHED',-1,'initial');}
   let nextIndex=resume?resume.nextIndex:0,processed=0;
@@ -126,9 +147,13 @@
    const prior=state,crossed=prior.q.gt(0)&&buffer(prior,price).lte(0);
    current.valuation={kind:'synthetic',source:'explicit-stress-path',markPriceUSD:str(price),asOf:step.at};
    if(step.rules){
-    need(step.rules.version!==current.rules.version||JSON.stringify(step.rules)===JSON.stringify(current.rules),'RULE_VERSION_REUSED');current.rules=Rules.load(step.rules);
+    need(step.rules.version!==current.rules.version||JSON.stringify(step.rules)===JSON.stringify(current.rules),'RULE_VERSION_REUSED');current.rules=Rules.load(step.rules);valuationBasis=null;
    }
-   state=snapshot(current);
+   // Reprice exact validated accumulators only while facts/rules are unchanged.
+   // Rule changes and resumed requests reconstruct; actions verify each new fact
+   // against exact accumulators with transactional rollback.
+   if(valuationBasis)state=ledgerSnapshot(current,valuationBasis.atValuation(current.valuation));
+   else{valuationBasis=Core.prepareJournal(current);state=ledgerSnapshot(current,valuationBasis.ledger);}
    const breached=crossed||(state.q.gt(0)&&buffer(state,price).lte(0));
    if(breached){
     risk(index,crossed?'before-actions':'rule-change',step.transition,crossed?prior:state,price);
@@ -165,10 +190,16 @@
  }
  function simulate(input,path){return runSimulation(input,path).result;}
  function beginSimulation(input,path){return runSimulation(input,path,null,0);}
+ // Start and consume the first bounded unit in one validated reconstruction.
+ // Nothing is cached across requests; persisted continuations still rebuild fully.
+ function startSimulation(input,path,{maxSteps=1}={}){
+  need(Number.isSafeInteger(maxSteps)&&maxSteps>=1&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
+  return runSimulation(input,path,null,maxSteps);
+ }
  function advanceSimulation(saved,{maxSteps=1}={}){
   need(saved?.version==='v20-risk-path-12d9.1'&&Number.isInteger(saved.nextIndex)&&saved.nextIndex>=0&&saved.nextIndex<=saved.steps?.length&&Number.isFinite(saved.previousTime)&&Array.isArray(saved.history)&&Array.isArray(saved.hypotheticalIds)&&saved.stopped===false,'INVALID_STRESS_CONTINUATION');
   need(Number.isSafeInteger(maxSteps)&&maxSteps>=1&&maxSteps<=500,'INVALID_STRESS_BATCH_SIZE');
   return runSimulation(saved.current,{steps:saved.steps},JSON.parse(JSON.stringify(saved)),maxSteps);
  }
- return Object.freeze({RiskError,estimate,inverse,previewTransfer,simulate,beginSimulation,advanceSimulation,requiredMarginForFloor});
+ return Object.freeze({RiskError,reconstructContext,estimate,inverse,previewTransfer,simulate,beginSimulation,startSimulation,advanceSimulation,requiredMarginForFloor});
 });

@@ -1,0 +1,50 @@
+{
+  "kind": "hosted-synthetic-fixed-clock-runtime-diagnostic",
+  "startedAt": "2026-10-23T04:40:43.711Z",
+  "recordedAt": "2026-10-23T04:40:49.206Z",
+  "runId": "5b4f84e8b5ae",
+  "bundleSHA256": "152c4fdcc3f32cf8f5065e64cbe4a7b3f7179070696d3c20b51a25aecdd80a14",
+  "sourceCommit": "91bf7f8aa050a608ba4e582918627b2757580034",
+  "results": [
+    {
+      "operation": "small-start",
+      "authorized": false,
+      "httpStatus": 401,
+      "clientWallMs": 5226.882764,
+      "requestId": "01a1670f-c26c-7255-a72b-2e470de7d3a1",
+      "body": {
+        "code": "QA_CAPABILITY_REQUIRED"
+      }
+    },
+    {
+      "operation": "sql-read-only",
+      "authorized": true,
+      "httpStatus": 200,
+      "clientWallMs": 267.01110400000016,
+      "requestId": "01a1670f-c438-7d73-ab6c-f01c26ef76a4",
+      "body": {
+        "runId": "5b4f84e8b5ae",
+        "operation": "sql-read-only",
+        "recordedAt": "2026-10-23T04:40:49.183Z",
+        "totalWallMs": 1.3391419999999812,
+        "result": {
+          "status": "failed",
+          "code": "QA_OPERATION_FAILED",
+          "phase": "driver-initialization",
+          "category": "UNCLASSIFIED",
+          "errorType": "ReferenceError",
+          "runtimeCapability": null,
+          "tlsUpgraded": true,
+          "certificateVerificationRequired": true,
+          "authenticatedFinancialSessionTested": false
+        },
+        "financialCloudEnabled": false
+      }
+    }
+  ],
+  "excludes": [
+    "financial-write-approval",
+    "valid-account-session-flow",
+    "end-to-end-job-deadline-approval"
+  ]
+}

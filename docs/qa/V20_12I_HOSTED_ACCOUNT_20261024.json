@@ -1,0 +1,327 @@
+{
+  "kind": "hosted-capability-account-qa",
+  "runId": "1aa22a1b04ee",
+  "steps": [
+    {
+      "label": "missing-capability",
+      "status": 401,
+      "wallMs": 4643,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null,
+      "code": "QA_CAPABILITY_REQUIRED"
+    },
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 2149,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/password-login-0",
+      "status": 200,
+      "wallMs": 569,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/password-login-1",
+      "status": 200,
+      "wallMs": 247,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 2106,
+      "worker": "e342d4e7-f9de-4d1a-937b-a6a6801907c4",
+      "serverWallMs": 1941,
+      "heapBytes": 10079088,
+      "responseDiscarded": true
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 5371,
+      "worker": "f2bda598-4037-4cd5-8bd4-03ec31915ec9",
+      "serverWallMs": 1705,
+      "heapBytes": 10086176
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 6718,
+      "worker": "a61bb29d-688a-4ae1-93f6-906337eb9b2d",
+      "serverWallMs": 1893,
+      "heapBytes": 9958520
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 6172,
+      "worker": "45567563-0385-4f14-a20e-d55d6bbcdb3b",
+      "serverWallMs": 2180,
+      "heapBytes": 10003984,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/state",
+      "status": 401,
+      "wallMs": 1761,
+      "worker": "22b536d3-5bc0-47c5-aea8-1e8a15a312a0",
+      "serverWallMs": 1464,
+      "heapBytes": 9840720,
+      "code": "SESSION_NOT_VALID"
+    },
+    {
+      "label": "api/state",
+      "status": 403,
+      "wallMs": 191,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null,
+      "code": "QA_SCOPE_REQUIRED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 200,
+      "wallMs": 3736,
+      "worker": "e63a7560-cd15-46d3-8e97-71265d241191",
+      "serverWallMs": 3542,
+      "heapBytes": 10516464
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3704,
+      "worker": "30466268-d81b-404c-9617-de19cb4cf35b",
+      "serverWallMs": 3547,
+      "heapBytes": 11273968
+    },
+    {
+      "label": "api/calculations/status",
+      "status": 200,
+      "wallMs": 5611,
+      "worker": "1c6d04e3-28fb-4ad6-832f-1b8e3ec53cc3",
+      "serverWallMs": 1785,
+      "heapBytes": 10070072
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3993,
+      "worker": "22259f46-6aa4-4466-8f36-c8e3852609de",
+      "serverWallMs": 3526,
+      "heapBytes": 10876392
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 4143,
+      "worker": "e5374682-df37-478b-9e94-5b1db45d7b6b",
+      "serverWallMs": 3909,
+      "heapBytes": 11362488
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3815,
+      "worker": "559fe0a9-0a7c-4538-b24b-ace8532b0f6e",
+      "serverWallMs": 3628,
+      "heapBytes": 11344816
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3729,
+      "worker": "c3f6b74d-5968-4b31-8dae-b547dbec8c46",
+      "serverWallMs": 3531,
+      "heapBytes": 11022232
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3876,
+      "worker": "2c560bdd-d5fe-4c25-9340-4497a4bd0ad3",
+      "serverWallMs": 3708,
+      "heapBytes": 10597280
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 4580,
+      "worker": "7822171f-36ae-4c8e-989f-643e07d40aa6",
+      "serverWallMs": 4204,
+      "heapBytes": 11374368
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3887,
+      "worker": "f76d02c1-9507-4995-81eb-55418cb2be44",
+      "serverWallMs": 3719,
+      "heapBytes": 10890832
+    },
+    {
+      "label": "api/calculations/result",
+      "status": 200,
+      "wallMs": 3016,
+      "worker": "92996b1f-9c87-4e12-a9c5-5148719f892b",
+      "serverWallMs": 2777,
+      "heapBytes": 10782072
+    },
+    {
+      "label": "api/prepare",
+      "status": 200,
+      "wallMs": 5322,
+      "worker": "7d02ea38-0741-4961-b3a3-f3a4b0717479",
+      "serverWallMs": 5117,
+      "heapBytes": 12297616
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 3760,
+      "worker": "616983b5-383a-419e-9437-948f7f63dac1",
+      "serverWallMs": 3569,
+      "heapBytes": 11829312
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 2108,
+      "worker": "e3a37fb5-6f2e-4639-ad55-8bf0fb82d8ae",
+      "serverWallMs": 1940,
+      "heapBytes": 10462456
+    },
+    {
+      "label": "api/prepare",
+      "status": 200,
+      "wallMs": 3964,
+      "worker": "8363b4c2-25c8-446e-bcf5-34538367216f",
+      "serverWallMs": 3629,
+      "heapBytes": 11134872
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 3708,
+      "worker": "9fb598b8-4d0b-40c6-ac38-a773dc9b1912",
+      "serverWallMs": 3551,
+      "heapBytes": 10774552,
+      "responseDiscarded": true
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 5797,
+      "worker": "07674819-2f23-4dc7-8be9-2477ee4f49df",
+      "serverWallMs": 2167,
+      "heapBytes": 9816392
+    },
+    {
+      "label": "api/export",
+      "status": 200,
+      "wallMs": 5867,
+      "worker": "38d430e6-b649-4f81-a036-1ed1e3dd1a6f",
+      "serverWallMs": 2178,
+      "heapBytes": 10787424
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 193,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 3917,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 401,
+      "wallMs": 1554,
+      "worker": "44f1ecf7-4043-4cfe-91e1-ac54267056e9",
+      "serverWallMs": 1381,
+      "heapBytes": 9840704,
+      "code": "SESSION_NOT_VALID"
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 1640,
+      "worker": null,
+      "serverWallMs": null,
+      "heapBytes": null
+    }
+  ],
+  "startedAt": "2026-10-24T05:15:08.513Z",
+  "marketAndRules": "synthetic-not-Kraken-verification",
+  "emailVerification": "admin-provisioned-QA-only-no-SMTP",
+  "publicReleaseApproved": false,
+  "openingCashUSD": "2000",
+  "status": "passed",
+  "accountsDisabled": 2,
+  "previousAttempts": [
+    {
+      "failure": {
+        "code": "ERR_ASSERTION",
+        "lastStep": "api/calculations/enqueue",
+        "lastStatus": 503
+      },
+      "steps": 15
+    },
+    {
+      "failure": {
+        "code": "ERR_ASSERTION",
+        "lastStep": "api/calculations/advance",
+        "lastStatus": 200
+      },
+      "terminalJobCode": "CALCULATION_EXPIRED",
+      "steps": 29
+    },
+    {
+      "failure": {
+        "code": "ERR_ASSERTION",
+        "lastStep": "api/prepare",
+        "lastStatus": 503
+      },
+      "terminalJobCode": null,
+      "steps": 25
+    }
+  ],
+  "originalDeadline": "2026-10-24T05:16:41.208Z",
+  "firstWorker": "e63a7560-cd15-46d3-8e97-71265d241191",
+  "resumedWorker": "1c6d04e3-28fb-4ad6-832f-1b8e3ec53cc3",
+  "bundleSHA256": "892b6b089883b948e7bd95621781f821b6ece7eee8bf58a180dd79b4ba3afcc2",
+  "exportFormat": "btcsp-wallet-export-v20.1",
+  "finalRevision": "2",
+  "contributedCapitalUSD": "2500",
+  "finishedAt": "2026-10-24T05:17:04.974Z",
+  "financialFactsRetained": true,
+  "originalDeadlinePreserved": true,
+  "workerChanged": true,
+  "cleanup": {
+    "qaFunctionVersion": 10,
+    "qaFunctionHTTP": 503,
+    "qaFunctionCode": "QA_COMPLETE_CLOSED",
+    "qaUsers": 2,
+    "qaUsersBanned": true,
+    "qaSessions": 0,
+    "qaFinancialEventsRetained": 2,
+    "qaCommandReceiptsRetained": 3,
+    "mainHealthHTTP": 200,
+    "mainCloudAvailable": false
+  }
+}

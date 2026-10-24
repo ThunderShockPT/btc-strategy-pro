@@ -19,7 +19,8 @@
   for(const e of sorted){
    const id=e.id.toLowerCase();
    if(!['correction','void','reversal'].includes(e.event_type)){
-    records.set(id,{original:clone(e),version:'1',state:{active:true,record:{facts:clone(e.facts),effective_at:e.effective_at}},lastCorrectionId:null,history:[]});continue;
+    const original=clone(e);
+    records.set(id,{original,version:'1',state:{active:true,record:{facts:original.facts,effective_at:original.effective_at}},lastCorrectionId:null,history:[]});continue;
    }
    const f=e.facts;fields(f,['expectedVersion','action','previous','next','reversesCorrectionId']);
    need(typeof e.target_event_id==='string','CORRECTION_TARGET_REQUIRED',e.id);const target=e.target_event_id.toLowerCase(),r=records.get(target);
@@ -42,7 +43,7 @@
    r.state=clone(f.next);r.version=(BigInt(r.version)+1n).toString();r.lastCorrectionId=id;r.history.push(id);changes.set(id,clone(e));
   }
   const rows=[...records.values()];
-  return freeze({events:rows.filter(r=>r.state.active).map(r=>({...r.original,...clone(r.state.record)})),records:rows.map(r=>({...r,localJournalAdjustment:true,exchangeTradeChanged:false})),correctionCount:changes.size});
+  return freeze({events:rows.filter(r=>r.state.active).map(r=>({...r.original,...r.state.record})),records:rows.map(r=>({...r,localJournalAdjustment:true,exchangeTradeChanged:false})),correctionCount:changes.size});
  }
  return Object.freeze({JournalError,canonical,clone,freeze,project});
 });
