@@ -30,7 +30,7 @@ test('more than 100 successful path units do not exhaust the retry budget',async
 test('operational control reads omit checkpoints while a claimed unit receives the full signed state',async t=>{
  const x=await setup(t),responses=[],db={transaction:fn=>x.db.transaction(tx=>fn({query:async(...args)=>{const result=await tx.query(...args);if(String(args[0]).includes('calculation_jobs'))responses.push(result.rows);return result;}}))},queue=Jobs.create({...x.options,db});
  const job=await queue.enqueue(f.TA,scope,{idempotencyKey:'compact-job-control'});responses.length=0;
- const next=await queue.runUnit(f.TA,scope,job.id);assert.equal(next.sequence,1);assert.equal(next.unitsCompleted,1);
+ const next=await queue.runUnit(f.TA,scope,job.id);assert.equal(next.sequence,1);assert.equal(next.unitsCompleted,2);
  const transported=responses.flat().filter(row=>Object.hasOwn(row,'envelope'));assert.equal(transported.length,1);assert.equal(typeof transported[0].envelope.mac,'string');assert(transported[0].envelope.payload.search.input.events.length>0);
  responses.length=0;const status=await queue.status(f.TA,scope,job.id);assert.equal(status.unitsCompleted,next.unitsCompleted);assert.equal(responses.flat().some(row=>Object.hasOwn(row,'envelope')),false);
  responses.length=0;assert.equal((await queue.cancel(f.TA,scope,job.id)).status,'cancelled');assert.equal(responses.flat().some(row=>Object.hasOwn(row,'envelope')),false);

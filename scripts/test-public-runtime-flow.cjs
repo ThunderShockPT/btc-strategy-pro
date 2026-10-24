@@ -70,6 +70,11 @@ test('public recalculation without a profile choice preserves the active profile
  const again=await x.call(b,'calculations/enqueue',{request:{idempotencyKey:'approved-current-profile'}});assert.equal(again.status,200,JSON.stringify(again.body));let repeated=again.body.result;
  for(let i=0;repeated.status!=='completed';i++){assert(i<300);const step=await x.call(a,'calculations/advance',{jobId:repeated.id});assert.equal(step.status,200);repeated=step.body.result;}
  const nextRequest={workflow:'plan-calculation',command:{mode:'recorded',jobId:repeated.id,change:{id:f.uuid(4903),version:'3'}}},next=await x.call(a,'prepare',{request:nextRequest});assert.equal(next.status,200,JSON.stringify(next.body));assert.equal(next.body.result.review.type,'profile-review');assert.equal(next.body.result.review.candidatePlan.profile,before.state.plan.profile);assert.equal(next.body.result.review.candidatePlan.protectionFloorUSD,before.state.plan.protectionFloorUSD);
+ const nextReview=next.body.result,nextConfirmation={headHash:nextReview.headHash,reviewHash:nextReview.reviewHash,idempotencyKey:'approved-current-profile-apply'};
+ const confirmedAgain=await x.call(b,'commit',{request:nextRequest,confirmation:nextConfirmation});assert.equal(confirmedAgain.status,200,JSON.stringify(confirmedAgain.body));assert.equal(confirmedAgain.body.result.planApplied,true);assert.deepEqual(confirmedAgain.body.result.eventsAppended,[]);
+ const replay=await x.call(a,'commit',{request:nextRequest,confirmation:nextConfirmation});assert.equal(replay.status,200);assert.equal(replay.body.result.replayed,true);
+ const final=(await x.call(b,'state')).body.result;assert.equal(final.state.plan.version,'3');assert.equal(final.state.plan.profile,after.state.plan.profile);assert.equal(final.state.plan.protectionFloorUSD,after.state.plan.protectionFloorUSD);assert.deepEqual(final.state.input.events,before.state.input.events);assert.deepEqual(Core.reconstruct(final.state.input),Core.reconstruct(after.state.input));
+ assert.equal((await x.db.query('select count(*)::int n from btcsp_private.command_receipts where project_id=$1',[x.scope.projectId])).rows[0].n,2);
 });
 
 test('a current public price that places reinforcements below the preserved floor is an explicit 422 without jobs or financial writes',async t=>{

@@ -13,7 +13,7 @@
     "backend/public-observations.cjs": "f179de50d53504bec5893e8c0e3059e8cadfdb9cc64fed089e47f5d3efe07864",
     "backend/financial-context.cjs": "a9973078780b33fd8797153fd0ada6bbccd324e851ad561741e914cde4768f64",
     "policies/public-liquidity-20261021.json": "27b714663839b6e8ab54ebb0a64c9fd327fc44bc6dad065878a5cacdb1a82417",
-    "backend/calculation-checkpoints.cjs": "8220f346c7f639b36eecbabf8790e096bd98a452c9d0d2df01af323196e145b2",
+    "backend/calculation-checkpoints.cjs": "c6eb73473a4a455b8d27024c4026ef042518b258121a7b500dbe22be4a0f94c6",
     "backend/calculation-jobs.cjs": "48cca39f8b36b028f01d3699a8dbd92085458e159c88b921c235a1f771469433",
     "backend/calculation-storage.cjs": "4c94606cf5552b9ced7e2d21e6400466aa7e10a3421fd25643c79cbbd45cc5d4",
     "backend/atomic-store.cjs": "11c7a4358b5824dcd0b75e5d50a6c78fd9bb4e45b13fedc7086f42b6cc0c8306",
