@@ -1,3 +1,5 @@
+> Atualização 2026-10-24: a apresentação privada passou a usar as cinco páginas partilhadas da Demo. Ver [integração atual e ensaio alojado](V20_CONTA_PAGINAS_PARTILHADAS_20261024.md). A descrição do painel abaixo regista a etapa anterior.
+
 # V20 — painel da conta e cálculos retomáveis
 
 23/10/2026. Trabalho preparado no PR #34. Não conclui o Bloco 12 nem ativa a conta online publicada.

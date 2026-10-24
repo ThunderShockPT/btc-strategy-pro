@@ -1,0 +1,358 @@
+{
+  "version": "v20-account-pages-hosted-20261024.1",
+  "startedAt": "2026-10-24T17:37:05.616Z",
+  "inventedQAFacts": true,
+  "realHostedAuthSQL": true,
+  "realPublicSources": true,
+  "ownerFinancialDataTouched": false,
+  "emailDeliveryTested": false,
+  "steps": [
+    {
+      "label": "provision/bootstrap",
+      "status": 200,
+      "wallMs": 5662
+    },
+    {
+      "label": "auth/qa-login",
+      "status": 200,
+      "wallMs": 3863
+    },
+    {
+      "label": "auth/qa-login",
+      "status": 200,
+      "wallMs": 4234
+    },
+    {
+      "label": "wallets",
+      "status": 200,
+      "wallMs": 7179,
+      "requestId": "2ac180e3-4e99-4e1d-ae96-794b5297b72f"
+    },
+    {
+      "label": "prepare",
+      "status": 200,
+      "wallMs": 8188,
+      "requestId": "60e63462-6c56-49a3-9284-de3a14b6a2f7"
+    },
+    {
+      "label": "commit",
+      "status": 200,
+      "wallMs": 8568,
+      "requestId": "6e63320f-5b82-4d83-a1c6-ad8e3485052f"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 8782,
+      "requestId": "682921bd-ce03-4362-ad03-aeaadbfcb77c"
+    },
+    {
+      "label": "isolation/other-account",
+      "status": 404,
+      "wallMs": 5897,
+      "requestId": "c6a60b27-a72e-42cc-88ef-5e430ae43968",
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "prepare",
+      "status": 200,
+      "wallMs": 8098,
+      "requestId": "9cbab77e-65d5-4e22-b8cb-ba30062ad4b7"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 7469,
+      "requestId": "152fc6ea-2310-4011-a952-b9077fffe256"
+    },
+    {
+      "label": "prepare",
+      "status": 200,
+      "wallMs": 11560,
+      "requestId": "4cb0f517-2171-4033-a64a-52d9ec450b65"
+    },
+    {
+      "label": "commit",
+      "status": 200,
+      "wallMs": 7483,
+      "requestId": "89a0d8f0-8894-498c-9e29-4a075d5acaf2"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 7298,
+      "requestId": "0680c100-197b-45eb-9967-581875be6270"
+    },
+    {
+      "label": "prepare",
+      "status": 200,
+      "wallMs": 8137,
+      "requestId": "78beaba1-8bbd-4300-944d-1c333f924a65"
+    },
+    {
+      "label": "commit",
+      "status": 200,
+      "wallMs": 7735,
+      "requestId": "33ecebd9-477e-4ee0-9790-9d3da57e8321"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 7913,
+      "requestId": "c888a9b3-fc9f-4972-865b-f336fa47f2e7"
+    },
+    {
+      "label": "prepare",
+      "status": 200,
+      "wallMs": 9947,
+      "requestId": "33878f98-0a97-422b-bbfa-4c17438f3c43"
+    },
+    {
+      "label": "commit",
+      "status": 200,
+      "wallMs": 8206,
+      "requestId": "86affdba-4eb9-4534-b4d3-94058d143da2"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 7111,
+      "requestId": "804a74cc-5d29-46f4-80e9-5e5105aee905"
+    },
+    {
+      "label": "prepare",
+      "status": 200,
+      "wallMs": 8586,
+      "requestId": "5528ca71-72c3-4d45-bb48-230da367b66c"
+    },
+    {
+      "label": "commit",
+      "status": 200,
+      "wallMs": 7676,
+      "requestId": "22348af1-cee9-4767-b91f-238be15c306b"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 7530,
+      "requestId": "cf44f805-2b29-4b8e-bd70-aa18ecda433e"
+    },
+    {
+      "label": "calculations/enqueue",
+      "status": 200,
+      "wallMs": 10154,
+      "requestId": "c7d8dd27-c6c3-49bf-8998-3ba86b07f1b2"
+    },
+    {
+      "label": "calculations/advance",
+      "status": 200,
+      "wallMs": 8304,
+      "requestId": "122b3be0-d39e-4bdc-a584-39e26a4f7374"
+    },
+    {
+      "label": "calculations/advance",
+      "status": 200,
+      "wallMs": 8718,
+      "requestId": "0b7a1c47-30b0-473e-bd9c-1c1271f4eebc"
+    },
+    {
+      "label": "calculations/advance",
+      "status": 200,
+      "wallMs": 8203,
+      "requestId": "286f1fe0-983a-41c7-8ef8-9359b9be649e"
+    },
+    {
+      "label": "calculations/advance",
+      "status": 200,
+      "wallMs": 10848,
+      "requestId": "df0b4c41-b498-48b3-8600-c7453e144606"
+    },
+    {
+      "label": "state",
+      "status": 200,
+      "wallMs": 7125,
+      "requestId": "2c4fe083-6fbc-4089-8217-f512183bc9b7"
+    },
+    {
+      "label": "export",
+      "status": 200,
+      "wallMs": 6266,
+      "requestId": "39835a7f-100d-440a-908e-01d400d7042a"
+    },
+    {
+      "label": "auth/qa-logout",
+      "status": 204,
+      "wallMs": 3998
+    },
+    {
+      "label": "auth/qa-logout",
+      "status": 204,
+      "wallMs": 4307
+    },
+    {
+      "label": "provision/finish-qa",
+      "status": 200,
+      "wallMs": 5278
+    }
+  ],
+  "phases": [
+    "idle",
+    "review",
+    "refresh-required",
+    "ready",
+    "review",
+    "error",
+    "ready",
+    "review",
+    "refresh-required",
+    "ready",
+    "review",
+    "refresh-required",
+    "ready",
+    "review",
+    "refresh-required",
+    "ready",
+    "review",
+    "refresh-required",
+    "ready",
+    "calculating",
+    "review",
+    "ready"
+  ],
+  "qaProjectId": "6278baee-4376-421f-ac14-b3f4fdc34f87",
+  "qaOwnerId": "5ba4b618-6fbd-41e3-8de9-66df294323a6",
+  "zeroMarginBuyBlocked": true,
+  "buyReviewRemainingMs": 57481,
+  "calculation": {
+    "phase": "review",
+    "reviewAvailable": true,
+    "automaticallyConfirmed": false,
+    "reviewRemainingMs": 15857
+  },
+  "final": {
+    "events": 8,
+    "quantityBTC": "0.002",
+    "capitalUSD": "1000",
+    "walletUSD": "899.9",
+    "marginUSD": "100",
+    "originalFactsPreserved": true,
+    "exportMatches": true
+  },
+  "passed": true,
+  "qaAccountsDisabled": true,
+  "completedAt": "2026-10-24T17:41:11.190Z",
+  "qaCleanupSQL": {
+    "qaUsers": 22,
+    "qaBanned": 22,
+    "qaSessions": 0
+  },
+  "ownerFinancialSnapshotUnchanged": true,
+  "runtimeFinal": {
+    "privateTestVersion": 10,
+    "ownerOnly": true,
+    "provisionVersion": 11,
+    "provisionClosed": true,
+    "productionGateUnchanged": true
+  },
+  "health": {
+    "btcsp-v20-api": {
+      "status": 200,
+      "body": {
+        "cloudAvailable": false,
+        "requestId": "909632be-4a32-402c-bb51-715e2ba8f213"
+      }
+    },
+    "btcsp-v20-account-qa": {
+      "status": 503,
+      "body": {
+        "code": "QA_COMPLETE_CLOSED"
+      }
+    },
+    "btcsp-v20-runtime-qa": {
+      "status": 503,
+      "body": {
+        "code": "QA_COMPLETE_CLOSED"
+      }
+    },
+    "btcsp-v20-private-test": {
+      "status": 200,
+      "body": {
+        "cloudAvailable": true,
+        "requestId": "df0735bc-0a1f-4b82-9871-5eb9fd198853"
+      }
+    },
+    "btcsp-v20-private-provision": {
+      "status": 503,
+      "body": {
+        "code": "PRIVATE_PROVISION_CLOSED"
+      }
+    }
+  },
+  "persistedPublicSourceEvidence": [
+    {
+      "engine_version": "v20-onboarding-10.1",
+      "result_kind": "manual-position-estimate",
+      "rule_version": "kraken-eea-public-5b9c0b18bee145572fe35805",
+      "basis_revision": 0,
+      "valuation": null,
+      "rules_observed_at": null,
+      "recorded_at": "2026-10-24 17:37:41.280393+00"
+    },
+    {
+      "engine_version": "v20-cash-7b.1",
+      "result_kind": "manual-position-estimate",
+      "rule_version": "kraken-eea-public-73005072e7e177b05a69c670",
+      "basis_revision": 1,
+      "valuation": {
+        "asOf": "2026-10-24T17:38:23.536Z",
+        "kind": "public_mark",
+        "source": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD",
+        "markPriceUSD": "80085.56237006617"
+      },
+      "rules_observed_at": "2026-10-24T17:38:22.291Z",
+      "recorded_at": "2026-10-24 17:38:31.461664+00"
+    },
+    {
+      "engine_version": "v20-execution-11b.1",
+      "result_kind": "manual-position-estimate",
+      "rule_version": "kraken-eea-public-1f69d9392b2efe0b263c79eb",
+      "basis_revision": 2,
+      "valuation": {
+        "asOf": "2026-10-24T17:38:46.553Z",
+        "kind": "public_mark",
+        "source": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD",
+        "markPriceUSD": "80086.17583355137"
+      },
+      "rules_observed_at": "2026-10-24T17:38:45.826Z",
+      "recorded_at": "2026-10-24 17:38:59.453799+00"
+    },
+    {
+      "engine_version": "v20-execution-11b.1",
+      "result_kind": "manual-position-estimate",
+      "rule_version": "kraken-eea-public-4c40d1722f15fb0a3734e16c",
+      "basis_revision": 4,
+      "valuation": {
+        "asOf": "2026-10-24T17:39:16.554Z",
+        "kind": "public_mark",
+        "source": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD",
+        "markPriceUSD": "80061.03008607418"
+      },
+      "rules_observed_at": "2026-10-24T17:39:15.006Z",
+      "recorded_at": "2026-10-24 17:39:25.539261+00"
+    },
+    {
+      "engine_version": "v20-execution-11b.1",
+      "result_kind": "manual-position-estimate",
+      "rule_version": "kraken-eea-public-f41f5a375ce8f51bbd12cfd1",
+      "basis_revision": 6,
+      "valuation": {
+        "asOf": "2026-10-24T17:39:40.878Z",
+        "kind": "public_mark",
+        "source": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD",
+        "markPriceUSD": "80062.21507255736"
+      },
+      "rules_observed_at": "2026-10-24T17:39:40.547Z",
+      "recorded_at": "2026-10-24 17:39:48.967156+00"
+    }
+  ]
+}
