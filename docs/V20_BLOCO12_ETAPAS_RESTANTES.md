@@ -68,10 +68,10 @@ O ensaio no Edge encontrou HTTP 546 / CPU excedido nos inícios de 5000 moviment
 | Prioridade | Trabalho concreto | Situação verificável |
 | --- | --- | --- |
 | 1 | Fluxo completo no alojamento: sessão, fila, SQL, revisão e confirmação | Fluxo completo alojado passou com Auth/SQL reais e fontes sintéticas numa carteira pequena, incluindo retoma entre versões. Carga máxima, fontes públicas e concorrência alojadas ainda pendentes; ver V20_BLOCO12I_CONTA_ALOJADA.md |
-| 2 | Validar admissão temporal, ingresso, concorrência e pico de memória | O mínimo provisório de 45 s é inferior a tempos máximos observados. Ainda não constitui garantia de conclusão; não aumentar validade das fontes |
+| 2 | Validar admissão temporal, ingresso, concorrência e pico de memória | O mínimo provisório de 45 s é inferior a tempos máximos observados. Ainda não constitui garantia de conclusão; não aumentar validade das fontes. 16 unidades sintéticas nos limites 100/101 passaram no Edge, incluindo oito passos selecionados; CPU de worker e pico de memória não foram obtidos (12J) |
 | 3 | Ligar interface de carteira/planos/movimentos/correções e cálculos à conta | Painel da conta liga leitura, cálculo, revisão e confirmação na prévia, com cliente fornecido pela composição autenticada. Movimentos, compras/vendas por ciclo e correções auditáveis com comparação/confirmação ligados em QA. Diretório e criação sem posição ligados em QA. Composição de login/recuperação/logout ligada e testada em Chromium com API/PGlite e identidades sintéticas. Bootstrap autenticado no alojamento, importação de posições, formulários de alocações e testes alojados completos pendentes |
 | 4 | Privacidade e ciclo de vida da conta | Backup financeiro autenticado por carteira implementado e validado em QA. Portabilidade integral, preferências, termos e eliminação da conta ainda pendentes |
-| 5 | Recuperação e migração V19 | As sete migrações V20 foram aplicadas em 24/10 após restauro/rollback do esquema vazio e criação V20 em PostgreSQL 17.11. As 14 tabelas/RLS e definições V19 foram verificadas online. Restauro integral de Auth/configurações, retenção/chaves e migração/reconciliação de projetos locais continuam pendentes. Ver V20_BLOCO12G_SCHEMA_ALOJADO.md |
+| 5 | Recuperação e migração V19 | As sete migrações V20 foram aplicadas em 24/10 após restauro/rollback do esquema vazio e criação V20 em PostgreSQL 17.11. As 14 tabelas/RLS e definições V19 foram verificadas online. Restauro integral de Auth/configurações, retenção/chaves e o percurso de migração/reconciliação de projetos locais continua por validar para utilizadores com dados. Luis confirmou que não tem dados V19; a sua entrada será como conta nova. Ver V20_BLOCO12G_SCHEMA_ALOJADO.md |
 | 6 | Email e recuperação de acesso exclusivos BTC | Inspeção confirmou que só existe domínio verificado do outro projeto. Falta domínio/remetente próprio BTC, SMTP e ensaio real de confirmação/recuperação. Duas contas descartáveis na CI não aprovam email de produção |
 | 7 | Teste integrado e S25 | Preparar acesso de teste e roteiro de conta, cálculo, revisão, confirmação, offline, recuperação e segundo dispositivo; executar antes do Bloco 13 |
 
@@ -90,3 +90,7 @@ O cliente `cloud-client-v20.js` expõe início, avanço, estado, resultado e can
 | 15 — Beta e preparação de lançamento | QA web, Android/S25 e PWA; privacidade, atualização/offline, testes com utilizadores e decisão de publicação após critérios aprovados |
 
 Faltam quatro blocos principais contando o Bloco 12 em curso. Depois do 12 ficam três: 13, 14 e 15. Não existe data de lançamento garantida por esta contagem.
+
+## Decisões do responsável — 24/10/2026
+
+O responsável confirmou que não tem carteiras nem operações V19 a conservar. A sua entrada será como conta nova; não é necessário recolher dados antigos para esse acesso. A validação geral da importação continua separada. Domínio e remetente BTC serão criados mais tarde: SMTP e confirmação/recuperação por email continuam pendentes, sem impedir o restante desenvolvimento ou equivaler a um gate aprovado. O contacto pessoal fornecido fica fora deste repositório público.
