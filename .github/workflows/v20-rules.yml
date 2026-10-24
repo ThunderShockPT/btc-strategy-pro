@@ -20,6 +20,8 @@ jobs:
           npm ci --ignore-scripts
           node --check backend/calculation-jobs.cjs
           node --test scripts/test-calculation-jobs.cjs
+          node --test scripts/test-calculation-storage.cjs
+          node --test scripts/test-calculation-basis.cjs
           node --test scripts/test-calculation-http.cjs
           node --test scripts/test-cloud-calculations.cjs
           node --test scripts/test-account-workflow.cjs

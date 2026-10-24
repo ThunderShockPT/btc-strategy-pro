@@ -44,6 +44,17 @@ async function load(tx,s,lock='share'){
  need(sourceHash(state)===h.state_hash&&revision(state)===h.revision,'STORED_SOURCE_INTEGRITY_FAILURE');
  return {state,head:h};
 }
+async function sourceFingerprint(tx,s){
+ // Hash the complete stored rows in PostgreSQL, not a caller's claimed digest.
+ // Includes envelopes, row metadata, head context and recorded ordering. A head
+ // share lock held by the caller serializes every normal financial writer.
+ const r=(await tx.query(`select pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(pg_catalog.jsonb_build_object(
+ 'head',pg_catalog.to_jsonb(h),
+ 'events',coalesce((select pg_catalog.jsonb_agg(pg_catalog.to_jsonb(e) order by e.revision,e.id) from public.btcsp_financial_events e where e.project_id=$1 and e.owner_id=$2 and e.scenario_key=$3),'[]'::jsonb),
+ 'plans',coalesce((select pg_catalog.jsonb_agg(pg_catalog.to_jsonb(p) order by p.version,p.id) from public.btcsp_plan_versions p where p.project_id=$1 and p.owner_id=$2 and p.scenario_key=$3),'[]'::jsonb)
+ )::text,'UTF8')),'hex') as source_fingerprint from btcsp_private.project_heads h where h.project_id=$1 and h.owner_id=$2 and h.scenario_key=$3`,params(s))).rows[0];
+ need(typeof r?.source_fingerprint==='string'&&/^[a-f0-9]{64}$/.test(r.source_fingerprint),'STORED_SOURCE_INTEGRITY_FAILURE');return r.source_fingerprint;
+}
 function create({db,authenticate,contextProvider,planContextProvider=null,calculationJobs=null,authorizeTransaction=null,enabled=false}){
  need(db&&typeof db.transaction==='function'&&typeof authenticate==='function'&&typeof contextProvider==='function','SERVER_DEPENDENCIES_REQUIRED');
  async function identity(token,s){need(enabled===true,'CLOUD_WRITE_GATE_CLOSED');scope(s);const user=await authenticate(token);need(user&&user.id===s.ownerId&&typeof user.email_confirmed_at==='string'&&Number.isFinite(Date.parse(user.email_confirmed_at))&&user.is_anonymous===false,'VERIFIED_OWNER_SESSION_REQUIRED');return user;}
@@ -145,6 +156,8 @@ function create({db,authenticate,contextProvider,planContextProvider=null,calcul
  }
  async function exportWallet(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s),envelope=P.stage(b.state,s),at=(await tx.query('select clock_timestamp() as exported_at')).rows[0].exported_at;return {format:'btcsp-wallet-export-v20.1',projectRef:'oftzqqjbwonngubihrsd',exportedAt:new Date(at).toISOString(),headHash:b.head.state_hash,revision:b.head.revision,envelope,includesAuthTables:false,automaticRestoreAllowed:false};});}
  async function snapshot(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s);return {state:clone(b.state),headHash:b.head.state_hash,revision:b.head.revision};});}
- return Object.freeze({prepare,commit,snapshot,exportWallet});
+ async function calculationSnapshot(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const b=await load(tx,s),fingerprint=await sourceFingerprint(tx,s);return {state:clone(b.state),headHash:b.head.state_hash,revision:b.head.revision,sourceFingerprint:fingerprint};});}
+ async function calculationBasis(token,s){const user=await identity(token,s);return db.transaction(async tx=>{await authorize(tx,user,s);const h=(await tx.query('select state_hash from btcsp_private.project_heads where project_id=$1 and owner_id=$2 and scenario_key=$3 for share',params(s))).rows[0];need(h,'PROJECT_NOT_INITIALIZED');return {headHash:h.state_hash,sourceFingerprint:await sourceFingerprint(tx,s)};});}
+ return Object.freeze({prepare,commit,snapshot,exportWallet,calculationSnapshot,calculationBasis});
 }
 module.exports=Object.freeze({VERSION,initialize,initializeInTransaction,create,load,sourceHash});

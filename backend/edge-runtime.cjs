@@ -16,7 +16,7 @@ function create({getEnv,Pool,policy,origins,contextProvider,planContextProvider,
    // Only the signing material is reused; identity is request-local and SQL sessions stay live-checked.
    const calculationJobsFactory=({authenticate})=>{
     const store=Store.create({db,authenticate,authorizeTransaction:auth.assertSession,contextProvider,planContextProvider,enabled:true});
-    const checkpoints=Checkpoints.create({key:signingKey,enabled:true,now,loadSnapshot:(token,s)=>store.snapshot(token,s),contextProvider,
+    const checkpoints=Checkpoints.create({key:signingKey,enabled:true,now,loadSnapshot:(token,s)=>store.calculationSnapshot(token,s),loadBasis:(token,s)=>store.calculationBasis(token,s),contextProvider,
      policyProvider:async(s,input,plan)=>{const c=await planContextProvider(s,input,plan);if(!c?.cyclePolicy)throw Error('PLAN_CONTEXT_REQUIRED');return c.cyclePolicy;},
      profileContextProvider:async(s,input,plan)=>{const c=await planContextProvider(s,input,plan);if(!c?.market||!c?.baseCyclePolicy)throw Error('PROFILE_CONTEXT_REQUIRED');return {market:c.market,baseCyclePolicy:c.baseCyclePolicy};}});
     return Jobs.create({db,authenticate,authorizeTransaction:auth.assertSession,checkpoints,enabled:true});
