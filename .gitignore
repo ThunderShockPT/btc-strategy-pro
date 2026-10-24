@@ -1,5 +1,0 @@
-node_modules/
-supabase/.temp/
-supabase/.branches/
-*.local
-build/

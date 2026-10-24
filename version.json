@@ -1,7 +1,0 @@
-{
-  "version": "19.1.0-beta-onboarding",
-  "build": "2026-10-20",
-  "mode": "demo",
-  "cloud_auth": false,
-  "stage": "verified-first-login-onboarding-and-demo-preview; real cloud auth still gated pending SMTP and integration QA"
-}

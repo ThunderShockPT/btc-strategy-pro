@@ -1,8 +1,0 @@
-{
-  "codeCommit": "03ed430fb7e0908c454d3953503d0f09fde2823a",
-  "command": "node --test scripts/test-onboarding-preview.cjs scripts/test-app-workflows.cjs scripts/test-plan-view.cjs scripts/test-account-executions.cjs scripts/test-account-batch-executions.cjs scripts/test-cloud-calculations.cjs scripts/test-account-session.cjs scripts/test-private-test.cjs scripts/test-public-profile-context.cjs scripts/test-wallet-plan-store.cjs scripts/test-account-wallets.cjs",
-  "tests": 106,
-  "pass": 106,
-  "fail": 0,
-  "durationMs": 33581.403361
-}
