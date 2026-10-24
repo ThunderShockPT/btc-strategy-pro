@@ -5,13 +5,13 @@
 const {createHash,timingSafeEqual,randomBytes}=require('node:crypto'),Auth=require('./supabase-auth.cjs');
 const json=(status,body)=>Response.json(body,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 function create({config,getEnv,fetchImpl=globalThis.fetch,now=()=>Date.now()}){
- if(!/^[a-f0-9]{64}$/.test(config?.capabilityHash)||!/^[a-f0-9]{32}$/.test(config.accessTag)||!Array.isArray(config.accounts)||config.accounts.length!==3||!Number.isFinite(Date.parse(config.expiresAt)))throw Error('PRIVATE_PROVISION_CONFIGURATION_REQUIRED');
+ if(!/^[a-f0-9]{64}$/.test(config?.capabilityHash)||!/^[a-f0-9]{32}$/.test(config.accessTag)||!Array.isArray(config.accounts)||(config.qaOnly===true?config.accounts.length!==2||config.accounts.some(a=>a.qa!==true):config.accounts.length!==3)||!Number.isFinite(Date.parse(config.expiresAt)))throw Error('PRIVATE_PROVISION_CONFIGURATION_REQUIRED');
  async function admin(path,method,body){const secret=getEnv('SUPABASE_SERVICE_ROLE_KEY');if(getEnv('SUPABASE_URL')!==Auth.URL_BASE||!secret)throw Error('CONFIGURATION');const r=await fetchImpl(Auth.URL_BASE+'/auth/v1/admin/'+path,{method,headers:{apikey:secret,Authorization:'Bearer '+secret,'Content-Type':'application/json'},...(body?{body:JSON.stringify(body)}:{}),redirect:'error',signal:AbortSignal.timeout(10000)});if(method==='GET'&&r.status===404)return null;const result=await r.json();if(!r.ok)throw Error('AUTH_ADMIN_'+r.status+'_'+String(result.error_code||result.code||'UNKNOWN').toUpperCase().replace(/[^A-Z0-9_]/g,''));return path.startsWith('users')?result.user||result:result;}
  return async request=>{
   if(now()>=Date.parse(config.expiresAt))return json(503,{code:'PRIVATE_PROVISION_CLOSED'});
   const token=request.headers.get('X-BTCSP-Provision');if(typeof token!=='string'||!/^[a-f0-9]{64}$/.test(token)||!timingSafeEqual(createHash('sha256').update(token).digest(),Buffer.from(config.capabilityHash,'hex')))return json(401,{code:'PRIVATE_PROVISION_REQUIRED'});
   if(request.method!=='POST'||(await request.text())!=='{}')return json(400,{code:'PRIVATE_PROVISION_FIXED_INPUT_REQUIRED'});
-  const route=new URL(request.url).pathname.split('/').at(-1);if(config.onlyOwnerLink===true&&route!=='owner-link')return json(404,{code:'PRIVATE_PROVISION_ROUTE_NOT_FOUND'});
+  const route=new URL(request.url).pathname.split('/').at(-1);if(config.onlyOwnerLink===true&&route!=='owner-link'||config.qaOnly===true&&!['bootstrap','finish-qa'].includes(route))return json(404,{code:'PRIVATE_PROVISION_ROUTE_NOT_FOUND'});
   try{
    if(route==='bootstrap'){
     for(const a of config.accounts){let user=await admin('users/'+a.id,'GET');if(user&&(user.id!==a.id||user.email!==a.email||user.app_metadata?.btcsp_private_test!==config.accessTag))throw Error('IDENTITY_MISMATCH');

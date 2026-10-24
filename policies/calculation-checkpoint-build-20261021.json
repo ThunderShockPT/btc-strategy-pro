@@ -5,7 +5,7 @@
   },
   "files": {
     "backend/edge-runtime.cjs": "3a3db34a37db0410ca8876cb67b54733701dccbeb5dee90c2708f010caf32e94",
-    "backend/private-test-runtime.cjs": "6bda5386c2e7bcc7c09f5b10c7a698ec115bda7a0e4a4c27eab173e79ec693be",
+    "backend/private-test-runtime.cjs": "1fc7a2e70fb2fea30fffaa0f09835eb120082bb7a376000ffa3796f5ee40537e",
     "backend/public-rules.cjs": "a550b2b758c33a98b49dca523b1717a601220cc5b800dc1cdd648df649640bf7",
     "policies/manual-cycle-base-20261024.json": "6a44f5e429023386b614d66988311b70018059721a9ce66609724e242072ed86",
     "backend/calculation-window.cjs": "0d93f400b91d63b69b2a4e5a8c426dadf5da4c593cbdd22a35e646ff8aa81b8d",
@@ -27,11 +27,12 @@
     "risk-profiles.js": "54515b6d66e62c3c6a0b0069b3d051b5b21fd86ab5cf0839078de0191c4b5306",
     "policies/profiles-beta-20261021.json": "db545e8fc22a0aafa1c27669e67de810225f2ebd0a04a3c449d79261491aceb9",
     "exit-planner.js": "c3a5f6c771bf86ae97aeb7638ff96823acfb45f0a609eaae4fa43faa2ef71918",
-    "cycle-planner.js": "40c278b05fbee1ecd68e7c7efb1324805003cca9d12841d613a5d82f5f197bdb",
+    "cycle-planner.js": "b6fed43774ecd1df080dfccbf1a105d8da6326d13f912c2108d84d7e1246bd99",
     "position-risk.js": "74743ab92391f20d900eafff0ab48cb80663f0fc3c4456629b17b8329731a943",
     "financial-engine.js": "e5835e18947bb3446999536bb9c3adb6b9fb49060841fcb2041fc2be65b5c89c",
     "kraken-rules.js": "b1feec61a15fa29fd1b62e74f86ebaa15666c61b64b6f7e030e467add76a4843",
     "journal-projection.js": "a25608350ee367d6f453626196088fe97c735f3db127a7cbcccce39b724484d2",
-    "package-lock.json": "14551f4011e29a333b7636e54006d188376d5723e2ecbc86d8e2e3f51a2489e0"
+    "package-lock.json": "14551f4011e29a333b7636e54006d188376d5723e2ecbc86d8e2e3f51a2489e0",
+    "backend/account-read-model.cjs": "a853c95339ad1951c9ef6eacc9f4d57be81e99506ca2c610e5cc1eba7c1228e2"
   }
 }

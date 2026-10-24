@@ -27,3 +27,8 @@ test('first-access operator route keeps the generated token when Auth also retur
  const request=route=>new Request('https://oftzqqjbwonngubihrsd.supabase.co/functions/v1/btcsp-v20-private-provision/'+route,{method:'POST',headers:{'X-BTCSP-Provision':cap},body:'{}'});
  assert.equal((await handler(request('bootstrap'))).status,404);const response=await handler(request('owner-link'));assert.equal(response.status,200);assert.equal((await response.json()).tokenHash,'a'.repeat(56));assert.equal(requests.length,2);assert(requests.every(r=>r.url.includes('/auth/v1/admin/')));
 });
+test('QA-only provisioner cannot create an owner or generate first-access links',async()=>{
+ const P=require('../backend/private-test-provision.cjs'),{createHash}=require('node:crypto'),cap='2'.repeat(64),config={capabilityHash:createHash('sha256').update(cap).digest('hex'),accessTag:'b'.repeat(32),expiresAt:new Date(time+1000).toISOString(),qaOnly:true,accounts:[{qa:true},{qa:true}]};
+ assert.throws(()=>P.create({config:{...config,accounts:[{qa:false},{qa:true}]}}),/CONFIGURATION/);
+ const h=P.create({config,now:()=>time,getEnv:()=>{throw Error('MUST_NOT_ACCESS_AUTH');}});const r=await h(new Request('https://example.test/owner-link',{method:'POST',headers:{'X-BTCSP-Provision':cap},body:'{}'}));assert.equal(r.status,404);
+});

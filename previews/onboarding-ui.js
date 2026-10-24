@@ -26,11 +26,12 @@ function warning(text){return `<div class="notice"><svg aria-hidden="true" viewB
 function render(){
  privatePanel?.destroy();privatePanel=null;
  document.body.classList.toggle('planner-mode',activeArea==='planner');for(const el of document.querySelectorAll('[data-area]')){if(el.dataset.area===activeArea)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current');}
- if(privateMode&&activeArea!=='market'){
+ if(privateMode&&(!accountSession||accountSession.state().phase!=='signed-in'||!accountWorkflow)){
   document.body.classList.remove('planner-mode');app?.invalidate();
   $('main').innerHTML='<div class="card-head"><span class="eyebrow">PRÉVIA PRIVADA V20</span><h2 id="pageTitle">A tua carteira</h2><p class="sub">Escolhe uma carteira ou cria uma nova. Cada registo pede revisão e confirmação.</p></div><div class="content" id="privateAccount"></div>';
   privatePanel=mountAccountPanel($('privateAccount'));return;
  }
+ if(privateMode){app.render(activeArea);return;}
  if(activeArea!=='planner'){app.render(activeArea);return;}
  for(const name of ['guide','setup','review']){$('stage-'+name).classList.toggle('current',stage===name);if(stage===name)$('stage-'+name).setAttribute('aria-current','step');else $('stage-'+name).removeAttribute('aria-current');}
  $('main').setAttribute('aria-busy',busy?'true':'false');
@@ -53,7 +54,7 @@ function uuid(){if(crypto.randomUUID)return crypto.randomUUID();const b=crypto.g
 function context(){const c=View.scenarioContext(base,existing.input?existing.input.valuation.markPriceUSD:normalize(draft.referenceUSD));c.projectId=projectId();c.now=new Date().toISOString();c.openingEventId=uuid();c.planId=uuid();c.receiptId=uuid();return c;}
 function stopWorker(){worker?.terminate();worker=null;if(workerURL){URL.revokeObjectURL(workerURL);workerURL=null;}}
 function cancel(){serial++;stopWorker();busy=false;if($('calculate'))$('calculate').disabled=false;if($('cancelCalc'))$('cancelCalc').hidden=true;$('main').setAttribute('aria-busy','false');}
-function rpc(method,payload){stopWorker();workerURL=URL.createObjectURL(new Blob([BTCPreviewWorkerSource],{type:'text/javascript'}));worker=new Worker(workerURL);const id=++serial;return new Promise((resolve,reject)=>{worker.onmessage=e=>{if(id!==serial)return;const m=e.data;if(m.ok)resolve(m.value);else reject(Error(m.code));stopWorker();};worker.onerror=()=>{if(id!==serial)return;stopWorker();reject(Error('WORKER_UNAVAILABLE'));};worker.postMessage({method,payload});});}
+function rpc(method,payload){stopWorker();workerURL=URL.createObjectURL(new Blob([BTCPreviewWorkerSource],{type:'text/javascript'}));worker=new Worker(workerURL);const id=++serial;return new Promise((resolve,reject)=>{worker.onmessage=e=>{if(id!==serial)return;const m=e.data;if(m.ok)resolve(m.value);else reject(Error(m.code));stopWorker();};worker.onerror=()=>{if(id!==serial)return;stopWorker();reject(Error('WORKER_UNAVAILABLE'));};worker.postMessage({method,payload:privateMode?{...payload,accountReadOnly:true}:payload});});}
 const errors={INVALID_REFERENCE_PRICE:'Indica um preço BTC positivo, em USD inteiros, igual ou superior a 10.',INVALID_SETUP_DECIMAL:'Usa um número sem separadores de milhares. Podes usar vírgula ou ponto decimal.',INVALID_SETUP_AMOUNT:'Indica um montante positivo.',INVALID_PROTECTION_FLOOR:'O piso tem de ser inferior ao preço de referência.',PROFILE_LEVELS_DO_NOT_FIT_ABOVE_FLOOR:'O piso escolhido não deixa espaço para as três compras. Revê o piso ou o perfil.',INVALID_SETUP_FEE_RATE:'A taxa de comissão tem de ser inferior a 1.',INVALID_PROJECT_TITLE:'Indica um nome de projeto válido, até 100 caracteres.',EXISTING_CAPITAL_REQUIRES_CASH_MOVEMENT:'O capital existente deve ser alterado por um depósito ou retirada.',ALL_TUTORIAL_TOPICS_REQUIRED:'Vê os seis temas do guia antes de confirmar.',SETUP_PLAN_INFEASIBLE:'Plano inviável com a caixa e as condições atuais.',WORKER_UNAVAILABLE:'Não foi possível iniciar o cálculo neste navegador. Experimenta abrir a prévia pelo Chrome.'};
 async function calculate(){if(busy)return;try{capture();const r=request();reviewContext=context();busy=true;$('calculate').disabled=true;$('cancelCalc').hidden=false;$('main').setAttribute('aria-busy','true');$('feedback').innerHTML='<p class="busy" role="status"><span class="spinner" aria-hidden="true"></span>A simular ciclos, margem e cenários…</p>';const value=await rpc(crypto.subtle?'prepare':'calculate',{context:reviewContext,request:r,existing:{input:existing.input,plan:existing.plan}});busy=false;review=value;stage='review';store();render();}catch(e){busy=false;if($('calculate'))$('calculate').disabled=false;if($('cancelCalc'))$('cancelCalc').hidden=true;$('main').setAttribute('aria-busy','false');if($('feedback'))$('feedback').innerHTML=`<p class="error" role="alert">${esc(errors[e.message]||'Não foi possível calcular este cenário. Revê os dados e tenta novamente.')} <small>${esc(e.message)}</small></p>`;}}
 function stat(label,value,planned=false){return `<div class="stat ${planned?'planned':''}"><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`;}
@@ -72,35 +73,95 @@ const publicFeed=BTCFuturesFeed.create({onChange:quote=>{liveQuote=quote;paintQu
 function refreshQuote(){publicFeed.setActive(!document.hidden&&navigator.onLine!==false);}
 document.addEventListener('visibilitychange',refreshQuote);window.addEventListener('online',refreshQuote);window.addEventListener('offline',refreshQuote);window.addEventListener('pagehide',()=>publicFeed.setActive(false));window.addEventListener('pageshow',refreshQuote);
 function navigate(area){capture();cancel();app.invalidate();activeArea=area;render();}
-function openPlanner(action){if(privateMode){navigate('account');return;}capture();cancel();app.invalidate();activeArea='planner';if(action==='help'){stage='guide';topic=0;}else if(action==='review'&&review)stage='review';else stage=visited.size===6?'setup':'guide';render();}
+function openPlanner(action){if(privateMode){if(action==='help')openAccountHelp();else void accountAction('configure');return;}capture();cancel();app.invalidate();activeArea='planner';if(action==='help'){stage='guide';topic=0;}else if(action==='review'&&review)stage='review';else stage=visited.size===6?'setup':'guide';render();}
 // Hosting supplies an already authenticated client only after its release checks.
 // No credentials, automatic sign-in, Demo upload or production enablement here.
-let accountWorkflow=null,accountSession=null;
+let accountWorkflow=null,accountSession=null,accountData=null,accountUnsubscribe=null,sessionUnsubscribe=null,accountRenderKey='',taskPanel=null,taskControlUnsubscribe=null;
+function accountExisting(){const v=accountData?.snapshot;return v?{input:{...v.state.input,...(v.dashboard?.inputContext||{})},plan:v.state.plan}:{input:null,plan:null};}
+function accountChanged(state){
+ accountData=state;if(!privateMode)return;
+ const k=JSON.stringify({phase:state.phase,busy:state.busy,head:state.snapshot?.headHash,asOf:state.snapshot?.dashboard?.asOf,error:state.error,review:state.review?.reviewHash,wallets:state.wallets,receipt:state.receipt?.idempotencyKey});
+ if(k===accountRenderKey)return;accountRenderKey=k;
+ if(accountSession?.state().phase==='signed-in')void app?.render(activeArea,{focus:false});
+}
+function openAccountHelp(){let d=$('accountHelpDialog');if(!d){d=document.createElement('dialog');d.id='accountHelpDialog';document.body.append(d);}d.innerHTML='<h2>Conhecer o Modelo C</h2>'+catalog.topics.map(t=>'<details><summary>'+esc(t.title)+'</summary><p>'+esc(t.summary)+'</p><p>'+esc(t.example)+'</p>'+warning(t.reminder)+'</details>').join('')+'<button class="primary" id="accountHelpClose">Fechar</button>';d.showModal();$('accountHelpClose').onclick=()=>d.close();}
+async function closeAccountTask(){
+ const d=$('accountTaskDialog');accountWorkflow?.pause();
+ const state=accountWorkflow?.state();
+ if(state&&!state.busy&&!state.hasPending){if(state.walletDraft)await accountWorkflow.discardWallet();else if(state.executionDraft)accountWorkflow.discardExecution();else if(state.movementDraft)accountWorkflow.discardMovement();}
+ d?.close();taskPanel?.destroy();taskPanel=null;taskControlUnsubscribe?.();taskControlUnsubscribe=null;
+}
+function showAccountTask(planControls=false){
+ let d=$('accountTaskDialog');if(!d){d=document.createElement('dialog');d.id='accountTaskDialog';d.setAttribute('aria-label','Rever e confirmar na conta');d.addEventListener('cancel',event=>{event.preventDefault();void closeAccountTask();});document.body.append(d);}
+ taskPanel?.destroy();taskControlUnsubscribe?.();
+ const plan=accountData?.snapshot?.state.plan;
+ d.innerHTML='<div class="section-head"><span class="eyebrow">CONTA PRIVADA</span><button class="ghost" id="closeAccountTask">Fechar</button></div>'+(planControls&&plan?'<details class="detail"><summary>Perfil e piso desta proposta</summary><div class="form-grid"><div class="field"><label>Perfil<select id="accountPlanProfile">'+[['safe','Seguro'],['balanced','Equilibrado'],['risky','Arriscado']].map(([v,t])=>'<option value="'+v+'" '+(v===plan.profile?'selected':'')+'>'+t+'</option>').join('')+'</select></label></div><div class="field"><label>Piso<select id="accountPlanFloor"><option value="preserve">Manter o piso guardado</option><option value="from-profile-reference">Propor novo piso a partir do perfil</option></select></label></div></div><p class="legend">Mudar estas opções exige uma nova proposta e confirmação.</p><button class="secondary" id="accountPlanRecalculate">Calcular esta alteração</button></details>':'')+'<div id="accountTaskPanel"></div>';
+ taskPanel=BTCAccountViewV20.mount({element:$('accountTaskPanel'),workflow:accountWorkflow,money,presentation:'task',sizeExecution:async draft=>{try{const sized=await rpc('trade-size',{...accountExisting(),nominalUSD:normalize(draft.nominalUSD),priceUSD:normalize(draft.priceUSD)});accountWorkflow.editExecution({...draft,...(draft.fillStatus==='filled'?{quantityBTC:sized.quantityBTC}:{}),requestedQuantityBTC:sized.quantityBTC,sizeMessage:'Nominal arredondado: '+money(sized.executableNominalUSD)+' · remanescente: '+money(sized.remainderUSD)});}catch{accountWorkflow.editExecution({...draft,sizeMessage:'Indica um montante e um preço positivos para converter.'});}},onApplied:async state=>{const kind=state.receiptKind;try{await accountWorkflow.load();if(kind==='wallet-setup-review')await accountWorkflow.listWallets();await closeAccountTask();navigate(kind==='profile-review'||kind==='cycle-plan-review'?'strategies':'home');}catch{/* The confirmed receipt remains visible; reading never creates a second command. */}}});
+ $('closeAccountTask').onclick=()=>void closeAccountTask();
+ if(planControls&&plan){for(const id of ['accountPlanProfile','accountPlanFloor'])$(id).onchange=()=>accountWorkflow.discardPlanReview();$('accountPlanRecalculate').onclick=()=>{if(accountData.busy)return;void accountWorkflow.calculate({profile:$('accountPlanProfile').value,floorMode:$('accountPlanFloor').value,marginAdmission:'strict'}).catch(()=>{});};taskControlUnsubscribe=accountWorkflow.subscribe(state=>{for(const id of ['accountPlanProfile','accountPlanFloor','accountPlanRecalculate'])if($(id))$(id).disabled=state.busy;});}
+ if(!d.open)d.showModal();
+}
+async function accountAction(which,target=null){
+ if(!privateMode)return false;
+ if(which==='help'){openAccountHelp();return true;}
+ if(['home','strategies','market','risk','account'].includes(which))return false;
+ if(!accountWorkflow)return true;
+ const state=accountData||accountWorkflow.state();
+ if(state.busy)return !['exits','inverse','stress-continuous','stress-gap'].includes(which);
+ if(['inverse','stress-continuous','stress-gap','exits'].includes(which)){
+  const model=state.snapshot?.dashboard;if(!model?.fresh||Date.now()-Date.parse(model.asOf)>60000){await accountWorkflow.load().catch(()=>{});return true;}return false;
+ }
+ if(which==='refresh'){await accountWorkflow.load().catch(()=>{});return true;}
+ if(which==='reconcile'){showAccountTask();return true;}
+ if(which==='wallet-select'){await accountWorkflow.selectWallet(target.dataset.walletId);navigate('home');return true;}
+ if(which==='wallet-new'){
+  accountWorkflow.editWallet({projectTitle:'',capitalUSD:'',profile:'balanced',protectedReserveUSD:'0',fundingReserveUSD:'0',feeRate:'',horizonDays:30,noOpenPosition:false,completedTopicIds:[],understoodRisk:false,acceptedDocuments:false});showAccountTask();return true;
+ }
+ if(['configure','calculate','review','prepare','resume'].includes(which)){
+  if(!state.snapshot){navigate('account');return true;}showAccountTask(true);
+  if(which==='review'&&state.review)return true;
+  try{if(which==='resume')await accountWorkflow.resume();else if(which==='prepare')await accountWorkflow.preparePlan();else await accountWorkflow.calculate();}catch{}return true;
+ }
+ if(['deposit','margin','withdraw','movement'].includes(which)){
+  if(!state.snapshot){navigate('account');return true;}
+  accountWorkflow.editMovement({kind:which==='margin'?'margin_add':which==='withdraw'?'capital_withdrawal':'capital_deposit',amountUSD:'',effectiveAt:new Date().toISOString(),purpose:which==='margin'&&accountExisting().input?.events.every(e=>e.event_type!=='margin_add')?'initial':'additional',note:'',alreadyRecorded:false});showAccountTask();return true;
+ }
+ if(['buy','sell','trade'].includes(which)){
+  if(!state.snapshot){navigate('account');return true;}
+  const cycles=state.snapshot.state.plan.configuration?.cycleInventory||[],cycle=cycles.find(c=>c.entries.some(e=>e.state==='active'))?.cycle||'cycle-1';
+  accountWorkflow.editExecution({kind:'trade',type:which==='sell'?'trade_sell':'trade_buy',cycle,stage:which==='sell'?0:cycles.find(c=>c.cycle===cycle)?.entries.find(e=>e.state==='active')?.stage||0,quantityBTC:'',requestedQuantityBTC:'',priceUSD:'',feeUSD:'',fillStatus:'filled',pnlDestination:'wallet',effectiveAt:new Date().toISOString(),alreadyRecorded:false});showAccountTask();return true;
+ }
+ if(which==='correction'){
+  const row=state.history.find(r=>r.original.id===target?.dataset.accountTarget);if(row){const f=row.state.record.facts;accountWorkflow.editExecution({kind:'correction',targetEventId:row.original.id,eventType:row.original.event_type,active:row.state.active,hasCorrection:!!row.lastCorrectionId,action:row.state.active?'replace':'restore',quantityBTC:f.quantityBTC,priceUSD:f.priceUSD,amountUSD:f.amountUSD,cycle:f.cycle||(f.allocations?'all':''),allocations:f.allocations||[],pnlDestination:f.pnlDestination||'wallet',effectiveAt:row.state.record.effective_at,reason:'',includeLinkedFees:false,restoreStage:0,alreadyRecorded:false});showAccountTask();}return true;
+ }
+ return false;
+}
+
 function mountAccountPanel(element){
- if(accountSession)return BTCAccountAccessViewV20.mount({element,controller:accountSession,mountAccount:node=>BTCAccountViewV20.mount({element:node,workflow:accountWorkflow,money})});
+ if(accountSession)return BTCAccountAccessViewV20.mount({element,controller:accountSession,mountAccount:node=>BTCAccountViewV20.mount({element:node,workflow:accountWorkflow,money,presentation:privateMode?'directory':'full',pauseOnDestroy:!privateMode,onTask:privateMode?accountAction:null})});
  if(!accountWorkflow){element.innerHTML='<section class="surface"><h3>Conta online</h3><p>A ligação à conta online está em preparação. Os dados Demo ficam neste navegador.</p></section>';return null;}
  return BTCAccountViewV20.mount({element,workflow:accountWorkflow,money});
 }
 globalThis.BTCV20AccountConnection=Object.freeze({
- configureSession({supabase,supabaseURL,privateTest=false}){
+ configureSession({supabase,supabaseURL,privateTest=false,fetchImpl}){
   if(!globalThis.BTCAccountSessionV20||!globalThis.BTCAccountAccessViewV20)throw Error('ACCOUNT_HOST_BUNDLE_REQUIRED');
-  accountSession?.dispose();accountWorkflow?.clearSession();accountWorkflow=null;
-  accountSession=(privateTest?BTCAccountSessionV20.createPrivateTest:BTCAccountSessionV20.create)({supabase,supabaseURL,connection:globalThis.BTCV20AccountConnection,newId:uuid});
+  sessionUnsubscribe?.();accountSession?.dispose();accountUnsubscribe?.();accountWorkflow?.clearSession();accountWorkflow=null;accountData=null;
+  accountSession=(privateTest?BTCAccountSessionV20.createPrivateTest:BTCAccountSessionV20.create)({supabase,supabaseURL,connection:globalThis.BTCV20AccountConnection,newId:uuid,fetchImpl});
   if(privateMode||activeArea==='account')render();
-  if(accountSession.state().enabled)accountSession.start().catch(()=>{});
+  let lastPhase=null,lastOwner=null;sessionUnsubscribe=accountSession.subscribe(state=>{if(state.phase!==lastPhase||state.ownerId!==lastOwner){lastPhase=state.phase;lastOwner=state.ownerId;if(privateMode)render();}});if(accountSession.state().enabled)accountSession.start().catch(()=>{});
   return accountSession;
  },
- attach(client){accountWorkflow?.clearSession();accountWorkflow=BTCAccountWorkflowV20.create({client,newId:uuid,tutorialCatalog:catalog,shouldPause:()=>document.hidden});if(privateMode||activeArea==='account')render();accountWorkflow.listWallets().catch(()=>{});},
+ attach(client){accountUnsubscribe?.();accountWorkflow?.clearSession();accountWorkflow=BTCAccountWorkflowV20.create({client,newId:uuid,tutorialCatalog:catalog,shouldPause:()=>document.hidden||!privateMode&&globalThis.BTCV20PrivateTest===true});accountUnsubscribe=accountWorkflow.subscribe(accountChanged);if(privateMode||activeArea==='account')render();const bound=accountWorkflow;void(async()=>{await bound.listWallets();if(bound!==accountWorkflow)return;const wallets=bound.state().wallets;if(wallets.length)await bound.selectWallet(wallets[0].projectId);})().catch(()=>{});},
  clearSession(){accountWorkflow?.clearSession();},
- detach(){accountWorkflow?.clearSession();accountWorkflow=null;if(privateMode||activeArea==='account')render();}
+ detach(){accountUnsubscribe?.();accountUnsubscribe=null;accountWorkflow?.clearSession();accountWorkflow=null;accountData=null;taskPanel?.destroy();taskPanel=null;$('accountTaskDialog')?.close();if(privateMode||activeArea==='account')render();}
 });
-app=BTCAppViews.create({accountMode:()=>privateMode,mountAccountPanel,equalAmount:(x,y)=>new BTCPreviewDecimal(x).eq(y),amountLTE:(x,y)=>new BTCPreviewDecimal(x).lte(y),comparePrice:(x,y)=>new BTCPreviewDecimal(y).cmp(x),esc,money,stat,line,warning,timeline,normalize,uuid,secure:()=>!!crypto.subtle,rpc,getExisting:()=>({input:existing.input,plan:existing.plan}),getReview:()=>review,getQuote:()=>liveQuote,needsReview:()=>!!existing.needsReview,storageAvailable:()=>storageAvailable,getPlanHistory:()=>existing.planHistory||[],getTitle:()=>draft.projectTitle,onSnapshot:s=>{existing.capitalUSD=s.ledger.capital.netContributedUSD;draft.capitalUSD=existing.capitalUSD;},navigate,openPlanner,acceptExecution:result=>{existing={...existing,planHistory:BTCDemoStorage.keepPlanVersion(existing.planHistory,existing.plan,result.nextPlan),input:result.nextInput,plan:result.nextPlan,needsReview:true};review=null;reviewContext=null;store();},acceptMovement:input=>{existing={...existing,input,needsReview:true};review=null;reviewContext=null;store();}});
+app=BTCAppViews.create({accountMode:()=>privateMode,accountState:()=>accountData,accountAction,mountAccountPanel,equalAmount:(x,y)=>new BTCPreviewDecimal(x).eq(y),amountLTE:(x,y)=>new BTCPreviewDecimal(x).lte(y),comparePrice:(x,y)=>new BTCPreviewDecimal(y).cmp(x),esc,money,stat,line,warning,timeline,normalize,uuid,secure:()=>!!crypto.subtle,rpc,getExisting:()=>privateMode?accountExisting():({input:existing.input,plan:existing.plan}),getReview:()=>privateMode?null:review,getQuote:()=>liveQuote,needsReview:()=>privateMode?!!accountData?.snapshot?.planNeedsReview:!!existing.needsReview,storageAvailable:()=>storageAvailable,getPlanHistory:()=>privateMode?accountData?.snapshot?.state.planHistory||[]:existing.planHistory||[],getTitle:()=>draft.projectTitle,onSnapshot:s=>{if(privateMode)return;existing.capitalUSD=s.ledger.capital.netContributedUSD;draft.capitalUSD=existing.capitalUSD;},navigate,openPlanner,acceptExecution:result=>{if(privateMode)throw Error('ACCOUNT_WRITE_REQUIRES_SERVER_REVIEW');existing={...existing,planHistory:BTCDemoStorage.keepPlanVersion(existing.planHistory,existing.plan,result.nextPlan),input:result.nextInput,plan:result.nextPlan,needsReview:true};review=null;reviewContext=null;store();},acceptMovement:input=>{if(privateMode)throw Error('ACCOUNT_WRITE_REQUIRES_SERVER_REVIEW');existing={...existing,input,needsReview:true};review=null;reviewContext=null;store();}});
 for(const el of document.querySelectorAll('[data-area]'))el.onclick=()=>navigate(el.dataset.area);
 try{const previous=localStorage.getItem('btcsp:v20:preview-fixture:'+base.ownerId);if(['new','existing'].includes(previous)){fixture=previous;$('fixture').value=fixture;}}catch{storageAvailable=false;}
 restore();refreshQuote();setInterval(paintQuote,1000);
 if(globalThis.BTCV20PrivateTest){
  const control=document.createElement('button');control.className='ghost';control.id='workspaceMode';control.type='button';
  const paintMode=()=>{control.textContent=privateMode?'Experimentar Demo':'Voltar à conta';document.querySelector('.mode-label').textContent=privateMode?'Prévia privada · conta':'Demo · dados fictícios';document.querySelector('.scenario-switch').hidden=privateMode;$('draftStatus').textContent=privateMode?'Conta privada no servidor. A Demo continua separada.':'O progresso Demo fica neste navegador.';};
- control.onclick=()=>{privateMode=!privateMode;activeArea='home';paintMode();render();};document.querySelector('.header-actions').prepend(control);paintMode();
+ control.onclick=()=>{accountWorkflow?.pause();privateMode=!privateMode;activeArea='home';paintMode();render();};document.querySelector('.header-actions').prepend(control);paintMode();
 }
 })();

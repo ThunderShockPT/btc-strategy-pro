@@ -215,5 +215,6 @@
    limitations:['SYNTHETIC_SCENARIOS_NOT_PROBABILITIES','PROFILE_POLICY_BLOCK7','NO_FUNDING_FORECAST_BLOCK9','NO_EXIT_TARGETS_BLOCK7','MANUAL_FILL_LINKS','NO_UNSEEN_PATH_OUTSIDE_DECLARED_SCENARIOS']});
  }
  function generate(input,plan,policy){let job=beginSearch(input,plan,policy);while(!job.done)job=advanceSearch(job,{maxScenarios:7});return searchResult(job);}
- return Object.freeze({CycleError,generate,beginSearch,advanceSearch,searchResult,TECHNICAL_LIMIT});
+ function inspectInventory(input,plan){input=clone(input);plan=clone(plan);const ledger=Core.reconstruct(input);return freeze(inventory(input,plan.configuration?.cycleInventory||[],{floor:decimal(plan.protectionFloorUSD,true),ledger,effectiveEvents:Core.effectiveEvents(input)}));}
+ return Object.freeze({CycleError,generate,beginSearch,advanceSearch,searchResult,inspectInventory,TECHNICAL_LIMIT});
 });
