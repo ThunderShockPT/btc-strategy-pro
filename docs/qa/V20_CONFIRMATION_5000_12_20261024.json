@@ -1,0 +1,428 @@
+{
+  "kind": "hosted-real-public-prices-auth-sql",
+  "caseName": "large-12",
+  "variant": "floor-room-v2",
+  "runId": "9df1d207f214",
+  "startedAt": "2026-10-24T13:22:19.311Z",
+  "rules": "synthetic-not-Kraken-verification",
+  "history": "invented-QA-fixture",
+  "prices": "real-public-Kraken-endpoints",
+  "emailDeliveryTested": false,
+  "publicReleaseApproved": false,
+  "transport": "platform-default-http-QA-only",
+  "requestedRegion": "eu-west-1",
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 4395,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e13-a1f8-715d-9067-c0e1827e5f39",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-0",
+      "status": 200,
+      "wallMs": 669,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e13-a56f-7d96-af09-16e075f04c1b",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-1",
+      "status": 200,
+      "wallMs": 289,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e13-a80d-78c6-8add-54c7695de10f",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 851,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e13-a92d-75b4-8208-6b831639ac2d",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 1529,
+      "worker": "d8c20271-20d6-4df8-8d9a-1f88fd2d346e",
+      "serverWallMs": 528,
+      "requestId": "01a16e13-ac81-7032-ba46-c2cd1c65e091",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 25978744
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 770,
+      "worker": "7e49a7dd-0103-4fcb-9639-6cae197ef9b6",
+      "serverWallMs": 109,
+      "requestId": "01a16e13-b27e-7a06-aae6-11cdd6a27568",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 15870264,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 425,
+      "wallMs": 1720,
+      "worker": "0539be91-4ed8-40e0-8c61-f88a63a4466f",
+      "serverWallMs": 1356,
+      "requestId": "01a16e13-b594-7180-9ebd-6502d5b7edfd",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 29816264,
+      "code": "CALCULATION_WINDOW_TOO_SHORT",
+      "reason": "WAIT_FOR_CLOSED_HISTORY",
+      "serverTime": "2026-10-24T13:22:29.462Z",
+      "expiresAt": "2026-10-24T13:23:00.000Z",
+      "minimumRemainingMs": 45000,
+      "retryAt": "2026-10-24T13:23:00.000Z"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 200,
+      "wallMs": 6136,
+      "worker": "3cb48560-fc9f-4b5a-b184-b20a986b263b",
+      "serverWallMs": 2064,
+      "requestId": "01a16e14-4d9a-74e8-b4dd-83a444545e73",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 22888744
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 2295,
+      "worker": "3dd0fb94-7929-4f4c-9a9a-eef4b978c439",
+      "serverWallMs": 1922,
+      "requestId": "01a16e14-572f-7457-a176-02947c6c037b",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 23399976
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6071,
+      "worker": "697bfe35-83e9-4874-a1c5-6dc5d671c7ad",
+      "serverWallMs": 1754,
+      "requestId": "01a16e14-6699-7216-8bd7-043bf60e913d",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 23403256
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 1628,
+      "worker": "47bdc969-c427-463d-91f9-fd6b8980fd45",
+      "serverWallMs": 1234,
+      "requestId": "01a16e14-6f02-7d71-9acd-53dbe323c22f",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 35392232
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 3019,
+      "worker": "915bcdcf-2df5-43e5-bdf8-b1c6e1c0500f",
+      "serverWallMs": 2351,
+      "requestId": "01a16e14-757c-760d-91cc-f6a6c979e249",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 30328592
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 6228,
+      "worker": "bc875be8-9bf7-4cfe-b588-56741524c702",
+      "serverWallMs": 1597,
+      "requestId": "01a16e14-ccdf-742d-98cb-2ee1a44b3314",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 28713960
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 619,
+      "worker": "def59789-036b-45fe-9e9f-b984de3dff4a",
+      "serverWallMs": 258,
+      "requestId": "01a16e14-d49f-7af6-afa8-b0c45d5447ef",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 23643600
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 1330,
+      "worker": "244da043-226a-4f8e-92be-407fe70ff305",
+      "serverWallMs": 297,
+      "requestId": "01a16e14-d71d-7485-9447-d1ef66fd2bb8",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 26054408
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 255,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e14-dcb5-7762-ab66-80cba3b90bdc",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 4031,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e14-eb8d-7dd7-b590-cf2a49ed1fa9",
+      "edgeRegion": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 4047,
+      "worker": null,
+      "serverWallMs": null,
+      "requestId": "01a16e14-fabd-7e08-a6f3-4113af6c6116",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 401,
+      "wallMs": 473,
+      "worker": "74237565-eca6-4a9c-87cb-a6d96c0c25c7",
+      "serverWallMs": 126,
+      "requestId": "01a16e14-fda5-779c-9f4e-1319eac0aeb4",
+      "edgeRegion": "eu-west-1",
+      "contextError": null,
+      "heapBytes": 15692936,
+      "code": "SESSION_NOT_VALID"
+    }
+  ],
+  "bundleSHA256": "0740f1fce2d995695a311ee0b76e36ff37d7bd3c7631d132e7bb8a5cfcea96ae",
+  "eventCount": 5000,
+  "beforeHead": "ef95b3b45cf5c063aca74ce7508e694d566c337a9cca364c9f70026161762a5a",
+  "admissionRejected": true,
+  "retryWaitMs": 33407,
+  "jobId": "3c93f6d7-a65b-4a73-a9e7-2849d29be5ba",
+  "originalDeadline": "2026-10-24T13:24:00.000Z",
+  "calculationStartedAt": "2026-10-24T13:23:09.214Z",
+  "concurrentAdvanceChecked": true,
+  "resultIncludedWithCompletion": true,
+  "resultHash": "53c62f02735192965d1668e847f05b480fecd4804b88fe1d111d0605d41f8ad1",
+  "reviewIncludedWithCompletion": true,
+  "reviewReceivedAt": "2026-10-24T13:23:20.048Z",
+  "reviewRemainingMs": 39952,
+  "simulatedInteractionMs": 15000,
+  "status": "passed",
+  "originalDeadlinePreserved": true,
+  "financialFactsUnchanged": true,
+  "sequence": 3,
+  "finishedAt": "2026-10-24T13:23:43.371Z",
+  "accountsDisabled": 2,
+  "calculationCompleted": true,
+  "fullSynchronousResultEquality": true,
+  "previousSnapshotFullResultEquality": true,
+  "independentFinancialAudit": false,
+  "sourceSHA256": "4c9d24e85395f14f5ae1c2db1dd2468e87e9100ad702ffc370868ecdfbe1efa0",
+  "resultSHA256": "53c62f02735192965d1668e847f05b480fecd4804b88fe1d111d0605d41f8ad1",
+  "engineBuild": "970362ffe12911fd6851825d0980dc2eeef0db981103c5e2be7a3003efc48585",
+  "configuredCycleLimit": 12,
+  "selectedCycleCount": 12,
+  "implementationCommit": "a078a2df7809b2caad97f666484234273c3dfa0c",
+  "testFollowupCommit": "9098cc75646a723b2f2766787592a620026a910d",
+  "synchronousComparisonWallMs": 9369,
+  "reconciliation": {
+    "state_hash": "40f0d4dabee5c48ee8ec24f247feea2fdcd27daa6c8ab944583ae2b1e5b0a3d4",
+    "active_plan_version": "2",
+    "events": 5000,
+    "plans": 2,
+    "receipts": 1,
+    "receipt_recorded_at": "2026-10-24 13:23:41.093324+00",
+    "review_expires_at": "2026-10-24 13:24:00+00",
+    "original_ms_remaining_at_commit_transaction": "18906.676000",
+    "factored_review": true,
+    "duplicated_input": false
+  },
+  "shutdownMetrics": [
+    {
+      "cpu_ms": "263",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-d71d-7485-9447-d1ef66fd2bb8",
+      "shutdown_memory_bytes": "18194773"
+    },
+    {
+      "cpu_ms": "204",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-d49f-7af6-afa8-b0c45d5447ef",
+      "shutdown_memory_bytes": "18203157"
+    },
+    {
+      "cpu_ms": "86",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e13-b27e-7a06-aae6-11cdd6a27568",
+      "shutdown_memory_bytes": "18071717"
+    },
+    {
+      "cpu_ms": "1380",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-ccdf-742d-98cb-2ee1a44b3314",
+      "shutdown_memory_bytes": "31925250"
+    },
+    {
+      "cpu_ms": "259",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e13-ac81-7032-ba46-c2cd1c65e091",
+      "shutdown_memory_bytes": "18194637"
+    },
+    {
+      "cpu_ms": "462",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e13-a92d-75b4-8208-6b831639ac2d",
+      "shutdown_memory_bytes": "18285357"
+    },
+    {
+      "cpu_ms": "56",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e13-a1f8-715d-9067-c0e1827e5f39",
+      "shutdown_memory_bytes": "17446229"
+    },
+    {
+      "cpu_ms": "1596",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-757c-760d-91cc-f6a6c979e249",
+      "shutdown_memory_bytes": "40137279"
+    },
+    {
+      "cpu_ms": "591",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-6f02-7d71-9acd-53dbe323c22f",
+      "shutdown_memory_bytes": "18953757"
+    },
+    {
+      "cpu_ms": "1176",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-6699-7216-8bd7-043bf60e913d",
+      "shutdown_memory_bytes": "30580850"
+    },
+    {
+      "cpu_ms": "1368",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-572f-7457-a176-02947c6c037b",
+      "shutdown_memory_bytes": "30369037"
+    },
+    {
+      "cpu_ms": "1335",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e14-4d9a-74e8-b4dd-83a444545e73",
+      "shutdown_memory_bytes": "30078714"
+    },
+    {
+      "cpu_ms": "858",
+      "event_message": "shutdown",
+      "reason": "EarlyDrop",
+      "request_id": "01a16e13-b594-7180-9ebd-6502d5b7edfd",
+      "shutdown_memory_bytes": "18788613"
+    }
+  ],
+  "maxObservedRequestCpuMs": 1596,
+  "shutdownMemoryIsPeak": false,
+  "closure": {
+    "accountFunctionVersion": 37,
+    "runtimeFunctionVersion": 20,
+    "productionFunctionVersion": 1,
+    "accountAndRuntimeMode": "static-503",
+    "newAccountsBanned": 6,
+    "newAccountSessions": 0,
+    "productionCloudAvailable": false
+  },
+  "preparationTiming": {
+    "operation": "prepare",
+    "wallMs": 2148,
+    "phases": [
+      {
+        "phase": "load",
+        "wallMs": 137
+      },
+      {
+        "phase": "job-source",
+        "wallMs": 567
+      },
+      {
+        "phase": "source-validation",
+        "wallMs": 588
+      },
+      {
+        "phase": "domain-review",
+        "wallMs": 484
+      },
+      {
+        "phase": "proposal",
+        "wallMs": 6
+      },
+      {
+        "phase": "persist",
+        "wallMs": 366
+      }
+    ]
+  },
+  "limitations": [
+    "Invented QA history and synthetic rules, not current Kraken financial-rule verification",
+    "Public sources and the original deadlines were preserved",
+    "15-second interaction delay is automated QA, not human or physical S25 approval",
+    "HTTP transport differs from earlier forced-Connection-close trials; timings do not isolate a single causal change",
+    "Shutdown memory samples are not peak-memory or concurrency-capacity approval",
+    "Frontend and production release gates remain closed"
+  ],
+  "reviewReturnedByDedicatedPreparationAdvance": true,
+  "ci": {
+    "codeCommit": "9098cc75646a723b2f2766787592a620026a910d",
+    "runId": 40098215397,
+    "conclusion": "success",
+    "jobs": 7,
+    "documentationOnlyFollowupSkipsRepeatedCI": true
+  }
+}
