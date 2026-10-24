@@ -1,0 +1,94 @@
+{
+  "version": "v20-dialog-units-fix-20261024.1",
+  "checkedAt": "2026-10-24T21:32:15.744Z",
+  "githubCodeCommit": "14713f29867ac2518a73b136f316b7eaf3910c92",
+  "ci": {
+    "id": 40134162160,
+    "jobs": [
+      {
+        "id": 120992011868,
+        "name": "postgres-atomic",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120992012024,
+        "name": "real-auth-runtime (large-12)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120992012088,
+        "name": "real-auth-runtime (baseline)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120992012101,
+        "name": "account-browser",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120992012167,
+        "name": "real-auth-runtime (medium-12)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120992012210,
+        "name": "rules",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 120992012271,
+        "name": "real-auth-runtime (large-1)",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "deployment": {
+    "version": 8,
+    "sourceCommit": "d6d3ec36cb1718b5dcf01e7c983d9d48cd6fd3e7",
+    "id": "appgdep_6add237baaf481919864dbf3b419027a",
+    "project_id": "appgprj_6ad88188fbf88191896531870c23f213",
+    "title": "BTC Strategy Pro · Prévia V20",
+    "version_id": "appgprj_6ad88188fbf88191896531870c23f213~appgver_e5536a32399c8191a09b64e395140b6f",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6ad88188fbf88191896531870c23f213",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-10-24T21:30:47.229643+00:00",
+    "ownerOnlyAudiencePreserved": true
+  },
+  "fixes": [
+    "close execution, movement and wallet task dialogs through the host",
+    "discarded reviews return to the loaded-wallet phase",
+    "show a return action for an empty task",
+    "explain BTC quantity versus USD price for a rejected fill",
+    "blocked reviews announce no appended events",
+    "preserve the draft event timestamp when editing other fields"
+  ],
+  "browserTests": {
+    "privateTaskPlanCalculationReviewExplicitConfirmationReceipt": true,
+    "blocked84000BTC": true,
+    "internalCloseButtons": true,
+    "widths": [
+      393,
+      1280
+    ],
+    "authAndSourcesSimulated": true,
+    "sql": "PGlite",
+    "physicalS25": false
+  },
+  "financialCommandsOnOwner": 0,
+  "productionApproved": false,
+  "block12Closed": false,
+  "completeSourceTreePreserved": true
+}

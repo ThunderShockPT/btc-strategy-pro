@@ -1,3 +1,5 @@
+> Atualização posterior: versão 8 com correção do fecho dos formulários e clareza das unidades. Ver [relatório atual](V20_CORRECAO_JANELA_E_UNIDADES_20261024.md). A evidência da versão 7 abaixo é preservada.
+
 # V20 — páginas da Demo ligadas à conta privada
 
 Continuidade do PR #34 a partir de eba3e96eca104ffd290dc1bc4fb60867e269c6c1. O relato do utilizador expôs uma integração incompleta: o painel técnico de operações ocupava as páginas privadas. Esta entrega reutiliza os componentes de Início, Estratégias, Mercado, Risco e Conta, alimentados pela API autenticada.

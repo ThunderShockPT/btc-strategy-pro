@@ -11,3 +11,15 @@ Os testes cobrem o fecho interno dos três formulários, descarte de uma revisã
 Na inspeção de leitura, o servidor tinha cálculos concluídos e preservava o diário financeiro do proprietário. Foi também observado um bloqueio de profundidade admissível do plano; o respetivo texto passa a explicar a restrição. A admissão A estrita, os prazos, os preços, os pisos e as funções cloud não são alterados nesta correção. O resultado CI e a versão publicada são registados depois da sua conclusão.
 
 O novo ensaio rápido detetou ainda uma perda involuntária dos milissegundos da data ao editar outros campos. A data inicial do rascunho passa a ser preservada até a pessoa editar o próprio campo da data. Não se alteram datas de fontes, não se ajusta a execução para passar uma regra histórica e o servidor mantém a verificação da evidência válida para a data declarada.
+
+## Publicação e evidência
+
+O CI [40134162160](https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40134162160) passou as sete tarefas no commit `14713f29867ac2518a73b136f316b7eaf3910c92`. Os quatro testes de browser incluem a navegação em dois tamanhos, fechos internos, o percurso privado de cálculo/revisão/confirmação/recibo e a recusa de uma quantidade inválida. O teste da recusa escolhe explicitamente um ciclo manual de QA, pois o ciclo anterior já estava fechado após a revisão do plano; não se altera o motor para aceitar uma etapa fechada.
+
+Foi publicada a versão 8 no mesmo Site privado, a partir do commit de artefacto `d6d3ec36cb1718b5dcf01e7c983d9d48cd6fd3e7`. Ver [recibo de CI/publicação](qa/V20_DIALOG_UNITS_RELEASE_20261024.json). A chave da sessão e a audiência só do proprietário são preservadas. O arquivo final não inclui o Auth simulado de QA nem o contacto administrativo. Não se alteraram funções, migrações ou política cloud nesta correção.
+
+Durante a gravação inicial do código houve um commit com árvore incompleta. A árvore completa da branch anterior foi reposta no commit `2870b8aa60a41568c4a569c21c5ef0799fb6c139`, antes de qualquer publicação. O estado final foi comparado com `1925cfc`: contém a correção e os testes, sem ficheiros removidos; não foi recriado a partir da main. A aplicação publicada e os dados não foram afetados por esse erro de gravação.
+
+O teste interativo de fecho foi observado na prévia com dados fictícios. Após uma interrupção, essa sessão de browser deixou de estar disponível; a verificação final do percurso completo está no browser do CI acima. Não se apresenta uma imagem anterior como prova desta correção. O teste físico no S25 e as restantes pendências do Bloco 12 continuam abertos.
+
+Para obter a atualização, recarregar a página (Ctrl+F5 no PC). Num registo pelo nominal, preencher o montante USD e o preço USD/BTC, converter e conferir a quantidade efetivamente executada e a comissão. A conversão arredonda ao lote e apresenta o remanescente; não altera automaticamente um registo real ou uma data para o tornar admissível.
