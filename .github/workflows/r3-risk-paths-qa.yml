@@ -14,6 +14,9 @@ on:
       - 'scripts/test-r5-unified-five-menus-20261025.cjs'
       - 'five-menu-integrated-runtime-v20.js'
       - 'financial-alerts-v20.js'
+      - 'financial-alerts-view-v20.js'
+      - 'previews/v20-b13-alerts-bloco8-qa-20261025.html'
+      - 'scripts/test-b13-alerts-browser-20261025.cjs'
       - 'scripts/test-b13-alerts-20261025.cjs'
       - 'scripts/test-r5-integrated-runtime-20261025.cjs'
       - 'scripts/test-r5-unified-browser-20261025.cjs'
@@ -103,6 +106,8 @@ jobs:
         run: npx playwright install chromium --with-deps
       - name: R5.4 six-screen real UI regression
         run: node --test scripts/test-r5-unified-browser-20261025.cjs
+      - name: Bloco 13.1 six-screen alerts UI regression
+        run: node --test scripts/test-b13-alerts-browser-20261025.cjs
       - name: Recovery contract regressions
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
