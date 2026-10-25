@@ -1,0 +1,41 @@
+name: BTC Strategy Pro - R3.3 isolated risk paths QA
+on:
+  push:
+    branches:
+      - audit/v20-strategy-recovery-20261025
+    paths:
+      - '.github/workflows/r3-risk-paths-qa.yml'
+      - 'scripts/test-r3-risk-paths-20261025.cjs'
+      - 'architecture/**'
+      - 'docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  r3-risk-paths:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install exact locked packages (no install scripts)
+        run: npm ci --ignore-scripts
+      - name: Verify real engine and test syntax
+        run: |
+          node -e "console.log('decimal.js version', require('decimal.js').version)"
+          node --check scripts/test-r3-risk-paths-20261025.cjs
+      - name: Run 14 new real-engine risk paths
+        run: node --test scripts/test-r3-risk-paths-20261025.cjs
+      - name: V20 finance regressions
+        run: |
+          node --test scripts/test-cycle-planner.cjs
+          node --test scripts/test-position-risk.cjs
+          node --test scripts/test-temporal-simulator.cjs
+          node --test scripts/test-kraken-rules.cjs
+      - name: Recovery contract regressions
+        run: |
+          node --test scripts/test-r3-strategy-contract-20261025.cjs
+          node --test scripts/test-r3-preview-bridge-20261025.cjs
