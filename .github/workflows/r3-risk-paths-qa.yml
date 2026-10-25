@@ -32,6 +32,11 @@ on:
       - 'scripts/test-b15-account-recovery-browser-20261025.cjs'
       - 'scripts/build-b15-mobile-pwa-20261025.cjs'
       - 'scripts/test-b15-mobile-pwa-browser-20261025.cjs'
+      - 'scripts/check-b15-release-readiness-20261025.cjs'
+      - 'scripts/test-b15-release-readiness-20261025.cjs'
+      - 'scripts/build-b15-release-candidate-20261025.cjs'
+      - 'policies/v20-b15-release-evidence-20261025.json'
+      - 'policies/cloud-release-20261021.json'
       - 'previews/b153/**'
       - 'scripts/generate_icons.py'
       - 'scripts/test-backup-envelope.cjs'
@@ -168,3 +173,19 @@ jobs:
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
           node --test scripts/test-r3-preview-bridge-20261025.cjs
+      - name: Bloco 15.4 release readiness negative gates (QA only)
+        run: |
+          node --test scripts/test-b15-release-readiness-20261025.cjs
+          node scripts/check-b15-release-readiness-20261025.cjs --mode=qa-review
+      - name: Bloco 15.4 generate QA-only checksummed candidate manifest
+        run: node scripts/build-b15-release-candidate-20261025.cjs
+      - name: Bloco 15.4 downloadable release review package - never deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-strategy-v20-b154-review-only
+          path: |
+            previews/b153/
+            docs/V20_B15_ETAPA4_GATE_FINAL_20261025.md
+            policies/v20-b15-release-evidence-20261025.json
+          if-no-files-found: error
+          retention-days: 14
