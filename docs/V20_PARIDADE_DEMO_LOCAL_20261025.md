@@ -41,3 +41,11 @@ A equivalência dos componentes implementados é verificada com factos iguais; a
 Código `fdf17d8432442437e339a78bff97502bffacfe41`. O [CI 40164103771](https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40164103771) passou as sete tarefas, incluindo os quatro testes de navegador. A publicação 9 da prévia, que continua a ser a aplicação V20, foi concluída no mesmo endereço privado. A audiência mantém-se restrita ao proprietário.
 
 Evidência completa: [V20_DEMO_ACCOUNT_PRESENTATION_RELEASE_20261025.json](qa/V20_DEMO_ACCOUNT_PRESENTATION_RELEASE_20261025.json). O servidor foi revalidado por leituras: API pública V20 fechada, prévia privada disponível, duas funções antigas de QA e provisionamento fechados, 14 tabelas com RLS, 22 utilizadores de QA bloqueados e zero sessões de QA. Não foram alterados backend, esquema ou registos financeiros do proprietário.
+
+## Reforço da referência visual — 25/10/2026
+
+O proprietário reiterou que pretende o design da Demo local de teste igual na conta autenticada, com os gráficos, navegação e funcionalidades já implementadas. Esta é a referência de aceitação; não se pretende uma aplicação nova ou um painel técnico alternativo.
+
+Corrigida uma diferença concreta na página Conta: o histórico de configurações anteriores do plano passa a ser apresentado pelo mesmo componente nos dois modos, com perfil, versão, referência e piso preservado. A indicação de importação concluída distingue agora os factos guardados de um plano ainda por rever.
+
+Validação desta alteração: 11 testes direcionados aprovados e build da prévia concluído. A alteração ainda exige comparação visual no navegador, CI e publicação privada; não equivale a entrega alojada ou fecho do Bloco 12. A funcionalidade de importação continua com os limites e pendências do relatório próprio.
