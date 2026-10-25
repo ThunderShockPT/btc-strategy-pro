@@ -106,6 +106,7 @@ jobs:
           node --test scripts/test-temporal-simulator.cjs
           node --test scripts/test-wallet-onboarding.cjs scripts/test-onboarding-preview.cjs
           node --test scripts/test-plan-view.cjs scripts/test-app-workflows.cjs scripts/test-demo-storage.cjs scripts/test-execution-workflow.cjs
+          node --test scripts/test-plan-presentation.cjs
           node scripts/build-onboarding-preview.cjs
           node scripts/test-auth-guard.cjs
           node scripts/test-cloud-sync.cjs

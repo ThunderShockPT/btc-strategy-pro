@@ -12,4 +12,10 @@ function state({emptyPosition=false}={}){
  return {state:source,revision:String(source.input.events.length),headHash:'a'.repeat(64),dashboard,planNeedsReview:!emptyPosition};
 }
 function bootstrap(snapshot,{networkAPI=false}={}){return `(()=>{globalThis.BTC_UI_QA_SYNTHETIC=true;const snapshot=${JSON.stringify(snapshot).replace(/</g,'\\u003c')},owner=snapshot.state.input.ownerId;let current={user:{id:owner},access_token:'qa-ui-synthetic-not-a-real-credential',expires_at:Date.now()/1000+3600},listener=null;const supabase={auth:{onAuthStateChange(fn){listener=fn;return {data:{subscription:{unsubscribe(){}}}};},async getSession(){return {data:{session:current}};},async getUser(){return {data:{user:{id:owner,is_anonymous:false,email_confirmed_at:'2026-10-01T00:00:00Z'}}};},async signOut(){current=null;listener?.('SIGNED_OUT',null);return {};}}};const fakeFetch=async(url,options)=>{if(${networkAPI})return fetch(url,options);const route=new URL(url).pathname.split('/').at(-1);if(route==='wallets')return Response.json({result:{wallets:[{projectId:snapshot.state.input.projectId,title:snapshot.state.plan.configuration.title,scenarioKey:'manual_long',revision:snapshot.revision}],nextCursor:null}});if(route==='state')return Response.json({result:snapshot});return Response.json({code:'QA_UI_MUTATIONS_DISABLED'},{status:422});};BTCV20AccountConnection.configureSession({supabase,supabaseURL:'https://oftzqqjbwonngubihrsd.supabase.co',privateTest:true,fetchImpl:fakeFetch});})();`;}
-module.exports={state,bootstrap};
+function equivalentDemo(snapshot){
+ const demo=structuredClone(snapshot.state);demo.input.scenarioKey='demo_long';demo.plan.scenarioKey='demo_long';
+ demo.input.valuation.kind='synthetic';demo.input.valuation.source='qa-comparison-invented-not-live';
+ for(const event of demo.input.events){event.scenario_key='demo_long';event.origin='demo';}
+ return demo;
+}
+module.exports={state,bootstrap,equivalentDemo};

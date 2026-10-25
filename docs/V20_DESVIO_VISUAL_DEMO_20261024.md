@@ -1,5 +1,7 @@
 # Desvio entre a Demo original e a prévia privada V20
 
+> Atualização de 25/10: o proprietário clarificou que a referência é o **modo Demo local**. A integração concreta e os seus limites constam de [V20_PARIDADE_DEMO_LOCAL_20261025.md](V20_PARIDADE_DEMO_LOCAL_20261025.md). O diagnóstico abaixo é histórico e não prevalece sobre essa indicação.
+
 ## Diagnóstico
 
 A comparação da prévia privada com a Demo original ficou incompleta. O código mantém duas apresentações: `index.html` conserva o Trading Command Center da V19.1, com Dashboard, Trading Terminal, Radar de Estratégias, Tabela Chaves e identidade Candle Grid; `previews/onboarding-template.html`, `previews/app-views.js` e `account-view-v20.js` compõem a prévia V20 de cinco páginas e os formulários autenticados.
