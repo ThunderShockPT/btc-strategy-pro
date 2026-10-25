@@ -11,20 +11,22 @@
   require('./five-menu-journal-v20.js'),
   require('./unified-five-menus-v20.js'),
   require('./financial-alerts-v20.js'),
-  require('./financial-alerts-view-v20.js'));
+  require('./financial-alerts-view-v20.js'),
+  require('./onboarding-guide-v20.js'));
  else root.BTCFiveMenuIntegratedRuntimeV20=factory(
   root.BTCAccountSessionV20,root.BTCFiveMenuAccountBridgeV20,
   root.BTCAccountWorkflowV20,root.BTCFiveMenuJournalV20,
-  root.BTCUnifiedFiveMenusV20,root.BTCFinancialAlertsV20,root.BTCFinancialAlertsViewV20);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Session,Account,Workflows,Journal,Unified,Alerts,AlertsView){
+  root.BTCUnifiedFiveMenusV20,root.BTCFinancialAlertsV20,root.BTCFinancialAlertsViewV20,
+  root.BTCOnboardingGuideV20);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Session,Account,Workflows,Journal,Unified,Alerts,AlertsView,Tutorial){
 'use strict';
 function fail(code){const e=new Error(code);e.code=code;throw e;}
 function clone(v){return v==null?v:JSON.parse(JSON.stringify(v));}
 function create({supabase,supabaseURL,projectId,fetchImpl,clock,
   newId,now,document:doc=null,sessionFactory=Session.create,onOpenReview=null}={}){
- if(!Session||!Account||!Workflows||!Journal||!Unified||!Alerts||!AlertsView)fail('R55_REQUIRED_V20_MODULES_MISSING');
+ if(!Session||!Account||!Workflows||!Journal||!Unified||!Alerts||!AlertsView||!Tutorial)fail('R55_REQUIRED_V20_MODULES_MISSING');
  if(typeof sessionFactory!=='function')fail('R55_SESSION_REQUIRED');
- let generation=0,closed=false,masked=true,sourceClient=null,workflow=null,journal=null,alertView=null;
+ let generation=0,closed=false,masked=true,sourceClient=null,workflow=null,journal=null,alertView=null,tutorial=null;
  let unsubscribeJournal=null;
  const listeners=new Set();
  const locked=()=>({phase:'signed-out',source:'NONE',selectedProjectId:null,revision:null,
@@ -116,8 +118,10 @@ function create({supabase,supabaseURL,projectId,fetchImpl,clock,
   statusText:ui.status==='ready'?'Diário autenticado coerente':
    'Sem valores autenticados verificados: não usar saldos anteriores'
  });}
- function dispose(){if(closed)return;alertView?.dispose();alertView=null;drop();detachAccount();menus.dispose();account.dispose();closed=true;listeners.clear();}
+ function dispose(){if(closed)return;tutorial?.dispose();tutorial=null;alertView?.dispose();alertView=null;drop();detachAccount();menus.dispose();account.dispose();closed=true;listeners.clear();}
  function alerts(){return Alerts.evaluate({account:account.state(),journal:proxy.state()});}
+ function openTutorial(options={}){guard();if(!doc)fail('B132_DOCUMENT_REQUIRED');if(!tutorial)tutorial=Tutorial.create({document:doc});return tutorial.show(options);}
+ function tutorialState(){return tutorial?.state()||{visible:false,completed:false,persisted:false,canTrade:false,financialApproval:false};}
  function mount(){
   const value=menus.mount();
   if(doc&&!alertView){
@@ -130,7 +134,7 @@ function create({supabase,supabaseURL,projectId,fetchImpl,clock,
   }
   return value;
  }
- return Object.freeze({start,listWallets,selectWallet,refresh,prepare,confirm,signOut,alerts,
+ return Object.freeze({start,listWallets,selectWallet,refresh,prepare,confirm,signOut,alerts,openTutorial,tutorialState,
   signIn:args=>account.signIn(args),mount,selectMode:value=>menus.selectMode(value),
   state,dispose});
 }
