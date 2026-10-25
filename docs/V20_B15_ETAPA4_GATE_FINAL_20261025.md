@@ -2,6 +2,14 @@
 
 **Estado inicial: pacote demonstrativo pronto para revisão, mas publicação financeira e abertura de contas BLOQUEADAS.** Não confundir CI verde com aprovação do utilizador. Este relatório não autoriza deploy, merges, ordens Kraken, migrações ou alterações de dados reais.
 
+## Resultado final automatizado B15.4 — 25/10/2026
+
+- **GitHub Actions 40240463726: 651/651 testes PASS, 0 FAIL**, incluindo **11/11 testes novos de bloqueio de publicação**: https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40240463726
+- A revisão com políticas fechadas **passou** (`node scripts/check-b15-release-readiness-20261025.cjs --mode=qa-review`); a tentativa de lançamento público sem aprovações **falhou por desenho** (retorno não nulo `--mode=public-release`). O CI confirmaria erro se o lançamento não fosse impedido.
+- Atestação gerada para **8 ficheiros estáticos**, com hashes SHA-256 verificáveis, nome da branch e `releaseStatus: BLOCKED_PENDING_HUMAN_AND_PRODUCTION_GATES`. Atestação e ZIP são QA only, não assinatura criptográfica de aprovação humana.
+- **Artefacto final de revisão (ZIP)**: https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40240463726/artifacts/12616867553 (ficheiros da PWA, relatório e evidência de aprovação). Pacote PWA isolado no mesmo run: https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40240463726/artifacts/12617135444
+- **Estado**: 33/34 etapas técnicas preparadas (**97,1%**), todas as etapas B15 entregues em QA, **1 gate R1.4 humano ainda não aprovado**, R2.4 sem escolha financeira final, S25 físico e auditorias de produção ainda por cumprir. **NÃO lançar, NÃO publicar financeiramente, NÃO marcar 34/34.**
+
 ## O que existe realmente
 
 - **Demo integrada V20**, com visual Bloco 8, cinco menus, gráficos ilustrativos, tutorial, alertas e duas carteiras **fictícias**: `previews/v20-b15-integrated-bloco8-qa-20261025.html`.
