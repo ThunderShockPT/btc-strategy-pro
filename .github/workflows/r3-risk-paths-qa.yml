@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/r3-risk-paths-qa.yml'
       - 'scripts/test-r3-risk-paths-20261025.cjs'
+      - 'scripts/test-r3-end-to-end-20261025.cjs'
       - 'architecture/**'
       - 'docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md'
   pull_request:
@@ -32,6 +33,8 @@ jobs:
           node --check scripts/test-r3-risk-paths-20261025.cjs
       - name: Run 14 new real-engine risk paths
         run: node --test scripts/test-r3-risk-paths-20261025.cjs
+      - name: R3.4 integrated preview to V20 risk acceptance
+        run: node --test scripts/test-r3-end-to-end-20261025.cjs
       - name: V20 finance regressions
         run: |
           node --test scripts/test-cycle-planner.cjs
