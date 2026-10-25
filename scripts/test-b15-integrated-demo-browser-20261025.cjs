@@ -71,7 +71,7 @@ for(const width of [320,390,393,430,768,1440]){
    assert.equal(a.status,'ready');assert.equal(a.mode,'account');
    assert.equal(a.values.cash,'1.700 USD');
    assert.equal(await page.locator('#homeView [data-r54-cash]').textContent(),'1.700 USD');
-   assert.match(await page.locator('#b151ModeStatus').textContent(),/simplificados/);
+   assert.match(await page.locator('#b151ModeStatus').textContent(),/premium da conta/);
    await page.locator('#b13Margin').click();
    assert.equal(await page.locator('[data-b13-code="EXISTING_MARGIN_AT_RISK"]').count(),1);
    for(const menu of ['Início','Estratégias','Mercado','Risco','Conta']){
