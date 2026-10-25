@@ -26,3 +26,7 @@ Novo `five-menu-integrated-runtime-v20.js` agrega **os módulos originais do pro
 - `main`, site público, Supabase e carteiras reais não foram alterados; PR #35 continua draft, sem merge ou deploy.
 
 **Roadmap técnico:** R5.5 implementado em ambiente de QA, 23/34 etapas técnicas trabalhadas; a aceitação funcional física e autorização financeira permanecem gates abertos. **Próximo: Bloco 13**, com QA de lançamento, regras Kraken atuais, segurança cloud e UX fidelidade visual antes de qualquer publicação.
+
+## Confirmação FINAL após execução completa
+
+O **GitHub Actions run 40218096079 concluiu com sucesso**, https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40218096079, executando **441/441 testes PASS e zero falhas**. Soma das suites reportadas pelo próprio runner: R5.5 14, R5.4 22, browser Chromium 6, R5.3 e regressões restantes 399. Dependência decimal.js verificada em **10.6.0**. Etapas de API autenticada em PGlite e PostgreSQL temporário (incluindo cópia/restauro) aprovadas. O teste físico Samsung S25 **não foi realizado**; o HTML entregue continua com carteiras fictícias. A publicação, a política financeira e as contas reais continuam intocadas.
