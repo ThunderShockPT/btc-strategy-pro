@@ -7,6 +7,8 @@ on:
       - '.github/workflows/r3-risk-paths-qa.yml'
       - 'scripts/test-r3-risk-paths-20261025.cjs'
       - 'scripts/test-r3-end-to-end-20261025.cjs'
+      - 'scripts/test-r5-authenticated-dashboard-20261025.cjs'
+      - 'authenticated-dashboard-v20.js'
       - 'architecture/**'
       - 'scripts/test-next-buy-capacity-20261025.cjs'
       - 'docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md'
@@ -44,6 +46,8 @@ jobs:
           node --test scripts/test-position-risk.cjs
           node --test scripts/test-temporal-simulator.cjs
           node --test scripts/test-kraken-rules.cjs
+      - name: R5.1 authenticated five-menu single-source tests
+        run: node --test scripts/test-r5-authenticated-dashboard-20261025.cjs
       - name: Recovery contract regressions
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
