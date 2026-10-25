@@ -54,3 +54,7 @@ Laboratório comparativo sem trading concluído: **120 cenários sintéticos** e
 - QA em `docs/V20_R2_ETAPA4_QA_20261025.md`: **15/15** testes aritméticos de evidência e **6/6** tamanhos Chromium (320/390/393/430/768/1440) com alterações de controlos e sem erros/overflow. Fonte do teste em `scripts/test-r2-strategy-decision-20261025.py`.
 - **10/34 etapas com entrega técnica** (R0.1–3, R1.1–3, R2.1–4), **duas avaliações humanas pendentes**: aceitação R1.4 e direção/política financeira R2.4. R2 não equivale a backtest Kraken real (faltam mark/funding/ordens e liquidação cronológica).
 - **R3.1 é o próximo bloco técnico permitido em modo apenas de conceção e testes**. Não alterar `policies/profiles-beta-20261021.json`, `risk-profiles.js`, `cycle-planner.js`, autenticado, produção ou carteiras até decisão financeira explícita e verificações.
+
+## R3.1 — Etapa técnica concluída em 25/10
+
+Contrato apenas de comparação em `architecture/strategy-comparison-contract.cjs`, com 18 testes locais aprovados (`scripts/test-r3-strategy-contract-20261025.cjs`). Código e testes versionados na branch isolada. As políticas V20, carteiras e produção não foram modificadas. 11/34 etapas técnicas implementadas. A validação humana de R1.4 e R2.4 continua pendente; próximo trabalho: R3.2, pré-visualização e validação integrada sem alterações financeiras ativas. Relatório: `docs/V20_R3_ETAPA1_ARQUITETURA_QA_20261025.md`.
