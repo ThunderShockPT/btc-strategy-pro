@@ -64,6 +64,10 @@ jobs:
           node --test scripts/test-execution-workflow.cjs
           node --test scripts/test-corrections.cjs
           node --test scripts/test-persistence-contract.cjs
+      - name: R5.3 authenticated atomic API regressions (ephemeral PGlite)
+        run: |
+          node --test scripts/test-authenticated-api.cjs
+          node --test scripts/test-atomic-postgres.cjs
       - name: Recovery contract regressions
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
