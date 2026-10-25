@@ -53,21 +53,21 @@ return {status:'ready',source:'V20_AUTHENTICATED_SHARED_SNAPSHOT',projectId:s.pr
 function create({bridge,journal,document:doc=typeof document==='undefined'?null:document,onOpenReview=null}={}){
 if(!bridge||!journal||!['state','subscribe','refresh'].every(k=>typeof bridge[k]==='function')
 ||!['state','subscribe','load','confirm'].every(k=>typeof journal[k]==='function'))err('R54_DEPENDENCY_REQUIRED');
-let mode='demo',busy=false,closed=false,current=null;
+let mode='demo',busy=false,closed=false,current=null,recoveryLock=false;
 const layers={},listeners=new Set(),viewObservers=[];
-const html='<div class="r54-panel"><div class="r54-kicker">BTC STRATEGY PRO · CONTA V20 · APENAS LEITURA</div><div class="r54-title" data-r54-title></div><strong class="r54-main" data-r54-main></strong><p data-r54-info></p><div class="r54-figures"><div>Caixa livre<br><b data-r54-cash></b></div><div>Margem isolada<br><b data-r54-margin></b></div><div>BTC aberto<br><b data-r54-btc></b></div></div><p class="r54-warning" data-r54-warning role="status"></p><div class="r54-buttons"><button data-r54-action="refresh" type="button">Atualizar carteira</button><button data-r54-action="journal" type="button">Abrir diário autenticado</button><button data-r54-action="demo" type="button">Voltar à Demo</button></div><div class="r54-rows" data-r54-rows></div><small>O histórico ilustrativo da Demo está oculto neste modo. Nenhuma operação Kraken será executada.</small></div>';
+const html='<div class="r54-panel"><header class="r54-hero"><div class="r54-kicker">BTC STRATEGY <span>PRO</span> · V20 · CARTEIRA VERIFICADA</div><span class="r54-demo-separator">FONTE: DIÁRIO AUTENTICADO · SEM ORDENS</span></header><div class="r54-grid"><div class="r54-primary"><div class="r54-title" data-r54-title></div><strong class="r54-main" data-r54-main></strong><p data-r54-info></p><div class="r54-figures"><div class="r54-stat"><span>CAIXA LIVRE</span><b data-r54-cash></b></div><div class="r54-stat"><span>MARGEM ISOLADA</span><b data-r54-margin></b></div><div class="r54-stat"><span>POSIÇÃO BTC</span><b data-r54-btc></b></div></div><p class="r54-warning" data-r54-warning role="status"></p><div class="r54-buttons"><button data-r54-action="refresh" type="button">Atualizar carteira</button><button data-r54-action="journal" type="button">Abrir diário autenticado</button><button data-r54-action="demo" type="button">Voltar à Demo</button></div><div class="r54-rows" data-r54-rows></div></div><aside class="r54-chart-card" aria-label="Mercado: gráfico não verificado"><div class="r54-chart-caption"><span>VISÃO DE MERCADO</span><span class="r54-no-live">SEM FEED AO VIVO</span></div><div class="r54-chart-grid" aria-hidden="true"></div><strong class="r54-chart-text">Cotação não verificada</strong><p>Os gráficos históricos da Demo não representam a carteira real. Para proteger os teus dados, esta vista só apresenta informações autenticadas e reconciliadas.</p><small>Sem estimativa oficial de liquidação · Sem ordens Kraken</small></aside></div><footer class="r54-footer">Design V20 baseado na Demo original. Os dados da Demo ficam separados dos da tua conta. A paridade visual final depende da tua revisão.</footer></div>';
 const css=[
 'body[data-r54-mode="account"] #homeView>:not(.r54-layer),body[data-r54-mode="account"] #strategiesView>:not(.r54-layer),body[data-r54-mode="account"] #terminalView>:not(.r54-layer),body[data-r54-mode="account"] #riskView>:not(.r54-layer),body[data-r54-mode="account"] #accountView>:not(.r54-layer),body[data-r54-mode="account"] #journalView>:not(.r54-layer){display:none!important}',
 'body[data-r54-mode="demo"] .r54-layer,body[data-r54-mode="account"] #r53Launch,body[data-r54-mode="account"] .r43-context{display:none!important}',
-'.r54-layer{padding:14px 0;color:#ddf4fa}.r54-panel{margin:auto;max-width:1050px;padding:18px;border-radius:14px;border:1px solid #366574;background:linear-gradient(125deg,#0a2632,#10313b);font:14px system-ui,sans-serif}',
-'.r54-kicker{font-size:11px;color:#75d3e1;letter-spacing:.1em}.r54-title{margin-top:14px;color:#a7d2da}.r54-main{display:block;font-size:clamp(22px,3vw,36px);overflow-wrap:anywhere;margin:10px 0}.r54-panel p{color:#a6cbd0;font-size:12px}',
-'.r54-figures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}.r54-figures>div{padding:12px;background:#0a2531;border:1px solid #2c5462;border-radius:9px;overflow-wrap:anywhere}.r54-warning{background:#333123;border-left:3px solid #e0b85d;padding:11px}',
-'.r54-buttons{display:flex;gap:10px;flex-wrap:wrap}.r54-buttons button{border:1px solid #326979;border-radius:9px;background:#164c5c;color:white;padding:11px;cursor:pointer}.r54-buttons button:disabled{opacity:.4}.r54-rows{margin:12px 0}.r54-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;border-bottom:1px solid #2e5360;padding:7px;font-size:11px}',
-'@media(max-width:540px){.r54-panel{padding:12px}.r54-figures{grid-template-columns:1fr 1fr}.r54-figures>div:last-child{grid-column:1/-1}.r54-buttons button{flex:1}.r54-row{grid-template-columns:1fr 1fr}}'
+'.r54-layer{padding:16px 0;color:#F3F6FB;font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-width:0}.r54-panel{margin:0 auto;max-width:1460px;padding:24px;border-radius:18px;border:1px solid #2A3545;background:linear-gradient(125deg,#131B27,#101c2b);box-shadow:0 12px 48px #0005;min-width:0}.r54-hero{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:19px;border-bottom:1px solid #2A3545}.r54-kicker span{color:#18B8E6}.r54-demo-separator{font-size:10px;letter-spacing:.06em;color:#94A3B8;text-align:right}.r54-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(260px,1fr);gap:16px;margin-top:18px}.r54-primary,.r54-chart-card{min-width:0;background:#1A2534;border:1px solid #2A3545;border-radius:14px;padding:22px}.r54-chart-card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}.r54-chart-caption{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;font-size:10px;letter-spacing:.12em;color:#94A3B8}.r54-no-live{color:#F4B740}.r54-chart-grid{height:180px;border:1px dashed #33485d;border-radius:12px;background:repeating-linear-gradient(0deg,transparent 0,transparent 35px,#2A3545 36px),repeating-linear-gradient(90deg,transparent 0,transparent 49px,#2A3545 50px)}.r54-chart-text{color:#c8dbe4;letter-spacing:.02em;font-size:17px}.r54-chart-card p{font-size:12px;line-height:1.65;margin:0}.r54-chart-card small{color:#F4B740}.r54-footer{font-size:11px;color:#94A3B8;border-top:1px solid #2A3545;padding-top:17px;margin-top:20px;line-height:1.6}',
+'.r54-kicker{font-size:12px;color:#F3F6FB;letter-spacing:.1em;font-weight:800}.r54-title{margin-top:15px;color:#94A3B8;font-size:13px;font-weight:700}.r54-main{display:block;font-size:clamp(25px,3vw,42px);overflow-wrap:anywhere;margin:10px 0;color:#F3F6FB}.r54-panel p{color:#94A3B8;font-size:12px;line-height:1.5}',
+'.r54-figures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:20px 0}.r54-figures>div{padding:14px;background:#131B27;border:1px solid #2A3545;border-radius:12px;overflow-wrap:anywhere;display:flex;flex-direction:column;gap:8px;min-width:0}.r54-stat span{font-size:10px;letter-spacing:.05em;color:#94A3B8}.r54-stat b{font-size:clamp(15px,1.6vw,22px);color:#18B8E6}.r54-warning{background:#332d20;border-left:3px solid #F4B740;padding:11px 13px;border-radius:7px}',
+'.r54-buttons{display:flex;gap:10px;flex-wrap:wrap}.r54-buttons button{border:1px solid #2E839A;border-radius:10px;background:#164c5c;color:#F3F6FB;padding:12px 16px;min-height:44px;cursor:pointer}.r54-buttons button:focus-visible{outline:2px solid #18B8E6;outline-offset:2px}.r54-buttons button:disabled{opacity:.4}.r54-rows{margin:12px 0}.r54-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;border-bottom:1px solid #2A3545;padding:9px;font-size:11px}',
+'@media(max-width:960px){.r54-grid{grid-template-columns:minmax(0,1fr)}.r54-chart-grid{height:110px}}@media(max-width:540px){.r54-panel{padding:12px}.r54-primary,.r54-chart-card{padding:13px}.r54-hero{flex-direction:column;align-items:flex-start}.r54-figures{grid-template-columns:1fr 1fr}.r54-figures>div:last-child{grid-column:1/-1}.r54-buttons button{flex:1;min-width:110px}.r54-row{grid-template-columns:1fr 1fr}.r54-chart-grid{height:80px}}'
 ].join('\n');
 const set=(layer,sel,value)=>{const node=layer.querySelector(sel);if(node)node.textContent=String(value??'—');};
 function paint(){
- if(closed)return;current=project(bridge.state(),journal.state());
+ if(closed)return;current=(busy||recoveryLock)?empty('refresh-required','Saldos ocultos durante sincronização ou após falha. Atualiza a carteira e o diário para verificar a mesma revisão.'):project(bridge.state(),journal.state());
  if(!doc)return;doc.body.dataset.r54Mode=mode;
  // Historical Bloco8 modules rebuild view.innerHTML on navigation.
  // Restore the account layer after those builds without exposing legacy figures.
@@ -94,20 +94,25 @@ function paint(){
  }
  }
 }
-function state(){const s=current||project(bridge.state(),journal.state());return {mode,status:s.status,projectId:s.projectId,revision:s.revision,values:s.values?copy(s.values):null,historyCount:s.history.length,canWrite:false,canWriteDirectly:false,canTrade:false};}
+function state(){const s=current||(busy||recoveryLock?empty('refresh-required','Saldos ocultos até confirmação de sincronização.'):project(bridge.state(),journal.state()));return {mode,status:s.status,projectId:s.projectId,revision:s.revision,values:s.values?copy(s.values):null,historyCount:s.history.length,canWrite:false,canWriteDirectly:false,canTrade:false};}
 function signal(){paint();if(!closed)for(const cb of listeners)cb(state());}
 const offA=bridge.subscribe(signal),offJ=journal.subscribe(signal);
 async function refresh(){
  if(closed||busy)err('R54_BUSY_OR_DISPOSED');busy=true;paint();
- try{await bridge.refresh();await journal.load();return state();}
+ try{await bridge.refresh();await journal.load();recoveryLock=false;}
+ catch(error){recoveryLock=true;throw error;}
  finally{busy=false;signal();}
+ return state();
 }
 async function confirm({reviewHash,accepted,acceptPlanLinkCleanup=false}={}){
  if(closed||busy)err('R54_BUSY_OR_DISPOSED');if(accepted!==true)err('R54_EXPLICIT_ACCEPTANCE_REQUIRED');
  busy=true;paint();
  try{const result=await journal.confirm({reviewHash,accepted:true,acceptPlanLinkCleanup});
-  if(result.fresh)await bridge.refresh();return result;
- }finally{busy=false;signal();}
+  // The receipt alone is not a verified financial projection. Re-sync both sources.
+  if(result.fresh){await bridge.refresh();await journal.load();recoveryLock=false;}else recoveryLock=true;
+  return result;
+ }catch(error){recoveryLock=true;throw error;}
+ finally{busy=false;signal();}
 }
 function onClick(e){
  const b=e.target?.closest?.('[data-r54-action]');
