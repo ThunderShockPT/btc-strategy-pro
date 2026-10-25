@@ -117,6 +117,7 @@ async function accountAction(which,target=null){
  if(which==='refresh'){await accountWorkflow.load().catch(()=>{});return true;}
  if(which==='reconcile'){showAccountTask();return true;}
  if(which==='wallet-select'){await accountWorkflow.selectWallet(target.dataset.walletId);navigate('home');return true;}
+ if(which==='wallet-import'){accountWorkflow.beginImport();showAccountTask();return true;}
  if(which==='wallet-new'){
   accountWorkflow.editWallet({projectTitle:'',capitalUSD:'',profile:'balanced',protectedReserveUSD:'0',fundingReserveUSD:'0',feeRate:'',horizonDays:30,noOpenPosition:false,completedTopicIds:[],understoodRisk:false,acceptedDocuments:false});showAccountTask();return true;
  }

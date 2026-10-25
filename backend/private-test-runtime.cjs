@@ -20,7 +20,8 @@ function create({getEnv,Pool,ownerIds,accessTag,origins,fetchImpl=globalThis.fet
   function providers(){
    const pair=Public.create({market,observations,rulesProvider:rules.snapshot,baseCyclePolicyProvider:async()=>({...baseCyclePolicy}),now});
    const setupContextProvider=async()=>{const r=await rules.snapshot(),data=await observations.snapshot(),notBefore=new Date(Math.max(Date.parse(data.book.observedAt),Date.parse(data.history.observedThrough))).toISOString(),q=await market.snapshot({notBefore}),at=now();return {now:at,rules:r,valuation:{kind:'public_mark',source:q.source,markPriceUSD:q.markPriceUSD,asOf:q.observedAt},market:Public.assemble(data,q,r,at),baseCyclePolicy:{...baseCyclePolicy}};};
-   return {...pair,setupContextProvider};
+   const importContextProvider=async()=>{const r=await rules.snapshot(),q=await market.snapshot({notBefore:r.observedAt});return {now:now(),rules:r,valuation:{kind:'public_mark',source:q.source,markPriceUSD:q.markPriceUSD,asOf:q.observedAt},market:{kind:'unused-history-only-import'},baseCyclePolicy:{...baseCyclePolicy}};};
+   return {...pair,setupContextProvider,importContextProvider};
   }
   const valuationProvider=async(scope,input)=>{const r=await rules.snapshot();return FinancialContext.create({now,rulesProvider:async()=>r,market:{snapshot:()=>market.snapshot({notBefore:r.observedAt})}})(scope,input);};services={db,auth,admit,signingKey,providers,valuationProvider};return services;
  }
