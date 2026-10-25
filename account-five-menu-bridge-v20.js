@@ -69,7 +69,7 @@
          assert(w&&ID.test(w.projectId)&&['manual_long','demo_long'].includes(w.scenarioKey),'R52_INVALID_WALLET_SCOPE');
          const id=w.projectId.toLowerCase();
          assert(!seen.has(id),'R52_DUPLICATE_WALLET');seen.add(id);
-         return {projectId:id,scenarioKey:w.scenarioKey,title:typeof w.name==='string'?w.name.slice(0,100):'Carteira'};
+         return {projectId:id,scenarioKey:w.scenarioKey,title:typeof w.title==='string'?w.title.slice(0,100):'Carteira'};
        });
        phase='wallet-selection-required';emit();return copy(knownWallets);
      }catch(e){if(generation===token){phase='blocked';lastError=e.code||'R52_WALLET_LIST_UNAVAILABLE';projection=null;emit();}throw e;}
