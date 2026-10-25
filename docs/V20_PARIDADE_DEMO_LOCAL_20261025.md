@@ -35,3 +35,9 @@ A equivalência dos componentes implementados é verificada com factos iguais; a
 3. Em Estratégias, consultar mapa, montantes pendentes, distribuição 20/30/50 e «Abrir Tabela Chaves».
 4. Comparar a organização com «Experimentar Demo». Os valores só coincidem se os factos forem os mesmos; a tua conta não é copiada para a Demo.
 5. «Recalcular e rever» apresenta a proposta e a validade. Confirmar continua a ser uma decisão explícita tua.
+
+## Entrega publicada
+
+Código `fdf17d8432442437e339a78bff97502bffacfe41`. O [CI 40164103771](https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40164103771) passou as sete tarefas, incluindo os quatro testes de navegador. A publicação 9 da prévia, que continua a ser a aplicação V20, foi concluída no mesmo endereço privado. A audiência mantém-se restrita ao proprietário.
+
+Evidência completa: [V20_DEMO_ACCOUNT_PRESENTATION_RELEASE_20261025.json](qa/V20_DEMO_ACCOUNT_PRESENTATION_RELEASE_20261025.json). O servidor foi revalidado por leituras: API pública V20 fechada, prévia privada disponível, duas funções antigas de QA e provisionamento fechados, 14 tabelas com RLS, 22 utilizadores de QA bloqueados e zero sessões de QA. Não foram alterados backend, esquema ou registos financeiros do proprietário.
