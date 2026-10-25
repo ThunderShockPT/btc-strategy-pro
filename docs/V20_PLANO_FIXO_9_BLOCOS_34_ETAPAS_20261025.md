@@ -82,3 +82,13 @@ R3 etapa 4/4 executada com o motor financeiro real V20 no GitHub Actions: **203/
 **Contagem: 14/34 etapas com entrega técnica. R3 tecnicamente fechado, mas aprovação funcional do proprietário pendente.** R1.4/R2.4 continuam por validar antes de qualquer alteração à política financeira. PR #35 permanece draft, sem merge, deploy, migração ou alterações à produção/contas.
 
 **Próximo bloco: R4 1/4**, recuperar a interface da Demo histórica (cinco menus e gráficos), sem impor layouts cloud genéricos e com checkpoints visuais/testáveis.
+
+## Feedback do proprietário R3.4 — caixa e compras futuras (25/10/2026)
+
+O proprietário validou visualmente 20/30/50, entrada no piso bloqueada e caixa vs margem, mas **rejeitou aprovação financeira definitiva** e pediu uma apresentação com **um único valor principal de caixa disponível** e cálculo dinâmico da capacidade de compra após operações anteriores e desvalorização BTC.
+
+Foi entregue um módulo **apenas de QA, sem escrita** em `architecture/next-buy-capacity.cjs`: usa o motor V20 real para calcular caixa livre, perda na posição ao nível seguinte, margem adicional necessária e estimativa de nominal executável, bloqueando quando a manutenção seria atingida antes da compra; o novo cálculo não desconta perdas não realizadas duas vezes da caixa. `scripts/test-next-buy-capacity-20261025.cjs`: 16/16 testes aprovados; conjunto completo de regressões **219/219**, https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40203983744, com `decimal.js@10.6.0`.
+
+Requisito UX R4: cartão grande «Caixa livre estimada para novas compras» e estado por cada próxima compra (montante nominal, margem requerida, fees, caixa restante, bloqueios), mantendo detalhes contabilísticos em secção expansível. **NÃO sincroniza saldo Kraken**, não calcula poder de compra oficial nem garante que uma compra seja executável. A fonte de regras Kraken tem de ser atualizada antes de qualquer validação corrente.
+
+Relatório detalhado: `docs/V20_R3_OWNER_FEEDBACK_CAIXA_COMPRA_DINAMICA_20261025.md`. Sem alteração da política financeira, sem merge/deploy/Supabase ou dados de utilizador. **14/34 etapas permanecem concluídas**; o feedback é correção da revisão R3 e será integrado visualmente em R4.1–R4.2; R1.4/R2.4 pendem aprovação explícita.
