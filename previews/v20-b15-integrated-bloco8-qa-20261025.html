@@ -1517,7 +1517,7 @@ panel.appendChild(buttons);
 const warning=document.createElement('p');warning.className='b151-alert';warning.textContent='Atenção: os painéis de conta da Beta ainda não reproduzem integralmente o visual da Demo. O alinhamento visual da conta autenticada é pendente e bloqueia a aprovação estética final. Não há ligação à Kraken.';panel.appendChild(warning);
 const state=document.createElement('p');state.className='b151-info';state.id='b151ModeStatus';state.setAttribute('role','status');panel.appendChild(state);
 target.prepend(panel);
-function update(){const s=window.BTCR54QA.status();state.textContent=s.mode==='demo'?'Visual: Demo original · gráficos e dados fictícios':s.status==='ready'?'Visual: painéis de conta simplificados (QA) · carteira fictícia':'Visual: conta bloqueada/sem sincronização';}
+function update(){const s=window.BTCR54QA.status();state.textContent=s.mode==='demo'?'Visual: Demo original · gráficos e dados fictícios':s.status==='ready'?'Visual: painéis premium da conta (QA) · carteira fictícia · revisão estética pendente':'Visual: conta bloqueada/sem sincronização';}
 const ids=['r54Demo','r54A','r54B','r54Logout','r54Drift','r54Sync'];ids.forEach(id=>document.getElementById(id)?.addEventListener('click',()=>queueMicrotask(update)));
 update();
 window.BTCB151QA=Object.freeze({guide,mode:()=>window.BTCR54QA.status(),alertView:window.BTCB13QA.alertView,visualParityOfAccountApproved:false,financialCloudApproved:false,productionDeployment:false,ordersEnabled:false});
