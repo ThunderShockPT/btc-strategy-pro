@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "delivery": "V20_LOCAL_DEMO_ACCOUNT_PRESENTATION",
+  "recordedAt": "2026-10-25T05:07:56.719768+00:00",
+  "project": "ThunderShockPT/btc-strategy-pro",
+  "branch": "qa/v20-block12-recovery-20261022",
+  "codeCommit": "fdf17d8432442437e339a78bff97502bffacfe41",
+  "baseBeforeDelivery": "b677e4df5529710ddf5341f696de00cc6af8f836",
+  "mainPreserved": "d26545f36acda2f2c464626fb93ce688d41309af",
+  "ci": {
+    "runId": 40164103771,
+    "codeSha": "fdf17d8432442437e339a78bff97502bffacfe41",
+    "jobs": [
+      {
+        "id": 121081499332,
+        "name": "postgres-atomic",
+        "conclusion": "success"
+      },
+      {
+        "id": 121081499418,
+        "name": "real-auth-runtime (medium-12)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121081499446,
+        "name": "real-auth-runtime (large-1)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121081499455,
+        "name": "real-auth-runtime (large-12)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121081499470,
+        "name": "rules",
+        "conclusion": "success"
+      },
+      {
+        "id": 121081499475,
+        "name": "account-browser",
+        "conclusion": "success"
+      },
+      {
+        "id": 121081499519,
+        "name": "real-auth-runtime (baseline)",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40164103771"
+  },
+  "localTests": {
+    "passed": 39,
+    "failed": 0,
+    "scope": "targeted account wallet/workflow, shared presentation, Demo Worker and navigation adapters; not a lifetime unique count"
+  },
+  "browserTests": {
+    "passed": 4,
+    "failed": 0,
+    "viewports": [
+      {
+        "width": 393,
+        "height": 852
+      },
+      {
+        "width": 1280,
+        "height": 852
+      }
+    ],
+    "sourceMode": "invented-fixtures; full HTTP/PGlite flow in the frozen-review test; not live Kraken or physical S25",
+    "checks": [
+      "equal saved-plan HTML for equivalent Demo/account facts",
+      "equal capital chart for equivalent facts",
+      "key table scroll contained in the page",
+      "radio profile preserved while editing capital",
+      "explicit unchecked acknowledgment, frozen review, confirmation and receipt",
+      "internal close buttons, logout and Demo isolation"
+    ]
+  },
+  "manualBrowser": {
+    "synthetic": true,
+    "liveOwnerCommands": 0,
+    "sameSavedPlanPresentation": true,
+    "profileRetainedAfterCapitalEdit": true,
+    "costDetailsRemainOpen": true,
+    "consentsRemainUnchecked": true,
+    "screenshot": "V20_PLANO_PARTILHADO_QA_20261025.jpg"
+  },
+  "hosting": {
+    "project_id": "appgprj_6ad88188fbf88191896531870c23f213",
+    "commit_sha": "42db01f85a42f0137bfb7e61ea45d26fe31b8911",
+    "archive": "/workspace/scratch/95b56ad16539/btc-v20-demo-parity-20261025.tar.gz",
+    "archiveSHA256": "7d7596348e7c8990e451c3ee9e73cf3a223480147aff2f4e12f82fc54b9b6b4c",
+    "publicationNumber": 9,
+    "deploymentId": "appgdep_6add8ea036008191a72a16f1da418d43",
+    "versionId": "appgprj_6ad88188fbf88191896531870c23f213~appgver_beb4b6f99eb48191b870963318078519",
+    "status": "succeeded",
+    "url": "https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site",
+    "audience": {
+      "mode": "custom",
+      "ownerOnly": true,
+      "users": 1,
+      "external": 0,
+      "groups": 0
+    }
+  },
+  "cloudRevalidation": {
+    "projectRef": "oftzqqjbwonngubihrsd",
+    "readOnly": true,
+    "functions": [
+      {
+        "slug": "btcsp-v20-api",
+        "version": 1,
+        "healthStatus": 200,
+        "cloudAvailable": false
+      },
+      {
+        "slug": "btcsp-v20-account-qa",
+        "version": 37,
+        "healthStatus": 503,
+        "code": "QA_COMPLETE_CLOSED"
+      },
+      {
+        "slug": "btcsp-v20-runtime-qa",
+        "version": 20,
+        "healthStatus": 503,
+        "code": "QA_COMPLETE_CLOSED"
+      },
+      {
+        "slug": "btcsp-v20-private-test",
+        "version": 10,
+        "healthStatus": 200,
+        "cloudAvailable": true
+      },
+      {
+        "slug": "btcsp-v20-private-provision",
+        "version": 11,
+        "healthStatus": 503,
+        "code": "PRIVATE_PROVISION_CLOSED"
+      }
+    ],
+    "rlsTables": 14,
+    "publicRlsTables": 8,
+    "privateRlsTables": 6,
+    "qaUsers": 22,
+    "qaBanned": 22,
+    "qaSessions": 0,
+    "backendChanges": false,
+    "schemaChanges": false,
+    "ownerFinancialCommands": 0
+  },
+  "maximumHostedPath": {
+    "rerunThisDelivery": false,
+    "priorEvidence": "V20_CONFIRMATION_5000_12_20261024.json"
+  },
+  "gates": {
+    "physicalSamsungS25Approved": false,
+    "block12Complete": false,
+    "block13Started": false,
+    "publicV20ReleaseApproved": false
+  }
+}

@@ -30,6 +30,13 @@ before(async()=>{
  api=Store.create({db,authenticate,contextProvider,enabled:true});
 });
 after(async()=>{if(pool)await pool.end();if(admin){try{await admin.query('drop database if exists '+database);}finally{await admin.end();}}});
+test('native account portability keeps exact SQL numbers and has an independent database authorization guard',async()=>{
+ const Port=require('../backend/account-portability.cjs'),Collect=require('../account-portability-v20.js');let checks=0;
+ const service=Port.create({db,authenticate,authorizeTransaction:async(tx,user,s)=>{checks++;assert.equal(user.id,s.ownerId);assert.equal((await tx.query('select id from auth.users where id=$1 for share',[user.id])).rows.length,1);},enabled:true});
+ const before=await read(),out=await Collect.collect({read:request=>service.read('owner',scope,request)}),data=JSON.parse(out.content);
+ assert.equal(data.metadata.complete,true);assert.equal(data.sections.events.length,before.state.input.events.length);assert(checks>=12);assert.deepEqual((await read()).state,before.state);
+ await assert.rejects(service.read('owner',{...scope,ownerId:uuid(90)},{section:'manifest'}),/VERIFIED_OWNER_SESSION_REQUIRED/);
+});
 const read=()=>db.transaction(tx=>Store.load(tx,scope));
 test('native two-connection race accepts one command and rejects the stale contender',async()=>{
  const a=request(1,'3'),b=request(2,'3'),ra=await api.prepare('owner',scope,a),rb=await api.prepare('owner',scope,b);gate=barrier();let results;try{results=await Promise.allSettled([api.commit('owner',scope,a,confirmation(ra,'race-a')),api.commit('owner',scope,b,confirmation(rb,'race-b'))]);}finally{gate=null;}

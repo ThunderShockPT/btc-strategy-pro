@@ -199,6 +199,7 @@
   candidatePlan.configuration={...(plan.configuration||{}),cyclePolicy:result.cyclePolicy,profilePolicyVersion:result.policyVersion,profileAdmission:change.marginAdmission,
    profileBaseCyclePolicy:clone(change.baseCyclePolicy),profileMarketContext:clone(change.market),profileValuation:clone(input.valuation),profileFloorMode:change.floorMode,
    cycleInventory:result.cycles.candidateInventory||clone(plan.configuration?.cycleInventory||[])};
+  if(candidatePlan.configuration.importReconciliation)candidatePlan.configuration.importReconciliation={...candidatePlan.configuration.importReconciliation,status:'plan-reviewed'};
   if(result.cycles.selected)candidatePlan.configuration.cycleReservationBasis={protectedCashUSD:result.cyclePolicy.protectedCashUSD,fundingReserveUSD:result.cyclePolicy.fundingReserveUSD,closingFeeReserveUSD:result.cycles.selected.closingFeeReserveUSD};
   validatePlan(candidatePlan,input);
   return seal({workflowVersion:'v20-cash-7b.1',type:'profile-review',basisHash:await hash({input,plan}),baseRevision:lastRevision(input),change,activePlan:plan,candidatePlan,result,

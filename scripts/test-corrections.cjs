@@ -143,3 +143,15 @@ test('thousands of untouched facts plus 60 correction versions reconstruct witho
 test('oversized correction payloads are refused before preparing a database-bound event',async()=>{
  const i=opened(),c=change(i);c.record.facts.oversized='x'.repeat(64001);await assert.rejects(()=>W.prepare(i,request(i,[c])),{code:'CORRECTION_FACTS_TOO_LARGE'});
 });
+test('projection preserves the pre-optimization correction output and detaches immutable facts',()=>{
+ const events=f.input().events;events.push(f.event(2,'trade_buy',{symbol:'PF_XBTUSD',executionStatus:'executed',quantityBTC:'0.001',priceUSD:'100000',cycle:'cycle-1'}));
+ const previous={active:true,record:{facts:events[1].facts,effective_at:events[1].effective_at}},next={active:true,record:{facts:{...events[1].facts,quantityBTC:'0.002'},effective_at:events[1].effective_at}};
+ events.push({...f.event(3,'correction',{expectedVersion:'1',action:'replace',previous,next,reversesCorrectionId:null}),effective_at:f.now,recorded_at:f.now,target_event_id:events[1].id,correction_reason:'Corrigir quantidade'});
+ const result=J.project(events),serialized=J.canonical(result);
+ assert.equal(require('node:crypto').createHash('sha256').update(serialized).digest('hex'),'130e74cd3ea012bf2e765d0f3a2319c7d1bb5351b814c3e9d506aa32da0e437e');
+ assert.equal(Object.isFrozen(events[0].facts),false);assert.equal(Object.isFrozen(events[2].facts.next.record.facts),false);
+ events[0].facts.amountUSD='1';events[2].facts.next.record.facts.quantityBTC='99';assert.equal(J.canonical(result),serialized);
+ assert.throws(()=>{result.events[0].facts.amountUSD='1';},TypeError);assert.throws(()=>{result.records[1].state.record.facts.quantityBTC='99';},TypeError);
+ const invalid=f.input().events;invalid[0].facts.hidden=NaN;assert.throws(()=>J.project(invalid),/INVALID_JOURNAL_JSON/);
+});
+test('transactional hypothetical suffix preserves the full corrected source projection',async()=>{const i=await applied(opened()),p=Core.prepareJournal(i),valuation={...i.valuation,asOf:'2026-10-20T23:41:00Z'},n=i.events.length+1,e={...f.event(n,'capital_deposit',{amountUSD:'50',currency:'USD'}),effective_at:valuation.asOf,recorded_at:valuation.asOf},action=p.beginAction(valuation),actual=action.append(e);assert.deepEqual(actual,Core.reconstruct({...i,events:[...i.events,e],valuation}));assert.equal(actual.journal.correctionCount,1);action.commit();});

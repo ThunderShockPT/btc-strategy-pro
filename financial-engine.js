@@ -38,15 +38,10 @@
   const result=calculateMargin(new D(basisUSD),Rules.selectSchedule(rules,platform,clientType));
   return freeze({initialUSD:fmt(result.initial),maintenanceUSD:fmt(result.maintenance),initialRate:result.level.initialRate,maintenanceRate:result.level.maintenanceRate});
  }
- function reconstruct(input){
-  insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
-  insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
-  insist(Array.isArray(input.events)&&input.events.length<=10000,'INVALID_EVENT_COUNT');
-  const valuation=input.valuation;
+ function valuationContext(input,valuation,rules){
   insist(valuation&&['synthetic','public_mark','manual_mark'].includes(valuation.kind),'MARK_PRICE_REQUIRED');
   insist(typeof valuation.source==='string'&&valuation.source.trim().length>0&&valuation.source.length<=200,'PRICE_SOURCE_REQUIRED');
   const mark=decimal(valuation.markPriceUSD,{positive:true}),asOf=time(valuation.asOf);
-  const rules=Rules.load(input.rules);
   let assessmentAt=valuation.asOf;
   if(input.ruleScenario!==undefined){
    keys(input.ruleScenario,['mode','referenceAt']);
@@ -57,30 +52,44 @@
   const blockingReasons=eligibility.reasons.slice(0,eligibility.reasons.length-rules.limitations.length);
   const staleBookkeeping=input.bookkeepingOnly===true&&blockingReasons.length===1&&blockingReasons[0]==='STALE_RULES';
   insist(eligibility.scopeReady||staleBookkeeping,'RULES_OUT_OF_SCOPE_OR_STALE');
+  return {valuation,mark,asOf,assessmentAt,eligibility,blockingReasons};
+ }
+ function rebuild(input,includeEvents=false,prepare=false){
+  insist(input&&UUID.test(input.projectId)&&UUID.test(input.ownerId),'INVALID_SCOPE');
+  insist(['manual_long','demo_long'].includes(input.scenarioKey),'UNREVIEWED_LEGACY_SCENARIO');
+  insist(Array.isArray(input.events)&&input.events.length<=10000,'INVALID_EVENT_COUNT');
+  // Exact timestamp strings are immutable. Validate each distinct string once per
+  // replay; chronology is still checked independently for every source fact.
+  const timestamps=new Map();
+  function eventTime(value){if(!timestamps.has(value))timestamps.set(value,time(value));return timestamps.get(value);}
+  const rules=Rules.load(input.rules);
+  const {valuation,asOf,assessmentAt}=valuationContext(input,input.valuation,rules);
   const levels=Rules.selectSchedule(rules,input.platform,input.clientType);
   function requirements(basis){
    return calculateMargin(basis,levels);
   }
-  const projectId=uuid(input.projectId),ownerId=uuid(input.ownerId);
-  const ids=new Set(),revisions=new Set(),idempotency=new Set();
-  const validated=input.events.map(event=>{
+  const projectId=uuid(input.projectId),ownerId=uuid(input.ownerId),scenarioKey=input.scenarioKey;
+  const executionContext={platform:input.platform,clientType:input.clientType,ruleScenario:input.ruleScenario===undefined?undefined:{...input.ruleScenario},includeTrace:input.includeTrace};
+  let ids=new Set(),revisions=new Set(),idempotency=new Set();
+  function validateEvent(event,cutoff=asOf){
    insist(event&&typeof event.id==='string'&&UUID.test(event.id)&&!ids.has(event.id.toLowerCase()),'DUPLICATE_OR_INVALID_EVENT_ID',event?.id);ids.add(event.id.toLowerCase());
-   insist(uuid(event.project_id)===projectId&&uuid(event.owner_id)===ownerId&&event.scenario_key===input.scenarioKey,'EVENT_SCOPE_MISMATCH',event.id);
-   insist(event.origin===(input.scenarioKey==='manual_long'?'manual':'demo'),'EVENT_ORIGIN_MISMATCH',event.id);
+   insist(uuid(event.project_id)===projectId&&uuid(event.owner_id)===ownerId&&event.scenario_key===scenarioKey,'EVENT_SCOPE_MISMATCH',event.id);
+   insist(event.origin===(scenarioKey==='manual_long'?'manual':'demo'),'EVENT_ORIGIN_MISMATCH',event.id);
    insist(event.schema_version===1,'UNSUPPORTED_EVENT_SCHEMA',event.id);
    insist(typeof event.revision==='string'&&/^[1-9]\d{0,18}$/.test(event.revision)&&BigInt(event.revision)<=9223372036854775807n&&!revisions.has(event.revision),'DUPLICATE_OR_INVALID_REVISION',event.id);revisions.add(event.revision);
    insist(typeof event.idempotency_key==='string'&&event.idempotency_key.length>0&&event.idempotency_key.length<=128&&!idempotency.has(event.idempotency_key),'DUPLICATE_OR_INVALID_IDEMPOTENCY_KEY',event.id);idempotency.add(event.idempotency_key);
    insist(TYPES.includes(event.event_type),'UNSUPPORTED_EVENT_TYPE',event.id);
-   const effective=time(event.effective_at);time(event.recorded_at);
-   insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);
+   const effective=eventTime(event.effective_at);eventTime(event.recorded_at);
+   insist(effective<=cutoff,'FUTURE_EVENT_REQUIRES_PLAN',event.id);
    return {event,effective,revision:BigInt(event.revision)};
-  });
+  }
+  const validated=input.events.map(event=>validateEvent(event));
   const projection=Journal.project(validated.map(v=>v.event));
-  const sorted=projection.events.map(event=>{const effective=time(event.effective_at);insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);return {event,effective,revision:BigInt(event.revision)};}).sort((a,b)=>a.effective-b.effective||(a.revision<b.revision?-1:a.revision>b.revision?1:0));
+  const sorted=projection.events.map(event=>{const effective=eventTime(event.effective_at);insist(effective<=asOf,'FUTURE_EVENT_REQUIRES_PLAN',event.id);return {event,effective,revision:BigInt(event.revision)};}).sort((a,b)=>a.effective-b.effective||(a.revision<b.revision?-1:a.revision>b.revision?1:0));
   let opened=false,wallet=ZERO,margin=ZERO,quantity=ZERO,basis=ZERO,realized=ZERO,fees=ZERO,fundingNet=ZERO;
   let initialCapital=ZERO,deposits=ZERO,withdrawals=ZERO,marginAdded=ZERO,marginRemoved=ZERO,extraMargin=ZERO;
   let acquisition=ZERO,saleNotional=ZERO,allocatedBasis=ZERO;
-  const cycleQty=new Map(),trades=new Map(),feeRefs=new Set(),fundingRefs=new Set(),trace=[];
+  let cycleQty=new Map(),trades=new Map(),feeRefs=new Set(),fundingRefs=new Set(),trace=[];
   function verify(id){
    insist(wallet.gte(0),'INSUFFICIENT_WALLET',id);insist(margin.gte(0),'INSUFFICIENT_ISOLATED_MARGIN',id);
    insist(quantity.gte(0)&&basis.gte(0)&&(!quantity.eq(0)||basis.eq(0)),'INVALID_POSITION',id);
@@ -89,7 +98,7 @@
    const cycles=Array.from(cycleQty.values()).reduce((sum,q)=>sum.add(q),ZERO);
    insist(cycles.eq(quantity),'CYCLE_QUANTITY_FAILURE',id);
   }
-  for(const {event:e}of sorted){
+  function applyLedgerEvent(e,marketAction=false){
    try{
     const f=e.facts,type=e.event_type;
     insist(opened||type==='opening_balance','OPENING_BALANCE_REQUIRED',e.id);
@@ -119,11 +128,11 @@
       quantity=quantity.add(q);basis=basis.add(notional);acquisition=acquisition.add(notional);cycleQty.set(f.cycle,cq.add(q));
       insist(quantity.lte(rules.instrument.maxQuantity),'POSITION_LIMIT_EXCEEDED',e.id);
       let buyRequirements=requirements(basis);
-      if(input.buyRulesByEvent&&Object.hasOwn(input.buyRulesByEvent,e.id.toLowerCase())){
-       const historical=input.buyRulesByEvent[e.id.toLowerCase()];
-       const valid=Rules.assess(historical,{now:input.ruleScenario&&(time(e.effective_at)>time(assessmentAt)||time(historical.observedAt)>time(e.effective_at))?assessmentAt:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:input.platform,clientType:input.clientType,collateralCurrency:'USD'});
+      if(marketAction||input.buyRulesByEvent&&Object.hasOwn(input.buyRulesByEvent,e.id.toLowerCase())){
+       const historical=marketAction?rules:input.buyRulesByEvent[e.id.toLowerCase()];
+       const valid=Rules.assess(historical,{now:executionContext.ruleScenario&&(eventTime(e.effective_at)>eventTime(assessmentAt)||eventTime(historical.observedAt)>eventTime(e.effective_at))?assessmentAt:e.effective_at,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:executionContext.platform,clientType:executionContext.clientType,collateralCurrency:'USD'});
        insist(valid.scopeReady,'HISTORICAL_RULES_INVALID',e.id);
-       buyRequirements=calculateMargin(basis,Rules.selectSchedule(historical,input.platform,input.clientType));
+       buyRequirements=calculateMargin(basis,Rules.selectSchedule(historical,executionContext.platform,executionContext.clientType));
       }
       insist(margin.gte(buyRequirements.initial),'INITIAL_MARGIN_NOT_ALLOCATED',e.id);
      }else{
@@ -161,39 +170,90 @@
      const amount=decimal(f.amountUSD),delta=f.direction==='paid'?amount.neg():amount;wallet=wallet.add(delta);fundingNet=fundingNet.add(delta);
     }
     verify(e.id);
-    if(input.includeTrace)trace.push({eventId:e.id,walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),quantityBTC:fmt(quantity),remainingBasisUSD:fmt(basis),realizedGrossUSD:fmt(realized)});
+    if(executionContext.includeTrace){if(Object.isFrozen(trace))trace=trace.slice();trace.push({eventId:e.id,walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),quantityBTC:fmt(quantity),remainingBasisUSD:fmt(basis),realizedGrossUSD:fmt(realized)});}
    }catch(error){if(error instanceof FinancialError&&error.eventId===null)error.eventId=e.id;throw error;}
   }
+  for(const {event:e}of sorted)applyLedgerEvent(e);
   insist(opened,'OPENING_BALANCE_REQUIRED');
-  const req=requirements(basis),unrealized=quantity.mul(mark).sub(basis),isolatedEquity=margin.add(unrealized);
-  const reservations=input.reservations||{ordersUSD:'0',marginUSD:'0',protectedUSD:'0'};
-  keys(reservations,['ordersUSD','marginUSD','protectedUSD']);
-  const orders=decimal(reservations.ordersUSD),reservedMargin=decimal(reservations.marginUSD),protectedCash=decimal(reservations.protectedUSD);
-  const totalReserved=orders.add(reservedMargin).add(protectedCash),free=wallet.sub(totalReserved);
-  const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
-  const equity=wallet.add(margin).add(unrealized);
-  insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
-  return freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
-   ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady&&!input.ruleScenario,syntheticFrozenRules:!!input.ruleScenario,assessedAt:assessmentAt},
-   journal:{sourceEventCount:input.events.length,correctionCount:projection.correctionCount,activeFactCount:projection.events.length,localAdjustmentsOnly:true},
-   inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
-   capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
-   cash:{walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),bookCashTotalUSD:fmt(wallet.add(margin)),spendableUSD:fmt(D.max(0,free)),unfundedReservationsUSD:fmt(D.max(0,free.neg())),
-    reservedOrdersUSD:fmt(orders),reservedMarginUSD:fmt(reservedMargin),protectedUSD:fmt(protectedCash),reservationStatus:free.gte(0)?'funded':'unfunded',
-    marginTransferredInUSD:fmt(marginAdded),marginTransferredOutUSD:fmt(marginRemoved),additionalMarginTransferredUSD:fmt(extraMargin)},
-   position:{symbol:'PF_XBTUSD',quantityBTC:fmt(quantity),remainingBasisUSD:fmt(basis),averageEntryUSD:quantity.gt(0)?fmt(basis.div(quantity)):null,
-    markNotionalUSD:fmt(quantity.mul(mark)),acquisitionNotionalUSD:fmt(acquisition),saleNotionalUSD:fmt(saleNotional),allocatedBasisUSD:fmt(allocatedBasis),
-    cycles:Array.from(cycleQty.entries()).filter(([,q])=>q.gt(0)).sort(([a],[b])=>BigInt(a.slice(6))<BigInt(b.slice(6))?-1:1).map(([cycle,q])=>({cycle,quantityBTC:fmt(q)}))},
-   pnl:{realizedGrossUSD:fmt(realized),unrealizedGrossUSD:fmt(unrealized),feesPaidUSD:fmt(fees),fundingNetUSD:fmt(fundingNet),totalNetUSD:fmt(netResult),totalEquityUSD:fmt(equity)},
-   margin:{selectedLeverage:'10',initialRequiredUSD:fmt(req.initial),maintenanceRequiredUSD:fmt(req.maintenance),isolatedEquityUSD:fmt(isolatedEquity),maintenanceBufferUSD:fmt(isolatedEquity.sub(req.maintenance)),
-    initialCollateralShortfallUSD:fmt(D.max(0,req.initial.sub(margin))),maintenanceStatus:quantity.eq(0)?'no-position':isolatedEquity.lt(req.maintenance)?'breached':'not-breached-at-mark',
-    effectiveEntryLeverage:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(basis.div(isolatedEquity)):null,
-    markExposureToIsolatedEquity:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(quantity.mul(mark).div(isolatedEquity)):null,
-    unreturnedMarginUSD:quantity.eq(0)?fmt(margin):'0',estimatedLiquidationUSD:null},
-   precision:{inputDecimals:18,calculationSignificantDigits:80,outputDecimals:24,rounding:'half-even'},
-   limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_REQUIRES_TEMPORAL_SCENARIO','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
-   recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
+  // This closure holds exact Decimal accumulators, never rounded ledger outputs.
+  // Capture only immutable valuation context; callers cannot change its source facts.
+  const valuationInput={scenarioKey:input.scenarioKey,platform:input.platform,clientType:input.clientType,bookkeepingOnly:input.bookkeepingOnly,
+   reservations:input.reservations?{...input.reservations}:input.reservations,ruleScenario:input.ruleScenario===undefined?undefined:{...input.ruleScenario},events:{length:input.events.length}};
+  let sourceEventCount=input.events.length,activeFactCount=projection.events.length;
+  let lastEffective=sorted.at(-1).effective,lastRevision=validated.reduce((v,e)=>e.revision>v?e.revision:v,0n),activeAction=false;
+  function render(nextValuation){
+   const input=valuationInput;
+   const {valuation,mark,asOf:nextAsOf,assessmentAt,eligibility,blockingReasons}=valuationContext(input,nextValuation,rules);
+   insist(nextAsOf>=asOf&&nextAsOf>=lastEffective,'VALUATION_BEFORE_VALIDATED_BASIS');
+   const req=requirements(basis),unrealized=quantity.mul(mark).sub(basis),isolatedEquity=margin.add(unrealized);
+   const reservations=input.reservations||{ordersUSD:'0',marginUSD:'0',protectedUSD:'0'};
+   keys(reservations,['ordersUSD','marginUSD','protectedUSD']);
+   const orders=decimal(reservations.ordersUSD),reservedMargin=decimal(reservations.marginUSD),protectedCash=decimal(reservations.protectedUSD);
+   const totalReserved=orders.add(reservedMargin).add(protectedCash),free=wallet.sub(totalReserved);
+   const netContributions=initialCapital.add(deposits).sub(withdrawals),netResult=realized.add(unrealized).sub(fees).add(fundingNet);
+   const equity=wallet.add(margin).add(unrealized);
+   insist(equity.sub(netContributions.add(netResult)).abs().lte(EPSILON),'EQUITY_CONSERVATION_FAILURE');
+   const ledger=freeze({engineVersion:'v20-core-9.1',ruleVersion:rules.version,status:input.ruleScenario?'synthetic-frozen-rules':eligibility.scopeReady?'approximate-manual-ledger':'bookkeeping-only-stale-rules',
+    ruleAssessment:{scopeReady:eligibility.scopeReady,reasons:blockingReasons,marginFiguresCurrent:eligibility.scopeReady&&!input.ruleScenario,syntheticFrozenRules:!!input.ruleScenario,assessedAt:assessmentAt},
+    journal:{sourceEventCount,correctionCount:projection.correctionCount,activeFactCount,localAdjustmentsOnly:true},
+    inputMode:input.scenarioKey==='manual_long'?'manual':'demo',valuation:{...valuation},
+    capital:{initialUSD:fmt(initialCapital),addedUSD:fmt(deposits),withdrawnUSD:fmt(withdrawals),netContributedUSD:fmt(netContributions)},
+    cash:{walletUSD:fmt(wallet),isolatedMarginUSD:fmt(margin),bookCashTotalUSD:fmt(wallet.add(margin)),spendableUSD:fmt(D.max(0,free)),unfundedReservationsUSD:fmt(D.max(0,free.neg())),
+     reservedOrdersUSD:fmt(orders),reservedMarginUSD:fmt(reservedMargin),protectedUSD:fmt(protectedCash),reservationStatus:free.gte(0)?'funded':'unfunded',
+     marginTransferredInUSD:fmt(marginAdded),marginTransferredOutUSD:fmt(marginRemoved),additionalMarginTransferredUSD:fmt(extraMargin)},
+    position:{symbol:'PF_XBTUSD',quantityBTC:fmt(quantity),remainingBasisUSD:fmt(basis),averageEntryUSD:quantity.gt(0)?fmt(basis.div(quantity)):null,
+     markNotionalUSD:fmt(quantity.mul(mark)),acquisitionNotionalUSD:fmt(acquisition),saleNotionalUSD:fmt(saleNotional),allocatedBasisUSD:fmt(allocatedBasis),
+     cycles:Array.from(cycleQty.entries()).filter(([,q])=>q.gt(0)).sort(([a],[b])=>BigInt(a.slice(6))<BigInt(b.slice(6))?-1:1).map(([cycle,q])=>({cycle,quantityBTC:fmt(q)}))},
+    pnl:{realizedGrossUSD:fmt(realized),unrealizedGrossUSD:fmt(unrealized),feesPaidUSD:fmt(fees),fundingNetUSD:fmt(fundingNet),totalNetUSD:fmt(netResult),totalEquityUSD:fmt(equity)},
+    margin:{selectedLeverage:'10',initialRequiredUSD:fmt(req.initial),maintenanceRequiredUSD:fmt(req.maintenance),isolatedEquityUSD:fmt(isolatedEquity),maintenanceBufferUSD:fmt(isolatedEquity.sub(req.maintenance)),
+     initialCollateralShortfallUSD:fmt(D.max(0,req.initial.sub(margin))),maintenanceStatus:quantity.eq(0)?'no-position':isolatedEquity.lt(req.maintenance)?'breached':'not-breached-at-mark',
+     effectiveEntryLeverage:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(basis.div(isolatedEquity)):null,
+     markExposureToIsolatedEquity:quantity.gt(0)&&isolatedEquity.gt(0)?fmt(quantity.mul(mark).div(isolatedEquity)):null,
+     unreturnedMarginUSD:quantity.eq(0)?fmt(margin):'0',estimatedLiquidationUSD:null},
+    precision:{inputDecimals:18,calculationSignificantDigits:80,outputDecimals:24,rounding:'half-even'},
+    limitations:['LIQUIDATION_ENGINE_BLOCK4','INTRADAY_PATH_NOT_VALIDATED','OPEN_ORDER_ADMISSIBILITY_BLOCK4','FUNDING_ACCRUAL_REQUIRES_TEMPORAL_SCENARIO','MANUAL_FACTS_NOT_EXCHANGE_VERIFIED','RESERVATIONS_ARE_PLAN_OVERLAYS'],
+    recommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,trace});
+   return ledger;
+  }
+  const ledger=render(valuation);
+  function atValuation(value){insist(!activeAction,'LEDGER_ACTION_IN_PROGRESS');return render(value);}
+  function beginAction(nextValuation){
+   insist(!activeAction,'LEDGER_ACTION_IN_PROGRESS');
+   nextValuation=Journal.clone(nextValuation);
+   const context=valuationContext(valuationInput,nextValuation,rules);render(nextValuation);
+   // Decimal operations return new values. Copy maps/sets, never rounded outputs.
+   const before={opened,wallet,margin,quantity,basis,realized,fees,fundingNet,initialCapital,deposits,withdrawals,marginAdded,marginRemoved,extraMargin,acquisition,saleNotional,allocatedBasis,
+    cycleQty:new Map(cycleQty),trades:new Map(trades),feeRefs:new Set(feeRefs),fundingRefs:new Set(fundingRefs),ids:new Set(ids),revisions:new Set(revisions),idempotency:new Set(idempotency),trace,sourceEventCount,activeFactCount,lastEffective,lastRevision};
+   let closed=false,committed=false,count=0,lastLedger;activeAction=true;
+   function rollback(){
+    if(closed){insist(!committed,'LEDGER_ACTION_ALREADY_COMMITTED');return;}
+    ({opened,wallet,margin,quantity,basis,realized,fees,fundingNet,initialCapital,deposits,withdrawals,marginAdded,marginRemoved,extraMargin,acquisition,saleNotional,allocatedBasis,
+     cycleQty,trades,feeRefs,fundingRefs,ids,revisions,idempotency,trace,sourceEventCount,activeFactCount,lastEffective,lastRevision}=before);
+    closed=true;activeAction=false;
+   }
+   function append(raw){
+    insist(!closed,'LEDGER_ACTION_CLOSED');
+    try{
+     insist(sourceEventCount<10000,'INVALID_EVENT_COUNT');
+     const checked=validateEvent(raw,context.asOf);
+     insist(['margin_add','margin_remove','trade_buy','trade_sell','fee','funding','capital_deposit','capital_withdrawal'].includes(raw.event_type),'JOURNAL_CORRECTION_NOT_A_MARKET_ACTION',raw.id);
+     insist(checked.revision===lastRevision+1n,'NON_SEQUENTIAL_HYPOTHETICAL_REVISION',raw.id);
+     insist(checked.effective===context.asOf&&checked.effective>=lastEffective,'INVALID_ACTION_CHRONOLOGY',raw.id);
+     const event=Journal.clone(raw);applyLedgerEvent(event,true);
+     sourceEventCount++;activeFactCount++;lastEffective=checked.effective;lastRevision=checked.revision;
+     lastLedger=render(nextValuation);count++;return lastLedger;
+    }catch(error){rollback();throw error;}
+   }
+   function commit(){insist(!closed&&count>0,'LEDGER_ACTION_NOT_READY');closed=true;committed=true;activeAction=false;return lastLedger;}
+   return Object.freeze({append,commit,rollback});
+  }
+  if(prepare)return Object.freeze({ledger,effectiveEvents:projection.events,atValuation,...(prepare==='journal'?{beginAction}:{})});
+  return includeEvents?Object.freeze({ledger,effectiveEvents:projection.events}):ledger;
  }
- function effectiveEvents(input){reconstruct(input);return Journal.project(input.events).events;}
- return Object.freeze({FinancialError,reconstruct,marginRequirements,effectiveEvents});
+ function reconstruct(input){return rebuild(input);}
+ function reconstructWithEvents(input){return rebuild(input,true);}
+ function prepareValuations(input){return rebuild(input,true,true);}
+ function prepareJournal(input){return rebuild(input,true,'journal');}
+ function effectiveEvents(input){return reconstructWithEvents(input).effectiveEvents;}
+ return Object.freeze({FinancialError,reconstruct,reconstructWithEvents,prepareValuations,prepareJournal,marginRequirements,effectiveEvents});
 });

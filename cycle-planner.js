@@ -38,13 +38,13 @@
   need(!Object.hasOwn(config,'pendingPurchases')||(Array.isArray(config.pendingPurchases)&&config.pendingPurchases.length===0),'UNMAPPED_LEGACY_PENDING_ORDERS');
   need(!Object.hasOwn(config,'cycleInventory')||Array.isArray(config.cycleInventory),'INVALID_CYCLE_INVENTORY');
   if(!withLedger)return {p,floor,inventory:clone(config.cycleInventory||[])};
-  const ledger=Core.reconstruct(input);need(ledger.ruleAssessment.scopeReady,'CURRENT_RULES_REQUIRED');
-  need(!Risk.estimate(input).atOrBelowMaintenance,'EXISTING_POSITION_AT_MAINTENANCE');
-  return {p,floor,ledger,inventory:clone(config.cycleInventory||[])};
+  const rebuilt=Risk.reconstructContext(input),ledger=rebuilt.ledger;need(ledger.ruleAssessment.scopeReady,'CURRENT_RULES_REQUIRED');
+  need(!rebuilt.atOrBelowMaintenance,'EXISTING_POSITION_AT_MAINTENANCE');
+  return {p,floor,ledger,effectiveEvents:rebuilt.effectiveEvents,inventory:clone(config.cycleInventory||[])};
  }
- function inventory(input,source,{floor,ledger},isNew=false){
+ function inventory(input,source,{floor,ledger,effectiveEvents},isNew=false){
   need(Array.isArray(source)&&source.length<=100,'INVALID_CYCLE_INVENTORY');
-  const ids=new Set(),fillIds=new Set(),buys=Core.effectiveEvents(input).filter(e=>e.event_type==='trade_buy'),byId=new Map(buys.map(e=>[e.id.toLowerCase(),e]));
+  const ids=new Set(),fillIds=new Set(),buys=effectiveEvents.filter(e=>e.event_type==='trade_buy'),byId=new Map(buys.map(e=>[e.id.toLowerCase(),e]));
   const cycles=source.map(c=>{
    fields(c,['cycle','nominalBudgetUSD','entries']);need(/^cycle-[1-9]\d{0,5}$/.test(c.cycle)&&!ids.has(c.cycle),'DUPLICATE_OR_INVALID_CYCLE');ids.add(c.cycle);
    const budget=decimal(c.nominalBudgetUSD,true);need(Array.isArray(c.entries)&&c.entries.length===3,'THREE_ENTRIES_REQUIRED');
@@ -130,9 +130,8 @@
     if(active){
      need(active.simulation.baseEventCount===input.events.length,'INVALID_SCENARIO_EVENT_BASIS');
      const restored=clone(active.simulation);restored.current.events=[...input.events,...restored.current.events];
-     progress={continuation:restored,result:null};
-    }else progress=Risk.beginSimulation(input,{steps});
-    if(progress.continuation)progress=Risk.advanceSimulation(progress.continuation,{maxSteps:maxPathSteps});
+     progress=Risk.advanceSimulation(restored,{maxSteps:maxPathSteps});
+    }else progress=Risk.startSimulation(input,{steps},{maxSteps:maxPathSteps});
     if(progress.continuation){
      const saved=progress.continuation;need(saved.current.events.length>=input.events.length,'INVALID_SCENARIO_EVENT_BASIS');
      const compact={...saved,baseEventCount:input.events.length,current:{...saved.current,events:saved.current.events.slice(input.events.length)}};
@@ -153,7 +152,7 @@
  }
  function beginSearch(input,plan,policy){
   input=clone(input);input.rules=Rules.load(input.rules);plan=clone(plan);policy=clone(policy);const ctx=context(input,plan,policy),existing=inventory(input,ctx.inventory,ctx);
-  const used=new Set([...ctx.inventory.map(c=>c.cycle),...Core.effectiveEvents(input).filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle),...input.events.filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle)]);
+  const used=new Set([...ctx.inventory.map(c=>c.cycle),...ctx.effectiveEvents.filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle),...input.events.filter(e=>e.event_type==='trade_buy').map(e=>e.facts.cycle)]);
   let nextNumber=[...used].reduce((n,c)=>Math.max(n,Number(c.slice(6))),0)+1;
   const active=new Set(ctx.ledger.position.cycles.map(c=>c.cycle));for(const c of existing)if(c.entries.some(e=>new D(e.pendingQuantityBTC).gt(0)))active.add(c.cycle);
   const slots=Math.max(0,policy.maxCycles-active.size),audit=[],candidates=[];
@@ -216,5 +215,6 @@
    limitations:['SYNTHETIC_SCENARIOS_NOT_PROBABILITIES','PROFILE_POLICY_BLOCK7','NO_FUNDING_FORECAST_BLOCK9','NO_EXIT_TARGETS_BLOCK7','MANUAL_FILL_LINKS','NO_UNSEEN_PATH_OUTSIDE_DECLARED_SCENARIOS']});
  }
  function generate(input,plan,policy){let job=beginSearch(input,plan,policy);while(!job.done)job=advanceSearch(job,{maxScenarios:7});return searchResult(job);}
- return Object.freeze({CycleError,generate,beginSearch,advanceSearch,searchResult,TECHNICAL_LIMIT});
+ function inspectInventory(input,plan){input=clone(input);plan=clone(plan);const ledger=Core.reconstruct(input);return freeze(inventory(input,plan.configuration?.cycleInventory||[],{floor:decimal(plan.protectionFloorUSD,true),ledger,effectiveEvents:Core.effectiveEvents(input)}));}
+ return Object.freeze({CycleError,generate,beginSearch,advanceSearch,searchResult,inspectInventory,TECHNICAL_LIMIT});
 });

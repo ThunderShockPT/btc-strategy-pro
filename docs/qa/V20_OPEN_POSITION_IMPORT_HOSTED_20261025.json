@@ -1,0 +1,83 @@
+{
+  "kind": "hosted-open-position-import",
+  "runId": "f238ec539886",
+  "startedAt": "2026-10-25T08:55:23.841Z",
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 8564
+    },
+    {
+      "label": "login-0",
+      "status": 200,
+      "wallMs": 723
+    },
+    {
+      "label": "login-1",
+      "status": 200,
+      "wallMs": 507
+    },
+    {
+      "label": "api/prepare",
+      "status": 200,
+      "wallMs": 3891
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 2184,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 4451
+    },
+    {
+      "label": "api/commit",
+      "status": 200,
+      "wallMs": 2208
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 2430
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 1478,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "logout",
+      "status": 204,
+      "wallMs": 175
+    },
+    {
+      "label": "logout",
+      "status": 204,
+      "wallMs": 5841
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 6945
+    }
+  ],
+  "ownerFinancialCommands": 0,
+  "physicalS25Approved": false,
+  "productionApproved": false,
+  "remainingReviewMs": 58649,
+  "receiptBeforeExpiry": true,
+  "eventCount": 4,
+  "headSHA256": "7b93e20c380461dce722b8fe7de61371d6aaa4a676edf9153ed0e0eeea5f083f",
+  "replayedWithoutDuplication": true,
+  "otherAccountIsolated": true,
+  "actualHistoricalRuleObservedAt": "2026-10-24T16:10:22.887Z",
+  "reviewSHA256": "af14782feeafcfe53c8b3f35fce8eb41011da0bc86fbda1de71bcbcdf1b073cb",
+  "status": "passed",
+  "qaAccountsBanned": 2,
+  "finishedAt": "2026-10-25T08:56:03.243Z"
+}

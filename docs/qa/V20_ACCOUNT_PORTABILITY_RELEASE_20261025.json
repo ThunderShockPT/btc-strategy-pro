@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "delivery": "V20_ACCOUNT_BUSINESS_DATA_PORTABILITY",
+  "recordedAt": "2026-10-25T07:29:08.321727+00:00",
+  "repository": "ThunderShockPT/btc-strategy-pro",
+  "branch": "qa/v20-block12-recovery-20261022",
+  "codeCommit": "e04bf5a0e3cb81a95c4b4ea1ddfb53c4e12ffc6d",
+  "priorCodeCommit": "06f6275e9273c997b86ab7c9b5b993ea5bc7670c",
+  "mainPreserved": "d26545f36acda2f2c464626fb93ce688d41309af",
+  "ci": {
+    "runId": 40172289566,
+    "sha": "e04bf5a0e3cb81a95c4b4ea1ddfb53c4e12ffc6d",
+    "jobs": [
+      {
+        "id": 121105496440,
+        "name": "rules",
+        "conclusion": "success"
+      },
+      {
+        "id": 121105496555,
+        "name": "real-auth-runtime (large-12)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121105496601,
+        "name": "account-browser",
+        "conclusion": "success"
+      },
+      {
+        "id": 121105496607,
+        "name": "real-auth-runtime (large-1)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121105496609,
+        "name": "real-auth-runtime (baseline)",
+        "conclusion": "success"
+      },
+      {
+        "id": 121105496621,
+        "name": "postgres-atomic",
+        "conclusion": "success"
+      },
+      {
+        "id": 121105496667,
+        "name": "real-auth-runtime (medium-12)",
+        "conclusion": "success"
+      }
+    ],
+    "url": "https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40172289566",
+    "browserTestsPassed": 5
+  },
+  "hostedEvidence": "V20_ACCOUNT_PORTABILITY_HOSTED_20261025.json",
+  "hostedReadImplementationUnchangedByFollowup": true,
+  "hosted": {
+    "events": 5000,
+    "bytes": 5893312,
+    "wallMs": 68006,
+    "pageRequests": 25,
+    "otherAccountIsolated": true,
+    "revokedSessionRejected": true,
+    "qaUsers": 24,
+    "qaBanned": 24,
+    "qaSessions": 0,
+    "ownerFinancialCommands": 0,
+    "ownerDataExportedByAgent": false
+  },
+  "hosting": {
+    "sourceCommit": "d041917222880696352602fee292aa301e669bbc",
+    "publicationNumber": 10,
+    "deploymentId": "appgdep_6addafb8ee588191b122620499eb9683",
+    "versionId": "appgprj_6ad88188fbf88191896531870c23f213~appgver_4eb1f8ea6ca48191a8a9e72a8465fd8b",
+    "status": "succeeded",
+    "url": "https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site",
+    "ownerOnly": true
+  },
+  "backend": {
+    "projectRef": "oftzqqjbwonngubihrsd",
+    "privateRuntimeVersion": 11,
+    "privateRuntimeAvailable": true,
+    "productionApiVersion": 1,
+    "productionCloudAvailable": false,
+    "accountQAClosedVersion": 39,
+    "runtimeQAClosedVersion": 20,
+    "provisionClosedVersion": 11,
+    "rlsTables": 14,
+    "publicTables": 8,
+    "privateTables": 6,
+    "migrationsApplied": false,
+    "financialEnginesChanged": false,
+    "newBuildRequiresFreshReview": true
+  },
+  "limits": {
+    "scope": "account-business-data",
+    "browserFileLimitBytes": 64000000,
+    "pageTargetBytes": 1000000,
+    "pageMaxRecords": 500,
+    "largeRecordPieceCharacters": 64000,
+    "financialSnapshot": false,
+    "automaticRestoreAllowed": false,
+    "excluded": [
+      "credentials-and-server-secrets",
+      "temporary-checkpoints-and-unconfirmed-reviews",
+      "provider-operational-logs-and-request-buckets",
+      "device-local-Demo"
+    ]
+  },
+  "backupCheck": {
+    "command": "node scripts/check-wallet-backup.cjs FILE.json",
+    "offline": true,
+    "verifiesAccountAuthorization": false,
+    "databaseWritten": false
+  },
+  "physicalS25Approved": false,
+  "block12Complete": false,
+  "block13Started": false,
+  "publicV20ReleaseApproved": false,
+  "screenshot": "V20_ACCOUNT_PORTABILITY_QA_20261025.jpg"
+}

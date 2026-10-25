@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-24T07:56:19.932Z",
+  "status": 200,
+  "body": {
+    "valuation": {
+      "kind": "public_mark",
+      "source": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD",
+      "markPriceUSD": "80664.7093240901",
+      "asOf": "2026-10-24T07:56:24.369Z"
+    },
+    "provenance": {
+      "bestAskQuantityBTC": "0.3207",
+      "bestAskReportedSize": "0.3207",
+      "bookObservedAt": "2026-10-24T07:56:24.196Z",
+      "bookSource": "https://futures.kraken.com/derivatives/api/v3/orderbook?symbol=PF_XBTUSD",
+      "contractSizeBTC": "1",
+      "eligibleVisibleNotionalUSD": "25869.5862",
+      "historyObservedThrough": "2026-10-24T07:56:00.000Z",
+      "historySource": "https://futures.kraken.com/api/charts/v1/mark/PF_XBTUSD/1m?count=65",
+      "limitations": [
+        "VISIBLE_BEST_ASK_CAN_CHANGE_OR_DISAPPEAR",
+        "NO_EXECUTION_OR_FUTURE_LIQUIDITY_GUARANTEE",
+        "NO_AUTOMATIC_ORDERS_OR_TRANSFERS",
+        "FIXED_REQUEST_SYMBOL_AND_TICK_TYPE_NO_RESPONSE_ECHO",
+        "ONE_MINUTE_OHLC_NOT_CONTINUOUS_TICKS",
+        "INTRAMINUTE_HIGH_LOW_ORDER_UNKNOWN",
+        "CANDLE_BOUNDARIES_NOT_INDIVIDUAL_TRADE_TIMESTAMPS",
+        "HISTORICAL_MARKS_NOT_EXECUTION_PRICES",
+        "NO_INTERPOLATION_OR_GAP_FILLING",
+        "CLOSE_SAMPLES_CAN_MISS_INTRAMINUTE_DRAWDOWN",
+        "OBSERVATIONS_ARE_NOT_A_VOLATILITY_FORECAST"
+      ],
+      "liquidityBasis": "best-visible-ask-only",
+      "liquidityPolicyVersion": "public-liquidity-2026-10-21.1",
+      "observationKind": "closed-one-minute-mark-candle-closes",
+      "ruleVersion": "QA-SYNTHETIC-REAL-AUTH",
+      "tickerObservedAt": "2026-10-24T07:56:24.369Z",
+      "tickerSource": "https://futures.kraken.com/derivatives/api/v3/tickers/PF_XBTUSD"
+    },
+    "validUntil": "2026-10-24T07:57:00.000Z",
+    "remainingMs": 35560,
+    "rules": "synthetic-not-Kraken-verification"
+  }
+}

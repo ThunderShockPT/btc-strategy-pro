@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),{gzipSync,gunzipSync}=require('node:zlib'),{randomBytes,createHash}=require('node:crypto'),esbuild=require('esbuild');
+const privateDir=process.argv[2];if(!privateDir||!path.isAbsolute(privateDir))throw Error('ABSOLUTE_PRIVATE_DIRECTORY_REQUIRED');
+fs.mkdirSync(privateDir,{recursive:true,mode:0o700});
+const fixtureDir=process.argv[3]||path.resolve('build/hosted-qa');if(!path.isAbsolute(fixtureDir))throw Error('ABSOLUTE_FIXTURE_DIRECTORY_REQUIRED');
+fs.mkdirSync(fixtureDir,{recursive:true});
+if(!fs.existsSync(path.join(fixtureDir,'cases.json')))fs.writeFileSync(path.join(fixtureDir,'cases.json'),gunzipSync(fs.readFileSync('docs/qa/V20_12D12_FIXTURES.json.gz')));
+if(!fs.existsSync(path.join(fixtureDir,'fixture-manifest.json')))fs.copyFileSync('docs/qa/V20_12D12_FIXTURE_MANIFEST.json',path.join(fixtureDir,'fixture-manifest.json'));
+const manifest=JSON.parse(fs.readFileSync(path.join(fixtureDir,'fixture-manifest.json'),'utf8')),current=require('../../policies/calculation-checkpoint-build-20261021.json');
+if(JSON.stringify(manifest.engineBuild)!==JSON.stringify(current))throw Error('QA_FIXTURE_BUILD_MISMATCH_REGENERATE');
+const token=randomBytes(32).toString('hex'),capHash=createHash('sha256').update(token).digest('hex'),runId=capHash.slice(0,12),expiresAt=new Date(Date.now()+15*60*1000).toISOString();
+fs.writeFileSync(path.join(privateDir,'token'),token,{mode:0o600});
+const compressed=gzipSync(fs.readFileSync(path.join(fixtureDir,'cases.json')));
+fs.writeFileSync(path.join(fixtureDir,'cases.json.gz'),compressed);
+// Decode only the requested synthetic case in the worker, not the whole archive.
+const packed=Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(path.join(fixtureDir,'cases.json'),'utf8'))).map(([name,value])=>[name,gzipSync(Buffer.from(JSON.stringify(value))).toString('base64')]));
+const config={capHash,runId,expiresAt},entry=`import {createRequire} from 'node:module';import {Buffer} from 'node:buffer';import {gunzipSync} from 'node:zlib';import pg from 'pg';import Handler from ${JSON.stringify(path.resolve('scripts/qa/hosted-runtime-handler.cjs'))};const require=createRequire(import.meta.url);globalThis.Buffer??=Buffer;const driverProbe=new pg.Pool({max:1});await driverProbe.end();const cases={};for(const [name,data]of Object.entries(${JSON.stringify(packed)}))Object.defineProperty(cases,name,{enumerable:true,get:()=>JSON.parse(gunzipSync(Buffer.from(data,'base64')).toString('utf8'))});const handler=Handler.create({...${JSON.stringify(config)},cases,Pool:pg.Pool,getEnv:k=>Deno.env.get(k),log:v=>console.log(JSON.stringify({kind:'BTCSP_QA_RESULT',...v}))});Deno.serve(handler);`;
+fs.writeFileSync(path.join(fixtureDir,'entry.mjs'),entry);
+esbuild.buildSync({entryPoints:[path.join(fixtureDir,'entry.mjs')],outfile:path.join(fixtureDir,'index.mjs'),bundle:true,nodePaths:[path.resolve('node_modules')],platform:'node',format:'esm',target:'es2022',minify:true,external:['pg-native','cloudflare:sockets'],banner:{js:'import {createRequire as btcCreateRequire} from "node:module";const require=btcCreateRequire(import.meta.url);import {Buffer as BTCBuffer} from "node:buffer";globalThis.Buffer??=BTCBuffer;import BTCProcess from "node:process";globalThis.process??=BTCProcess;globalThis.global??=globalThis;'},legalComments:'none'});
+fs.writeFileSync(path.join(fixtureDir,'deno.json'),JSON.stringify({nodeModulesDir:'auto'}));
+fs.writeFileSync(path.join(privateDir,'run.json'),JSON.stringify({...config,capHash:undefined,privateDir,bundleSHA256:createHash('sha256').update(fs.readFileSync(path.join(fixtureDir,'index.mjs'))).digest('hex')},null,2));
+console.log(JSON.stringify({runId,expiresAt,bundleBytes:fs.statSync(path.join(fixtureDir,'index.mjs')).size,fixtureCompressedBytes:compressed.length}));

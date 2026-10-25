@@ -1,0 +1,196 @@
+{
+  "kind": "hosted-real-public-prices-auth-sql",
+  "caseName": "large-12",
+  "variant": "floor-room-v2",
+  "runId": "1d9d70236992",
+  "startedAt": "2026-10-24T08:08:01.303Z",
+  "rules": "synthetic-not-Kraken-verification",
+  "history": "invented-QA-fixture",
+  "prices": "real-public-Kraken-endpoints",
+  "emailDeliveryTested": false,
+  "publicReleaseApproved": false,
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 5941,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-0",
+      "status": 200,
+      "wallMs": 264,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/login-1",
+      "status": 200,
+      "wallMs": 258,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 3087,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 3386,
+      "worker": "6f8f50b4-45e1-4f25-8bcd-535d27e98d9a",
+      "contextError": null,
+      "heapBytes": 41683616
+    },
+    {
+      "label": "api/state",
+      "status": 404,
+      "wallMs": 2502,
+      "worker": "9e8252d2-bb09-4de8-abe7-d9ab67521479",
+      "contextError": null,
+      "heapBytes": 17681000,
+      "code": "PROJECT_NOT_INITIALIZED"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 425,
+      "wallMs": 5217,
+      "worker": "1765e565-69f6-4f7a-a48c-fe38bbe6bf36",
+      "contextError": null,
+      "heapBytes": 80140776,
+      "code": "CALCULATION_WINDOW_TOO_SHORT",
+      "reason": "WAIT_FOR_CLOSED_HISTORY",
+      "serverTime": "2026-10-24T08:08:21.922Z",
+      "expiresAt": "2026-10-24T08:09:00.000Z",
+      "minimumRemainingMs": 45000,
+      "retryAt": "2026-10-24T08:09:00.000Z"
+    },
+    {
+      "label": "api/calculations/enqueue",
+      "status": 200,
+      "wallMs": 11153,
+      "worker": "f39d1697-c2f1-4a69-b85d-7038160ff52a",
+      "contextError": null,
+      "heapBytes": 24090920
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 6777,
+      "worker": "724ed4d6-f136-4025-b9f5-65b3123e3185",
+      "contextError": null,
+      "heapBytes": 26558416
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 11937,
+      "worker": "78866eb6-191f-4ee2-9e77-99b383da11f4",
+      "contextError": null,
+      "heapBytes": 26838696
+    },
+    {
+      "label": "api/calculations/status",
+      "status": 200,
+      "wallMs": 5948,
+      "worker": "5675b97b-46cc-493a-922e-4154906f852e",
+      "contextError": null,
+      "heapBytes": 17740024
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 7295,
+      "worker": "a808e392-fbed-4489-8e31-6655c7f7dbc8",
+      "contextError": null,
+      "heapBytes": 68002520
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 7108,
+      "worker": "33440ac0-a3c3-43ac-aebb-c411cc2f18d8",
+      "contextError": null,
+      "heapBytes": 27328672
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 200,
+      "wallMs": 8374,
+      "worker": "6156bee9-85a3-4d68-a16d-89df86920a37",
+      "contextError": null,
+      "heapBytes": 27257272
+    },
+    {
+      "label": "api/calculations/advance",
+      "status": 409,
+      "wallMs": 6269,
+      "worker": "533b6578-2c5a-4481-87b4-13066d28fa81",
+      "contextError": null,
+      "heapBytes": 21729424,
+      "code": "CALCULATION_EXPIRED"
+    },
+    {
+      "label": "api/state",
+      "status": 200,
+      "wallMs": 4597,
+      "worker": "49b01505-fd89-45a4-aabe-ab954d498f79",
+      "contextError": null,
+      "heapBytes": 41274744
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 227,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "auth/logout",
+      "status": 204,
+      "wallMs": 4039,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 6261,
+      "worker": null,
+      "contextError": null,
+      "heapBytes": null
+    }
+  ],
+  "bundleSHA256": "c44fea554c37186241449116e73432865dc2752bdd5316933eebc65c64838a8c",
+  "eventCount": 5000,
+  "beforeHead": "61e402b2bc68a27fbd78c75d6cd34d661241a01cd5c838ec5c22a5517c3479b6",
+  "admissionRejected": true,
+  "retryWaitMs": 41012,
+  "jobId": "d3405ea8-37ee-45c4-aabe-3e48354846ee",
+  "originalDeadline": "2026-10-24T08:10:00.000Z",
+  "calculationStartedAt": "2026-10-24T08:09:14.181Z",
+  "concurrentAdvanceChecked": true,
+  "failureCode": "CALCULATION_EXPIRED",
+  "status": "blocked-before-completion",
+  "jobStatus": "queued",
+  "financialStateUnchanged": true,
+  "accountsDisabled": 2,
+  "expiredJobReconciliation": {
+    "newVerifiedSession": true,
+    "status": "blocked",
+    "errorCode": "CALCULATION_EXPIRED",
+    "originalDeadlinePreserved": true,
+    "resumeRejected": true,
+    "sequence": 5
+  }
+}

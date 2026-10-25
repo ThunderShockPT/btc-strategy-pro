@@ -1,0 +1,329 @@
+{
+  "kind": "hosted-account-portability",
+  "runId": "2b5fe7b86c08",
+  "caseName": "large-12",
+  "expectedEvents": 5000,
+  "configuredCycleLimit": 12,
+  "codeCommit": "06f6275e9273c997b86ab7c9b5b993ea5bc7670c",
+  "startedAt": "2026-10-25T07:13:56.189Z",
+  "steps": [
+    {
+      "label": "bootstrap",
+      "status": 401,
+      "wallMs": 6190,
+      "code": "QA_CAPABILITY_REQUIRED"
+    },
+    {
+      "label": "bootstrap",
+      "status": 200,
+      "wallMs": 2643
+    },
+    {
+      "label": "login-0",
+      "status": 200,
+      "wallMs": 666
+    },
+    {
+      "label": "login-1",
+      "status": 200,
+      "wallMs": 250
+    },
+    {
+      "label": "fixture",
+      "status": 200,
+      "wallMs": 5144
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3370
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2320
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2274
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2254
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2103
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2253
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3031
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3287
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3365
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2912
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2887
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3042
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 1605
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3461
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3153
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3300
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2117
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2759
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3103
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2481
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2306
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2296
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2552
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2252
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3177
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 3346
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2186
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2263
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2241
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2293
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2339
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2325
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2277
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2208
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2267
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2320
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2057
+    },
+    {
+      "label": "api/portability",
+      "status": 200,
+      "wallMs": 2871
+    },
+    {
+      "label": "api/portability",
+      "status": 400,
+      "wallMs": 1544,
+      "code": "INVALID_PORTABILITY_REQUEST"
+    },
+    {
+      "label": "revoke-other",
+      "status": 204,
+      "wallMs": 241
+    },
+    {
+      "label": "api/portability",
+      "status": 401,
+      "wallMs": 7088,
+      "code": "SESSION_NOT_VALID"
+    },
+    {
+      "label": "logout",
+      "status": 204,
+      "wallMs": 5815
+    },
+    {
+      "label": "logout",
+      "status": 403,
+      "wallMs": 5681,
+      "code": 403
+    },
+    {
+      "label": "finish",
+      "status": 200,
+      "wallMs": 6712
+    }
+  ],
+  "ownerFinancialCommands": 0,
+  "accountEmailsPublished": false,
+  "financialCalculationApproval": false,
+  "physicalS25Approval": false,
+  "status": "passed",
+  "exportedEvents": 5000,
+  "exportBytes": 5893312,
+  "exportSHA256": "bf1ba0befff395fefb1fab7b8f11c9abf312bb005c8cf2f0c48c4bd04986aa58",
+  "complete": true,
+  "automaticRestoreAllowed": false,
+  "exportWallMs": 68006,
+  "sections": [
+    {
+      "name": "profile",
+      "count": "1",
+      "sha256": "36432e91d149ba07f3b441dc32cfc3337984ecfa572031f3194297ed273401b8"
+    },
+    {
+      "name": "projects",
+      "count": "1",
+      "sha256": "a33995fdead0d82496e03bdcc14025ad89ec957dedb9aeffd0f6cb7940997477"
+    },
+    {
+      "name": "snapshots",
+      "count": "0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "events",
+      "count": "5000",
+      "sha256": "df6f71a93c423c2d619d98734dc4de86e5d05aa5b9d82c0009ba7268260b8d6b"
+    },
+    {
+      "name": "plans",
+      "count": "1",
+      "sha256": "314f226960ee74eda85e431a9476bb2ab5d0a519257ebcc12d84ca73341401ae"
+    },
+    {
+      "name": "preferences",
+      "count": "0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "tutorial",
+      "count": "0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "calculations",
+      "count": "0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "legacyImports",
+      "count": "0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "receipts",
+      "count": "0",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "maximumPageRequests": 25,
+  "otherAccountIsolated": true,
+  "invalidSectionRejected": true,
+  "revokedSessionRejected": true,
+  "qaAccountsBanned": 2,
+  "finishedAt": "2026-10-25T07:16:17.178Z"
+}

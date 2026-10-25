@@ -1,0 +1,11 @@
+'use strict';
+// Invented QA history only. Dates belong to this generated workload, never a live source.
+const {randomUUID}=require('node:crypto'),B=require('../benchmark-large-checkpoints.cjs'),f=require('./onboarding-fixture.cjs'),cf=require('./cycle-fixture.cjs');
+const CASES=Object.freeze({baseline:Object.freeze({events:3,maxCycles:1,requireCompletion:true}),'medium-12':Object.freeze({events:1000,maxCycles:12,requireCompletion:true}),'large-1':Object.freeze({events:5000,maxCycles:1,requireCompletion:true}),'large-12':Object.freeze({events:5000,maxCycles:12,requireCompletion:true})});
+function configuration(name='baseline'){if(!Object.hasOwn(CASES,name))throw Error('UNKNOWN_AUTH_CAPACITY_CASE');return CASES[name];}
+function state(name,scope,at){const c=configuration(name),n=Date.parse(at);if(!Number.isFinite(n))throw Error('INVALID_QA_CLOCK');const value=c.events===3?{...f.existing(),planHistory:[],receipts:[]}:{input:B.fixture(c.events,'trades'),plan:cf.plan(),planHistory:[],receipts:[]},rules=JSON.parse(JSON.stringify(value.input.rules)),ids=new Map(value.input.events.map(e=>[e.id,randomUUID()]));
+ rules.qaFixture={kind:'synthetic-not-Kraken-verification',referenceObservedAt:rules.observedAt};rules.version='QA-SYNTHETIC-REAL-AUTH';rules.observedAt=new Date(n-3600000).toISOString();Object.assign(value.input,{ownerId:scope.ownerId,projectId:scope.projectId,scenarioKey:scope.scenarioKey,rules,valuation:{kind:'manual_mark',source:'explicit-generated-QA-history',markPriceUSD:'100000',asOf:new Date(n-60000).toISOString()}});
+ value.input.events.forEach((e,i)=>{const at=new Date(n-1800000+i*10).toISOString();Object.assign(e,{id:ids.get(e.id),owner_id:scope.ownerId,project_id:scope.projectId,scenario_key:scope.scenarioKey,origin:'manual',effective_at:at,recorded_at:at});if(e.facts.tradeEventId)e.facts.tradeEventId=ids.get(e.facts.tradeEventId);});
+ Object.assign(value.plan,{ownerId:scope.ownerId,projectId:scope.projectId,scenarioKey:scope.scenarioKey,id:randomUUID(),referenceAt:new Date(n-1800000).toISOString()});for(const cycle of value.plan.configuration.cycleInventory||[])for(const entry of cycle.entries)entry.fillEventIds=entry.fillEventIds.map(id=>ids.get(id));return value;
+}
+module.exports={configuration,state};

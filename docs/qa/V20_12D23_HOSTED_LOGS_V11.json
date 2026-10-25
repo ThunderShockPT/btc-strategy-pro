@@ -1,0 +1,483 @@
+{
+  "kind": "hosted-function-logs",
+  "function": "btcsp-v20-runtime-qa",
+  "version": 11,
+  "windowUTC": [
+    "2026-10-23T11:44:00Z",
+    "2026-10-23T11:50:00Z"
+  ],
+  "rows": [
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 41ms)",
+      "execution_id": "cc070121-b47c-4e6b-9fb9-86fdda9a636b",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:38.268000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 35ms)",
+      "execution_id": "459b4628-14c6-44ab-a3bc-4e45747c2ef3",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:38.991000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"small-start\",\"recordedAt\":\"2026-10-23T11:45:39.032Z\",\"totalWallMs\":21.223274000000004,\"result\":{\"operationWallMs\":19.457324999999997,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":10,\"maxCycles\":1,\"method\":\"start\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "459b4628-14c6-44ab-a3bc-4e45747c2ef3",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:39.032000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 30ms)",
+      "execution_id": "c4e851d7-22aa-4710-a6ed-aa08934c5e02",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:39.130000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"small-advance\",\"recordedAt\":\"2026-10-23T11:45:39.163Z\",\"totalWallMs\":18.749738,\"result\":{\"operationWallMs\":15.959931000000005,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":10,\"maxCycles\":1,\"method\":\"advance\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "c4e851d7-22aa-4710-a6ed-aa08934c5e02",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:39.164000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 35ms)",
+      "execution_id": "664edf69-214e-4644-b203-82d028ece63c",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:39.268000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"small-result\",\"recordedAt\":\"2026-10-23T11:45:39.298Z\",\"totalWallMs\":9.397163999999997,\"result\":{\"operationWallMs\":5.276765999999995,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":10,\"maxCycles\":1,\"method\":\"result\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "664edf69-214e-4644-b203-82d028ece63c",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:39.299000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 35ms)",
+      "execution_id": "145c86b1-99f1-43da-a364-806ce96c8fb9",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:39.399000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"medium-start\",\"recordedAt\":\"2026-10-23T11:45:40.025Z\",\"totalWallMs\":605.418263,\"result\":{\"operationWallMs\":593.52039,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":1000,\"maxCycles\":12,\"method\":\"start\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "145c86b1-99f1-43da-a364-806ce96c8fb9",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:40.025000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 28ms)",
+      "execution_id": "b16e6655-3355-4e57-be00-6184f293e651",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:40.129000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"medium-advance\",\"recordedAt\":\"2026-10-23T11:45:40.278Z\",\"totalWallMs\":134.25528599999998,\"result\":{\"operationWallMs\":112.06306699999999,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":1000,\"maxCycles\":12,\"method\":\"advance\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "b16e6655-3355-4e57-be00-6184f293e651",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:40.278000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 35ms)",
+      "execution_id": "c4539717-7239-4243-856b-e5626b3cca27",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:40.396000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"medium-result\",\"recordedAt\":\"2026-10-23T11:45:40.473Z\",\"totalWallMs\":57.16386000000001,\"result\":{\"operationWallMs\":33.446101,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":1000,\"maxCycles\":12,\"method\":\"result\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "c4539717-7239-4243-856b-e5626b3cca27",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:40.473000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 37ms)",
+      "execution_id": "c0235bc4-bb7d-4d7d-9236-5e17a9dece5e",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:40.590000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"large-start\",\"recordedAt\":\"2026-10-23T11:45:41.833Z\",\"totalWallMs\":1222.8850419999999,\"result\":{\"operationWallMs\":1179.2355260000002,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":1,\"method\":\"start\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "c0235bc4-bb7d-4d7d-9236-5e17a9dece5e",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:41.834000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "1206",
+      "event_message": "shutdown",
+      "execution_id": "c0235bc4-bb7d-4d7d-9236-5e17a9dece5e",
+      "memory_total": "30718677",
+      "timestamp": "2026-10-23T11:45:41.872000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 30ms)",
+      "execution_id": "33ebf42d-1052-4800-b3ab-4c3b54bc0dc0",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:41.969000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"large-advance\",\"recordedAt\":\"2026-10-23T11:45:42.471Z\",\"totalWallMs\":486.49252199999995,\"result\":{\"operationWallMs\":413.179399,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":1,\"method\":\"advance\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "33ebf42d-1052-4800-b3ab-4c3b54bc0dc0",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:42.471000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 36ms)",
+      "execution_id": "a957bd20-e61d-4b76-8c5f-89f4a3ee2e68",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:42.583000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"large-result\",\"recordedAt\":\"2026-10-23T11:45:42.761Z\",\"totalWallMs\":158.107228,\"result\":{\"operationWallMs\":85.529281,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":1,\"method\":\"result\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "a957bd20-e61d-4b76-8c5f-89f4a3ee2e68",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:42.761000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"large-limit-start\",\"recordedAt\":\"2026-10-23T11:45:45.588Z\",\"totalWallMs\":2740.073097,\"result\":{\"operationWallMs\":2691.773479,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"start\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "c4539717-7239-4243-856b-e5626b3cca27",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:45.589000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "2723",
+      "event_message": "CPU Time exceeded",
+      "execution_id": "c4539717-7239-4243-856b-e5626b3cca27",
+      "memory_total": "31282627",
+      "timestamp": "2026-10-23T11:45:45.606000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "2723",
+      "event_message": "shutdown",
+      "execution_id": "c4539717-7239-4243-856b-e5626b3cca27",
+      "memory_total": "31282627",
+      "timestamp": "2026-10-23T11:45:45.606000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 29ms)",
+      "execution_id": "ad7eb529-9eeb-478f-8e63-d58f89bf572b",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:45.681000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"large-limit-advance\",\"recordedAt\":\"2026-10-23T11:45:46.127Z\",\"totalWallMs\":431.433961,\"result\":{\"operationWallMs\":362.530461,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"advance\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "ad7eb529-9eeb-478f-8e63-d58f89bf572b",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:46.127000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 34ms)",
+      "execution_id": "dfcd3d1f-cdcb-4fec-8fb2-76fe674d424f",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:46.225000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"large-limit-result\",\"recordedAt\":\"2026-10-23T11:45:46.425Z\",\"totalWallMs\":180.130895,\"result\":{\"operationWallMs\":97.851828,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"result\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "dfcd3d1f-cdcb-4fec-8fb2-76fe674d424f",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:46.425000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 35ms)",
+      "execution_id": "66f76175-66bf-41a5-bc0c-a63af30082e5",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:46.535000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"profile-large-start\",\"recordedAt\":\"2026-10-23T11:45:49.462Z\",\"totalWallMs\":2906.297413,\"result\":{\"operationWallMs\":2861.255503,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"start\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "66f76175-66bf-41a5-bc0c-a63af30082e5",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:49.462000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "2817",
+      "event_message": "CPU Time exceeded",
+      "execution_id": "66f76175-66bf-41a5-bc0c-a63af30082e5",
+      "memory_total": "33797083",
+      "timestamp": "2026-10-23T11:45:49.473000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "2817",
+      "event_message": "shutdown",
+      "execution_id": "66f76175-66bf-41a5-bc0c-a63af30082e5",
+      "memory_total": "33797083",
+      "timestamp": "2026-10-23T11:45:49.473000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 35ms)",
+      "execution_id": "02f7a7e8-6a48-4dc5-879a-5c722e4a9384",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:49.561000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"profile-large-advance\",\"recordedAt\":\"2026-10-23T11:45:50.211Z\",\"totalWallMs\":630.355999,\"result\":{\"operationWallMs\":538.835837,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"advance\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "02f7a7e8-6a48-4dc5-879a-5c722e4a9384",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:50.212000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 29ms)",
+      "execution_id": "f6a46042-01a4-4774-bad9-9ae4b0970fee",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:50.324000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"profile-large-result\",\"recordedAt\":\"2026-10-23T11:45:50.670Z\",\"totalWallMs\":331.323332,\"result\":{\"operationWallMs\":268.798801,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"result\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "f6a46042-01a4-4774-bad9-9ae4b0970fee",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:50.671000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 36ms)",
+      "execution_id": "e469113d-730a-4802-9056-2794fb160ca5",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:50.773000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"profile-large-review\",\"recordedAt\":\"2026-10-23T11:45:51.058Z\",\"totalWallMs\":265.250865,\"result\":{\"operationWallMs\":172.927909,\"expectedHashMatched\":true,\"inputUnchanged\":true,\"synthetic\":true,\"fixedClock\":\"2026-10-20T23:40:00Z\",\"eventCount\":5000,\"maxCycles\":12,\"method\":\"reviewSource\"},\"financialCloudEnabled\":false}\n",
+      "execution_id": "e469113d-730a-4802-9056-2794fb160ca5",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:51.059000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 34ms)",
+      "execution_id": "4e555fd1-d232-4189-8c4a-c0db04e31faf",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:51.178000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"public-3s\",\"recordedAt\":\"2026-10-23T11:45:51.690Z\",\"totalWallMs\":491.60591999999997,\"result\":{\"timeoutMs\":3000,\"totalWallMs\":491.42323,\"sources\":[{\"source\":\"mark-ticker\",\"ok\":true,\"observedAt\":\"2026-10-23T11:45:51.336Z\"},{\"source\":\"book-and-closed-mark-candles\",\"ok\":true,\"bookObservedAt\":\"2026-10-23T11:45:51.309Z\",\"historyObservedThrough\":\"2026-10-23T11:45:00.000Z\",\"candles\":64}]},\"financialCloudEnabled\":false}\n",
+      "execution_id": "4e555fd1-d232-4189-8c4a-c0db04e31faf",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:51.690000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 37ms)",
+      "execution_id": "41f855b0-eb8a-4e48-9c04-4ef16872893d",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:51.793000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"sql-read-only\",\"recordedAt\":\"2026-10-23T11:45:53.502Z\",\"totalWallMs\":1688.465233,\"result\":{\"status\":\"passed\",\"connectionAndTransactionWallMs\":1686.639108,\"readOnly\":true,\"tlsUpgraded\":true,\"certificateVerificationRequired\":true,\"authenticatedFinancialSessionTested\":false},\"financialCloudEnabled\":false}\n",
+      "execution_id": "41f855b0-eb8a-4e48-9c04-4ef16872893d",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:53.502000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "booted (time: 28ms)",
+      "execution_id": "314aa6c7-4fe5-441c-965c-d3f2e25b939e",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:53.606000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "",
+      "event_message": "{\"kind\":\"BTCSP_QA_RESULT\",\"runId\":\"ae40ea67a782\",\"operation\":\"invalid-auth\",\"recordedAt\":\"2026-10-23T11:45:54.129Z\",\"totalWallMs\":508.57306600000004,\"result\":{\"status\":\"rejected-as-expected\",\"httpStatus\":403,\"authWallMs\":508.49414899999994,\"validUserTested\":false},\"financialCloudEnabled\":false}\n",
+      "execution_id": "314aa6c7-4fe5-441c-965c-d3f2e25b939e",
+      "memory_total": "",
+      "timestamp": "2026-10-23T11:45:54.129000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "33",
+      "event_message": "shutdown",
+      "execution_id": "cc070121-b47c-4e6b-9fb9-86fdda9a636b",
+      "memory_total": "14993037",
+      "timestamp": "2026-10-23T11:46:53.288000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "55",
+      "event_message": "shutdown",
+      "execution_id": "459b4628-14c6-44ab-a3bc-4e45747c2ef3",
+      "memory_total": "15523109",
+      "timestamp": "2026-10-23T11:46:54.009000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "45",
+      "event_message": "shutdown",
+      "execution_id": "c4e851d7-22aa-4710-a6ed-aa08934c5e02",
+      "memory_total": "15611045",
+      "timestamp": "2026-10-23T11:46:54.145000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "43",
+      "event_message": "shutdown",
+      "execution_id": "664edf69-214e-4644-b203-82d028ece63c",
+      "memory_total": "15112037",
+      "timestamp": "2026-10-23T11:46:54.284000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "628",
+      "event_message": "shutdown",
+      "execution_id": "145c86b1-99f1-43da-a364-806ce96c8fb9",
+      "memory_total": "15897077",
+      "timestamp": "2026-10-23T11:46:54.422000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "159",
+      "event_message": "shutdown",
+      "execution_id": "b16e6655-3355-4e57-be00-6184f293e651",
+      "memory_total": "15818165",
+      "timestamp": "2026-10-23T11:46:55.146000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "506",
+      "event_message": "shutdown",
+      "execution_id": "33ebf42d-1052-4800-b3ab-4c3b54bc0dc0",
+      "memory_total": "15507733",
+      "timestamp": "2026-10-23T11:46:56.992000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "189",
+      "event_message": "shutdown",
+      "execution_id": "a957bd20-e61d-4b76-8c5f-89f4a3ee2e68",
+      "memory_total": "15160181",
+      "timestamp": "2026-10-23T11:46:57.603000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "448",
+      "event_message": "shutdown",
+      "execution_id": "ad7eb529-9eeb-478f-8e63-d58f89bf572b",
+      "memory_total": "15633821",
+      "timestamp": "2026-10-23T11:47:00.707000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "214",
+      "event_message": "shutdown",
+      "execution_id": "dfcd3d1f-cdcb-4fec-8fb2-76fe674d424f",
+      "memory_total": "15159693",
+      "timestamp": "2026-10-23T11:47:01.250000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "646",
+      "event_message": "shutdown",
+      "execution_id": "02f7a7e8-6a48-4dc5-879a-5c722e4a9384",
+      "memory_total": "15490293",
+      "timestamp": "2026-10-23T11:47:04.585000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "354",
+      "event_message": "shutdown",
+      "execution_id": "f6a46042-01a4-4774-bad9-9ae4b0970fee",
+      "memory_total": "15570461",
+      "timestamp": "2026-10-23T11:47:05.341000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "302",
+      "event_message": "shutdown",
+      "execution_id": "e469113d-730a-4802-9056-2794fb160ca5",
+      "memory_total": "15173997",
+      "timestamp": "2026-10-23T11:47:05.799000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "65",
+      "event_message": "shutdown",
+      "execution_id": "4e555fd1-d232-4189-8c4a-c0db04e31faf",
+      "memory_total": "15313485",
+      "timestamp": "2026-10-23T11:47:06.195000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "61",
+      "event_message": "shutdown",
+      "execution_id": "41f855b0-eb8a-4e48-9c04-4ef16872893d",
+      "memory_total": "15505693",
+      "timestamp": "2026-10-23T11:47:06.814000",
+      "version": "11"
+    },
+    {
+      "cpu_time_used": "35",
+      "event_message": "shutdown",
+      "execution_id": "314aa6c7-4fe5-441c-965c-d3f2e25b939e",
+      "memory_total": "15065205",
+      "timestamp": "2026-10-23T11:47:08.621000",
+      "version": "11"
+    }
+  ]
+}
