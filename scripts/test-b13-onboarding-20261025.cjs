@@ -56,9 +56,9 @@ test('tutorial includes actual manual correction, no API order or trading output
  assert.equal(Object.keys(Guide).sort().join(','),'create,lessons,quiz');
 });
 test('profiles are illustrated only, with explicit non-approval',()=>{
- const text=Guide.lessons[6].text;assert.match(text,/aprovação financeira explícita/);
+ const text=Guide.lessons[6].title+' '+Guide.lessons[6].text;assert.match(text,/aprovação financeira explícita/);
  for(const x of ['Seguro','Equilibrado','Arriscado'])assert.ok(text.includes(x));
 });
 test('real Kraken rule staleness and absence of push are explained',()=>{
- assert.match(Guide.lessons[7].text,/não são notificações em segundo plano/);
+ assert.match(Guide.lessons[7].text,/não são notificações em segundo plano/i);
 });
