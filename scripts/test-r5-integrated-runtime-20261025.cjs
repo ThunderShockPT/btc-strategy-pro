@@ -156,3 +156,27 @@ test('no automatic financial policy approvals, trade execution or credentials ar
  assert.equal(x.runtime[method],undefined);
  assert.equal(x.runtime.state().financialCloudApproved,false);x.runtime.dispose();
 });
+
+
+test('B13.1 financial alerts are derived only from the same verified R5 journal revision',async()=>{
+ const x=await loaded();
+ const current=x.runtime.alerts();
+ assert.equal(current.status,'ready');
+ assert.equal(current.basis.projectId,PROJECT);
+ assert.equal(current.basis.revision,'3');
+ assert.ok(current.alerts.some(a=>a.code==='STALE_MARKET_OR_RULES'));
+ assert.ok(current.alerts.every(a=>a.maySubmitOrders===false));
+ await x.runtime.signOut();
+ assert.equal(x.runtime.alerts().status,'reconciliation-required');
+ assert.equal(x.runtime.alerts().basis,null);
+ x.runtime.dispose();
+});
+test('B13.1 alerts never reuse wallet A risk after choosing wallet B',async()=>{
+ const x=await loaded();
+ const previous=x.runtime.alerts().basis;
+ await x.runtime.selectWallet(PROJECT_B);
+ assert.equal(x.runtime.alerts().status,'ready');
+ assert.notEqual(x.runtime.alerts().basis.projectId,previous.projectId);
+ assert.equal(x.runtime.alerts().basis.projectId,PROJECT_B);
+ x.runtime.dispose();
+});
