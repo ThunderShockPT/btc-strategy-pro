@@ -68,3 +68,9 @@ A fotografia das regras é antiga (`STALE_RULES`), impedindo avaliação finance
 ## R3.3 — Testes adversos preparados, execução total pendente (25/10)
 
 Reexecutados **55 testes** na sessão (R3.1: 18, R3.2: 19, regras Kraken: 18), **55 aprovados, 0 falhas**. Preparados e versionados **14 novos testes** para o motor V20 real, em `scripts/test-r3-risk-paths-20261025.cjs`. Apenas sintaxe validada no ambiente local, **não reportar estes 14 como aprovados**. A dependência `decimal.js` não está instalada e o npm está indisponível (`EAI_AGAIN`). Código preservado em GitHub e ZIP; relatório `docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md`. Instruções de repetição: `npm ci --ignore-scripts; node --test scripts/test-r3-risk-paths-20261025.cjs`. A política financeira, main, produção e carteiras continuam intactos. **Contagem mantém-se 12/34** enquanto R3.3 aguarda testes reais; só então avançar para R3.4. Gates R1.4 e R2.4 continuam pendentes.
+
+## R3.3 tecnicamente concluída — CI real 25/10
+
+A Etapa R3.3 passou em GitHub Actions com `decimal.js 10.6.0` fixado e Node 24: **189/189 testes aprovados**, incluindo **14/14 novos testes adversos** do motor financeiro V20. Execução verificada: https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40200460740. PR draft #35 exclusivamente para QA, não integrar automaticamente. Os dois primeiros erros eram apenas pressupostos errados dos novos testes (funding parcialmente pendente e nome do erro de regras desatualizadas); foram corrigidos nos testes, **sem alteração dos motores financeiros ou dos dados**. Relatório: `docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md`.
+
+**Progresso: 13/34 etapas técnicas concluídas; R3.4 é a próxima etapa**, destinada ao fecho técnico do Bloco R3 e teste funcional. R1.4/R2.4 continuam pendentes da avaliação e escolha financeira do proprietário; a nova política financeira não está aprovada nem publicada.
