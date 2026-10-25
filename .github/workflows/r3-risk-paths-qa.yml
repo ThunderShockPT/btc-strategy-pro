@@ -28,7 +28,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Verify real engine and test syntax
         run: |
-          node -e "console.log('decimal.js version', require('decimal.js').version)"
+          node -e "const v=require('decimal.js/package.json').version; console.log('decimal.js version',v); if(v!=='10.6.0') process.exit(1)"
           node --check scripts/test-r3-risk-paths-20261025.cjs
       - name: Run 14 new real-engine risk paths
         run: node --test scripts/test-r3-risk-paths-20261025.cjs
