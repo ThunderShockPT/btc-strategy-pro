@@ -37,7 +37,7 @@ function nextBuyCapacity({input,entryPriceUSD,targetNominalUSD,stressFloorUSD,
  const existingRequirement=Core.marginRequirements({basisUSD:str(prevBasis),rules,platform:input.platform,clientType:input.clientType});
  const previousPnlAtEntry=prevQ.mul(entry).sub(prevBasis);
  const maintenanceAtEntry=prevMargin.add(previousPnlAtEntry).sub(existingRequirement.maintenanceUSD);
- const previousUnrealizedAtMark=decimal(ledger.pnl.unrealizedGrossUSD);
+ const previousUnrealizedAtMark=new D(ledger.pnl.unrealizedGrossUSD); // Signed loss/profit from validated V20 ledger
  const top=Object.freeze({cashAvailableUSD:str(cash),bookWalletUSD:ledger.cash.walletUSD,
    isolatedMarginAlreadyAllocatedUSD:str(prevMargin),unrealizedPnLNowUSD:str(previousUnrealizedAtMark),
    unrealizedPnLAtFutureEntryUSD:str(previousPnlAtEntry),pendingFundingDebitUSD:str(funding),
