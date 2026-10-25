@@ -9,7 +9,7 @@ const html=fs.readFileSync(path.join(folder,'v20-b15-integrated-bloco8-qa-202610
 const original=fs.readFileSync(path.join(folder,'v20-r4-bloco8-faithful-home-20261025.html'),'utf8');
 const baseCSS=s=>s.match(/<style>([\s\S]*?)<\/style>/i)?.[1].split('</style>')[0];
 test('B15.1 original Bloco 8 root visual tokens remain identical',()=>{
- const a=baseCSS(original),b=baseCSS(html);
+ const a=baseCSS(original)?.trimStart(),b=baseCSS(html)?.trimStart();
  assert.ok(a&&b&&a.length>4000&&b.length>4000);
  assert.ok(a.startsWith(':root{--bg:#0B1018;--surface:#131B27;'));
  assert.ok(b.startsWith(a.slice(0,2500)), 'Original palette/grid/navigation style changed');
