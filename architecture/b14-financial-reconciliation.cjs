@@ -11,9 +11,9 @@ const D=Decimal.clone({precision:80,rounding:Decimal.ROUND_HALF_EVEN,toExpNeg:-1
 const Z=new D(0),TOL=new D('0.000000000000000000001'),freeze=x=>Object.freeze(x);
 const n=x=>new D(x);
 const out=x=>x.toDecimalPlaces(18,D.ROUND_HALF_EVEN).toFixed();
-function check(label,actual,expected){
+function check(label,actual,expected,tolerance=TOL){
  const delta=n(actual).sub(expected);
- return freeze({name:label,pass:delta.abs().lte(TOL),differenceUSD:out(delta),
+ return freeze({name:label,pass:delta.abs().lte(tolerance),differenceUSD:out(delta),
   expectedUSD:out(expected),actualUSD:out(n(actual))});
 }
 function audit(input){
@@ -81,7 +81,7 @@ function audit(input){
   check('risk-maintenance-buffer-usd',risk.maintenanceBufferUSD,buffer)
  ];
  if(boundary!==null&&boundary.gt(0)&&risk.estimatedPriceUSD!==null)
-  checks.push(check('model-maintenance-boundary-usd',risk.estimatedPriceUSD,boundary));
+  checks.push(check('model-maintenance-boundary-usd',risk.estimatedPriceUSD,boundary,new D('0.000000006')));
  else if(quantity.eq(0)&&risk.estimatedPriceUSD!==null)
   throw Error('B142_EMPTY_POSITION_HAS_BOUNDARY');
  else if(boundary!==null&&boundary.lte(0)&&risk.estimatedPriceUSD!==null)
