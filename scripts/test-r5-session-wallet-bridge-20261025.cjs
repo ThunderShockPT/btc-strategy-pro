@@ -20,6 +20,7 @@ function setup({privateSession=true,delayState=null,rejectWallets=false,rejectSt
  const session=()=>({user:{id:owner},access_token:'access-token-fixture',expires_at:4102444800});
  const auth={
   getSession:async()=>({data:{session:expired?null:session()},error:null}),
+  signInWithPassword:async({email,password})=>({data:{session:session()},error:email==='qa@example.test'&&password==='correct-fixture-only'?null:{message:'INVALID_CREDENTIALS'}}),
   getUser:async()=>({data:{user:{id:actualOwner,email_confirmed_at:ownerValidated?'2026-10-20T00:00:00Z':null,is_anonymous:false}},error:null}),
   onAuthStateChange:cb=>{authEvent=cb;return {data:{subscription:{unsubscribe(){authEvent=null;}}}};},
   signOut:async()=>{logoutCalls++;expired=true;authEvent?.('SIGNED_OUT',null);return {error:null};}
@@ -138,4 +139,11 @@ test('adapter exposes read-only control, no credential storage or financial comm
  for(const method of ['commit','confirm','prepare','executeTrade','submitOrder'])assert.equal(Object.hasOwn(x.bridge,method),false);
  assert.equal(Object.hasOwn(x.bridge,'token'),false);
  x.bridge.dispose();
+});
+
+test('sign-in delegates to the existing verified Supabase session without exposing password',async()=>{
+ const x=await ready();await x.bridge.signIn({email:'qa@example.test',password:'correct-fixture-only'});
+ assert.equal(x.bridge.state().authenticated,true);assert.equal(x.bridge.state().projection,null);
+ assert.equal(Object.hasOwn(x.bridge.state(),'password'),false);
+ const listed=await x.bridge.listWallets();assert.equal(listed.length,2);x.bridge.dispose();
 });
