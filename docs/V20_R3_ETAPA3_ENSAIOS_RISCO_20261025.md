@@ -31,3 +31,7 @@ node --test scripts/test-temporal-simulator.cjs
 - Persistem os gates de decisão R1.4 e R2.4 antes de modificar a política ativa.
 
 **Progresso honesto: 12/34 etapas confirmadas; R3.3 ainda não está concluída.** Para fechar R3.3, executar e obter 14 PASS no motor verdadeiro, tratar falhas, regredir os testes existentes e apresentar resultados verificáveis antes de R3.4.
+
+## Entrega posterior: script QA preservado no repositório
+
+O script com 14 testes reais foi guardado em `scripts/test-r3-risk-paths-20261025.cjs`, commit `45306ee84cdea8708d360ac92adc6ccead9258f6`. Continua **não executado** com `decimal.js`; a sua existência no GitHub não significa que tenha passado. O ficheiro ZIP local preserva o código completo utilizado na preparação, logs dos 55 testes anteriores e instruções de execução.
