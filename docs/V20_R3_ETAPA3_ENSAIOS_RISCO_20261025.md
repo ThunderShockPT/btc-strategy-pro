@@ -35,3 +35,26 @@ node --test scripts/test-temporal-simulator.cjs
 ## Entrega posterior: script QA preservado no repositório
 
 O script com 14 testes reais foi guardado em `scripts/test-r3-risk-paths-20261025.cjs`, commit `45306ee84cdea8708d360ac92adc6ccead9258f6`. Continua **não executado** com `decimal.js`; a sua existência no GitHub não significa que tenha passado. O ficheiro ZIP local preserva o código completo utilizado na preparação, logs dos 55 testes anteriores e instruções de execução.
+
+## ACTUALIZAÇÃO FINAL — CI real do motor V20 (25/10/2026, 14:03 UTC)
+
+**A Etapa R3.3 está agora tecnicamente concluída.** A limitação de acesso npm do ambiente local foi contornada ao executar testes no GitHub Actions com `npm ci --ignore-scripts`, Node 24 e **decimal.js 10.6.0 verificado por package.json**. Não se usaram cálculos substitutos.
+
+**CI concluída com sucesso:** https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40200460740 (PR de rascunho https://github.com/ThunderShockPT/btc-strategy-pro/pull/35). Commit do workflow verificado: `a397f6b91a1cd6eafd27d1b8b85cd067101f62df`.
+
+| Conjunto | Testes realizados | Aprovados | Falhas |
+|---|---:|---:|---:|
+| R3.3, 14 novos percursos reais do motor V20 | 14 | 14 | 0 |
+| `test-cycle-planner.cjs` | 35 | 35 | 0 |
+| `test-position-risk.cjs` | 34 | 34 | 0 |
+| `test-temporal-simulator.cjs` | 51 | 51 | 0 |
+| `test-kraken-rules.cjs` | 18 | 18 | 0 |
+| `test-r3-strategy-contract-20261025.cjs` | 18 | 18 | 0 |
+| `test-r3-preview-bridge-20261025.cjs` | 19 | 19 | 0 |
+| **TOTAL** | **189** | **189** | **0** |
+
+A primeira execução havia devolvido 12/14 porque **duas afirmações nos testes** estavam incorretas: (i) o funding acumulado num intervalo de uma hora pode ficar parcialmente pendente, sem ter sido totalmente liquidado da carteira; (ii) a exceção real do motor para fotografia de regras vencida chama-se `RULES_OUT_OF_SCOPE_OR_STALE`. Os testes foram corrigidos de forma a **não contornar o bloqueio** e a verificar os montantes liquidados contra a carteira; **não foi alterado o motor financeiro**.
+
+A corrida final confirma que os casos simulados de compras parciais, ausência de execução, gap, falha de margem, risco pré-acção, caixa distinta de margem e funding são coerentes com o motor V20 e com os testes históricos. **Não** demonstra rentabilidade futura, liquidação oficial da Kraken, validade das regras do mercado em 25/10, backtesting cronológico histórico, ou o funcionamento integral da UI PWA/Supabase. Os eventos são sintéticos e isolados; não usam conta ou credenciais.
+
+A PR #35 é **draft** e NÃO deve ser fundida automaticamente; `main`, site, base de dados, carteiras e os parâmetros financeiros ativos permanecem inalterados. R1.4/R2.4 continuam por aprovação do proprietário antes de substituir a política. **Contagem: 13/34 etapas tecnicamente concluídas. Próximo: R3.4, fecho técnico e QA funcional do Bloco R3.**
