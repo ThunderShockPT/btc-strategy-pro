@@ -106,3 +106,11 @@ A Demo Bloco 8, com gráficos e radar preservados, ganhou cálculo **real do led
 **QA:** seis larguras Chromium (320/390/393/430/768/1440), sequência de seis movimentos e de mark 100k→97k, compra/venda parcial, bloqueio de risco antes da entrada, reset; 6/6 PASS, 0 JS errors, 0 overflow. Três movimentos errados rejeitados sem tocar no saldo. Corrigido adaptador para aceitar a precisão de 24 casas decimais do motor; motor V20 original intacto. Detalhes: `docs/V20_R4_ETAPA2_MOTOR_REAL_CAIXA_QA_20261025.md`. A base tinha 219/219 regressões CI em execução anterior. Não claim que a nova UI já esteja em produção ou em CI.
 
 **Limitações:** dados de diário local temporário, snapshot Kraken congelado em 20/10/2026, dados do gráfico/radar antigos ilustrativos e separados, sem Supabase / conta Kraken / dados reais ou garantia de execução/liquidação; sem alteração financeira aprovada. **16/34 etapas técnicas entregues**, gates R1.4/R2.4 ainda pendentes. Próximo: **R4.3**, cinco menus e UX da Demo.
+
+## R4.3 — Navegação final de cinco menus concluída tecnicamente (25/10/2026)
+
+Prévia autónoma em `previews/v20-r4-five-tab-bloco8-dashboard-20261025.html` implementa **Início | Estratégias | Mercado | Risco | Conta** em desktop/mobile, reaproveitando páginas e funções históricas da Demo Bloco8. Terminal de trading reside em Mercado; Diário de operações continua acessível por Estratégias e pela lateral no desktop. Gráfico de velas, radar, painel de caixa com motor V20 e movimentos fictícios mantidos. Avisos nas páginas deixam claro que os subsistemas antigos ainda **não são sincronizados** com o diário local V20 da Home.
+
+**6/6 tamanhos Chromium QA** (320/390/393/430/768/1440): cinco menus, diário contextual, estados de navegação, um único painel visível por percurso, caixa inicial 1700 USD, PnL da queda separado da caixa, comissão de 50 USD diminuindo a caixa para 1650 USD e reset; **zero JS errors e zero overflow**. Report `docs/V20_R4_ETAPA3_CINCO_MENUS_QA_20261025.md`, scripts e screenshots anexos no pacote da conversa.
+
+**Progresso: 17/34 etapas com entrega técnica** (R0 3, R1 3, R2 4, R3 4, R4 3); R1.4/R2.4 ainda pendentes de aprovação humana/financeira. **R4.4** seguirá com QA final de fidelidade visual e integração segura dos módulos; nenhum merge/deploy/alteração às contas, ao Supabase ou às políticas financeiras foi efetuado.
