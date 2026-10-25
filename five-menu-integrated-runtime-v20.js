@@ -9,19 +9,22 @@
   require('./account-five-menu-bridge-v20.js'),
   require('./account-workflow-v20.js'),
   require('./five-menu-journal-v20.js'),
-  require('./unified-five-menus-v20.js'));
+  require('./unified-five-menus-v20.js'),
+  require('./financial-alerts-v20.js'),
+  require('./financial-alerts-view-v20.js'));
  else root.BTCFiveMenuIntegratedRuntimeV20=factory(
   root.BTCAccountSessionV20,root.BTCFiveMenuAccountBridgeV20,
-  root.BTCAccountWorkflowV20,root.BTCFiveMenuJournalV20,root.BTCUnifiedFiveMenusV20);
-})(typeof globalThis!=='undefined'?globalThis:this,function(Session,Account,Workflows,Journal,Unified){
+  root.BTCAccountWorkflowV20,root.BTCFiveMenuJournalV20,
+  root.BTCUnifiedFiveMenusV20,root.BTCFinancialAlertsV20,root.BTCFinancialAlertsViewV20);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Session,Account,Workflows,Journal,Unified,Alerts,AlertsView){
 'use strict';
 function fail(code){const e=new Error(code);e.code=code;throw e;}
 function clone(v){return v==null?v:JSON.parse(JSON.stringify(v));}
 function create({supabase,supabaseURL,projectId,fetchImpl,clock,
   newId,now,document:doc=null,sessionFactory=Session.create,onOpenReview=null}={}){
- if(!Session||!Account||!Workflows||!Journal||!Unified)fail('R55_REQUIRED_V20_MODULES_MISSING');
+ if(!Session||!Account||!Workflows||!Journal||!Unified||!Alerts||!AlertsView)fail('R55_REQUIRED_V20_MODULES_MISSING');
  if(typeof sessionFactory!=='function')fail('R55_SESSION_REQUIRED');
- let generation=0,closed=false,masked=true,sourceClient=null,workflow=null,journal=null;
+ let generation=0,closed=false,masked=true,sourceClient=null,workflow=null,journal=null,alertView=null;
  let unsubscribeJournal=null;
  const listeners=new Set();
  const locked=()=>({phase:'signed-out',source:'NONE',selectedProjectId:null,revision:null,
@@ -113,9 +116,22 @@ function create({supabase,supabaseURL,projectId,fetchImpl,clock,
   statusText:ui.status==='ready'?'Diário autenticado coerente':
    'Sem valores autenticados verificados: não usar saldos anteriores'
  });}
- function dispose(){if(closed)return;drop();detachAccount();menus.dispose();account.dispose();closed=true;listeners.clear();}
- return Object.freeze({start,listWallets,selectWallet,refresh,prepare,confirm,signOut,
-  signIn:args=>account.signIn(args),mount:()=>menus.mount(),selectMode:value=>menus.selectMode(value),
+ function dispose(){if(closed)return;alertView?.dispose();alertView=null;drop();detachAccount();menus.dispose();account.dispose();closed=true;listeners.clear();}
+ function alerts(){return Alerts.evaluate({account:account.state(),journal:proxy.state()});}
+ function mount(){
+  const value=menus.mount();
+  if(doc&&!alertView){
+   const parent=doc.querySelector('#homeView .r54-panel');
+   if(!parent)fail('B13_ACCOUNT_PANEL_REQUIRED');
+   const host=doc.createElement('section');
+   host.setAttribute('data-b13-account-alerts','true');
+   parent.appendChild(host);
+   alertView=AlertsView.create({account,journal:proxy,host});
+  }
+  return value;
+ }
+ return Object.freeze({start,listWallets,selectWallet,refresh,prepare,confirm,signOut,alerts,
+  signIn:args=>account.signIn(args),mount,selectMode:value=>menus.selectMode(value),
   state,dispose});
 }
 return Object.freeze({create});
