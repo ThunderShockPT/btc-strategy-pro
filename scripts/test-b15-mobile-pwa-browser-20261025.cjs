@@ -67,7 +67,7 @@ test('B15.3 03 isolated worker cannot claim main site or cache authenticated end
  assert.ok(js.includes("const PREFIX='btcsp-v20-b153-demoqa-'"));
  assert.match(js,/request\.method!=='GET'/);
  assert.match(js,/ALLOW\.has\(canonical\)/);
- assert.match(js,/url\.pathname\.startsWith\(scope\.pathname\)/);
+ assert.match(js,/u\.pathname\.startsWith\(scope\.pathname\)/);
  assert.doesNotMatch(js,/cache\.addAll\(\[\s*['"]\/['"]/);
 });
 for(const width of [320,390,393,430,768,1440]){
