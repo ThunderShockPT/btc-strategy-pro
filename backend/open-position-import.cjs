@@ -25,6 +25,7 @@ function build(c,r){
  event(c.openingEventId,'opening_balance',r.openingAt,{amountUSD:r.capitalUSD,currency:'USD',source:'user-declared-complete-import-history'});
  const sources=[baseline,PublicRules.normalize(capture,capture.serverTime).rules,c.rules],evidence=[];let prior=time(r.openingAt);
  for(let index=0;index<r.history.length;index++){
+  try{
   const row=r.history[index];fields(row,['id','type','effectiveAt'],['amountUSD','quantityBTC','priceUSD','cycle','purpose','direction','reference','pnlDestination','feeUSD','feeId']);
   const rowTime=time(row.effectiveAt);need(rowTime>=prior&&rowTime<=statement,'IMPORT_CHRONOLOGY_REQUIRED');prior=rowTime;
   const basic=['capital_deposit','capital_withdrawal','margin_add','margin_remove'];let facts;
@@ -42,8 +43,10 @@ function build(c,r){
   else if(row.type==='fee'){fields(row,['id','type','effectiveAt','amountUSD']);amount(row.amountUSD);facts={amountUSD:row.amountUSD,currency:'USD',category:'other'};}
   else throw Error('INVALID_IMPORT_REQUEST');
   event(row.id,row.type,row.effectiveAt,facts);
+  }catch(error){error.importRow=index+1;throw error;}
  }
- const ledger=Core.reconstruct(input),actual={walletUSD:ledger.cash.walletUSD,marginUSD:ledger.cash.isolatedMarginUSD,quantityBTC:ledger.position.quantityBTC,basisUSD:ledger.position.remainingBasisUSD};
+ let ledger;try{ledger=Core.reconstruct(input);}catch(error){const index=r.history.findIndex(row=>row.id===error.eventId||row.feeId===error.eventId);if(index>=0)error.importRow=index+1;throw error;}
+ const actual={walletUSD:ledger.cash.walletUSD,marginUSD:ledger.cash.isolatedMarginUSD,quantityBTC:ledger.position.quantityBTC,basisUSD:ledger.position.remainingBasisUSD};
  const reconciliation=Object.keys(actual).map(key=>({key,declared:r.statement[key],reconstructed:actual[key],difference:new Decimal(actual[key]).sub(r.statement[key]).toFixed(),matches:new Decimal(actual[key]).eq(r.statement[key])}));
  const reconciled=reconciliation.every(item=>item.matches),summary={...actual,capitalUSD:ledger.capital.netContributedUSD,averageEntryUSD:ledger.position.averageEntryUSD,feesPaidUSD:ledger.pnl.feesPaidUSD,fundingNetUSD:ledger.pnl.fundingNetUSD,realizedGrossUSD:ledger.pnl.realizedGrossUSD,eventCount:input.events.length,statementAt:r.statementAt};
  const plan={id:c.planId,ownerId:c.ownerId,projectId:c.projectId,scenarioKey:'manual_long',version:'1',profile:r.profile,referencePriceUSD:c.valuation.markPriceUSD,referenceAt:c.valuation.asOf,protectionFloorUSD:r.floorUSD,configuration:{title:r.projectTitle.trim(),cycleInventory:[],importReconciliation:{version:'v20-open-position-import-1',status:'facts-only-plan-review-required',statementAt:r.statementAt,historyHash:hash(r.history)},profileAdmission:'not-reviewed',profileBaseCyclePolicy:clone(c.baseCyclePolicy)}};

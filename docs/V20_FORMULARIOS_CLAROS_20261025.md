@@ -23,3 +23,11 @@ Continuação da simplificação: nome/capital inicial, reservas, funding, taxa 
 21 testes locais de carteiras/movimentos passaram, incluindo duas verificações novas de erro localizado e preservação dos dados. No navegador QA foram observados o aviso de depósito que não muda margem, erro junto ao montante vazio e ajuda na criação de carteira. A etapa 12E e o Bloco 12 continuam abertos: importação, recuperação de erros de servidor e validação global ainda requerem trabalho. Comunicação futura deve indicar sempre bloco e etapa, conforme pedido do proprietário.
 
 A continuação da etapa 12E foi publicada após as sete tarefas do CI 40180380188 passarem, no código 19852abc03e33e7fa0a8b2a0c0229bd049d9d340. Fonte Sites 1c5bb1c11a38b4f628b12ec2172e73bae2ad2ff3, deployment appgdep_6addcb83b7148191acd7a48431ce0670. Prévia privada disponível, produção fechada e QA encerrada foram revalidadas por HTTP. Não foram executados comandos financeiros do proprietário. Esta entrega não fecha a etapa 12E ou o Bloco 12.
+
+## Bloco 12 · etapa 12E — importação e erros do servidor
+
+A importação passa a ter três secções numeradas: identificação/saldo inicial, movimentos reais e comparação dos quatro saldos do extrato. Cada caixa tem explicação da unidade e do valor esperado. Erros locais identificam campo e movimento; erros de validação e de replay do servidor indicam o movimento correspondente. Só se transmite um índice inteiro entre 1 e 250, nunca o erro interno integral ou dados de outra conta. O formulário é preservado.
+
+Pedidos acima do limite de 64 KB passam a devolver recusa explícita de tamanho, em vez de um erro de servidor ambíguo. Não é permitido omitir factos para reduzir o histórico, alterar datas de fontes, aceitar preços expirados ou aprovar planos pela importação. As regras financeiras e as confirmações explícitas permanecem iguais.
+
+31 testes locais de importação/API passaram, incluindo identificação da linha desde HTTP até ao workflow, erro financeiro de margem atribuído à compra correspondente, dados preservados, limite de tamanho e rejeição de metadados de linha inválidos. O navegador QA mostrou as três secções e os textos de ajuda. A validação alojada e a publicação desta alteração serão registadas depois de concluídas; não é fecho de 12E/Bloco 12.
