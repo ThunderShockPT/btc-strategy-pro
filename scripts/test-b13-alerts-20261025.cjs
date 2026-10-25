@@ -14,7 +14,7 @@ function fixture(){
   blockers:['INSUFFICIENT_CASH_FOR_TARGET_AND_FLOOR_STRESS']};
  return {a,j,basis,capacity};
 }
-const run=(mutate,extra={})=>{const f=fixture();mutate?.(f);return Alert.evaluate({account:f.a,journal:f.j,...extra(f)});};
+const run=(mutate,extra=()=>({}))=>{const f=fixture();mutate?.(f);return Alert.evaluate({account:f.a,journal:f.j,...extra(f)});};
 const codes=r=>r.alerts.map(x=>x.code);
 test('signed-out user sees no financial risk values or personalized buying alerts',()=>{
  const a=Alert.evaluate({});assert.equal(a.status,'reconciliation-required');assert.deepEqual(codes(a),['REVIEW_ACCOUNT_SYNC']);
