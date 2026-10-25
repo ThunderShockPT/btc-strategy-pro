@@ -83,6 +83,7 @@ jobs:
       - name: R5.3 concurrent PostgreSQL atomic checks (QA service only)
         env:
           BTCSP_TEST_PG_URL: postgresql://postgres:qa-only-isolated@127.0.0.1:5432/postgres
+          BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
         run: node --test scripts/test-atomic-postgres.cjs
       - name: Recovery contract regressions
         run: |
