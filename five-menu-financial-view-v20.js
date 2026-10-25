@@ -28,7 +28,7 @@
    const available=!!data&&snapshot.authenticated===true&&['ready','bookkeeping-only'].includes(snapshot.phase);
    if(!available){
     for(const field of fields)set(field,'—');
-    const labels={unavailable:'Acesso financeiro ainda não aprovado.',signed-out:'Sem sessão autenticada.',blocked:'Não foi possível confirmar os saldos.','loading-wallets':'A consultar carteiras…',loading:'A validar dados da carteira…','wallet-selection-required':'Seleciona uma carteira para consultar os saldos.','switching-wallet':'A mudar de carteira…'};
+    const labels={unavailable:'Acesso financeiro ainda não aprovado.','signed-out':'Sem sessão autenticada.',blocked:'Não foi possível confirmar os saldos.','loading-wallets':'A consultar carteiras…',loading:'A validar dados da carteira…','wallet-selection-required':'Seleciona uma carteira para consultar os saldos.','switching-wallet':'A mudar de carteira…'};
     lastStatus=labels[snapshot?.phase]||'Sem dados autenticados verificados.';
     set('status',lastStatus);
    }else{
