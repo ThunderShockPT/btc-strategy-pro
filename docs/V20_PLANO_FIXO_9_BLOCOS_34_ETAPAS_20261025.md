@@ -58,3 +58,9 @@ Laboratório comparativo sem trading concluído: **120 cenários sintéticos** e
 ## R3.1 — Etapa técnica concluída em 25/10
 
 Contrato apenas de comparação em `architecture/strategy-comparison-contract.cjs`, com 18 testes locais aprovados (`scripts/test-r3-strategy-contract-20261025.cjs`). Código e testes versionados na branch isolada. As políticas V20, carteiras e produção não foram modificadas. 11/34 etapas técnicas implementadas. A validação humana de R1.4 e R2.4 continua pendente; próximo trabalho: R3.2, pré-visualização e validação integrada sem alterações financeiras ativas. Relatório: `docs/V20_R3_ETAPA1_ARQUITETURA_QA_20261025.md`.
+
+## R3.2 — Validação de níveis, lotes e regras Kraken (25/10)
+
+O adaptador read-only `architecture/strategy-preview-bridge.cjs` integra o contrato R3.1 com o módulo V20 `kraken-rules.js` (`validateOrder`, `assess`), quantiza nominal para lotes executáveis e bloqueia preços iguais/inferiores ao piso. Os **19/19 testes Node** passaram em ambiente local; navegador Chromium **6/6 tamanhos** (320–1440 px) aprovado, sem erros JS/overflow. HTML offline e pacote de testes entregues ao proprietário na conversa; relatório `docs/V20_R3_ETAPA2_VALIDACAO_DE_ORDENS_QA_20261025.md`.
+
+A fotografia das regras é antiga (`STALE_RULES`), impedindo avaliação financeira. Dependência `decimal.js` ausente no ambiente offline impede executar o motor V20 completo; testes do encaminhamento usam stub e não validam liquidação. **12/34 etapas técnicas entregues**, R3 2/4. Gates R1.4 e R2.4 do proprietário pendentes. Próxima R3.3: integração do motor financeiro em ambiente com dependências e testes de trajetórias, sem mutações à produção.
