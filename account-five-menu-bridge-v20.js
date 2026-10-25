@@ -7,7 +7,7 @@
  else root.BTCFiveMenuAccountBridgeV20=factory(root.BTCAccountSessionV20,root.BTCAuthenticatedDashboardV20);
 })(typeof globalThis!=='undefined'?globalThis:this,function(Session,Dashboard){
  'use strict';
- const ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+ const ID=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
  function error(code){return Object.assign(new Error(code),{code});}
  function assert(ok,code){if(!ok)throw error(code);}
  const copy=v=>v==null?v:JSON.parse(JSON.stringify(v));
