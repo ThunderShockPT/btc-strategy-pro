@@ -30,6 +30,10 @@ on:
       - 'previews/v20-b15-integrated-bloco8-qa-20261025.html'
       - 'scripts/test-b15-integrated-demo-browser-20261025.cjs'
       - 'scripts/test-b15-account-recovery-browser-20261025.cjs'
+      - 'scripts/build-b15-mobile-pwa-20261025.cjs'
+      - 'scripts/test-b15-mobile-pwa-browser-20261025.cjs'
+      - 'previews/b153/**'
+      - 'scripts/generate_icons.py'
       - 'scripts/test-backup-envelope.cjs'
       - 'scripts/test-atomic-store.cjs'
       - 'backend/backup-envelope.cjs'
@@ -134,6 +138,18 @@ jobs:
         run: node --test scripts/test-b13-alerts-browser-20261025.cjs
       - name: Bloco 13.2 six-screen tutorial, quiz and cash-lesson regression
         run: node --test scripts/test-b13-tutorial-browser-20261025.cjs
+      - name: Bloco 15.3 build isolated V20 Android PWA QA package
+        run: node scripts/build-b15-mobile-pwa-20261025.cjs
+      - name: Bloco 15.3 Android-like UI and offline service worker browser tests
+        run: node --test scripts/test-b15-mobile-pwa-browser-20261025.cjs
+      - name: Bloco 15.3 downloadable manual Galaxy S25 QA package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-strategy-v20-b153-pwa-qa
+          path: previews/b153/
+          if-no-files-found: error
+          retention-days: 14
       - name: Bloco 15.2 backup envelope and atomic rollback regression
         run: node --test scripts/test-backup-envelope.cjs scripts/test-atomic-store.cjs
       - name: Bloco 15.2 premium account isolation and fail-closed recovery six screens
