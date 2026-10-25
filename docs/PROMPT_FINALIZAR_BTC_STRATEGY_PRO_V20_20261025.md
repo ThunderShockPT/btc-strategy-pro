@@ -116,7 +116,7 @@ Este exemplo é QA, não instrução para operar ou alterar a minha carteira rea
 
 Usar GitHub como fonte e relatórios versionados. Trabalhar em entregas completas, sem pedir sucessivamente «Avançar» para decisões técnicas rotineiras. Não acrescentar funcionalidades fora do pedido. Simplificar a interface mantendo os controlos financeiros necessários.
 
-Antes de corrigir, distinguir problema reproduzido de hipótese de leitura do código. Não afirmar «tudo funciona», «igual à Demo» ou «bloco fechado» com base em contagens de testes. Mostrar que o percurso foi realmente concluído. Atualizações curtas: problema encontrado, correção e resultado. No fim: o que mudou, como foi testado, o que posso testar e o que falta. Não prometer prazo ou fecho imediato sem demonstração.
+Antes de corrigir, distinguir problema reproduzido de hipótese de leitura do código. Não afirmar «tudo funciona», «igual à Demo» ou «bloco fechado» com base em contagens de testes. Mostrar que o percurso foi realmente concluído. Indicar sempre o bloco e a etapa em curso em cada atualização e entrega. Atualizações curtas: problema encontrado, correção e resultado. No fim: o que mudou, como foi testado, o que posso testar e o que falta. Não prometer prazo ou fecho imediato sem demonstração.
 
 **Primeira entrega esperada:** diagnóstico curto dos principais problemas de utilização, lista limitada das correções necessárias e execução da primeira correção completa. Não começar por uma nova arquitetura, um novo painel ou mais relatórios técnicos sem corrigir o percurso normal da app.
 

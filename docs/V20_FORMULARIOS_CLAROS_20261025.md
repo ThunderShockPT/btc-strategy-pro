@@ -15,3 +15,9 @@ A alteração é da interface/orquestração, sem alteração de regras financei
 20 testes locais direcionados passaram. O CI 40179607085, no código 3fce8e8bc763be76ed5e5657a8242964bb1ac956, passou as sete tarefas, incluindo os percursos de browser a 393 e 1280 px, conversão USD/BTC e erro junto à comissão sem perder a quantidade. A primeira CI falhou porque os testes ainda procuravam os rótulos antigos; os testes foram atualizados e ampliados antes da publicação.
 
 Publicação privada concluída: fonte Sites aa8adba1e4a1caa2e7030619c744c5d37c625c2d, deployment appgdep_6addc882d8588191a54b1920bda432e1, endereço habitual. Não houve alteração de backend ou de dados financeiros do proprietário. A aprovação física S25 e o fecho do Bloco 12 permanecem pendentes.
+
+## Bloco 12 · etapa 12E — carteira e movimentos
+
+Continuação da simplificação: nome/capital inicial, reservas, funding, taxa decimal de comissão e horizonte passam a ter explicações junto aos campos. Depósito, retirada, atribuição e devolução de margem explicam o efeito na caixa, no capital e na posição. Datas e montantes inválidos são identificados junto ao campo; valores introduzidos são conservados e o pedido não é enviado. Não se alteram motores, regras ou backend.
+
+21 testes locais de carteiras/movimentos passaram, incluindo duas verificações novas de erro localizado e preservação dos dados. No navegador QA foram observados o aviso de depósito que não muda margem, erro junto ao montante vazio e ajuda na criação de carteira. A etapa 12E e o Bloco 12 continuam abertos: importação, recuperação de erros de servidor e validação global ainda requerem trabalho. Comunicação futura deve indicar sempre bloco e etapa, conforme pedido do proprietário.
