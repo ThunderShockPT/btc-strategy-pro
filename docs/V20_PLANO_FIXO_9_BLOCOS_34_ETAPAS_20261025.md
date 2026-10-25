@@ -74,3 +74,11 @@ Reexecutados **55 testes** na sessão (R3.1: 18, R3.2: 19, regras Kraken: 18), *
 A Etapa R3.3 passou em GitHub Actions com `decimal.js 10.6.0` fixado e Node 24: **189/189 testes aprovados**, incluindo **14/14 novos testes adversos** do motor financeiro V20. Execução verificada: https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40200460740. PR draft #35 exclusivamente para QA, não integrar automaticamente. Os dois primeiros erros eram apenas pressupostos errados dos novos testes (funding parcialmente pendente e nome do erro de regras desatualizadas); foram corrigidos nos testes, **sem alteração dos motores financeiros ou dos dados**. Relatório: `docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md`.
 
 **Progresso: 13/34 etapas técnicas concluídas; R3.4 é a próxima etapa**, destinada ao fecho técnico do Bloco R3 e teste funcional. R1.4/R2.4 continuam pendentes da avaliação e escolha financeira do proprietário; a nova política financeira não está aprovada nem publicada.
+
+## R3.4 — Fecho técnico (25/10/2026)
+
+R3 etapa 4/4 executada com o motor financeiro real V20 no GitHub Actions: **203/203 testes aprovados** em https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40201612516 (14 novos cenários R3.4, além dos 189 já validados em R3.3). Dependência `decimal.js@10.6.0` confirmada. Laboratório HTML autónomo `previews/v20-r3-functional-demo-20261025.html` validado novamente em 6 resoluções Chromium com mudança de modo, margem e revisão, zero erros/overflow. Relatório `docs/V20_R3_ETAPA4_FECHO_TECNICO_20261025.md`.
+
+**Contagem: 14/34 etapas com entrega técnica. R3 tecnicamente fechado, mas aprovação funcional do proprietário pendente.** R1.4/R2.4 continuam por validar antes de qualquer alteração à política financeira. PR #35 permanece draft, sem merge, deploy, migração ou alterações à produção/contas.
+
+**Próximo bloco: R4 1/4**, recuperar a interface da Demo histórica (cinco menus e gráficos), sem impor layouts cloud genéricos e com checkpoints visuais/testáveis.
