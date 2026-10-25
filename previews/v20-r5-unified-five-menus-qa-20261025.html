@@ -1134,7 +1134,7 @@ function create({bridge,journal,document:doc=typeof document==='undefined'?null:
 if(!bridge||!journal||!['state','subscribe','refresh'].every(k=>typeof bridge[k]==='function')
 ||!['state','subscribe','load','confirm'].every(k=>typeof journal[k]==='function'))err('R54_DEPENDENCY_REQUIRED');
 let mode='demo',busy=false,closed=false,current=null;
-const layers={},listeners=new Set();
+const layers={},listeners=new Set(),viewObservers=[];
 const html='<div class="r54-panel"><div class="r54-kicker">BTC STRATEGY PRO · CONTA V20 · APENAS LEITURA</div><div class="r54-title" data-r54-title></div><strong class="r54-main" data-r54-main></strong><p data-r54-info></p><div class="r54-figures"><div>Caixa livre<br><b data-r54-cash></b></div><div>Margem isolada<br><b data-r54-margin></b></div><div>BTC aberto<br><b data-r54-btc></b></div></div><p class="r54-warning" data-r54-warning role="status"></p><div class="r54-buttons"><button data-r54-action="refresh" type="button">Atualizar carteira</button><button data-r54-action="journal" type="button">Abrir diário autenticado</button><button data-r54-action="demo" type="button">Voltar à Demo</button></div><div class="r54-rows" data-r54-rows></div><small>O histórico ilustrativo da Demo está oculto neste modo. Nenhuma operação Kraken será executada.</small></div>';
 const css=[
 'body[data-r54-mode="account"] #homeView>:not(.r54-layer),body[data-r54-mode="account"] #strategiesView>:not(.r54-layer),body[data-r54-mode="account"] #terminalView>:not(.r54-layer),body[data-r54-mode="account"] #riskView>:not(.r54-layer),body[data-r54-mode="account"] #accountView>:not(.r54-layer),body[data-r54-mode="account"] #journalView>:not(.r54-layer){display:none!important}',
@@ -1149,6 +1149,12 @@ const set=(layer,sel,value)=>{const node=layer.querySelector(sel);if(node)node.t
 function paint(){
  if(closed)return;current=project(bridge.state(),journal.state());
  if(!doc)return;doc.body.dataset.r54Mode=mode;
+ // Historical Bloco8 modules rebuild view.innerHTML on navigation.
+ // Restore the account layer after those builds without exposing legacy figures.
+ for(const [kind,id]of Object.entries(VIEWS)){
+  const parent=doc.getElementById(id),layer=layers[kind];
+  if(mode==='account'&&parent&&layer&&!parent.contains(layer))parent.insertBefore(layer,parent.firstChild);
+ }
  for(const [kind,layer]of Object.entries(layers)){
  const m=current.menu?.[kind];
  set(layer,'[data-r54-title]',m?.title||'Sem dados autenticados verificados');
@@ -1200,11 +1206,19 @@ function mount(){
   if(!layer){layer=doc.createElement('section');layer.className='r54-layer';layer.setAttribute('data-r54-view',kind);layer.innerHTML=html;view.insertBefore(layer,view.firstChild);}
   layers[kind]=layer;
  }
+ const Observer=doc.defaultView?.MutationObserver;
+ if(Observer)for(const [kind,id]of Object.entries(VIEWS)){
+  const parent=doc.getElementById(id),layer=layers[kind];
+  const observer=new Observer(()=>{
+   if(!closed&&mode==='account'&&!parent.contains(layer))parent.insertBefore(layer,parent.firstChild);
+  });
+  observer.observe(parent,{childList:true});viewObservers.push(observer);
+ }
  doc.addEventListener('click',onClick);signal();return state();
 }
 function selectMode(next){if(closed||!['account','demo'].includes(next))err('R54_INVALID_MODE');mode=next;signal();return state();}
 function dispose(){if(closed)return;closed=true;offA();offJ();listeners.clear();
- if(doc){doc.removeEventListener('click',onClick);delete doc.body.dataset.r54Mode;
+ if(doc){for(const observer of viewObservers)observer.disconnect();doc.removeEventListener('click',onClick);delete doc.body.dataset.r54Mode;
  for(const layer of Object.values(layers))layer.remove();doc.getElementById('r54-safe-css')?.remove();}
 }
 return Object.freeze({state,refresh,confirm,selectMode,mount,dispose,subscribe(fn){if(closed||typeof fn!=='function')err('R54_INVALID_SUBSCRIBER');listeners.add(fn);fn(state());return()=>listeners.delete(fn);}});
