@@ -15,7 +15,7 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
  function emit(){const value=state();for(const listener of listeners)listener(copy(value));}
  function clear(){portabilityProgress=null;generation++;pause=true;stopWaiting?.();waitingMarket=null;waitingProfileChange=undefined;client.clearSession();snapshot=result=review=receipt=error=movementDraft=movementRequest=executionDraft=executionRequest=journal=receiptKind=walletDraft=walletRequest=walletPreviousScope=null;wallets=[];nextWalletCursor=null;calculationObsolete=false;busy=false;phase='signed-out';emit();}
  function ensure(ticket){if(ticket!==generation)throw Error('SESSION_CHANGED');}
- function failure(e){const c=client.state();if(c.status==='signed-out'||c.status==='session-changed'){snapshot=result=review=receipt=movementDraft=movementRequest=executionDraft=executionRequest=journal=receiptKind=walletDraft=walletRequest=walletPreviousScope=null;wallets=[];nextWalletCursor=null;calculationObsolete=false;phase=c.status;}else{phase=c.hasPending?'commit-uncertain':c.hasUncertainCalculationStart?'start-uncertain':e.uncertain?'calculation-uncertain':'error';if(!c.hasPending)review=null;if(e.message==='WALLET_REVIEW_EXPIRED')walletRequest=null;}error={code:e.message,message:messages[e.message]||'Não foi possível concluir. Os dados guardados foram preservados.'};}
+ function failure(e){const c=client.state();if(c.status==='signed-out'||c.status==='session-changed'){snapshot=result=review=receipt=movementDraft=movementRequest=executionDraft=executionRequest=journal=receiptKind=walletDraft=walletRequest=walletPreviousScope=null;wallets=[];nextWalletCursor=null;calculationObsolete=false;phase=c.status;}else{phase=c.hasPending?'commit-uncertain':c.hasUncertainCalculationStart?'start-uncertain':e.uncertain?'calculation-uncertain':'error';if(!c.hasPending)review=null;if(e.message==='WALLET_REVIEW_EXPIRED')walletRequest=null;}error={code:e.message,message:e.userMessage||messages[e.message]||'Não foi possível concluir. Os dados guardados foram preservados.',...(e.field?{field:e.field}:{})};}
  async function action(fn){if(busy)throw Error('ACCOUNT_REQUEST_IN_PROGRESS');const ticket=generation;busy=true;error=null;emit();try{return await fn(ticket);}catch(e){if(ticket===generation)failure(e);throw e;}finally{if(ticket===generation){busy=false;emit();}}}
  function requireReconciled(){if(client.state().hasPending||client.state().hasUncertainCalculationStart)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');}
  async function listWallets(more=false){return action(async ticket=>{const value=await client.listWallets(more?nextWalletCursor:undefined);ensure(ticket);wallets=more?[...wallets,...value.wallets.filter(w=>!wallets.some(old=>old.projectId===w.projectId))]:value.wallets;nextWalletCursor=value.nextCursor;if(['signed-out','session-changed'].includes(phase))phase=snapshot?'ready':'idle';return copy(value);});}
@@ -123,6 +123,15 @@ function create({client,newId=()=>crypto.randomUUID(),now=()=>Date.now(),onChang
   if(client.state().hasPending||client.state().hasUncertainCalculationStart)throw Error('UNCERTAIN_COMMAND_REQUIRES_RECONCILIATION');
   if(!snapshot||!journal)throw Error('ACCOUNT_SNAPSHOT_REQUIRED');
   const d=executionDraft;if(d?.alreadyRecorded!==true)throw Error('EXECUTION_RECORD_ACK_REQUIRED');
+  if(d.kind==='trade'){
+   const check=(field,fn,message)=>{try{fn();}catch{const error=Error('INVALID_EXECUTION_AMOUNT');error.field=field;error.userMessage=message;throw error;}};
+   check('priceUSD',()=>number(d.priceUSD),'Preço da execução: indica um valor positivo em USD por BTC, como aparece na operação.');
+   check('quantityBTC',()=>number(d.quantityBTC),'Quantidade executada: indica o BTC que compraste ou vendeste. Se só tens o valor em USD, preenche o preço e usa Converter montante para BTC; depois confere o resultado.');
+   check('feeUSD',()=>number(d.feeUSD,true),'Comissão: indica o valor pago em USD. Escreve 0 apenas se a comissão foi zero.');
+   if(d.fillStatus==='partial')check('requestedQuantityBTC',()=>number(d.requestedQuantityBTC),'Quantidade solicitada: indica o BTC pedido na ordem parcialmente executada.');
+   check('effectiveAt',()=>validTime(d.effectiveAt),'Data da execução: indica a data e hora local em que a operação já aconteceu.');
+  }
+
   if(!executionRequest){
    const recordedAt=new Date(now()).toISOString(),planId=newId();
    if(d.kind==='trade'){

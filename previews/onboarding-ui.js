@@ -132,8 +132,8 @@ async function accountAction(which,target=null){
  }
  if(['buy','sell','trade'].includes(which)){
   if(!state.snapshot){navigate('account');return true;}
-  const cycles=state.snapshot.state.plan.configuration?.cycleInventory||[],cycle=cycles.find(c=>c.entries.some(e=>e.state==='active'))?.cycle||'cycle-1';
-  accountWorkflow.editExecution({kind:'trade',type:which==='sell'?'trade_sell':'trade_buy',cycle,stage:which==='sell'?0:cycles.find(c=>c.cycle===cycle)?.entries.find(e=>e.state==='active')?.stage||0,quantityBTC:'',requestedQuantityBTC:'',priceUSD:'',feeUSD:'',fillStatus:'filled',pnlDestination:'wallet',effectiveAt:new Date().toISOString(),alreadyRecorded:false});showAccountTask();return true;
+  const cycles=state.snapshot.dashboard?.cycles||[],pendingCycle=cycles.find(c=>c.entries.some(e=>e.state==='active'&&new BTCPreviewDecimal(e.pendingQuantityBTC||'0').gt(0))),cycle=pendingCycle?.cycle||state.snapshot.state.plan.configuration?.cycleInventory?.[0]?.cycle||'cycle-1';
+  accountWorkflow.editExecution({kind:'trade',type:which==='sell'?'trade_sell':'trade_buy',cycle,stage:which==='sell'?0:pendingCycle?.entries.find(e=>e.state==='active'&&new BTCPreviewDecimal(e.pendingQuantityBTC||'0').gt(0))?.stage||0,quantityBTC:'',requestedQuantityBTC:'',priceUSD:'',feeUSD:'',fillStatus:'filled',pnlDestination:'wallet',effectiveAt:new Date().toISOString(),alreadyRecorded:false});showAccountTask();return true;
  }
  if(['batch-void','batch-restore'].includes(which)){accountWorkflow.editExecution({kind:'correction',eventType:'batch',targetEventIds:target.targetEventIds,active:which==='batch-void',action:which==='batch-void'?'void':'restore',reason:'',includeLinkedFees:false,alreadyRecorded:false});showAccountTask();return true;}
  if(which==='correction'){
