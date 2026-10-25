@@ -12,6 +12,8 @@ on:
       - 'five-menu-journal-v20.js'
       - 'unified-five-menus-v20.js'
       - 'scripts/test-r5-unified-five-menus-20261025.cjs'
+      - 'five-menu-integrated-runtime-v20.js'
+      - 'scripts/test-r5-integrated-runtime-20261025.cjs'
       - 'scripts/test-r5-unified-browser-20261025.cjs'
       - 'previews/v20-r5-unified-five-menus-qa-20261025.html'
       - 'scripts/test-r5-journal-five-menu-20261025.cjs'
@@ -76,6 +78,8 @@ jobs:
         run: node --test scripts/test-r5-session-wallet-bridge-20261025.cjs
       - name: R5.2 five-menu private data bindings
         run: node --test scripts/test-r5-five-menu-bindings-20261025.cjs
+      - name: R5.5 private QA real V20 session-to-journal runtime
+        run: node --test scripts/test-r5-integrated-runtime-20261025.cjs
       - name: R5.4 unified five-menu shared V20 snapshot tests
         run: node --test scripts/test-r5-unified-five-menus-20261025.cjs
       - name: R5.3 journal explicit review and real V20 corrections
