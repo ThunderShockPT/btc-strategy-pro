@@ -197,3 +197,8 @@ Foi retomado o **tutorial original V20 versionado de seis temas** em `wallet-onb
 ## Bloco 13.3 — Fecho QA integrado (25/10/2026)
 
 Alertas B13.1 e tutorial B13.2 testados em conjunto com cinco menus, troca de carteira, logout, restauro de foco, teclado e 6 larguras Chromium, mantendo a Demo premium original. Corrigido teclado/foco no componente de onboarding; teste novo `scripts/test-b13-integrated-browser-20261025.cjs`. GitHub Actions `40232423290`: **543/543 PASS, 0 FAIL**. Relatório `docs/V20_B13_ETAPA3_INTEGRACAO_QA_20261025.md`. **26/34 etapas técnicas concluídas (76,5%); Bloco 13 3/3 concluído tecnicamente**; revisão humana R1.4/R2.4, QA física Galaxy S25 e aprovação financeira continuam pendentes. Próximo **B14.1**: auditoria das regras Kraken EEE, sem modificar políticas ou produção. PR #35 permanece draft.
+
+
+## Bloco 14.1 — Auditoria documental das regras Kraken EEE (25/10/2026)
+
+Fontes oficiais atualizadas de 07/10 a 22/10 comparadas com o snapshot de 20/10; confirmados documentalmente contrato PF_XBTUSD, IM/MM EEE classe A, tick/lote, fee inicial EEE, funding e riscos de margem isolada/conta. A tabela EEE não deve ser substituída por tabela genérica. Foi mantido o bloqueio das regras vencidas e de execução/transferências reais. **8/8 testes adicionais PASS; GitHub Actions 40232813885: 551/551 PASS.** Relatório `docs/V20_B14_ETAPA1_AUDITORIA_KRAKEN_EEE_20261025.md`. **27/34 etapas técnicas (79,4%)**, B14 1/3 documental concluída. Atualização de instrumentos via endpoint Kraken, conta real, reconciliação de funding/margem/liquidação e gates de aprovação R1.4/R2.4 continuam pendentes. Próximo **B14.2** em modo isolado, sem alterações à política financeira nem produção.
