@@ -30,6 +30,7 @@ jobs:
           node --test scripts/test-account-executions.cjs scripts/test-account-batch-executions.cjs scripts/test-private-test.cjs
           node --test scripts/test-account-wallets.cjs
           node --test scripts/test-account-export.cjs
+          node --test scripts/test-account-portability.cjs
           node --test scripts/test-account-session.cjs
           node --test scripts/test-hosted-schema-rehearsal.cjs
           node --test scripts/test-hosted-account-qa.cjs
@@ -203,4 +204,4 @@ jobs:
           "$browser_bin" --version
           printf 'CHROME_BIN=%s\n' "$browser_bin" >> "$GITHUB_ENV"
       - name: Browser session, account review and financial confirmation
-        run: node --test scripts/test-account-browser.cjs scripts/test-account-pages-browser.cjs
+        run: node --test scripts/test-account-browser.cjs scripts/test-account-pages-browser.cjs scripts/test-account-portability-browser.cjs

@@ -36,7 +36,7 @@ function create({config,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),runtimeFa
   const body=await read(request);
   if(path==='/bootstrap')return await bootstrap(body);
   if(path==='/finish'){if(Object.keys(body).length)throw Error('QA_INVALID_SCOPE');return await finish();}
-  if(!/^\/api\/(state|wallets|export|prepare|commit|calculations\/(enqueue|advance|status|result|cancel))$/.test(path))return reply(404,{code:'QA_ROUTE_NOT_FOUND'});
+  if(!/^\/api\/(state|wallets|export|portability|prepare|commit|calculations\/(enqueue|advance|status|result|cancel))$/.test(path))return reply(404,{code:'QA_ROUTE_NOT_FOUND'});
   // Decoding only narrows the QA allowlist. Runtime still verifies the token
   // remotely and SQL checks its live session on every transaction.
   let sub;try{sub=JSON.parse(Buffer.from(request.headers.get('Authorization').split(' ')[1].split('.')[1],'base64url')).sub;}catch{return reply(401,{code:'SESSION_NOT_VALID'});}
