@@ -38,3 +38,11 @@ Etapa R1.3 entregue como laboratório HTML offline, com quantização de 0,0001 
 ## Progresso de 25/10 — R2, etapa 2/4
 
 Verificação da reprodução dos registos históricos feita com **12/12 testes offline**. Evidência versionada: `docs/V20_R2_ETAPA2_REPRODUCAO_HISTORICA_20261025.md`, `scripts/test-r2-reproduction-20261025.py` e os 3 ficheiros `research/r2/` (código histórico, CSV histórico e snapshot do XLSX). Reprodução aritmética, **não** backtest integral com OHLC/mark/funding nem aprovação de lucro Kraken. R1.4 continua dependente de revisão humana. **8/34 etapas técnicas confirmadas** (R0.1–3, R1.1–3, R2.1–2); a R2.3 é a próxima. Nenhuma alteração a carteira, políticas Beta, main ou produção.
+
+## R2 — Etapa 3/4 concluída tecnicamente (25/10)
+
+Laboratório comparativo sem trading concluído: **120 cenários sintéticos** em matriz 3 grelhas × 4 capitais (1000/1500/2000/2500 USD) × 5 trajetórias × 2 modos de margem. Comparação com 5 ciclos × 1000 USD nominais, 20/30/50, 10× isolado; taxa taker 0,05%, manutenção ilustrativa 5%, funding hipotético explicitado. No cenário 80k→60k→85k e carteira de 2000 USD, V20 concentrada apresenta perda teórica ao fundo de -1143,27 USD e margem necessária de 1372,35 USD; A–E apresenta -516,90 USD e 779,45 USD respetivamente, mas a A–E infringe a regra atual do piso (uma entrada a 60k). Nem ganhos contrafactuais nem estado "resiste no modelo" demonstram sobrevivência Kraken real.
+
+**QA:** 26/26 verificações Python e 6/6 larguras Chromium (320/390/393/430/768/1440), sem erros JS/overflow, exportação CSV aprovada. Relatório `docs/V20_R2_ETAPA3_COMPARACAO_QA_20261025.md`, prévia `previews/v20-r2-synthetic-comparison-20261025.html`, dados `research/r2/r2-stage3-synthetic-matrix-20261025.csv`. O pacote de conversa contém também motor Python e testes originais para reprodução offline.
+
+**Contagem:** 9/34 etapas técnicas concluídas (R0 3, R1 3, R2 3), com gate humano R1.4 pendente. Próxima etapa **R2.4** sintetizar critérios, apresentar alternativas e obter validação; ainda NÃO aprovar nem aplicar política financeira. Sem publicação, migração ou alterações à carteira do proprietário.
