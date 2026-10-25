@@ -24,6 +24,17 @@ const clone=x=>JSON.parse(JSON.stringify(x));
 const css='.b132-root[hidden]{display:none!important}.b132-root{position:fixed;inset:0;z-index:2147483000;color:#ecfcff;font:14px system-ui,sans-serif}.b132-root *{box-sizing:border-box}.b132-back{background:rgba(0,10,20,.85);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:9px}.b132-dialog{width:min(680px,100%);max-height:calc(100dvh - 18px);overflow:auto;background:linear-gradient(125deg,#092434,#123f48);border:1px solid #4f9eab;border-radius:16px;padding:22px;box-shadow:0 25px 80px #0009}.b132-header{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#8fe0e9;font-size:11px;letter-spacing:.1em}.b132-dialog h2{font-size:clamp(20px,4vw,27px);margin:12px 0}.b132-dialog p{line-height:1.6;color:#d1e2e4}.b132-meter{height:5px;background:#284d58;margin:16px 0;border-radius:5px;overflow:hidden}.b132-fill{display:block;height:100%;background:#63d5e4}.b132-example{background:#102f3b;border:1px solid #357484;border-radius:12px;padding:14px;margin:20px 0}.b132-example strong{color:#95edf4}.b132-nav{display:flex;gap:10px;justify-content:space-between;margin-top:22px}.b132-dialog button{border:1px solid #4c9aa7;border-radius:9px;background:#175364;color:#fff;padding:10px 16px;cursor:pointer}.b132-nav button{flex:1}.b132-nav button:last-child{background:#04879a;font-weight:750}.b132-dialog button:disabled{opacity:.4;cursor:not-allowed}.b132-question{border:1px solid #386879;border-radius:11px;margin:13px 0;padding:13px}.b132-question legend{font-weight:700;line-height:1.4}.b132-option{display:flex;gap:9px;align-items:flex-start;margin:10px 0;cursor:pointer}.b132-option input{accent-color:#6cdded;margin-top:4px}.b132-good{color:#80e4b7!important}.b132-bad{color:#ffb6ad!important}.b132-note{font-size:11px;color:#9fb6be!important}@media(max-width:540px){.b132-dialog{padding:14px;border-radius:11px}.b132-nav button{padding:10px 6px}}';
 function create({document:doc=typeof document==='undefined'?null:document,onClose=null}={}){
  let step=0,visible=false,completed=false,answers=quiz.map(()=>null),host=null,priorOverflow='',priorFocus=null;
+ function keyboard(e){
+  if(!visible||!host)return;
+  if(e.key==='Escape'){e.preventDefault();hide();return;}
+  if(e.key!=='Tab')return;
+  const active=Array.from(host.querySelectorAll('button:not([disabled]),input:not([disabled])'));
+  if(!active.length)return;
+  const first=active[0],last=active[active.length-1];
+  if(!host.contains(doc.activeElement)){e.preventDefault();first.focus();}
+  else if(e.shiftKey&&doc.activeElement===first){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&doc.activeElement===last){e.preventDefault();first.focus();}
+ }
  const state=()=>({step,visible,completed,answers:clone(answers),total:lessons.length+1,persisted:false,canTrade:false,canWrite:false,financialApproval:false});
  function element(tag,cls,text){const el=doc.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;}
  function render(){
@@ -63,12 +74,12 @@ function create({document:doc=typeof document==='undefined'?null:document,onClos
  function show({initialStep=0}={}){
   if(!Number.isInteger(initialStep)||initialStep<0||initialStep>lessons.length)throw Error('B132_INVALID_STEP');
   ensure();if(!visible){priorFocus=doc.activeElement;priorOverflow=doc.body.style.overflow;}
-  step=initialStep;visible=true;host.hidden=false;doc.body.style.overflow='hidden';render();return state();
+  step=initialStep;visible=true;host.hidden=false;doc.body.style.overflow='hidden';doc.addEventListener('keydown',keyboard);render();return state();
  }
- function hide(){if(!visible)return state();visible=false;host.hidden=true;doc.body.style.overflow=priorOverflow;
+ function hide(){if(!visible)return state();visible=false;host.hidden=true;doc.removeEventListener('keydown',keyboard);doc.body.style.overflow=priorOverflow;
   if(priorFocus?.isConnected&&typeof priorFocus.focus==='function')priorFocus.focus();if(typeof onClose==='function')onClose(state());return state();}
  function go(n){if(!Number.isInteger(n)||n<0||n>lessons.length)throw Error('B132_INVALID_STEP');step=n;render();return state();}
- function choose(i,k){if(!Number.isInteger(i)||i<0||i>=quiz.length||!Number.isInteger(k)||k<0||k>=quiz[i].choices.length)throw Error('B132_INVALID_ANSWER');answers[i]=k;render();return state();}
+ function choose(i,k){if(!Number.isInteger(i)||i<0||i>=quiz.length||!Number.isInteger(k)||k<0||k>=quiz[i].choices.length)throw Error('B132_INVALID_ANSWER');answers[i]=k;render();host?.querySelectorAll('input[name="b132-'+i+'"]')?.[k]?.focus();return state();}
  function reset(){answers=quiz.map(()=>null);step=0;completed=false;render();return state();}
  function dispose(){hide();host?.remove();host=null;}
  return Object.freeze({show,hide,go,choose,reset,state,dispose});
