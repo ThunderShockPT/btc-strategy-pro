@@ -130,6 +130,7 @@ for(const width of [393,1440]){
    assert.equal((await page.evaluate(()=>window.BTCR54QA.status())).values,null);
    await context.setOffline(false);
    await page.reload({waitUntil:'load'});
+   await page.waitForFunction(()=>window.BTCB153PWA?.state().online===true,null,{timeout:15000});
    assert.match(await page.locator('#b153Status').textContent(),/Ligação: online/);
    assert.deepEqual(errors,[]);
   }finally{await context.close();await browser.close();}
