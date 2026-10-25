@@ -27,6 +27,8 @@ on:
       - 'architecture/b14-financial-reconciliation.cjs'
       - 'scripts/test-b14-financial-reconciliation-20261025.cjs'
       - 'scripts/test-b14-financial-adversarial-20261025.cjs'
+      - 'previews/v20-b15-integrated-bloco8-qa-20261025.html'
+      - 'scripts/test-b15-integrated-demo-browser-20261025.cjs'
       - 'previews/v20-b13-alerts-bloco8-qa-20261025.html'
       - 'scripts/test-b13-alerts-browser-20261025.cjs'
       - 'scripts/test-b13-alerts-20261025.cjs'
@@ -127,6 +129,8 @@ jobs:
         run: node --test scripts/test-b13-alerts-browser-20261025.cjs
       - name: Bloco 13.2 six-screen tutorial, quiz and cash-lesson regression
         run: node --test scripts/test-b13-tutorial-browser-20261025.cjs
+      - name: Bloco 15.1 six-screen complete Demo with alerts tutorial wallet and original visual
+        run: node --test scripts/test-b15-integrated-demo-browser-20261025.cjs
       - name: Bloco 14.3 adversarial gaps funding failed margin and liquidation model
         run: node --test scripts/test-b14-financial-adversarial-20261025.cjs
       - name: Bloco 14.2 independent wallet and isolated-margin reconciliation
