@@ -12,6 +12,8 @@ on:
       - 'five-menu-journal-v20.js'
       - 'unified-five-menus-v20.js'
       - 'scripts/test-r5-unified-five-menus-20261025.cjs'
+      - 'scripts/test-r5-unified-browser-20261025.cjs'
+      - 'previews/v20-r5-unified-five-menus-qa-20261025.html'
       - 'scripts/test-r5-journal-five-menu-20261025.cjs'
       - 'account-five-menu-bridge-v20.js'
       - 'five-menu-financial-view-v20.js'
@@ -89,6 +91,10 @@ jobs:
           BTCSP_TEST_PG_URL: postgresql://postgres:qa-only-isolated@127.0.0.1:5432/postgres
           BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
         run: node --test scripts/test-atomic-postgres.cjs
+      - name: R5.4 install isolated Chromium browser
+        run: npx playwright install chromium --with-deps
+      - name: R5.4 six-screen real UI regression
+        run: node --test scripts/test-r5-unified-browser-20261025.cjs
       - name: Recovery contract regressions
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
