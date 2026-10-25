@@ -1,0 +1,36 @@
+{
+  "codeCommit": "2a3e3c3159f1742d9a54e2850749adf9c3505455",
+  "siteSourceCommit": "599a352e56f831fe47c68aab6882ee82234102d5",
+  "sitePublication": 11,
+  "appVersion": "V20",
+  "deploymentId": "appgdep_6addc47ee3b081919a1fd783888cee0b",
+  "status": "succeeded",
+  "url": "https://btc-strategy-pro-v20-preview.wintrythyme34.chatgpt.site",
+  "ownerOnly": true,
+  "externalVisitors": 0,
+  "privateRuntimeVersion": 12,
+  "privateHealth": {
+    "status": 200,
+    "cloudAvailable": true
+  },
+  "productionHealth": {
+    "status": 200,
+    "cloudAvailable": false
+  },
+  "qaFunctionVersion": 41,
+  "qaFunctionClosed": true,
+  "freshQAUsersBanned": 2,
+  "freshQASessions": 0,
+  "ownerFinancialCommands": 0,
+  "targetedReleaseTestsPassed": 15,
+  "block12Approved": false,
+  "physicalS25Approved": false,
+  "remaining": [
+    "Full browser import acceptance",
+    "Physical S25",
+    "Privacy/deletion",
+    "Operational restore",
+    "Remaining ingress and capacity evidence",
+    "SMTP domain dependency"
+  ]
+}
