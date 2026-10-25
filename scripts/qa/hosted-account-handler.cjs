@@ -41,7 +41,7 @@ function create({config,Pool,getEnv,fetchImpl=fetch,now=()=>Date.now(),runtimeFa
   // remotely and SQL checks its live session on every transaction.
   let sub;try{sub=JSON.parse(Buffer.from(request.headers.get('Authorization').split(' ')[1].split('.')[1],'base64url')).sub;}catch{return reply(401,{code:'SESSION_NOT_VALID'});}
   if(!users.has(sub)||!projects.has(body.projectId)||body.scenarioKey!==scenarioKey)return reply(403,{code:'QA_SCOPE_REQUIRED'});
-  if(body.request?.workflow==='wallet-create'&&body.request.command?.setup?.projectTitle!==`[QA ${config.runId}] ${config.accounts.find(a=>a.id===sub).alias}`)return reply(403,{code:'QA_TITLE_REQUIRED'});
+  if(['wallet-create','wallet-import'].includes(body.request?.workflow)&&body.request.command?.setup?.projectTitle!==`[QA ${config.runId}] ${config.accounts.find(a=>a.id===sub).alias}`)return reply(403,{code:'QA_TITLE_REQUIRED'});
   const url=new URL(Auth.URL_BASE+Runtime.PREFIX+path.slice(4)),headers=new Headers(request.headers);headers.delete('X-BTCSP-QA-Capability');headers.delete('content-length');
   const response=await live()(new Request(url,{method:'POST',headers,body:JSON.stringify(body)}),info);
   response.headers.set('X-BTCSP-QA-Worker',workerId);response.headers.set('X-BTCSP-QA-Run',config.runId);response.headers.set('X-BTCSP-QA-Wall-Ms',String(Math.round(performance.now()-start)));const usage=memory();if(Number.isFinite(usage.heapUsed))response.headers.set('X-BTCSP-QA-Heap-Bytes',String(usage.heapUsed));return response;

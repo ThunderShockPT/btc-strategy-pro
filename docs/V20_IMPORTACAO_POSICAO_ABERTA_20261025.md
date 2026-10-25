@@ -13,3 +13,9 @@ Para a importação, o contexto público usa regras e mark atuais. O livro de or
 Validação local: 30 testes direcionados aprovados, incluindo oito novos testes de importação/reconciliação, criação atómica de carteira separada, recuperação de resposta perdida, divergências, fontes históricas ausentes, expiração e sessão revogada. Builds da aplicação e runtime concluídos. Nenhuma migração aplicada, função alojada alterada, confirmação financeira do proprietário executada ou publicação realizada nesta entrega.
 
 Pendente antes da disponibilização: teste browser do formulário completo e navegação em diálogo, reconciliação alojada com contas QA novas, auditoria de cobertura de importação e regressão CI. O teste físico no Samsung Galaxy S25 continua pendente.
+
+## Ensaio alojado concluído
+
+O ensaio `f238ec539886` passou com duas contas Auth novas, SQL e mark público. Preparação: 3891 ms; validade útil à chegada da revisão: 58649 ms; confirmação: 4451 ms, dentro do prazo original. A preparação não criou projeto; a confirmação criou quatro eventos, sem admitir plano. A repetição recuperou o recibo sem duplicar; a outra conta recebeu 404. A regra histórica preservou a observação real de 24/10 às 16:10:22.887Z. Evidência: `qa/V20_OPEN_POSITION_IMPORT_HOSTED_20261025.json`.
+
+As duas contas foram bloqueadas e ficaram sem sessões, verificado por SQL. A função QA foi encerrada na versão 41. O runtime privado do proprietário mantém autorização por allowlist e metadados imutáveis; nenhuma operação financeira do proprietário foi executada. A interface foi observada no navegador QA para abertura do diálogo, inclusão de movimento e mudança para compra. O percurso de importação completo no browser e S25 continua por verificar; não declarar R04 ou o Bloco 12 globalmente aprovados.
