@@ -6,7 +6,7 @@ A exportação anterior cobria apenas uma carteira financeira. Esta entrega acre
 
 A cópia reúne os dados de negócio do proprietário, em todos os seus projetos e cenários: perfil Auth selecionado, projetos, snapshots antigos, eventos financeiros originais, versões de planos, preferências, recibos do tutorial, cálculos guardados, importações antigas e recibos de comandos. Correções e anulações não eliminam os factos originais do ficheiro.
 
-Não inclui palavras-passe, tokens, segredos do servidor, checkpoints temporários, propostas por confirmar, quotas/logs operacionais do fornecedor nem a Demo local do dispositivo. O ficheiro contém dados privados e deve ser guardado pelo proprietário em local privado. Isto não conclui a resposta jurídica a pedidos de privacidade nem elimina a conta.
+Não lê colunas de palavras-passe, tokens ou segredos do servidor, checkpoints temporários, propostas por confirmar, quotas/logs operacionais do fornecedor nem a Demo local do dispositivo. O ficheiro contém dados privados e deve ser guardado pelo proprietário em local privado. Isto não conclui a resposta jurídica a pedidos de privacidade nem elimina a conta.
 
 ## Integridade e isolamento
 
@@ -36,3 +36,12 @@ O endpoint temporário foi fechado após o ensaio (v39); as 24 contas QA existen
 O primeiro CI encontrou uma referência de build por atualizar e um download interrompido pelo redesenho interno do painel. O manifesto foi regenerado incluindo a nova dependência; o download mantém a verificação da sessão sem depender da duração de vida do elemento visual. Uma atualização de build exige recálculo/revisão das propostas anteriores; a validade nunca é prolongada.
 
 Nenhuma exportação do proprietário é efetuada automaticamente pelo agente. A publicação e o CI final são registados separadamente depois de concluídos.
+
+
+## Entrega publicada e teste na app
+
+Código `e04bf5a0e3cb81a95c4b4ea1ddfb53c4e12ffc6d`. O [CI 40172289566](https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40172289566) passou as sete tarefas, com cinco testes de navegador, incluindo o clique e download efetivo a 393 px. O runtime privado passou a v11; a publicação 10 continua a ser a app V20, no mesmo endereço privado e apenas para o proprietário. Produção V20 permanece fechada; não foram aplicadas migrações nem alterados motores financeiros.
+
+Atualizar a página, abrir **Conta → Os meus dados → Exportar os meus dados**. A cópia é preparada e verificada antes do download. O botão **Exportar esta carteira** mantém o pacote financeiro anterior da carteira escolhida. Não é necessário criar outra carteira.
+
+[Evidência da entrega](qa/V20_ACCOUNT_PORTABILITY_RELEASE_20261025.json). [Captura de QA com dados fictícios](qa/V20_ACCOUNT_PORTABILITY_QA_20261025.jpg). A captura comprova a apresentação; o percurso de download é verificado pelo CI e a portabilidade 5000 pelo ensaio alojado. S25 físico ainda pendente.
