@@ -22,6 +22,7 @@ on:
       - 'scripts/test-b13-guided-tutorial-20261025.cjs'
       - 'previews/v20-b13-onboarding-bloco8-qa-20261025.html'
       - 'scripts/test-b13-tutorial-browser-20261025.cjs'
+      - 'scripts/test-b13-integrated-browser-20261025.cjs'
       - 'previews/v20-b13-alerts-bloco8-qa-20261025.html'
       - 'scripts/test-b13-alerts-browser-20261025.cjs'
       - 'scripts/test-b13-alerts-20261025.cjs'
@@ -122,6 +123,8 @@ jobs:
         run: node --test scripts/test-b13-alerts-browser-20261025.cjs
       - name: Bloco 13.2 six-screen tutorial, quiz and cash-lesson regression
         run: node --test scripts/test-b13-tutorial-browser-20261025.cjs
+      - name: Bloco 13.3 integration of alerts tutorial five menus and logout in six widths
+        run: node --test scripts/test-b13-integrated-browser-20261025.cjs
       - name: Recovery contract regressions
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
