@@ -88,7 +88,7 @@ function paint(){
  }
  }
 }
-function state(){const s=current||project(bridge.state(),journal.state());return {mode,status:s.status,projectId:s.projectId,revision:s.revision,values:s.values?copy(s.values):null,historyCount:s.history.length,canWrite:false,canTrade:false};}
+function state(){const s=current||project(bridge.state(),journal.state());return {mode,status:s.status,projectId:s.projectId,revision:s.revision,values:s.values?copy(s.values):null,historyCount:s.history.length,canWrite:false,canWriteDirectly:false,canTrade:false};}
 function signal(){paint();if(!closed)for(const cb of listeners)cb(state());}
 const offA=bridge.subscribe(signal),offJ=journal.subscribe(signal);
 async function refresh(){
