@@ -8,6 +8,7 @@ on:
       - 'scripts/test-r3-risk-paths-20261025.cjs'
       - 'scripts/test-r3-end-to-end-20261025.cjs'
       - 'architecture/**'
+      - 'scripts/test-next-buy-capacity-20261025.cjs'
       - 'docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md'
   pull_request:
     branches:
@@ -33,6 +34,8 @@ jobs:
           node --check scripts/test-r3-risk-paths-20261025.cjs
       - name: Run 14 new real-engine risk paths
         run: node --test scripts/test-r3-risk-paths-20261025.cjs
+      - name: Owner review - future buying power after earlier buys
+        run: node --test scripts/test-next-buy-capacity-20261025.cjs
       - name: R3.4 integrated preview to V20 risk acceptance
         run: node --test scripts/test-r3-end-to-end-20261025.cjs
       - name: V20 finance regressions
