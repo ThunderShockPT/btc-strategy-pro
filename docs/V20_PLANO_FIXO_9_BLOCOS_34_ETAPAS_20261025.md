@@ -46,3 +46,11 @@ Laboratório comparativo sem trading concluído: **120 cenários sintéticos** e
 **QA:** 26/26 verificações Python e 6/6 larguras Chromium (320/390/393/430/768/1440), sem erros JS/overflow, exportação CSV aprovada. Relatório `docs/V20_R2_ETAPA3_COMPARACAO_QA_20261025.md`, prévia `previews/v20-r2-synthetic-comparison-20261025.html`, dados `research/r2/r2-stage3-synthetic-matrix-20261025.csv`. O pacote de conversa contém também motor Python e testes originais para reprodução offline.
 
 **Contagem:** 9/34 etapas técnicas concluídas (R0 3, R1 3, R2 3), com gate humano R1.4 pendente. Próxima etapa **R2.4** sintetizar critérios, apresentar alternativas e obter validação; ainda NÃO aprovar nem aplicar política financeira. Sem publicação, migração ou alterações à carteira do proprietário.
+
+## R2 — Etapa 4/4: síntese técnica e painel de decisão (25/10)
+
+- Comparação de três grelhas, 120 cenários e resultados das investigações antigas documentada em `docs/V20_R2_ETAPA4_CONCLUSOES_20261025.md`. Nenhuma grelha de compra foi aprovada para alterar o motor.
+- Painel HTML autónomo `previews/v20-r2-strategy-decision-20261025.html`: carteira/trajectória/margem, três grelhas, estados diferenciados e proposta copiável. Não tem ligação a conta ou corretora.
+- QA em `docs/V20_R2_ETAPA4_QA_20261025.md`: **15/15** testes aritméticos de evidência e **6/6** tamanhos Chromium (320/390/393/430/768/1440) com alterações de controlos e sem erros/overflow. Fonte do teste em `scripts/test-r2-strategy-decision-20261025.py`.
+- **10/34 etapas com entrega técnica** (R0.1–3, R1.1–3, R2.1–4), **duas avaliações humanas pendentes**: aceitação R1.4 e direção/política financeira R2.4. R2 não equivale a backtest Kraken real (faltam mark/funding/ordens e liquidação cronológica).
+- **R3.1 é o próximo bloco técnico permitido em modo apenas de conceção e testes**. Não alterar `policies/profiles-beta-20261021.json`, `risk-profiles.js`, `cycle-planner.js`, autenticado, produção ou carteiras até decisão financeira explícita e verificações.
