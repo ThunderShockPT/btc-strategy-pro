@@ -9,7 +9,7 @@
     "backend/public-rules.cjs": "a550b2b758c33a98b49dca523b1717a601220cc5b800dc1cdd648df649640bf7",
     "policies/manual-cycle-base-20261024.json": "6a44f5e429023386b614d66988311b70018059721a9ce66609724e242072ed86",
     "backend/calculation-window.cjs": "0d93f400b91d63b69b2a4e5a8c426dadf5da4c593cbdd22a35e646ff8aa81b8d",
-    "backend/http-api.cjs": "fe9d6c12d63d3cc00b6aae17ca47e67e107bb969771fd3fb9e2e85bb83c437f4",
+    "backend/http-api.cjs": "e000a5499cd5f80721c28ecd8b78ed7839e27dac70307594c461bd3173126f59",
     "backend/request-admission.cjs": "d1691d02610a00f2e802f09d9c54620b59c74964303f79df1760e63f517d15eb",
     "backend/public-profile-context.cjs": "be8ac1ed07b162c856f6738d888f64f9f16ccd337c578b297495cca84fd9e109",
     "backend/public-market.cjs": "fdd4f92f0630c7e1538e1eef276d91b8fa681ca4336a694e9ce8f100976bc252",
@@ -33,6 +33,7 @@
     "kraken-rules.js": "b1feec61a15fa29fd1b62e74f86ebaa15666c61b64b6f7e030e467add76a4843",
     "journal-projection.js": "a25608350ee367d6f453626196088fe97c735f3db127a7cbcccce39b724484d2",
     "package-lock.json": "14551f4011e29a333b7636e54006d188376d5723e2ecbc86d8e2e3f51a2489e0",
-    "backend/account-read-model.cjs": "a853c95339ad1951c9ef6eacc9f4d57be81e99506ca2c610e5cc1eba7c1228e2"
+    "backend/account-read-model.cjs": "a853c95339ad1951c9ef6eacc9f4d57be81e99506ca2c610e5cc1eba7c1228e2",
+    "backend/account-portability.cjs": "d0aa79056c45a5df732b7d8aa3febdb9a5c79f90fb656cd826a47c26d3f30844"
   }
 }

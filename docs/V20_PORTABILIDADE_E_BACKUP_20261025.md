@@ -27,4 +27,12 @@ O botão existente continua a exportar o pacote financeiro da carteira seleciona
 
 R05 avança na portabilidade dos dados de negócio, mas continua aberto para eliminação integral, retenção, documentos finais e processo de privacidade completo. R06 continua aberto para restauro operacional integral (Auth, Storage, chaves/configuração, retenção e rollback). O ensaio PostgreSQL isolado e esta verificação local não substituem esse restauro. SMTP continua dependente de domínio BTC. S25 físico, Bloco 13 e lançamento não são aprovados nesta entrega.
 
-A evidência de testes e publicação será acrescentada depois das verificações e do ensaio alojado com contas novas de QA. Nenhuma exportação do proprietário é efetuada automaticamente pelo agente.
+## Evidência do ensaio alojado
+
+[V20_ACCOUNT_PORTABILITY_HOSTED_20261025.json](qa/V20_ACCOUNT_PORTABILITY_HOSTED_20261025.json) regista duas contas novas de QA com Auth real, SQL e o runtime alojado. Foram exportados 5000 eventos em 25 pedidos, 5 893 312 bytes e 68 006 ms, com contagens e hashes verificados. A outra conta recebeu zero eventos do primeiro proprietário; secção inválida e sessão revogada foram recusadas. A origem é fictícia e não corresponde aos registos do proprietário.
+
+O endpoint temporário foi fechado após o ensaio (v39); as 24 contas QA existentes estão bloqueadas e há zero sessões QA. O teste de portabilidade não volta a aprovar cálculo ou confirmação de planos 5000/12, nem regras Kraken atuais.
+
+O primeiro CI encontrou uma referência de build por atualizar e um download interrompido pelo redesenho interno do painel. O manifesto foi regenerado incluindo a nova dependência; o download mantém a verificação da sessão sem depender da duração de vida do elemento visual. Uma atualização de build exige recálculo/revisão das propostas anteriores; a validade nunca é prolongada.
+
+Nenhuma exportação do proprietário é efetuada automaticamente pelo agente. A publicação e o CI final são registados separadamente depois de concluídos.
