@@ -28,6 +28,20 @@ jobs:
   r3-risk-paths:
     runs-on: ubuntu-latest
     timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: qa-only-isolated
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -64,10 +78,12 @@ jobs:
           node --test scripts/test-execution-workflow.cjs
           node --test scripts/test-corrections.cjs
           node --test scripts/test-persistence-contract.cjs
-      - name: R5.3 authenticated atomic API regressions (ephemeral PGlite)
-        run: |
-          node --test scripts/test-authenticated-api.cjs
-          node --test scripts/test-atomic-postgres.cjs
+      - name: R5.3 authenticated API regressions (ephemeral PGlite)
+        run: node --test scripts/test-authenticated-api.cjs
+      - name: R5.3 concurrent PostgreSQL atomic checks (QA service only)
+        env:
+          BTCSP_TEST_PG_URL: postgresql://postgres:qa-only-isolated@127.0.0.1:5432/postgres
+        run: node --test scripts/test-atomic-postgres.cjs
       - name: Recovery contract regressions
         run: |
           node --test scripts/test-r3-strategy-contract-20261025.cjs
