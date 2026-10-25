@@ -98,9 +98,10 @@
      }catch(e){if(generation===token){projection=null;phase='blocked';lastError=e.code||e.message||'R52_READ_UNAVAILABLE';emit();}throw e;}
    }
    function resetPrivate(){if(disposed)return;connection.detach();}
+   async function signIn({email,password}){assert(!disposed,'R52_DISPOSED');assert(typeof email==='string'&&typeof password==='string','R52_CREDENTIALS_REQUIRED');await account.signIn({email,password});return publicState();}
    async function signOut(){assert(!disposed,'R52_DISPOSED');resetPrivate();await account.signOut();return publicState();}
    function dispose(){if(disposed)return;disposed=true;unsubscribe?.();connection.detach();account.dispose?.();listeners.clear();}
-   return Object.freeze({start,listWallets,selectWallet,refresh,signOut,clear:resetPrivate,dispose,
+   return Object.freeze({start,signIn,listWallets,selectWallet,refresh,signOut,clear:resetPrivate,dispose,
      state:()=>copy(publicState()),subscribe(fn){assert(typeof fn==='function','R52_INVALID_OBSERVER');listeners.add(fn);fn(publicState());return()=>listeners.delete(fn);}});
  }
  return Object.freeze({create});
