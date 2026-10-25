@@ -15,6 +15,11 @@ on:
       - 'five-menu-integrated-runtime-v20.js'
       - 'financial-alerts-v20.js'
       - 'financial-alerts-view-v20.js'
+      - 'onboarding-guide-v20.js'
+      - 'guided-tutorial-v20.js'
+      - 'guided-tutorial-view-v20.js'
+      - 'scripts/test-b13-onboarding-20261025.cjs'
+      - 'scripts/test-b13-guided-tutorial-20261025.cjs'
       - 'previews/v20-b13-alerts-bloco8-qa-20261025.html'
       - 'scripts/test-b13-alerts-browser-20261025.cjs'
       - 'scripts/test-b13-alerts-20261025.cjs'
@@ -85,6 +90,11 @@ jobs:
         run: node --test scripts/test-r5-five-menu-bindings-20261025.cjs
       - name: Bloco 13.1 alerts without trading or private data leaks
         run: node --test scripts/test-b13-alerts-20261025.cjs
+      - name: Bloco 13.2 original onboarding plus supplementary learning regressions
+        run: |
+          node --test scripts/test-wallet-onboarding.cjs
+          node --test scripts/test-b13-onboarding-20261025.cjs
+          node --test scripts/test-b13-guided-tutorial-20261025.cjs
       - name: R5.5 private QA real V20 session-to-journal runtime
         run: node --test scripts/test-r5-integrated-runtime-20261025.cjs
       - name: R5.4 unified five-menu shared V20 snapshot tests
