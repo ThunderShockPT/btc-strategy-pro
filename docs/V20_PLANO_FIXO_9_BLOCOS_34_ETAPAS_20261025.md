@@ -34,3 +34,7 @@ Etapa R1.3 entregue como laboratório HTML offline, com quantização de 0,0001 
 - Resultado histórico #1820: sete operações simuladas, quatro positivas, três negativas, total +1.186,34 USD; custo/juros do CSV arredondado difere do relatório por 0,01 USD cada. Estudo Spot Margin não determina Kraken Futures.
 - Revisão anual mostra que lucro teórico de estratégia Kraken Cross/ignorando liquidação não vale como lucro realizável em Isolated 10x. As cifras de +412,32/71 ciclos e +513–562 ainda não têm proveniência reconstituída neste inventário.
 - Contagem de etapas: **7 etapas confirmadas tecnicamente (R0.1–0.3, R1.1–1.3, R2.1), mais R1.4 preparado mas a aguardar revisão humana**. R2.2 é próximo objetivo de trabalho, em branch isolada; sem deploy, mudanças de política, migrações ou alterações de conta.
+
+## Progresso de 25/10 — R2, etapa 2/4
+
+Verificação da reprodução dos registos históricos feita com **12/12 testes offline**. Evidência versionada: `docs/V20_R2_ETAPA2_REPRODUCAO_HISTORICA_20261025.md`, `scripts/test-r2-reproduction-20261025.py` e os 3 ficheiros `research/r2/` (código histórico, CSV histórico e snapshot do XLSX). Reprodução aritmética, **não** backtest integral com OHLC/mark/funding nem aprovação de lucro Kraken. R1.4 continua dependente de revisão humana. **8/34 etapas técnicas confirmadas** (R0.1–3, R1.1–3, R2.1–2); a R2.3 é a próxima. Nenhuma alteração a carteira, políticas Beta, main ou produção.
