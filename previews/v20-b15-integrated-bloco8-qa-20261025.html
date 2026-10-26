@@ -1585,7 +1585,7 @@ const modeButtons=[['Demo','r54Demo'],['Carteira A','r54A'],['Carteira B','r54B'
 });
 const note=document.createElement('small');note.textContent='A/B são simulações; não existem operações reais.';small.append(note);
 nav.after(small);
-function render(){const t=window.BTCR54QA.status();for(const b of modeButtons){
+function render(){const t=window.BTCR54QA.status();note.textContent=t.mode==='account'?'Vista resumo da carteira fictícia. Clica «Demo» para recuperar os gráficos e menus completos.':'A/B são simulações; não existem operações reais.';for(const b of modeButtons){
  const id=b.dataset.for;
  const on=id==='r54Demo'?t.mode==='demo':t.mode==='account'&&String(t.projectId||'').endsWith(id==='r54A'?'0001':'0002');
  b.setAttribute('aria-pressed',String(on));
