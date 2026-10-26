@@ -48,3 +48,10 @@ O fecho **técnico** de R1.4/34 exige que o proprietário veja e aceite/peça al
 **Até haver a resposta explícita:** continuar em **33/34 (97,1%)**, com `PR #35` draft, `main` pública V19.1 sem alterações, demo Netlify fictícia e riscos financeiros não certificados. Mesmo com a aceitação de arquitetura, a aprovação financeira de produção, contas, restauro e execução Kraken ficam **separadamente bloqueadas**.
 
 Fontes internas: `docs/V20_R1_ETAPA4_REVIEW_20261025.md`, `docs/V20_R2_ETAPA4_CONCLUSOES_20261025.md`, `docs/V20_R2_ETAPA4_QA_20261025.md`, `policies/profiles-beta-20261021.json`, `policies/cloud-release-20261021.json`.
+
+
+## 5. Decisão efetiva do proprietário — ACEITE em 26/10/2026
+
+O proprietário respondeu explicitamente à proposta: **«Aprovo explicitamente apenas a arquitetura do Modelo C adaptativo, com três compras 20/30/50 por ciclo, Clássico A–E como comparador, piso de stress estrito e margem real separada de margem planeada. Não autorizo alterações de parâmetros de trading reais, registos públicos, ordens Kraken ou publicação financeira. Regista a decisão e conclui a revisão técnica R1.4/R2.4, verificando o estado das 34 etapas.»**
+
+**Interpretação autorizada e única:** `R1.4` aceite como recuperação/arquitetura; `R2.4` aceite como direção do produto. Não aprovar grelhas de preços, espaçamentos para trading real, contas públicas, operações Kraken, nem o lançamento. `policies/v20-model-c-architecture-owner-consent-20261026.json` conserva a decisão em formato estruturado. A secção 4 documenta a situação *antes* desta resposta; esta adenda é o estado atual. A auditoria técnica das 34 etapas está em `docs/V20_34_ETAPAS_AUDITORIA_FECHO_TECNICO_20261026.json`.
