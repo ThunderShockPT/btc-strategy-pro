@@ -75,3 +75,6 @@ Isto é um resultado encorajador, mas **não é prova** de que todas as rotas da
 Foi dada aprovação **somente à arquitetura do Modelo C adaptativo**; não existe autorização para registo público, preços/regras reais de trading, contas financeiras ou ordens Kraken. Esta fase é investigação preparatória, não é um lançamento nem um pedido implícito de ativação de qualquer serviço.
 
 **Próxima etapa autorizável sem risco de alteração:** P1.2 — auditoria de código das cinco Edge Functions, read-only, com relatório de bloqueios. Ativações de segurança, testes de contas reais e quaisquer alterações à produção só após autorização específica e verificação de impactos.
+
+
+**Validação P1.1 confirmada em 26/10:** GitHub Actions https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40408407035 — **8/8 testes PASS, 0 FAIL** na workflow isolada `.github/workflows/v20-post34-security-audit.yml`, sem dependências externas, sem browser, sem segredos e sem acesso de escrita ao Supabase. Verificação adicional em CI confirmou explicitamente `financialCloudApproved:false`, `publicRegistrationApproved:false` e nove checks de produção fechados. Estes testes validam a consistência das evidências **de leitura** e bloqueios do repositório, não autenticação com duas contas ou RLS em execução real.
