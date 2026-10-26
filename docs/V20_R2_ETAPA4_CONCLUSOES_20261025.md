@@ -75,3 +75,11 @@ A 55k, a V20 concentrada necessitou de 2.075,91 USD **incluindo 400 USD de reser
 - Os testes R2.3 (26 casos de cálculo, seis viewports) e este painel de decisão não equivalem a validação financeira independente, ainda reservada ao Bloco 14.
 
 **Produção, Supabase, perfis e carteiras permanecem inalterados.**
+
+## Adenda de 26/10/2026 — escolha de direção R2.4, sem trocar a política financeira
+
+O proprietário escolheu expressamente o **Modelo C adaptativo como arquitetura principal**, a grelha histórica **Clássico A–E para comparação**, a decomposição **20%/30%/50%** do nominal por ciclo, **piso de stress estrito** e separação de margem real de reforços apenas planeados. Esta decisão encerra o **gate de direção arquitetural R2.4**.
+
+**Não foram aprovados:** preços ou espaçamentos específicos para compras reais, automatização de ordens, estratégia de liquidação efetivamente segura, probabilidades de lucro, abertura de contas públicas ou lançamento da V20 financeira. As condições de qualidade do estudo R2.3 (120 cenários sintéticos, não backtests completos Kraken) e as observações anteriores continuam válidas. As distâncias históricas do clássico não passam automaticamente a parâmetros de negociação.
+
+Registo formal: `policies/v20-model-c-architecture-owner-consent-20261026.json`. Resumo auditado: `docs/V20_34_ETAPAS_AUDITORIA_FECHO_TECNICO_20261026.json`. Manter `financialCloudApproved:false`, `publicRegistrationApproved:false` e PR #35 em draft.
