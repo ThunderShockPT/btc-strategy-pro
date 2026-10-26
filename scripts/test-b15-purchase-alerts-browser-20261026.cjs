@@ -18,6 +18,9 @@ for(const width of [393,768,1440]){
   try{
    await page.setContent(html,{waitUntil:'load',timeout:60000});
    assert.match(await page.locator('#b13AlertHost').innerText(),/Dados de conta não sincronizados/);
+   await page.locator('#alertBtn').click();
+   assert.match(await page.locator('#toast').innerText(),/Alertas de demonstração/);
+   assert.doesNotMatch(await page.locator('#overlay').getAttribute('class'),/open/);
    await page.locator('#b13Cash').click();
    assert.match(await page.locator('#b13GuideStatus').innerText(),/SIMULAÇÃO/);
    assert.match(await page.locator('#b13AlertHost').innerText(),/Caixa insuficiente no cenário/);
