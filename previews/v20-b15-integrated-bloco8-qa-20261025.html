@@ -1017,7 +1017,7 @@ function navigate(route){
   else if(window.BTCBlock5?.go)window.BTCBlock5.go(route==='Mercado'?'Terminal':route);
   update(route);
   if(route==='Início')window.dispatchEvent(new Event('resize'));
-  const el=document.querySelector('.r43-context');if(el&&route!=='Início')el.scrollIntoView({block:'nearest'});
+  requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'instant'}));
  }catch(e){console.error('R4.3 navigation error',e);}
  finally{routing=false;}
 }
@@ -1554,4 +1554,45 @@ function update(){const s=window.BTCR54QA.status();state.textContent=s.mode==='d
 const ids=['r54Demo','r54A','r54B','r54Logout','r54Drift','r54Sync'];ids.forEach(id=>document.getElementById(id)?.addEventListener('click',()=>queueMicrotask(update)));
 update();
 window.BTCB151QA=Object.freeze({guide,mode:()=>window.BTCR54QA.status(),alertView:window.BTCB13QA.alertView,visualParityOfAccountApproved:false,financialCloudApproved:false,productionDeployment:false,ordersEnabled:false});
+})();</script><style id="v20-nav-visibility-fix">
+#v20QuickMode{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:8px 12px;margin:6px auto 12px;max-width:1200px;border:1px solid #214958;border-radius:10px;background:#0c222e;color:#d5edf6;font:12px system-ui,sans-serif}
+#v20QuickMode strong{font-size:12px;color:#92cdda;margin-right:4px}
+#v20QuickMode button{background:#143748;border:1px solid #326676;border-radius:7px;padding:6px 10px;color:#e6fbff;cursor:pointer;font:inherit;min-height:32px}
+#v20QuickMode button[aria-pressed="true"]{background:#136b7d;border-color:#51bfda;box-shadow:inset 0 0 0 1px #6bd9e8;color:#fff}
+#v20QuickMode small{font-size:11px;color:#a2cad5}
+#v20QASeparator{border-top:1px dashed #356273;max-width:1200px;margin:32px auto 16px;padding:14px 8px 3px;color:#a5d0dc;font:600 12px system-ui,sans-serif}
+#r54-qa-menu,#b13Labs,#b153PWA{scroll-margin-top:64px}
+@media(max-width:570px){#v20QuickMode{margin:7px 4px;padding:7px 9px;gap:6px}#v20QuickMode button{flex:1 0 auto}#v20QuickMode small{flex-basis:100%}}
+</style><script id="v20-nav-visibility-fix-runtime">(function(){'use strict';
+function mount(){
+const main=document.querySelector('main');
+const nav=document.getElementById('r43Context');
+const qa=document.getElementById('r54-qa-menu');
+const alerts=document.getElementById('b13Labs');
+const pwa=document.getElementById('b153PWA');
+if(!main||!qa||!alerts||!window.BTCR43Navigation||!window.BTCR54QA)throw Error('V20_NAV_QA_MISSING');
+const separator=document.createElement('div');separator.id='v20QASeparator';separator.textContent='FERRAMENTAS DE TESTE · Carteiras fictícias, tutorial, alertas e instalação PWA';
+main.append(separator);
+const originalHome=document.getElementById('homeView'),oldLab=document.getElementById('r52QA');
+if(originalHome&&oldLab)originalHome.append(oldLab);
+for(const el of [qa,alerts,pwa])if(el)main.append(el);
+const small=document.createElement('div');small.id='v20QuickMode';small.setAttribute('aria-label','Escolha rápida de carteira fictícia');
+const heading=document.createElement('strong');heading.textContent='CARTEIRA DE TESTE';small.append(heading);
+const modeButtons=[['Demo','r54Demo'],['Carteira A','r54A'],['Carteira B','r54B']].map(([name,id])=>{
+ const button=document.createElement('button');button.type='button';button.textContent=name;button.dataset.for=id;
+ button.addEventListener('click',()=>{document.getElementById(id)?.click();render();window.scrollTo({top:0,behavior:'instant'});});
+ small.append(button);return button;
+});
+const note=document.createElement('small');note.textContent='A/B são simulações; não existem operações reais.';small.append(note);
+nav.after(small);
+function render(){const t=window.BTCR54QA.status();for(const b of modeButtons){
+ const id=b.dataset.for;
+ const on=id==='r54Demo'?t.mode==='demo':t.mode==='account'&&String(t.projectId||'').endsWith(id==='r54A'?'0001':'0002');
+ b.setAttribute('aria-pressed',String(on));
+}}
+for(const id of ['r54Demo','r54A','r54B','r54Logout','r54Sync'])document.getElementById(id)?.addEventListener('click',()=>queueMicrotask(render));
+render();
+window.BTCV20NavigationQA=Object.freeze({reordered:true,currentMenu:()=>window.BTCR43Navigation.current(),activeMode:()=>window.BTCR54QA.status().mode});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();</script></body></html>
