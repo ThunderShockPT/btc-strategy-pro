@@ -282,3 +282,14 @@ Documentação: `docs/V20_POS34_P1_ETAPA1_AUDITORIA_SUPABASE_20261026.md`; snaps
 **Evidência:** `docs/V20_POS34_P1_ETAPA2_AUDITORIA_EDGE_FUNCTIONS_20261026.md`, `policies/v20-post34-edge-functions-audit-20261026.json`, `scripts/test-v20-post34-edge-function-audit-20261026.cjs`. Workflow QA isolada https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40414237062 — **18/18 testes PASS, 0 FAIL** (8 P1.1 + 10 P1.2), sem segredos de backend, deploy ou alteração de Auth.
 
 **Próximo P1.3/8:** avaliar/ativar somente com autorização específica a proteção contra passwords comprometidas. P1.4, P1.5, P1.6, P1.7, P1.8 continuam bloqueadas e não verificadas. O plano anterior **34/34 técnico (100%)** permanece válido e independente. **Publicação financeira, registo público e ordens Kraken: NO_GO**.
+
+
+## Pós-plano P1.3 — Proteção contra passwords comprometidas no Supabase Free (26/10/2026)
+
+**Plano técnico V20 mantém 34/34 (100%). A fase P1 permanece em 2/8 etapas inteiramente concluídas; P1.3 foi auditada e documentada mas a remediação permanece BLOQUEADA pelo plano e por falta de autorização para upgrade/configuração.** Total P1: 2 concluídas, 1 avaliada com bloqueio, 5 ainda por iniciar. Não transformar esta observação em proteção de passwords ativa nem aprovação de Beta real.
+
+Confirmado diretamente por `get_project` → `get_organization`: subscrição atual **Supabase Free, tier_free**; `get_advisors(security)` assinala `auth_leaked_password_protection` **WARN** e desativado. A documentação Supabase exige **Pro+** para a proteção nativa HIBP. Comprimento mínimo/complexidade de passwords e confirmação de email **não verificados**, pois a leitura Auth Config não estava disponível nas ferramentas de acesso desta fase.
+
+Evidência `docs/V20_POS34_P1_ETAPA3_PASSWORDS_PLANO_FREE_20261026.md`, `policies/v20-post34-password-security-review-20261026.json`, testes `scripts/test-v20-post34-password-security-20261026.cjs`. CI isolada https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40415051549: **26/26 PASS (8 P1.1 + 10 P1.2 + 8 P1.3), 0 FAIL**. A CI verifica bloqueios/contratos; **não** substitui a ativação da funcionalidade no servidor.
+
+**Próxima P1.4/8:** preparar testes RLS/Auth com duas contas de ensaio isoladas, sem alteração de dados existentes e sem autorizar registos públicos. Antes do lançamento revisitar a remediação pendente de P1.3 e obter consentimento separado para eventual mudança de subscrição (custo ainda não acordado). `financialCloudApproved:false`, `publicRegistrationApproved:false`, PR #35 draft, sem operações Kraken, sem publicação financeira.
