@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "btcsp-v20-post34-two-account-rls-qa.1",
+  "date": "2026-10-26",
+  "projectRef": "oftzqqjbwonngubihrsd",
+  "stage": "P1.4",
+  "isolation": "DISPOSABLE_LOCAL_PGLITE_AND_FAKE_AUTH_API_FIXTURES_ONLY",
+  "hostedSupabaseReadOnlySql": true,
+  "hostedAuthenticatedTwoAccountRuntimeTest": false,
+  "testRun": {
+    "id": 40420831201,
+    "workflow": ".github/workflows/v20-post34-two-account-rls-qa.yml",
+    "status": "SUCCESS",
+    "rlsTests": 7,
+    "authenticatedApiTests": 18,
+    "pass": 25,
+    "fail": 0
+  },
+  "syntheticSubjects": {
+    "ownerA": "00000000-0000-4000-a000-000000000101",
+    "ownerB": "00000000-0000-4000-a000-000000000102",
+    "noRealPersonalData": true
+  },
+  "verifiedScenarios": [
+    "Owner A and B read only own project/snapshot/financial event rows under actual PostgreSQL RLS in disposable PGlite, using audited policy shapes",
+    "Cross-owner reads and update/delete attempts return zero rows under RLS",
+    "Owner forged INSERT and UPDATE owner transfer denied by WITH CHECK; foreign project snapshot denied",
+    "Direct financial event insert/update/delete forbidden to client role",
+    "Anonymous role cannot SELECT reviewed public tables",
+    "Authenticated role cannot access btcsp_private",
+    "Financial API fixture denies foreign owner_id, arbitrary body owner, invalid/revoked/banned/unconfirmed sessions and attempts to mutate after session revoke",
+    "Regression verifies session switching, cache invalidation, origin/header checks and no data leaks"
+  ],
+  "observedHostedPolicies": {
+    "source": "Supabase execute_sql read-only pg_policies and information_schema.role_table_grants, 2026-10-26",
+    "projects": {
+      "select": "owner_id = auth.uid()",
+      "insertWithCheck": "owner_id = auth.uid()",
+      "updateUsingAndWithCheck": "owner_id = auth.uid()",
+      "deleteUsing": "owner_id = auth.uid()"
+    },
+    "project_snapshots": {
+      "select": "owner_id = auth.uid() AND EXISTS own project",
+      "insertWithCheck": "owner_id = auth.uid() AND EXISTS own project",
+      "updateWithCheck": "owner_id = auth.uid() AND EXISTS own project",
+      "deleteUsing": "owner_id = auth.uid()"
+    },
+    "financialTablesCount": 6,
+    "financialSelect": "owner_id = auth.uid() for authenticated",
+    "financialClientWriteGrants": false,
+    "privateSchemaAnonOrAuthenticatedUsage": false
+  },
+  "limitations": [
+    "Disposable database reproduces audited policy shapes but is not the hosted Supabase runtime",
+    "API tests use signed-looking fixture JWTs with stubbed authentication; not live GoTrue credentials",
+    "No real accounts created, changed or contacted on production",
+    "No hosted two-account signed-token response matrix or actual browser login/refresh/logout proven",
+    "Role grants and policies may drift; must rerun before any production release",
+    "P1.3 compromised-password protection on Free remains unresolved",
+    "Edge verify_jwt=false requires separately confirmed route-level dynamic controls"
+  ],
+  "progress": {
+    "p1_1": "CLOSED",
+    "p1_2": "CLOSED",
+    "p1_3": "ASSESSED_SECURITY_REMEDIATION_BLOCKED",
+    "p1_4": "ISOLATED_QA_PASSED_HOSTED_ACCEPTANCE_PENDING",
+    "next": "P1.5_AUTH_EMAIL_REDIRECTS_AND_RECOVERY_READONLY_REVIEW",
+    "release": "NO_GO",
+    "financialCloudApproved": false,
+    "publicRegistrationApproved": false,
+    "krakenTradingApproved": false
+  }
+}
