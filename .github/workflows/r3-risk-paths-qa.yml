@@ -30,6 +30,7 @@ on:
       - 'previews/v20-b15-integrated-bloco8-qa-20261025.html'
       - 'scripts/test-b15-integrated-demo-browser-20261025.cjs'
       - 'scripts/test-b15-purchase-alerts-browser-20261026.cjs'
+      - 'scripts/test-b15-navigation-visual-browser-20261026.cjs'
       - 'scripts/test-b15-account-recovery-browser-20261025.cjs'
       - 'scripts/build-b15-mobile-pwa-20261025.cjs'
       - 'scripts/test-b15-mobile-pwa-browser-20261025.cjs'
@@ -164,6 +165,8 @@ jobs:
         run: node --test scripts/test-b15-integrated-demo-browser-20261025.cjs
       - name: Bloco 15 S25 purchase modal confirmation and educational alerts QA
         run: node --test scripts/test-b15-purchase-alerts-browser-20261026.cjs
+      - name: Bloco 15 restore distinct screens five menus and preserve buying and alerts
+        run: node --test scripts/test-b15-navigation-visual-browser-20261026.cjs
       - name: Bloco 14.3 adversarial gaps funding failed margin and liquidation model
         run: node --test scripts/test-b14-financial-adversarial-20261025.cjs
       - name: Bloco 14.2 independent wallet and isolated-margin reconciliation
