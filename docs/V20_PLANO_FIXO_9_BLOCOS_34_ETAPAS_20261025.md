@@ -274,3 +274,11 @@ Documentação: `docs/V20_POS34_P1_ETAPA1_AUDITORIA_SUPABASE_20261026.md`; snaps
 
 
 **Validação P1.1 confirmada em 26/10:** GitHub Actions https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40408407035 — **8/8 testes PASS, 0 FAIL** na workflow isolada `.github/workflows/v20-post34-security-audit.yml`, sem dependências externas, sem browser, sem segredos e sem acesso de escrita ao Supabase. Verificação adicional em CI confirmou explicitamente `financialCloudApproved:false`, `publicRegistrationApproved:false` e nove checks de produção fechados. Estes testes validam a consistência das evidências **de leitura** e bloqueios do repositório, não autenticação com duas contas ou RLS em execução real.
+
+## Pós-plano P1.2 — Revisão read-only das cinco Edge Functions (26/10/2026)
+
+**Fase P1: 2/8 etapas concluídas (25%)**. Depois da auditoria P1.1, foi verificada, diretamente pelas ações de leitura Supabase, a versão implantada das cinco Edge Functions: `btcsp-v20-api` (produção bloqueada por política e validação de sessão no backend), `btcsp-v20-runtime-qa` (`503 QA_COMPLETE_CLOSED`), `btcsp-v20-account-qa` (QA com capacidade e expiração 25/10, não reutilizar para produção), `btcsp-v20-private-provision` (`503 PRIVATE_PROVISION_CLOSED`) e `btcsp-v20-private-test` (API de testes com allowlist, app metadata e sessão validada, ainda ativa). **Todas as 5 com `verify_jwt=false`**, exigindo auditoria dinâmica no contexto específico dos restantes fluxos antes de qualquer abertura pública. Não houve chamadas de escrita nem alterações à infraestrutura.
+
+**Evidência:** `docs/V20_POS34_P1_ETAPA2_AUDITORIA_EDGE_FUNCTIONS_20261026.md`, `policies/v20-post34-edge-functions-audit-20261026.json`, `scripts/test-v20-post34-edge-function-audit-20261026.cjs`. Workflow QA isolada https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40414237062 — **18/18 testes PASS, 0 FAIL** (8 P1.1 + 10 P1.2), sem segredos de backend, deploy ou alteração de Auth.
+
+**Próximo P1.3/8:** avaliar/ativar somente com autorização específica a proteção contra passwords comprometidas. P1.4, P1.5, P1.6, P1.7, P1.8 continuam bloqueadas e não verificadas. O plano anterior **34/34 técnico (100%)** permanece válido e independente. **Publicação financeira, registo público e ordens Kraken: NO_GO**.
