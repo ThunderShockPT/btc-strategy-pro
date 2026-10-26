@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "btcsp-v20-product-architecture-consent.1",
+  "project": "BTC Strategy Pro V20",
+  "decisionDate": "2026-10-26",
+  "source": {
+    "type": "explicit-owner-in-chat",
+    "statement": "Aprovo explicitamente apenas a arquitetura do Modelo C adaptativo, com três compras 20/30/50 por ciclo, Clássico A–E como comparador, piso de stress estrito e margem real separada de margem planeada. Não autorizo alterações de parâmetros de trading reais, registos públicos, ordens Kraken ou publicação financeira. Regista a decisão e conclui a revisão técnica R1.4/R2.4, verificando o estado das 34 etapas."
+  },
+  "consent": "APPROVED_PRODUCT_ARCHITECTURE_ONLY",
+  "appliesTo": [
+    "R1.4 architecture acceptance",
+    "R2.4 product design direction"
+  ],
+  "architecture": {
+    "primaryModel": "C_ADAPTIVE",
+    "cycles": {
+      "buySlicesPercent": [
+        20,
+        30,
+        50
+      ],
+      "countAndSpacing": "configurable, not fixed or approved for live use"
+    },
+    "comparison": {
+      "classicAE": {
+        "mode": "REFERENCE_ONLY",
+        "alwaysAvailable": true
+      },
+      "v20Beta": {
+        "mode": "COMPARISON_ONLY"
+      }
+    },
+    "riskFloor": {
+      "strict": true,
+      "atOrBelowFloor": "REJECT_BUY",
+      "isGuaranteedLiquidationProtection": false,
+      "isMandatoryLastBuyPrice": false
+    },
+    "margin": {
+      "walletCashSeparate": true,
+      "allocatedIsolatedMarginSeparate": true,
+      "plannedMarginAddsAreActual": false,
+      "initialCashAdditionChangesIsolatedMargin": false,
+      "simulateFailedReinforcementPath": true
+    },
+    "operationMode": "MANUAL_PLANNING_AND_QA_ONLY",
+    "realEntryPricesApproved": false,
+    "productionTradingConfigurationApproved": false
+  },
+  "nonAuthorizations": {
+    "changeLiveTradingParameters": false,
+    "changeProductionFinancialPolicy": false,
+    "publicAccountRegistration": false,
+    "krakenOrderPlacement": false,
+    "realMoneyExecution": false,
+    "productionDeployOrMerge": false,
+    "financialCloud": false,
+    "guaranteedProfitOrLiquidationFloor": false
+  },
+  "plan": {
+    "expectedBlocks": 9,
+    "expectedStages": 34,
+    "technicallyCompletedStages": 34,
+    "completedAs": "ARCHITECTURE_AND_ISOLATED_QA",
+    "productionReady": false
+  },
+  "guardrails": {
+    "officialCloudPolicyUnchanged": "policies/cloud-release-20261021.json",
+    "referenceBetaPolicyUnchanged": "policies/profiles-beta-20261021.json",
+    "releaseGateEvidenceUnchanged": "policies/v20-b15-release-evidence-20261025.json",
+    "releasePR": 35,
+    "draftUntilIndependentApproval": true
+  },
+  "limitations": [
+    "No historical backtest with complete Kraken Futures mark price, funding, gap and liquidation trajectories",
+    "Risk floors are stress testing inputs, not liquidation guarantees",
+    "No approval of concrete cycle spacing, price levels, funding assumptions or real-money limits",
+    "No production authorization, RLS/account recovery/production restore approval or live Kraken connection"
+  ]
+}
