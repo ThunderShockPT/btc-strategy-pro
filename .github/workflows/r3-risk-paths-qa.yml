@@ -32,6 +32,9 @@ on:
       - 'scripts/test-b15-purchase-alerts-browser-20261026.cjs'
       - 'scripts/test-b15-navigation-visual-browser-20261026.cjs'
       - 'scripts/test-v20-final-architecture-consent-20261026.cjs'
+      - 'scripts/test-v20-post34-supabase-security-audit-20261026.cjs'
+      - 'scripts/v20-post34-supabase-readonly-audit.sql'
+      - 'policies/v20-post34-supabase-security-audit-20261026.json'
       - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
       - 'docs/V20_34_ETAPAS_AUDITORIA_FECHO_TECNICO_20261026.json'
       - 'scripts/test-b15-account-recovery-browser-20261025.cjs'
@@ -184,6 +187,8 @@ jobs:
           node --test scripts/test-r3-preview-bridge-20261025.cjs
       - name: R1.4 R2.4 owner architecture-only approval and 34-stage final audit
         run: node --test scripts/test-v20-final-architecture-consent-20261026.cjs
+      - name: Post-34 P1.1 read-only Supabase security evidence and no-production gates
+        run: node --test scripts/test-v20-post34-supabase-security-audit-20261026.cjs
       - name: Bloco 15.4 release readiness negative gates (QA only)
         run: |
           node --test scripts/test-b15-release-readiness-20261025.cjs
