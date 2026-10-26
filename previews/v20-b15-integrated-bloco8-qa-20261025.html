@@ -235,7 +235,7 @@ window.BTC_SUPABASE_CONFIG = { url: '', publishableKey: '' };</script>
 #r54-qa-menu p{margin:6px 0;color:#a5d0d7;line-height:1.5}
 #r54-qa-feedback{font-weight:650;color:#b6eaee}
 @media(max-width:570px){#r54-qa-menu{margin:7px 4px}#r54-qa-menu .r54-qa-actions button{flex:1}}
-</style><style id="b13-alerts-style">
+</style><style id="btc-v20-purchase-alert-clarity">.b4-save-tip{padding:9px 11px;border:1px solid #286c7e;border-radius:9px;background:#123543;color:#d5f6ff!important;font-size:12px!important}.b4-saved-receipt{border:1px solid #2caa92;border-radius:12px;background:#0d302e;padding:16px;color:#ecfff8}.b4-saved-receipt h4{margin:0 0 10px;color:#88ffe0;font-size:18px}.b4-saved-receipt p{color:#c9eee5!important;line-height:1.7!important}.b13-help{border:1px solid #2d8391;border-radius:10px;padding:12px;background:#0a303e;color:#eafcff;margin:12px 0}.b13-help strong{font-size:14px}.b13-help p{margin:7px 0;line-height:1.65;color:#c1e9f0}#b13GuideStatus{background:#132b3b;border-left:3px solid #3ed1db;border-radius:6px;padding:8px 10px;font-weight:650;color:#e9fafa}</style><style id="b13-alerts-style">
 #b13Labs{max-width:1200px;margin:12px auto;padding:12px;border:1px solid #2b8293;background:linear-gradient(130deg,#0b2532,#123c45);border-radius:14px;color:#eafcff;font:13px system-ui,sans-serif}
 #b13Labs *{box-sizing:border-box}#b13Labs h3{margin:0;font-size:16px}#b13Labs>p{font-size:12px;color:#afcbd2}
 #b13Labs .b13-actions{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}
@@ -269,7 +269,7 @@ window.BTC_SUPABASE_CONFIG = { url: '', publishableKey: '' };</script>
 <p id="r54-qa-feedback" role="status">Modo Demo. Sem ligação a dados reais.</p></aside><section id="b13Labs" aria-label="Bloco 13.1 Alertas da BTC Strategy Pro">
 <h3>Bloco 13.1 · Alertas de segurança</h3>
 <p>Esta página conserva a Demo Bloco 8. Os testes seguintes utilizam carteiras e compras <b>fictícias</b>, sem ligação à Kraken nem notificações externas.</p>
-<div class="b13-actions"><button id="b13Normal" type="button">Ver avisos da carteira</button><button id="b13Cash" type="button">Compra sem caixa</button><button id="b13Margin" type="button">Risco antes do reforço</button><button id="b13Invalid" type="button">Estudo desatualizado</button><button id="b13Reset" type="button">Limpar cenário</button></div>
+<div class="b13-help"><strong>Como usar os alertas (teste guiado)</strong><p>Escolhe um botão abaixo: a aplicação carrega automaticamente a <b>Carteira fictícia A</b>, mostra o exemplo e explica o significado. Estes avisos <b>não</b> são alertas ao vivo nem ordens. Podes limpar o exemplo e voltar à Demo.</p><p id="b13GuideStatus" role="status" aria-live="polite">Pronto para testar. Começa por «Compra sem caixa».</p></div> <div class="b13-actions"><button id="b13Normal" type="button">Ver avisos da carteira</button><button id="b13Cash" type="button">Compra sem caixa</button><button id="b13Margin" type="button">Risco antes do reforço</button><button id="b13Invalid" type="button">Estudo desatualizado</button><button id="b13Reset" type="button">Limpar cenário</button><button id="b13ReturnDemo" type="button">Voltar à Demo original</button></div>
 <div id="b13AlertHost"></div></section><div id="homeView"><section id="r52QA" aria-label="Teste de sessão e carteiras da versão R5.2">
 <div class="r52heading"><b>R5.2 · Integração da conta nos cinco menus</b><span class="r52sub">AMBIENTE DE DEMONSTRAÇÃO — SEM LOGIN REAL</span></div>
 <div class="r52sub">Aqui simulas dois utilizadores e carteiras com diferentes revisões. A integração autenticada verdadeira está testada no código, mas permanece bloqueada para a publicação.</div>
@@ -346,8 +346,11 @@ function candles(n=48){let r=[],v=80600,seed=9147;for(let i=0;i<n;i++){seed=(see
 let crossX=-1;function draw(){let canvas=$('chart');if(!marketOn)return;let rect=canvas.getBoundingClientRect();if(!rect.width||!rect.height)return;let ratio=Math.min(2,window.devicePixelRatio||1);canvas.width=Math.round(rect.width*ratio);canvas.height=Math.round(rect.height*ratio);let cx=canvas.getContext('2d');cx.scale(ratio,ratio);let w=rect.width,h=rect.height;cx.fillStyle='#101a27';cx.fillRect(0,0,w,h);let s=get(),prices=[current,s.entry,s.entry-GAP,s.entry-2*GAP,target(s)],cs=candles(tf==='15m'?72:tf==='1h'?52:tf==='4h'?44:32);let lows=cs.map(v=>v.l),highs=cs.map(v=>v.h);let min=Math.min(...lows,current-850, ...prices.filter(x=>Math.abs(x-current)<6200)),max=Math.max(...highs,current+850,...prices.filter(x=>Math.abs(x-current)<6200));let span=Math.max(max-min,6500);min=(min+max)/2-span*.54;max=min+span*1.08;let gridW=w-72,top=16,bottom=h-40,plotH=bottom-top;let y=p=>top+(max-p)/(max-min)*plotH,x=i=>15+i*(gridW-20)/cs.length;cx.font='10px ui-monospace,monospace';cx.textAlign='left';for(let j=0;j<=5;j++){let yy=top+(plotH*j)/5;cx.strokeStyle='#2a35455c';cx.beginPath();cx.moveTo(10,yy);cx.lineTo(gridW,yy);cx.stroke();cx.fillStyle='#7a8a9a';cx.fillText(num(max-(max-min)*j/5),gridW+6,yy+3)}for(let i=0;i<cs.length;i++){let c=cs[i],xx=x(i),yy1=y(c.o),yy2=y(c.c),hi=y(c.h),lo=y(c.l),g=c.c>=c.o;cx.strokeStyle=g?'#20C997':'#F05D64';cx.lineWidth=1;cx.beginPath();cx.moveTo(xx,hi);cx.lineTo(xx,lo);cx.stroke();cx.fillStyle=cx.strokeStyle;cx.fillRect(xx-2,Math.min(yy1,yy2),4,Math.max(1,Math.abs(yy2-yy1)));cx.globalAlpha=.3;cx.fillRect(xx-2,bottom+7,4,c.volume/5);cx.globalAlpha=1;}
 const levels=[{p:s.entry,name:'Entrada',color:'#18B8E6'},{p:s.entry-GAP,name:'R30',color:'#20C997'},{p:s.entry-2*GAP,name:'R50',color:'#20C997'},{p:target(s),name:'Venda',color:'#F4B740'}];for(let l of levels){if(l.p<min||l.p>max)continue;let yy=y(l.p);cx.setLineDash([4,5]);cx.strokeStyle=l.color+'bb';cx.beginPath();cx.moveTo(10,yy);cx.lineTo(gridW,yy);cx.stroke();cx.setLineDash([]);cx.fillStyle=l.color;cx.fillRect(gridW-54,yy-8,54,14);cx.font='9px sans-serif';cx.fillStyle='#07101a';cx.fillText(l.name+' '+(l.p/1000).toFixed(1)+'k',gridW-52,yy+2)}let yy=y(current);cx.strokeStyle='#d5edff88';cx.setLineDash([2,3]);cx.beginPath();cx.moveTo(10,yy);cx.lineTo(gridW,yy);cx.stroke();cx.setLineDash([]);cx.fillStyle='#9defff';cx.fillRect(gridW,yy-10,66,20);cx.fillStyle='#041520';cx.font='bold 10px monospace';cx.fillText(num(current),gridW+5,yy+4);cx.fillStyle='#506679';cx.font='9px sans-serif';for(let i=0;i<5;i++){cx.fillText(['−48h','−36h','−24h','−12h','Agora'][i],15+i*(gridW-70)/4,h-5)}if(crossX>=0&&crossX<gridW){let index=Math.min(cs.length-1,Math.max(0,Math.round((crossX-15)/(gridW-20)*cs.length))),c=cs[index];cx.strokeStyle='#9ab2c16c';cx.beginPath();cx.moveTo(x(index),top);cx.lineTo(x(index),bottom);cx.stroke();$('hoverOhlc').textContent=`O ${num(c.o)} H ${num(c.h)} L ${num(c.l)} C ${num(c.c)}`;}else $('hoverOhlc').textContent='Passe o cursor sobre as velas';}
 function info(msg){clearTimeout(toastTimer);$('toast').textContent=msg;$('toast').classList.add('show');toastTimer=setTimeout(()=>$('toast').classList.remove('show'),3900)}
-function dialog(title,eyebrow,body,buttons){$('dialogTitle').textContent=title;$('dialogEyebrow').textContent=eyebrow;$('dialogBody').innerHTML=body;$('dialogFoot').innerHTML=buttons;$('overlay').classList.add('open')}
-function close(){$('overlay').classList.remove('open')};$('closeDialog').onclick=close;$('overlay').addEventListener('click',e=>{if(e.target.id==='overlay')close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+function dialog(title,eyebrow,body,buttons){$('overlay').dataset.b4Transaction='';$('dialogTitle').textContent=title;$('dialogEyebrow').textContent=eyebrow;$('dialogBody').innerHTML=body;$('dialogFoot').innerHTML=buttons;$('overlay').classList.add('open')}
+function close(){$('overlay').classList.remove('open');$('overlay').dataset.b4Transaction=''};$('closeDialog').onclick=close;
+// Prevent accidental backdrop/Escape dismissals for unsent financial-demo forms.
+$('overlay').addEventListener('click',e=>{if(e.target.id==='overlay'&&!$('overlay').dataset.b4Transaction)close()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('overlay').classList.contains('open')&&!$('overlay').dataset.b4Transaction)close()});
 function previewFill(){let s=get(),usd=Number($('usdInput')?.value),price=Number($('priceInput')?.value),out=$('previewBuy');if(!out)return;if(!(usd>0&&price>0)){out.innerHTML='Introduz valores positivos';return}let f=[...s.fills,{usd,price}],Q=f.reduce((a,v)=>a+v.usd/v.price,0),C=f.reduce((a,v)=>a+v.usd,0),newAvg=C/Q,stage=Math.min(3,f.length);out.innerHTML=`BTC adquirido: <strong>${(usd/price).toFixed(8)}</strong><br>Preço médio atualizado: <strong>${money(newAvg)}</strong><br>Objetivo após compra: <strong>${money(newAvg+off[stage-1])}</strong><br>Comissão estimada: ${money(usd*FEE,3)}`}
 function openBuy(){window.BTCBlock4?.openBuy()}
 function openSell(){window.BTCBlock4?.openSell()}
@@ -525,7 +528,9 @@ function openForm(kind,id){let orig=id?ledger.find(e=>e.id===id):null;if(orig)ki
  <div class="b4-field"><label>Notas pessoais (Demo)</label><textarea id="b4FNotes" maxlength="400" placeholder="Porquê esta operação?">${escape(orig?.notes||'')}</textarea></div>
  <div class="b4-preview" id="b4FPreview"></div><div class="b4-err" id="b4FError" role="alert"></div>`;
  api.modal(kind==='buy'?'Registar compra':'Registar venda',orig?'CORRIGIR OPERAÇÃO · DEMO':'NOVA OPERAÇÃO · DEMO',body,'<button class="btn neutral" id="b4FCancel">Cancelar</button><button class="btn primary" id="b4FSave">'+(orig?'Guardar correção':'Registar Demo')+'</button>');
- $('b4FSide').value=side;$('b4FCycle').value=cycle;
+ $('overlay').dataset.b4Transaction='editing';
+$('b4FSide').value=side;$('b4FCycle').value=cycle;
+const formTip=document.createElement('p');formTip.className='b4-save-tip';formTip.textContent='Preenche o preço e montante. A janela só fecha com Cancelar, X ou depois de confirmares o resultado. Nenhuma ordem é enviada.';document.getElementById('dialogBody').prepend(formTip);
  let manualFee=!!orig;let lastFeeAuto=kind==='buy'?initialUsd*api.settings().fee:initialQ*px*api.settings().fee;
  function currentData(){let m=kind==='sell'?(document.querySelector('input[name="b4SellMode"]:checked')?.value||'btc'):'usd',p=Number($('b4FPrice').value),usd=Number($('b4FUsd')?.value),qField=Number($('b4FQty')?.value);return {m,p,usd,qty:kind==='sell'?(m==='usd'?qField/p:qField):usd/p,notional:kind==='sell'?(m==='usd'?qField:qField*p):usd};}
  function updateFee(){let d=currentData();if(!manualFee&&Number.isFinite(d.notional)){$('b4FFee').value=(d.notional*api.settings().fee).toFixed(4);lastFeeAuto=d.notional*api.settings().fee;}}
@@ -541,7 +546,20 @@ function openForm(kind,id){let orig=id?ledger.find(e=>e.id===id):null;if(orig)ki
    const quantityInput=$('b4FQty');document.querySelectorAll('input[name="b4SellMode"]').forEach(x=>x.onchange=()=>{let n=currentData(),mode=document.querySelector('input[name="b4SellMode"]:checked').value;let c=snapshot().sets[$('b4FSide').value][$('b4FCycle').value];$('b4FQtyLabel').textContent=mode==='usd'?'Valor nominal a vender (USD)':'Quantidade BTC a vender';quantityInput.step=mode==='usd'?'0.01':'0.000000000001';quantityInput.value=mode==='usd'?(c.openQty*n.p).toFixed(2):c.openQty.toFixed(12);updateFee();preview()});
    for(let [id,part] of [['b4Half',.5],['b4Full',1]])$(id).onclick=()=>{let c=snapshot().sets[$('b4FSide').value][$('b4FCycle').value],d=currentData();$('b4FQty').value=(d.m==='usd'?c.openQty*Number($('b4FPrice').value)*part:c.openQty*part).toFixed(d.m==='usd'?2:12);updateFee();preview()};
  }
- $('b4FCancel').onclick=api.close;$('b4FSave').onclick=()=>{let v=preview();if(v.err)return;let date=$('b4FDate').value;if(!date||Number.isNaN(new Date(date).getTime())){$('b4FError').textContent='Indica uma data válida.';return}let side=$('b4FSide').value,cycle=$('b4FCycle').value,common={kind,side,cycle,price:v.d.p,fee:v.fee,date:new Date(date).toISOString(),notes:v.notes};let data=kind==='buy'?{...common,usd:v.d.usd}:{...common,qty:v.d.qty};let ok=orig?revise(orig.id,data):add(data);if(ok)api.close();};
+ $('b4FCancel').onclick=api.close;$('b4FSave').onclick=()=>{let v=preview();if(v.err)return;let date=$('b4FDate').value;if(!date||Number.isNaN(new Date(date).getTime())){$('b4FError').textContent='Indica uma data válida.';return}let side=$('b4FSide').value,cycle=$('b4FCycle').value,common={kind,side,cycle,price:v.d.p,fee:v.fee,date:new Date(date).toISOString(),notes:v.notes};let data=kind==='buy'?{...common,usd:v.d.usd}:{...common,qty:v.d.qty};let ok=orig?revise(orig.id,data):add(data);
+if(ok){
+ const safeMoney=(v)=>Number(v).toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2});
+ $('overlay').dataset.b4Transaction='saved';
+ const summary=document.createElement('section');summary.id='b4SaveReceipt';summary.setAttribute('role','status');summary.setAttribute('aria-live','polite');
+ summary.className='b4-saved-receipt';
+ const h=document.createElement('h4');h.textContent=orig?'Correção registada na Demo':kind==='buy'?'Compra fictícia registada':'Venda fictícia registada';
+ const t=document.createElement('p');t.textContent='Guardado apenas no cenário de demonstração. Sem ligação à Kraken nem execução de ordem.';
+ const meta=document.createElement('p');meta.textContent='Estratégia '+cycle+' · '+(side==='descida'?'BTC a descer':'BTC a subir')+' · Preço '+safeMoney(v.d.p)+' USD · '+(kind==='buy'?'Compra '+safeMoney(v.d.usd)+' USD':'Venda '+v.d.qty.toFixed(8)+' BTC');
+ summary.append(h,t,meta);$('dialogBody').replaceChildren(summary);
+ $('dialogFoot').innerHTML='<button type="button" class="btn primary" id="b4ReceiptClose">Entendido · fechar</button>';
+ $('b4ReceiptClose').onclick=api.close;
+}
+};
  updateFee();preview();
 }
 function confirmVoid(id){let e=ledger.find(x=>x.id===id);if(!e)return;api.modal(e.voided?'Repor operação':'Anular operação','CONFIRMAÇÃO DE HISTÓRICO',`<p>${e.voided?'Repor':'Anular'} a ${e.kind==='buy'?'compra':'venda'} <strong>${escape(e.id)}</strong> do conjunto ${e.cycle}?</p><p>As posições e o PNL serão recalculados, e a operação permanecerá visível no histórico para auditoria. A anulação não é uma ordem real.</p>`,'<button class="btn neutral" id="b4VCancel">Cancelar</button><button class="btn sell" id="b4VConfirm">Confirmar</button>');$('b4VCancel').onclick=api.close;$('b4VConfirm').onclick=()=>{if(flip(id))api.close()};}
@@ -1397,22 +1415,37 @@ return Object.freeze({create});
 const qa=window.BTCR54QA,host=document.getElementById('b13AlertHost');
 if(!qa||!host)throw Error('B13_DEMO_MISSING');
 const alertView=window.BTCFinancialAlertsViewV20.create({account:qa.bridge,journal:qa.journal,host});
+const status=document.getElementById('b13GuideStatus');
 function basis(){const s=qa.bridge.state().projection?.shared;return s?{projectId:s.projectId,revision:s.revision,headHash:s.headHash}:null;}
 function scenario(which){
+ if(!basis())document.getElementById('r54A').click();
  const b=basis();
- if(which==='clear'){alertView.setCapacity(null,null);return;}
+ if(!b){status.textContent='Não foi possível iniciar a carteira fictícia. Escolhe Conta fictícia A e tenta novamente.';return;}
+ if(which==='clear'){
+  alertView.setCapacity(null,null);
+  status.textContent='Exemplo limpo. Mantém-se o aviso de cotação/regras desatualizadas porque esta Demo não usa dados de mercado reais.';
+  return;
+ }
  const props={canApply:false,mayCallExchange:false,officialKrakenBuyingPower:false,
-   blockers:which==='cash'?['INSUFFICIENT_CASH_FOR_TARGET_AND_FLOOR_STRESS']:
-     which==='margin'?['EXISTING_POSITION_UNSAFE_BEFORE_NEXT_BUY']:
-     ['INSUFFICIENT_CASH_FOR_TARGET_AND_FLOOR_STRESS']};
+  blockers:which==='cash'?['INSUFFICIENT_CASH_FOR_TARGET_AND_FLOOR_STRESS']:
+    which==='margin'?['EXISTING_POSITION_UNSAFE_BEFORE_NEXT_BUY']:
+    ['INSUFFICIENT_CASH_FOR_TARGET_AND_FLOOR_STRESS']};
  const linked=which==='invalid'&&b?{...b,revision:String(Number(b.revision)+1)}:b;
  alertView.setCapacity(props,linked);
+ const messages={
+  cash:'SIMULAÇÃO: compra sem caixa livre. Repara no aviso «Caixa insuficiente no cenário». Sem compra real.',
+  margin:'SIMULAÇÃO: a margem pode ficar em risco ANTES da próxima compra. Repara no aviso vermelho «Posição em risco».',
+  invalid:'SIMULAÇÃO: o estudo pertence a outra revisão da carteira. Repara no aviso «Capacidade de compra por recalcular».'
+ };
+ status.textContent=messages[which]||'Avisos fictícios da carteira demonstrativa A.';
 }
-document.getElementById('b13Normal').onclick=()=>scenario('clear');
-document.getElementById('b13Cash').onclick=()=>scenario('cash');
-document.getElementById('b13Margin').onclick=()=>scenario('margin');
-document.getElementById('b13Invalid').onclick=()=>scenario('invalid');
-document.getElementById('b13Reset').onclick=()=>scenario('clear');
+for(const [id,name] of [['b13Normal','clear'],['b13Cash','cash'],['b13Margin','margin'],['b13Invalid','invalid'],['b13Reset','clear']]){
+ document.getElementById(id).onclick=()=>scenario(name);
+}
+document.getElementById('b13ReturnDemo').onclick=()=>{
+ alertView.setCapacity(null,null);document.getElementById('r54Demo').click();
+ status.textContent='Regressaste ao visual original da Demo. Os avisos continuam disponíveis aqui para teste fictício.';
+};
 window.BTCB13QA={alertView,scenario,engine:window.BTCFinancialAlertsV20};
 })();</script><style id="b151-ui">#b151Integrated{border:1px solid #285e70;border-radius:14px;background:linear-gradient(110deg,#0a2632,#142b3b);margin:12px 0 18px;padding:16px;color:#dcf6ff;font:14px system-ui,sans-serif}#b151Integrated h3{font-size:17px;color:#d4faff;margin:0 0 9px}#b151Integrated p{margin:7px 0 10px;color:#9fd2dd;font-size:12px;line-height:1.6}#b151Integrated .b151-buttons{display:flex;flex-wrap:wrap;gap:9px}#b151Integrated button{border:1px solid #44a3b4;border-radius:9px;background:#175669;color:#f2feff;padding:10px 14px;min-height:42px;cursor:pointer}#b151Integrated button:focus-visible{outline:2px solid #82efff;outline-offset:2px}#b151Integrated .b151-alert{border-left:3px solid #e8bb4a;background:#342d22;padding:10px 12px;border-radius:6px;font-size:12px;margin-top:11px;color:#ffe5b0}#b151Integrated .b151-info{color:#81e1b9;font-size:12px;font-weight:650}@media(max-width:390px){#b151Integrated{padding:12px}#b151Integrated button{width:100%}}</style><script id="b151-original-guide">/* BTC Strategy Pro — B13.2: tutorial V20, only educational.
  * Does not connect to Kraken/Supabase, write wallet data, choose risk profiles,
