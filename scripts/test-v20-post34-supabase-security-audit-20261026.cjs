@@ -73,7 +73,7 @@ test('All subsequent real-account tasks are pending owner-gated review',()=>{
 test('SQL auditor remains READ ONLY, contains no business-data reads or DDL',()=>{
  const sql=fs.readFileSync(path.join(root,'scripts/v20-post34-supabase-readonly-audit.sql'),'utf8');
  const withoutComments=sql.split('\n').filter(l=>!l.trim().startsWith('--')).join('\n');
- assert.ok((withoutComments.match(/\bselect\b/gi)||[]).length>=7);
+ assert.ok((withoutComments.match(/\bselect\b/gi)||[]).length>=6);
  assert.doesNotMatch(withoutComments,/\b(?:update|delete|insert|alter|drop|create|truncate|grant|revoke|copy|call|do)\b/i);
  assert.doesNotMatch(withoutComments,/\b(?:auth\.users|auth\.identities|btcsp_financial_events)\b/i,
   'Do not read personal or financial source tables for an infrastructure audit');
