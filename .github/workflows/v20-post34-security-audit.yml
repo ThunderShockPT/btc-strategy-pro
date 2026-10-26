@@ -10,6 +10,16 @@ on:
       - 'policies/cloud-release-20261021.json'
       - 'policies/v20-b15-release-evidence-20261025.json'
       - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
+  pull_request:
+    branches: [qa/v20-block12-recovery-20261022]
+    paths:
+      - '.github/workflows/v20-post34-security-audit.yml'
+      - 'scripts/test-v20-post34-supabase-security-audit-20261026.cjs'
+      - 'scripts/v20-post34-supabase-readonly-audit.sql'
+      - 'policies/v20-post34-supabase-security-audit-20261026.json'
+      - 'policies/cloud-release-20261021.json'
+      - 'policies/v20-b15-release-evidence-20261025.json'
+      - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
   workflow_dispatch:
 permissions:
   contents: read
