@@ -260,3 +260,14 @@ Criada a matriz de autorização em `policies/v20-b15-release-evidence-20261025.
 **NÃO confundir com aplicação lançada:** `policies/cloud-release-20261021.json` mantém `financialCloudApproved:false`, `publicRegistrationApproved:false` e todos os nove checks oficiais não aprovados. `policies/v20-b15-release-evidence-20261025.json` mantém os gates de **lançamento** de R1.4/R2.4 fechados porque estes exigem aprovação financeira real **distinta da arquitetura do produto**. O PR #35 permanece **draft, não fundido**; `main` (V19.1) e dados de produção não são alterados por este fecho.
 
 **Trabalho pós-plano ainda necessário para usar contas/dinheiro reais:** aprovação independente de grelhas e políticas de risco para produção; verificação atual das regras Kraken EEE e funding; testes reais de RLS, SMTP, registo e recuperação de conta; backup, restauro e privacidade em ambiente real; ensaio final do dispositivo; revisão de segurança/lançamento e autorização expressa separada do proprietário. **Sem promessa de lucro nem de não liquidação.**
+
+
+## Pós-plano P1.1 — Auditoria da infraestrutura existente sem alterações (26/10/2026)
+
+Após a aceitação **somente arquitetural** das 34 etapas, começou uma **fase P1 adicional de preparação da Beta real**, sem alterar o significado de 34/34 técnico (100%). O plano P1 tem **8 etapas independentes** e a primeira, **P1.1/8**, é a auditoria **read-only** do Supabase existente.
+
+Recolha de evidência real por API/SQL SELECT: projeto saudável; 14 tabelas (8 `public`, 6 `btcsp_private`) todas com RLS; 6 tabelas financeiras públicas exclusivamente SELECT own; schema privado sem USAGE para `anon`/`authenticated`; nenhuma view ou função `SECURITY DEFINER` nesses schemas. Advisor `auth_leaked_password_protection` **WARN** (ainda desativado); avisos INFO de RLS sem políticas nas 6 tabelas privadas (deny by default provável, não abrir sem motivo); 9 FK sem índice e 3 índices não usados. **Todas as 5 Edge Functions ativas têm `verify_jwt=false`; o código inspecionado parcialmente em duas funções faz verificação do Bearer e `/auth/v1/user`, mas faltam testes de acesso real e revisão das cinco**.
+
+Documentação: `docs/V20_POS34_P1_ETAPA1_AUDITORIA_SUPABASE_20261026.md`; snapshot sem dados pessoais: `policies/v20-post34-supabase-security-audit-20261026.json`; SQL apenas leitura: `scripts/v20-post34-supabase-readonly-audit.sql`; testes 8 casos: `scripts/test-v20-post34-supabase-security-audit-20261026.cjs`. **P1.1/8 auditada; P1.2** revisão detalhada de autenticação das cinco Edge Functions; P1.3 passwords, P1.4 RLS com contas de ensaio, P1.5 SMTP/Auth, P1.6 restauro, P1.7 regras Kraken, P1.8 simulação de release e GO/NO-GO.
+
+`financialCloudApproved:false`, `publicRegistrationApproved:false`, PR #35 draft, nenhum merge nem alteração de Supabase, real money `NO_GO`. A CI de P1.1 deve confirmar que os controlos estáticos permanecem fechados, mas não substitui testes reais de RLS/segurança.
