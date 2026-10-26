@@ -24,7 +24,7 @@ Além disso `#r52QA` estava no início da Home antes dos gráficos premium origi
 
 **Local:** Chromium real nos viewports 320, 390, 393, 430, 768 e 1440 px; 222 verificações aprovadas. Incluem navegação pelos **cinco** botões de menu, consistência dos conteúdos e estado de visibilidade, não sobreposição do QA no primeiro ecrã, sem overflow horizontal ou erros de JavaScript, alternância dos dois perfis fictícios, alerta de caixa, reset, tutorial, compra fictícia e confirmação sem fechar modal. ZIP validado por `ZipFile.testzip()`, com 11 ficheiros, ícones e manifesto.
 
-**GitHub CI:** `scripts/test-b15-navigation-visual-browser-20261026.cjs` introduz 9 casos (1 estático, 6 larguras e 2 testes de alertas/compra) no workflow de regressão completo. Confirmar a execução final antes de alegar regressão CI aprovada.
+**GitHub CI verificada:** GitHub Actions https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40395394838 — **664/664 testes PASS, 0 FAIL**, 38 suites, 9/9 testes novos de navegação e fluxos em browser aprovados. Código `scripts/test-b15-navigation-visual-browser-20261026.cjs`; os casos confirmam seis resoluções e a compra e os alertas a 393/1440 px.
 
 **Não testado ainda:** nova versão instalada no Samsung Galaxy S25 **após** publicação manual do ZIP corrigido no Netlify, funcionamento offline do novo ficheiro, nem integração financeira real. Site https://adorable-heliotrope-b8a413.netlify.app/ pode continuar a servir versão anterior até upload manual, atualização da PWA e reabertura.
 
