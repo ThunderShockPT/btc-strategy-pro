@@ -1,0 +1,31 @@
+name: BTC Strategy Pro V20 - post-34 security audit (no cloud changes)
+on:
+  push:
+    branches: [audit/v20-strategy-recovery-20261025]
+    paths:
+      - '.github/workflows/v20-post34-security-audit.yml'
+      - 'scripts/test-v20-post34-supabase-security-audit-20261026.cjs'
+      - 'scripts/v20-post34-supabase-readonly-audit.sql'
+      - 'policies/v20-post34-supabase-security-audit-20261026.json'
+      - 'policies/cloud-release-20261021.json'
+      - 'policies/v20-b15-release-evidence-20261025.json'
+      - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-security-snapshot-without-credentials:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout QA branch
+        uses: actions/checkout@v4
+      - name: Setup Node without installing external dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify read-only Supabase audit and deny all production gates
+        run: node --test scripts/test-v20-post34-supabase-security-audit-20261026.cjs
+      - name: Confirm no deploy, no secrets and no prod mutation
+        run: |
+          node -e "const p=require('./policies/cloud-release-20261021.json');if(p.financialCloudApproved||p.publicRegistrationApproved||Object.values(p.checks).some(Boolean))process.exit(1);console.log('PASS: financial/cloud/public registration remain CLOSED')"
