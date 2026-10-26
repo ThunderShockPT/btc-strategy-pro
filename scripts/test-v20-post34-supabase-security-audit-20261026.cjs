@@ -52,7 +52,7 @@ test('Leak-password protection warning must not be interpreted as remediation',(
  assert.equal(a.find(x=>x.name==='rls_enabled_no_policy').count,6);
  assert.equal(audit.advisors.performance.find(x=>x.name==='unindexed_foreign_keys').count,9);
 });
-test('P1.1 cannot open release gates even with owner's architecture approval',()=>{
+test("P1.1 cannot open release gates even with owner's architecture approval",()=>{
  assert.equal(consent.consent,'APPROVED_PRODUCT_ARCHITECTURE_ONLY');
  assert.equal(policy.financialCloudApproved,false);
  assert.equal(policy.publicRegistrationApproved,false);
