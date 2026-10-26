@@ -22,3 +22,11 @@ A recuperação matemática e os protótipos R1 estão tecnicamente prontos para
 Abrir os protótipos R1 (comparador e validador) já disponibilizados na conversa; selecionar BTC referência 80.000 USD e cinco ciclos. Comparar V20 concentrada (mínimo ~76.640 USD) com grelha histórica A–E (mínimo 60.000 USD) e observar o bloqueio do preço igual ao piso. Alterar caixa entre 1.000/1.500/2.000 USD e verificar que o resultado de capacidade muda; nenhuma operação real é executada.
 
 **Estado:** R1 etapa 4/4 — revisão técnica feita, feedback humano/decisão de regra pendentes. Avançar R2 em paralelo, sem alterar política V20.
+
+## Adenda de 26/10/2026 — fecho de R1.4, apenas arquitetura
+
+**Decisão humana expressa recebida e registada:** o proprietário aprovou exclusivamente a arquitetura do **Modelo C adaptativo** (3 compras por ciclo, 20%/30%/50%), com **Clássico A–E como comparador**, **piso de stress estrito** e separação de **caixa / margem isolada efetiva / margem prevista**. Não aprovou alterações a parâmetros de trading reais, registo público, ordens Kraken nem publicação financeira.
+
+Fontes de aceitação: `policies/v20-model-c-architecture-owner-consent-20261026.json`, `docs/V20_R1_R2_FECHO_DECISAO_20261026.md`. A revisão **R1.4 fica tecnicamente concluída e aceite apenas quanto à arquitetura do produto**. A tabela A–E é referência de comparação; uma compra no piso de stress continua proibida. A decisão **não** constitui calibração, backtest, garantia de resistência à liquidação ou aprovação de negociação real.
+
+**Lançamento:** `financialCloudApproved:false` e `publicRegistrationApproved:false` preservados; PR #35 draft. O texto de 25/10 acima é histórico anterior à aceitação, não deve ser usado como estado atual.
