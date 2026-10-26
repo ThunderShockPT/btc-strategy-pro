@@ -53,3 +53,10 @@ Esses testes apenas verificam a consistência do que foi efetivamente observado;
 - PR #35 mantém-se rascunho. **GO/NO-GO para contas reais/públicas e operações Kraken: NO_GO**.
 
 **Nota sobre o changelog:** revista a página pública Supabase Changelog de 2026, incluindo avisos relativos a Auth/SMTP. Não foi identificado um anúncio que altere a condição documentada **Pro+** para leaked password protection nesta revisão.
+
+
+## Resultado dos testes em GitHub Actions
+
+**GitHub Actions 40415051549 — 26/26 PASS, 0 FAIL.** O job da P1.3 passou os 8 controlos de revisão sem aceder aos dados de utilizadores; juntamente com P1.1 (8) e P1.2 (10), verificou que o lançamento financeiro e os registos públicos continuam fechados. https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40415051549
+
+**Interpretação:** avaliação da P1.3 concluída; remediação `auth_leaked_password_protection` **não concluída** no plano Free. O aviso real persiste; a P1.3 permanece assinalada como pendência de segurança antes de qualquer lançamento.
