@@ -12,6 +12,8 @@ on:
       - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
       - 'scripts/test-v20-post34-edge-function-audit-20261026.cjs'
       - 'policies/v20-post34-edge-functions-audit-20261026.json'
+      - 'policies/v20-post34-password-security-review-20261026.json'
+      - 'scripts/test-v20-post34-password-security-20261026.cjs'
       - 'backend/edge-runtime.cjs'
       - 'backend/private-test-runtime.cjs'
       - 'backend/private-test-provision.cjs'
@@ -27,6 +29,8 @@ on:
       - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
       - 'scripts/test-v20-post34-edge-function-audit-20261026.cjs'
       - 'policies/v20-post34-edge-functions-audit-20261026.json'
+      - 'policies/v20-post34-password-security-review-20261026.json'
+      - 'scripts/test-v20-post34-password-security-20261026.cjs'
       - 'backend/edge-runtime.cjs'
       - 'backend/private-test-runtime.cjs'
       - 'backend/private-test-provision.cjs'
@@ -48,6 +52,8 @@ jobs:
         run: node --test scripts/test-v20-post34-supabase-security-audit-20261026.cjs
       - name: Verify P1.2 five Edge Functions authentication guard evidence
         run: node --test scripts/test-v20-post34-edge-function-audit-20261026.cjs
+      - name: Verify P1.3 password security Free-plan restrictions and owner authorization
+        run: node --test scripts/test-v20-post34-password-security-20261026.cjs
       - name: Confirm no deploy, no secrets and no prod mutation
         run: |
           node -e "const p=require('./policies/cloud-release-20261021.json');if(p.financialCloudApproved||p.publicRegistrationApproved||Object.values(p.checks).some(Boolean))process.exit(1);console.log('PASS: financial/cloud/public registration remain CLOSED')"
