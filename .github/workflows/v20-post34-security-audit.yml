@@ -10,6 +10,11 @@ on:
       - 'policies/cloud-release-20261021.json'
       - 'policies/v20-b15-release-evidence-20261025.json'
       - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
+      - 'scripts/test-v20-post34-edge-function-audit-20261026.cjs'
+      - 'policies/v20-post34-edge-functions-audit-20261026.json'
+      - 'backend/edge-runtime.cjs'
+      - 'backend/private-test-runtime.cjs'
+      - 'backend/private-test-provision.cjs'
   pull_request:
     branches: [qa/v20-block12-recovery-20261022]
     paths:
@@ -20,6 +25,11 @@ on:
       - 'policies/cloud-release-20261021.json'
       - 'policies/v20-b15-release-evidence-20261025.json'
       - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
+      - 'scripts/test-v20-post34-edge-function-audit-20261026.cjs'
+      - 'policies/v20-post34-edge-functions-audit-20261026.json'
+      - 'backend/edge-runtime.cjs'
+      - 'backend/private-test-runtime.cjs'
+      - 'backend/private-test-provision.cjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,6 +46,8 @@ jobs:
           node-version: '22'
       - name: Verify read-only Supabase audit and deny all production gates
         run: node --test scripts/test-v20-post34-supabase-security-audit-20261026.cjs
+      - name: Verify P1.2 five Edge Functions authentication guard evidence
+        run: node --test scripts/test-v20-post34-edge-function-audit-20261026.cjs
       - name: Confirm no deploy, no secrets and no prod mutation
         run: |
           node -e "const p=require('./policies/cloud-release-20261021.json');if(p.financialCloudApproved||p.publicRegistrationApproved||Object.values(p.checks).some(Boolean))process.exit(1);console.log('PASS: financial/cloud/public registration remain CLOSED')"
