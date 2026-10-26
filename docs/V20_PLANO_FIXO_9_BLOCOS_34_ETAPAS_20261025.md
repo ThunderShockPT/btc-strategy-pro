@@ -12,8 +12,8 @@
 | R5 Fecho Bloco 12 | 5 | Conta e backend; execucoes e importacao; privacidade e restauro; carga; QA alojada e mobile |
 | 13 Alertas/tutorial | 3 | Alertas; onboarding; QA |
 | 14 Auditoria independente | 3 | Regras Kraken; reconciliacao formulas; QA financeira |
-| 15 Beta | 4 | QA integrado; seguranca/rollback; S25; aprovacao e publicacao |
-| **Total** | **34** | **R0 3/3; R1 2/4 tecnicamente implementada, pendente de avaliacao do utilizador** |
+| 15 Beta | 4 | QA integrado; seguranca/rollback; ensaios Android; gates de release (publicacao financeira bloqueada) |
+| **Total** | **34** | **34/34 entregas tecnicas/arquiteturais fechadas em 26/10; publicacao financeira NAO aprovada** |
 
 ## Como trabalhar
 
@@ -232,3 +232,31 @@ Criado o pacote PWA instalável **em origem HTTPS**, isolado em `previews/b153/`
 ## Bloco 15.4 — QA final de release e aprovação bloqueada (25/10/2026)
 
 Criada a matriz de autorização em `policies/v20-b15-release-evidence-20261025.json`, com 18 condições humanas/operacionais inicialmente falsas; o avaliador `scripts/check-b15-release-readiness-20261025.cjs` recusa publicação ou preview sem consentimento explícito, sem confundir testes automatizados com aceitação de risco e de produção. `scripts/test-b15-release-readiness-20261025.cjs`: 11 novos testes de gates negativos e casos sintéticos de autorização; `scripts/build-b15-release-candidate-20261025.cjs`: atestação SHA-256 de oito ficheiros PWA de teste, nunca deployment. **GitHub Actions https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40240463726 — 651/651 PASS, 0 FAIL**. ZIP de revisão: https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40240463726/artifacts/12616867553. Relatório: `docs/V20_B15_ETAPA4_GATE_FINAL_20261025.md`. **33/34 etapas técnicas (~97,1%); B15 4/4 preparado tecnicamente**, MAS R1.4 exige validação financeira humana (não converter «avançar» em aceitação). R2.4, S25 físico, visual da conta no aparelho, preview HTTPS autorizado, restauro real, SMTP, RLS, política cloud e regras Kraken continuam pendentes antes de qualquer produção. `main` V19.1 inalterada; PR #35 draft, sem merge, sem deploy, sem operações reais. A etapa 34/34 **não** está fechada.
+
+
+## Fecho final do plano técnico — 26/10/2026 — 34/34 (100% técnico, NÃO lançamento)
+
+**Decisão humana explícita:** o proprietário aprovou **apenas a arquitetura** do Modelo C adaptativo, três compras **20%/30%/50% por ciclo**, referência Clássico A–E, piso de stress estrito (compra no piso ou abaixo rejeitada) e separação entre caixa, margem isolada efetivamente atribuída e reforços de margem planeados. **Não autorizou** alterações de níveis/preços/espaçamentos de trading real, abertura de registos públicos, ordens Kraken, operações financeiras reais, merge ou publicação financeira. Consentimento estruturado: `policies/v20-model-c-architecture-owner-consent-20261026.json`.
+
+**R1.4** passa de "gate humano pendente" para **decisão arquitetural aceite**. **R2.4** passa a **direção arquitetural aceite**, sem aprovar resultados dos estudos como backtest real, retornos ou preços de entradas. Os relatórios originais de 25/10 continuam como evidência histórica; adendas datadas em `docs/V20_R1_ETAPA4_REVIEW_20261025.md`, `docs/V20_R2_ETAPA4_CONCLUSOES_20261025.md` e `docs/V20_R1_R2_FECHO_DECISAO_20261026.md` explicitam o novo estado.
+
+| Bloco | Etapas técnicas contabilizadas | Evidência de estado |
+|---|---:|---|
+| R0 Auditoria/proteção | **3/3** | Inventário, integridade, checkpoint |
+| R1 Estratégia original | **4/4** | Comparador, pisos/margem e consentimento restrito R1.4 |
+| R2 Estudos e direção | **4/4** | Estudos sintéticos documentados e escolha restrita R2.4 |
+| R3 Motor financeiro | **4/4** | Implementação e testes em QA isolada; sem ordens reais |
+| R4 Demo premium | **4/4** | Cinco menus, formulários e QA visual em browser |
+| R5 Bloco 12 | **5/5** | API/ledger/estado integrado testados em QA, não em produção |
+| 13 Alertas/tutorial | **3/3** | Alertas educativos, onboarding, regressões |
+| 14 Auditoria independente | **3/3** | Documentação de regras, reconciliação e cenários adversos |
+| 15 Beta | **4/4** | PWA de QA, segurança e checklist de release; sem autorização para lançar |
+| **TOTAL** | **34/34 (100% entrega técnica)** | **Produção: NO_GO** |
+
+**Auditoria etapa-a-etapa:** `docs/V20_34_ETAPAS_AUDITORIA_FECHO_TECNICO_20261026.json` lista as **34 etapas individualmente**, uma evidência por etapa, com a aprovação humana limitada a R1.4/R2.4. Contagem coerente com **9 blocos** e a matriz original.
+
+**Evidência regressão pré-fecho:** GitHub Actions https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40395394838 — **664/664 PASS, 0 FAIL**, incluindo a correção visual dos cinco menus. Os testes de integridade do consentimento e contagem foram adicionados ao workflow `.github/workflows/r3-risk-paths-qa.yml`; verificar no run novo o respetivo resultado. O proprietário confirmou "feito e testado" da nova Demo Netlify; já havia confirmado a instalação Galaxy S25 e uso offline na versão anterior. Não atribuir ao utilizador testes que não discriminou após a última atualização.
+
+**NÃO confundir com aplicação lançada:** `policies/cloud-release-20261021.json` mantém `financialCloudApproved:false`, `publicRegistrationApproved:false` e todos os nove checks oficiais não aprovados. `policies/v20-b15-release-evidence-20261025.json` mantém os gates de **lançamento** de R1.4/R2.4 fechados porque estes exigem aprovação financeira real **distinta da arquitetura do produto**. O PR #35 permanece **draft, não fundido**; `main` (V19.1) e dados de produção não são alterados por este fecho.
+
+**Trabalho pós-plano ainda necessário para usar contas/dinheiro reais:** aprovação independente de grelhas e políticas de risco para produção; verificação atual das regras Kraken EEE e funding; testes reais de RLS, SMTP, registo e recuperação de conta; backup, restauro e privacidade em ambiente real; ensaio final do dispositivo; revisão de segurança/lançamento e autorização expressa separada do proprietário. **Sem promessa de lucro nem de não liquidação.**
