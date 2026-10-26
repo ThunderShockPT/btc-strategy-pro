@@ -65,3 +65,12 @@ Ver protocolo completo em `previews/b153/README.md`. No telefone: instalar via m
 O fecho do **B15.4 técnico** permite declarar **33/34 etapas técnicas preparadas** (97,1%); **não** declarar 34/34 nem «aplicação finalizada» até passar o gate humano pendente R1.4 e restantes aprovações de release. Conclusão do Bloco 15 na vertente técnica não equivale a abertura ao público.
 
 **Este ficheiro é o checkpoint de aprovação de lançamento — não uma autorização para publicar.**
+
+
+## Adenda de 26/10/2026 — consentimento arquitetural NÃO abre gates financeiros
+
+O proprietário aceitou **apenas o desenho de produto R1.4/R2.4**, em `policies/v20-model-c-architecture-owner-consent-20261026.json`: Modelo C adaptativo, compras 20/30/50 por ciclo, Clássico A–E comparador, piso estrito e separação de margem atribuída vs planeada. Não consentiu parametrização de preços/regras de trading real, registos públicos, operações Kraken ou publicação financeira.
+
+**O 34/34 refere-se exclusivamente às entregas técnicas e à decisão arquitetural.** Assim, `policies/v20-b15-release-evidence-20261025.json` mantém os seus campos `ownerApprovals.strategyModelR14:false` e `strategyCriteriaR24:false` porque se referem à **aprovação financeira necessária para lançar**, não à aceitação da arquitetura da aplicação. `financialCloudApproved:false`, `publicRegistrationApproved:false` e os nove controlos oficiais permanecem intactos. **GO/NO-GO: NO_GO** para qualquer release financeira. A Demo de QA hospedada separadamente é um ensaio de dados fictícios, não prova de conformidade da aplicação autenticada.
+
+Contagem auditável das 34 entregas: `docs/V20_34_ETAPAS_AUDITORIA_FECHO_TECNICO_20261026.json`; referência de testes: `scripts/test-v20-final-architecture-consent-20261026.cjs`. O histórico acima reflete corretamente a situação *antes* da aceitação de arquitetura de 26/10.
