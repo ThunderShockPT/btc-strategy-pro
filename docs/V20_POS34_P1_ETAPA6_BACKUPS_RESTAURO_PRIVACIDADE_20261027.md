@@ -28,7 +28,7 @@ Confirmado por ferramenta Supabase `get_project` e `get_organization`: projeto a
 - Workflow `.github/workflows/v20-post34-backup-restore-qa.yml` executa também o teste direcionado `native encrypted pg_dump restores...` com **PostgreSQL 17 descartável**, Postgres dentro do container de CI, sem chaves, emails ou dados da produção.
 - Os testes CI não criam backups remotos, não executam recuperação sobre o projeto hospedado e não aprovam restauro de dados financeiros reais.
 
-**Resultado CI:** será documentado apenas depois da confirmação de uma execução verde; um script presente no repositório não é teste executado.
+**Resultado CI confirmado:** [GitHub Actions #40425560740](https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40425560740) — **19/19 PASS, 0 FAIL**. Distribuição: 8 novos testes de política/cifra/privacidade, 4 testes do envelope criptográfico, 6 testes de portabilidade autenticada e 1 teste **real** com PostgreSQL 17 descartável que executou `pg_dump`, cifrou e autenticou o arquivo, repôs via `pg_restore` numa **segunda base isolada** e confirmou saldos, eventos, planos, RLS e proteção append-only. Todos os gates financeiros continuaram fechados. O primeiro ensaio individual da mesma workflow tinha falhado porque pressupunha um cálculo pendente gerado pelos testes anteriores; o teste foi tornado independente, preservando o ensaio adicional de retoma de cálculos quando há um job pendente. A correção mexeu exclusivamente no teste `scripts/test-atomic-postgres.cjs`, não no motor, schema nem base alojada.
 
 ## 4. Pontos ainda obrigatórios para Beta real
 
@@ -59,3 +59,10 @@ Confirmado por ferramenta Supabase `get_project` e `get_organization`: projeto a
 - **P1.8:** avaliação do lançamento e autorização expressa separada do proprietário.
 
 **Estado de produção: NO_GO.** `financialCloudApproved:false`, `publicRegistrationApproved:false`, os nove controlos de lançamento continuam fechados. PR #35 *draft*; `main` V19.1, app pública, Netlify Demo, contas e Kraken intocados.
+
+
+## 6. Resultado verificado após a execução
+
+**P1.6 QA técnica de restauro e cifra: APROVADA em ambiente isolado**. Confirmou-se que os dados sintéticos sobrevivem ao processo de exportação/restauro e que o segundo banco preserva a política de acesso. **NÃO foi efetuada nenhuma cópia de dados reais**, e a execução CI é totalmente efémera.
+
+**P1.6 capacidade operacional em produção: BLOQUEADA** por falta de plano aprovado de backups Free, destino externo, custódia da chave, retenção/eliminação legal, RPO/RTO e ensaio de recuperação integral (Auth, Storage, SMTP, Edge Functions, configuração, segredos). P1.7 pode começar como auditoria separada sem desbloquear esta etapa para produção. **O PR #35 continua draft e não deve ser fundido nem publicado automaticamente.**
