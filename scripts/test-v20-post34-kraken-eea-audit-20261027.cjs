@@ -67,7 +67,7 @@ test('P1.7 fee examples are not current user maker/taker tiers',()=>{
  assert.ok(document.repoSnapshot.knownLimitations.includes('MANUAL_FEES_REQUIRED'));
  assert.ok(document.criticalDifferences.some(x=>x.id==='FEES_LOCALE_DATE_DIVERGENCE'));
 });
-test('P1.7 preserves owner's Model C 20/30/50 product-only architecture',()=>{
+test("P1.7 preserves owner-approved Model C 20/30/50 product-only architecture",()=>{
  assert.equal(consent.consent,'APPROVED_PRODUCT_ARCHITECTURE_ONLY');
  assert.equal(consent.architecture.primaryModel,'C_ADAPTIVE');
  assert.deepEqual(consent.architecture.cycles.buySlicesPercent,[20,30,50]);
