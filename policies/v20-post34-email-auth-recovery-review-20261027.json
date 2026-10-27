@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "btcsp-v20-post34-auth-email-recovery-audit.1",
+  "observedAt": "2026-10-27",
+  "projectRef": "oftzqqjbwonngubihrsd",
+  "sourceReview": [
+    "account-session-v20.js",
+    "auth-guard.js",
+    "previews/v20-r5-login-wallets-qa-20261025.html",
+    "scripts/test-account-session.cjs",
+    "scripts/test-auth-guard.cjs",
+    "scripts/test-authenticated-api.cjs",
+    "policies/cloud-release-20261021.json",
+    "Supabase Auth official SMTP, password and rate limits documentation"
+  ],
+  "sourceCodeFindings": {
+    "cloudAccountsDisabledInProductionPolicy": true,
+    "previewHasAuthRegistrationFormButDisabledWithoutBetaAuthFlag": true,
+    "previewUsesSignUp": true,
+    "previewEmailRedirectTo": "location.origin+location.pathname",
+    "previewUsesResetPasswordForEmail": true,
+    "previewResetRedirectTo": "location.origin+location.pathname",
+    "previewUsesUpdateUserPassword": true,
+    "accountSessionRequiresConfirmedNonAnonymousUser": true,
+    "accountSessionRecoveryModeNeverAttachesFinancialData": true,
+    "accountSessionPasswordChangePerformsGlobalSignOut": true,
+    "accountSessionRejectsInvalidOrExpiredSessions": true,
+    "authGuardRequiresHTTPSOrLocalhost": true,
+    "authGuardRejectsQueryAndHashFromRedirect": true,
+    "authGuardGeneralErrorsAvoidInternalDetails": true,
+    "authGuardRecognizesRateLimitAndExpiredLinkCodes": true,
+    "previewPasswordInputMinLength": 8,
+    "accountSessionPasswordResetMinimumLength": 10,
+    "crossVersionPasswordLengthDiscrepancy": "REQUIRES_UI_ALIGNMENT_BEFORE_ACTIVATION",
+    "redirectOriginSelectedAtRuntime": true,
+    "redirectMustBeAllowedInSupabaseAuthSettings": true,
+    "referenceSiteUrl": "https://thundershockpt.github.io/btc-strategy-pro/",
+    "referenceQAUrl": "https://adorable-heliotrope-b8a413.netlify.app/"
+  },
+  "liveConfiguration": {
+    "smtpProvider": "NOT_VERIFIED",
+    "customSmtpEnabled": "NOT_VERIFIED",
+    "senderDomainAndSPF_DKIM_DMARC": "NOT_VERIFIED",
+    "authEmailConfirmationsEnabled": "NOT_VERIFIED",
+    "siteUrl": "NOT_VERIFIED",
+    "redirectAllowList": "NOT_VERIFIED",
+    "emailRateLimits": "NOT_VERIFIED",
+    "recoveryLinkLifetime": "NOT_VERIFIED",
+    "otpAndVerificationRateLimits": "NOT_VERIFIED",
+    "customTemplates": "NOT_VERIFIED",
+    "customPasswordPolicy": "NOT_VERIFIED",
+    "realEmailDeliverabilityTest": "NOT_PERFORMED",
+    "twoHostedAuthenticatedAccounts": "NOT_PERFORMED",
+    "whyUnknown": "Current connected Supabase tools support project, advisors, SQL, functions, docs but not reading the project Auth configuration. No attempt to access Management API tokens, real email accounts or send emails."
+  },
+  "documentaryConstraints": {
+    "builtInSMTP": "Supabase's default SMTP is for testing and only permits delivery to pre-authorized team addresses; custom SMTP is required to send reliably to public recipients.",
+    "redirectRules": "Site URL and allowed redirect URLs must be reviewed and pinned for the approved production domain; avoid broad wildcards.",
+    "abuseMitigations": "Provider-side Auth rate limiting/SMTP settings must be checked; UI error messages are not provider-level enforcement.",
+    "officialDocs": [
+      "https://supabase.com/docs/guides/auth/auth-smtp",
+      "https://supabase.com/docs/guides/auth/passwords",
+      "https://supabase.com/docs/guides/auth/rate-limits",
+      "https://supabase.com/docs/guides/auth/redirect-urls"
+    ]
+  },
+  "riskRegister": [
+    {
+      "id": "SMTP_UNKNOWN",
+      "priority": "BLOCKING_REAL_REGISTRATION",
+      "reason": "No proof of custom SMTP configuration, sender domain ownership, delivery or inbox filtering"
+    },
+    {
+      "id": "REDIRECT_ALLOWLIST_UNKNOWN",
+      "priority": "BLOCKING_REAL_EMAIL_LINKS",
+      "reason": "No proof production callback and recovery URLs are allowed and restricted"
+    },
+    {
+      "id": "RATE_LIMITS_UNKNOWN",
+      "priority": "BLOCKING_REAL_REGISTRATION",
+      "reason": "No access to current Auth verification/email/OTP limits"
+    },
+    {
+      "id": "PASSWORD_UI_MIN_LENGTH_DRIFT",
+      "priority": "REVIEW",
+      "reason": "QA preview password field says minimum 8; session reset module enforces minimum 10; align before enabling"
+    },
+    {
+      "id": "RECOVERY_LINK_RUNTIME_UNKNOWN",
+      "priority": "BLOCKING_REAL_RECOVERY",
+      "reason": "No inbox-delivered real recovery link, expiry and session invalidation test"
+    },
+    {
+      "id": "P1_3_NATIVE_LEAKED_PASSWORD",
+      "priority": "BLOCKING_REAL_REGISTRATION",
+      "reason": "P1.3 Free-tier compromised-password protection still not available"
+    }
+  ],
+  "nextSafeActions": [
+    "Run offline simulated Auth callback, error privacy and account session regressions",
+    "Get owner-approved read-only screenshot/export of Auth SMTP, URL allowlist and rate limits (never expose SMTP passwords/API secrets)",
+    "Test actual email delivery only with explicit isolated QA accounts and approved test recipient",
+    "Do not enable public signUp, do not modify Auth configuration or release policies without separate approval"
+  ],
+  "outcome": {
+    "stage": "P1.5",
+    "evaluation": "SOURCE_AND_OFFLINE_QA_READY",
+    "hostedAcceptance": "PENDING",
+    "deliveryCountOriginal34": 34,
+    "releaseDecision": "NO_GO",
+    "financialCloudApproved": false,
+    "publicRegistrationApproved": false,
+    "emailsSent": 0,
+    "userRecordsRead": 0,
+    "supabaseWrites": 0,
+    "branchOnly": true
+  }
+}
