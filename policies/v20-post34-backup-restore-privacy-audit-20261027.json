@@ -122,11 +122,16 @@
     "mayTradeOnKraken": false
   },
   "acceptance": {
-    "offlineBackupAndRestoreQA": "PENDING_CI",
+    "offlineBackupAndRestoreQA": "PASSED_DISPOSABLE_POSTGRES_2026-10-27",
     "hostedOperationalRestore": "PENDING_EXPLICIT_SEPARATE_APPROVAL",
     "productionGoNoGo": "NO_GO",
     "publicRegistrationApproved": false,
     "financialCloudApproved": false,
-    "original34StagesTechnicalComplete": 34
+    "original34StagesTechnicalComplete": 34,
+    "ciRunId": 40425560740,
+    "ciPassed": 19,
+    "ciFailed": 0,
+    "productionOperationalBackupReady": false,
+    "releaseTestMeaning": "8 synthetic backup/privacy tests + 4 existing envelope + 6 existing account exports + 1 real PostgreSQL encrypted pg_dump/pg_restore on second disposable DB"
   }
 }
