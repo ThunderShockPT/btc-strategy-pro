@@ -46,7 +46,7 @@ Esta é uma revisão documental. **Não foi capturado e autenticado o endpoint d
 - `.github/workflows/v20-post34-kraken-eea-audit.yml` — CI isolada com testes existentes de Kraken B14 e `position-risk.js` usando simulações, sem acesso à Kraken.
 - Regressões B14 e PositionRisk não atualizam preços, não ligam API nem modificam motor.
 
-**Resultado CI:** consultar o resultado real de GitHub Actions antes de declarar aprovação; uma revisão de documentos não equivale a comparar valores privados reais.
+**Resultado CI verificado:** GitHub Actions https://github.com/ThunderShockPT/btc-strategy-pro/actions/runs/40427232269 — **52/52 testes PASS, 0 FAIL**: 10 novos testes de margens, funding, fees, mark/liquidação e gates fechados, 8 testes B14 de documentação Kraken e 34 testes de `position-risk.js` (motor aproximado e casos adversos), todos com dados isolados. Na primeira execução corrigiu-se uma aspa no nome de um teste, sem tocar nas regras ou cálculos. **Este sucesso não transforma o modelo local num cálculo de liquidação oficial Kraken nem valida custos/posições privados.**
 
 ## 5. Próximos passos e estado
 
