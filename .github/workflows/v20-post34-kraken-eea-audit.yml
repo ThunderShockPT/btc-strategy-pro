@@ -1,0 +1,44 @@
+name: BTC Strategy Pro V20 - P1.7 Kraken EEA read-only rules audit
+on:
+  push:
+    branches: [audit/v20-strategy-recovery-20261025]
+    paths:
+      - '.github/workflows/v20-post34-kraken-eea-audit.yml'
+      - 'scripts/test-v20-post34-kraken-eea-audit-20261027.cjs'
+      - 'policies/v20-post34-kraken-eea-risk-review-20261027.json'
+      - 'rules/kraken/eea-pf-xbtusd-20261021.json'
+      - 'kraken-rules.js'
+      - 'position-risk.js'
+      - 'policies/cloud-release-20261021.json'
+  pull_request:
+    branches: [qa/v20-block12-recovery-20261022]
+    paths:
+      - '.github/workflows/v20-post34-kraken-eea-audit.yml'
+      - 'scripts/test-v20-post34-kraken-eea-audit-20261027.cjs'
+      - 'policies/v20-post34-kraken-eea-risk-review-20261027.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  kraken-public-docs-regression-no-orders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout protected QA branch
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install pinned dependencies
+        run: npm ci --ignore-scripts
+      - name: P1.7 EEA official-docs policy and fail-closed assertions
+        run: node --test scripts/test-v20-post34-kraken-eea-audit-20261027.cjs
+      - name: Regress old Kraken rules and position risk in isolated fixtures
+        run: |
+          node --test scripts/test-b14-kraken-documentation-20261025.cjs
+          node --test scripts/test-position-risk.cjs
+      - name: Assert no real orders/public cloud release
+        run: |
+          node -e "const r=require('./rules/kraken/eea-pf-xbtusd-20261021.json');const p=require('./policies/cloud-release-20261021.json');if(r.applicationPolicy.orderExecutionEnabled||r.applicationPolicy.transfersEnabled||p.financialCloudApproved||p.publicRegistrationApproved||Object.values(p.checks).some(Boolean))process.exit(1);console.log('PASS: No real orders, no transfers, no financial public release')"
