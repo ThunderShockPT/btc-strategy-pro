@@ -1,0 +1,132 @@
+{
+  "schemaVersion": "btcsp-v20-post34-backup-restore-privacy-audit.1",
+  "recordedAt": "2026-10-27",
+  "projectRef": "oftzqqjbwonngubihrsd",
+  "phase": "P1.6/8",
+  "evidenceSources": [
+    "Supabase read-only organization plan 2026-10-27",
+    "Supabase official Database Backups documentation",
+    "backend/backup-envelope.cjs",
+    "backend/account-portability.cjs",
+    "backend/persistence-contract.cjs",
+    "scripts/test-atomic-postgres.cjs",
+    "scripts/test-backup-envelope.cjs",
+    "scripts/test-account-export.cjs",
+    "docs/V20_PORTABILIDADE_E_BACKUP_20261025.md",
+    "policies/cloud-release-20261021.json"
+  ],
+  "provider": {
+    "organizationPlan": "free",
+    "automaticDailyBackupsIncluded": false,
+    "productionBackupsConfigured": "UNVERIFIED",
+    "pitrEnabled": "UNVERIFIED",
+    "recommendation": "Periodic approved pg_dump, encrypted off-site retention with restore rehearsals; requires separately approved key custody and access controls",
+    "source": "https://supabase.com/docs/guides/platform/backups"
+  },
+  "code": {
+    "envelope": {
+      "cipher": "AES-256-GCM",
+      "keyBytes": 32,
+      "randomNonceBytes": 12,
+      "authTagBytes": 16,
+      "authenticatesHeader": true,
+      "sourceKindBound": true,
+      "projectBound": true,
+      "keyIdBound": true,
+      "maxBytes": 67108864,
+      "storesEncryptionKeyInArtifact": false
+    },
+    "operationalRestoreTest": {
+      "location": "scripts/test-atomic-postgres.cjs",
+      "source": "DISPOSABLE_LOCAL_POSTGRES",
+      "target": "SECOND_DISPOSABLE_LOCAL_POSTGRES_DATABASE",
+      "tests": "pg_dump custom format; encrypt; decrypt; pg_restore; compare ledger, plans, financial records, private jobs, RLS and append-only protection",
+      "performedOnHostedSupabase": false
+    },
+    "walletExport": {
+      "automaticRestoreAllowed": false,
+      "ownerBound": true,
+      "checksHashAndRevision": true,
+      "readsRealUserDataInThisAudit": false
+    },
+    "accountPortability": {
+      "automaticRestoreAllowed": false,
+      "readOnly": true,
+      "includesAuthUserProfileMetadata": true,
+      "doesNotIncludeAuthCredentials": true,
+      "notOperationalBackup": true,
+      "canContainPersonalAndFinancialInformation": true
+    }
+  },
+  "dataGovernance": {
+    "encryptionKeyCustodian": "NOT_DEFINED",
+    "keyRotationProcedure": "NOT_DEFINED",
+    "rotationRehearsal": "NOT_VERIFIED",
+    "productionBackupSchedule": "NOT_DEFINED",
+    "productionOffsiteRetention": "NOT_DEFINED",
+    "retentionPeriod": "NOT_DEFINED",
+    "restoreRtoMinutes": "NOT_DEFINED",
+    "restoreRpoMinutes": "NOT_DEFINED",
+    "backupTransportSecurity": "NOT_VERIFIED",
+    "authStorageRestoration": "NOT_TESTED",
+    "authSessionsAndRealtimeRestore": "NOT_TESTED",
+    "deletionErasureAndLegalRetention": "NOT_IMPLEMENTED_AND_NOT_VALIDATED",
+    "DSARExportSupportedInCode": true,
+    "DSARDeletionCompleted": false,
+    "hostedDatabaseDumpCreated": false,
+    "liveAccountDataExported": false,
+    "hostedProductionDatabaseModified": false
+  },
+  "risks": [
+    {
+      "id": "NO_AUTOMATIC_FREE_BACKUPS",
+      "priority": "BLOCKS_PRODUCTION",
+      "detail": "Supabase Free does not provide managed daily backups. Without authorized tested alternate backups there is a data loss exposure"
+    },
+    {
+      "id": "NO_KEY_CUSTODY_POLICY",
+      "priority": "BLOCKS_PRODUCTION",
+      "detail": "Code encrypts bytes, but no verified live key issuance, storage, rotation, recovery or independent custodians"
+    },
+    {
+      "id": "NO_OFFSITE_RETENTION",
+      "priority": "BLOCKS_PRODUCTION",
+      "detail": "No approved backup schedule, offsite retention or disaster recovery target"
+    },
+    {
+      "id": "NO_FULL_STACK_RESTORE",
+      "priority": "BLOCKS_PRODUCTION",
+      "detail": "A local DB restore does not recover hosted Auth settings, Storage, SMTP, secrets, Edge functions, OAuth settings or connected apps"
+    },
+    {
+      "id": "ACCOUNT_PORTABILITY_NOT_RESTORE",
+      "priority": "REVIEW",
+      "detail": "A personal export is not an operational database backup and cannot be imported to activate a financial account"
+    },
+    {
+      "id": "PRIVACY_ERASURE_PENDING",
+      "priority": "BLOCKS_PRODUCTION",
+      "detail": "Rights workflow for account deletion, retention periods and regulatory obligations not implemented or demonstrated"
+    }
+  ],
+  "ownerConsent": {
+    "mayReviewCode": true,
+    "mayRunDisposableCI": true,
+    "mayReadProjectMetadata": true,
+    "mayCreateHostedBackup": false,
+    "mayReadRealAccountData": false,
+    "mayChangeHostedDatabase": false,
+    "mayEnablePaidBackups": false,
+    "mayDeploy": false,
+    "mayOpenPublicRegistration": false,
+    "mayTradeOnKraken": false
+  },
+  "acceptance": {
+    "offlineBackupAndRestoreQA": "PENDING_CI",
+    "hostedOperationalRestore": "PENDING_EXPLICIT_SEPARATE_APPROVAL",
+    "productionGoNoGo": "NO_GO",
+    "publicRegistrationApproved": false,
+    "financialCloudApproved": false,
+    "original34StagesTechnicalComplete": 34
+  }
+}
