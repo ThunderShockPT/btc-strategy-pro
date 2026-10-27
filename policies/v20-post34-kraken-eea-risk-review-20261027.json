@@ -1,0 +1,177 @@
+{
+  "schemaVersion": "btcsp-v20-post34-kraken-eea-review.1",
+  "reviewedAt": "2026-10-27",
+  "project": "BTC Strategy Pro V20",
+  "exchange": "Kraken Derivatives EEE",
+  "symbol": "PF_XBTUSD",
+  "market": "linear-multi-collateral-perpetual",
+  "currency": "USD",
+  "plannedLeverage": "10x isolated",
+  "reviewScope": "READ_ONLY_OFFICIAL_KRAKEN_DOCS_AND_REPO; NO ACCOUNT/API/ORDER USE",
+  "sourceVersions": [
+    {
+      "topic": "EEE Multi-M isolated mode",
+      "url": "https://support.kraken.com/articles/multi-collateral-derivatives-contracts-eea",
+      "documentDate": "2026-10-08"
+    },
+    {
+      "topic": "EEE initial and maintenance margin tiers",
+      "url": "https://support.kraken.com/pt/articles/derivatives-margin-schedule-and-maximum-leverage-eea",
+      "documentDate": "2026-10-07 reported in search index; page may serve older locale revisions"
+    },
+    {
+      "topic": "Multi-M liquidation, funding debit and account-wide liquidation",
+      "url": "https://support.kraken.com/pt/articles/4844463246100-margining-liquidations-multi-collateral-derivatives",
+      "documentDate": "2026-09-05 reported by search"
+    },
+    {
+      "topic": "Liquidation FAQ and partial liquidation",
+      "url": "https://support.kraken.com/pt/articles/4402283092244-liquidation-faq-derivatives",
+      "documentDate": "2026-03-17"
+    },
+    {
+      "topic": "EEE linear contract/funding/mark price specification",
+      "url": "https://support.kraken.com/pt/articles/perpetual-contract-specifications-for-clients-in-the-eea",
+      "documentDate": "Current web index; page language/date may differ"
+    },
+    {
+      "topic": "EEE fees, dynamic tier by rolling volume",
+      "url": "https://support.kraken.com/pt/articles/fees-for-derivatives-trading-eea",
+      "documentDate": "2026-03-17 Portuguese; alternate English regional page indexed 2026-10-26"
+    },
+    {
+      "topic": "EEE current fee schedule in context",
+      "url": "https://support.kraken.com/in/articles/fees-for-derivatives-trading-eea",
+      "documentDate": "2026-10-26 in indexed search"
+    }
+  ],
+  "verifiedDocumentRules": {
+    "eeaClassAMarginFirstTier": {
+      "maxEntryNotionalUSD": "30000000",
+      "initialRate": "0.10",
+      "maintenanceRate": "0.05",
+      "initialLeverageCap": "10"
+    },
+    "initialAndMaintenanceMarginNotIdentical": true,
+    "perInstrumentAndNotionalTiers": true,
+    "exchangeMayChangeWithoutNotice": true,
+    "marginModeChoices": [
+      "cross",
+      "isolated"
+    ],
+    "crossDefaultDocumented": true,
+    "isolatedFundingChargedToGeneralWallet": true,
+    "accountWideLiquidationCanIncludeIsolatedPositions": true,
+    "liquidationUsesMarkPriceAndMarginEquity": true,
+    "liquidationPriceIsAnEstimateNotFixed": true,
+    "partialAndFullLiquidationPossible": true,
+    "markPriceCanDifferFromLastTradedPrice": true,
+    "perpetualFundingAccruesContinuouslyAndSettlesHourlyOrOnPositionChange": true,
+    "linearMultiMFeesDenominatedUSD": true,
+    "feesAreMakerTakerAndDependOn30DayVolume": true,
+    "nonUSDCollateralMayHaveHaircutAndConversionCosts": true,
+    "realClientEligibilityAndContractSpecificationUnverified": true
+  },
+  "repoSnapshot": {
+    "approvedRulesFile": "rules/kraken/eea-pf-xbtusd-20261021.json",
+    "sourceObservedAt": "2026-10-20T23:31:04.66Z",
+    "status": "partial",
+    "currentLiveRuleSnapshotRefreshed": false,
+    "selectedMode": "isolated",
+    "modelSpecificRiskRecommendationsEnabled": false,
+    "modelOrdersEnabled": false,
+    "modelTransfersEnabled": false,
+    "numericalMaintenanceEstimateModel": "position-risk.js: simple USD long maintenance boundary uses isolated allocated margin plus unrealised PnL minus maintenance, not full exchange account liquidation trigger",
+    "knownLimitations": [
+      "MARGIN_RECONCILIATION_PENDING",
+      "FUNDING_ACCOUNTING_RECONCILIATION_PENDING",
+      "LIQUIDATION_EXECUTION_UNVALIDATED",
+      "MANUAL_FEES_REQUIRED"
+    ],
+    "liveInputRisk": "STALE_RULES if snapshot beyond configured freshness and margin/funding remain partial"
+  },
+  "criticalDifferences": [
+    {
+      "id": "ISOLATED_NOT_COMPLETE_ACCOUNT_PROTECTION",
+      "severity": "HIGH",
+      "finding": "Current isolated-position boundary is not an account-wide liquidation oracle; Kraken may liquidate isolated positions when overall Multi-M wallet falls below aggregate requirement"
+    },
+    {
+      "id": "FUNDING_GENERAL_WALLET",
+      "severity": "HIGH",
+      "finding": "Isolated funding charged to general Multi-M wallet affects broader account safety; simple position-boundary calculation does not fully model multi-position equity evolution"
+    },
+    {
+      "id": "MARK_PRICE_BASIS",
+      "severity": "HIGH",
+      "finding": "Liquidation trigger uses mark price not manual BTC spot ticker; no official mark streaming or full EMA/index and fallback reconciliation"
+    },
+    {
+      "id": "MAINTENANCE_TIER_AND_FEES_CHANGE",
+      "severity": "HIGH",
+      "finding": "Historical EEE first-tier 10%/5% documented; class/tier, maker/taker account volume, partial liquidation fees, account configuration may vary and must be revalidated"
+    },
+    {
+      "id": "FEES_LOCALE_DATE_DIVERGENCE",
+      "severity": "MEDIUM",
+      "finding": "Locale-specific EEE fees documents have differing indexed last-updated dates and fee schedule references; retain manual fees and request a verified current exact fee tier instead of promoting archived 0.02%/0.05%"
+    },
+    {
+      "id": "NO_REAL_CLIENT_CLASSIFICATION",
+      "severity": "HIGH",
+      "finding": "Retail/pro classification, market availability and actual exchange UI account context cannot be inferred from the demo or public documentation"
+    },
+    {
+      "id": "FLOOR_IS_STRESS_TEST",
+      "severity": "HIGH",
+      "finding": "Strict piso de stress is a rejected-price scenario boundary, not a guaranteed survival/liquidation stop; failed planned transfers and fee/funding must be considered"
+    },
+    {
+      "id": "NO_LIVE_EXCHANGE_RULESET",
+      "severity": "HIGH",
+      "finding": "A dated 20 October public instrument snapshot cannot be treated as live executable rules on 27 October"
+    }
+  ],
+  "approvedProductArchitectureUnchanged": {
+    "primary": "MODEL_C_ADAPTIVE",
+    "buysPercent": [
+      20,
+      30,
+      50
+    ],
+    "classicAE": "COMPARATOR_ONLY",
+    "strictFloor": true,
+    "cashVsAllocatedIsolatedMarginSeparate": true,
+    "plannedMarginNotActual": true,
+    "changeRealTradeLevelsAuthorized": false,
+    "exchangeOrdersAuthorized": false,
+    "financialDeployAuthorized": false
+  },
+  "QA": {
+    "status": "READ_ONLY_AUDIT_REQUIRES_REGRESSION",
+    "productionSafe": false,
+    "modelRiskStatus": "APPROXIMATE_EDUCATIONAL_ONLY",
+    "feesRevisedInTradingEngine": false,
+    "marginParametersRevised": false,
+    "liveKrakenAccountConnected": false,
+    "noPriceOrPositionExecutionGuarantee": true
+  },
+  "nextBeforeProduction": [
+    "Reconcile exact PF_XBTUSD contract lot/tick, allowed status and EUR/USD collateral using current public API and account-approved UI before live application",
+    "Obtain correct EEA class/tier/retail-professional matrix and live maintenance requirements for instrument and position size",
+    "Reconcile market/index/mark-price and liquidation multi-position account margin, cross and isolated interactions",
+    "Reconcile funding actual real charges to wallet, interest, conversion fee and liquidation fee/partial fills",
+    "Adversarial scenarios of slippage, gaps, margin increase, missed isolated margin top-up, funding spikes and account-wide liquidation",
+    "Owner must separately authorize any real trading parameters or Kraken API credentials"
+  ],
+  "release": {
+    "financeCloudApproved": false,
+    "publicRegistrationApproved": false,
+    "publicFinancialRelease": "NO_GO",
+    "ordersAllowed": false,
+    "initial34StagesRemainClosed": true,
+    "post34Stage": "P1.7",
+    "post34Status": "DOCUMENT_REVIEW_ONLY",
+    "next": "P1.8_SAFE_RELEASE_READINESS_NO_GO"
+  }
+}
