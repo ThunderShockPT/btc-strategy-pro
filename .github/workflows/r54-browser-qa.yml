@@ -1,0 +1,33 @@
+name: BTC Strategy Pro - R5.4 Browser QA (isolated)
+on:
+  push:
+    branches:
+      - audit/v20-strategy-recovery-20261025
+    paths:
+      - 'previews/v20-r5-unified-five-menus-qa-20261025.html'
+      - 'scripts/test-r5-unified-browser-20261025.cjs'
+      - '.github/workflows/r54-browser-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  r54-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Install Playwright Chromium (QA runner only)
+        run: npx playwright install chromium --with-deps
+      - name: Validate five-menu visual and financial isolation
+        run: node --test scripts/test-r5-unified-browser-20261025.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: R5-4-browser-screenshots
+          path: r54-browser-*.png
+          if-no-files-found: ignore

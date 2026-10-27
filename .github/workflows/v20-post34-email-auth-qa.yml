@@ -1,0 +1,50 @@
+name: BTC Strategy Pro V20 - P1.5 Email and Recovery QA (offline only)
+on:
+  push:
+    branches: [audit/v20-strategy-recovery-20261025]
+    paths:
+      - '.github/workflows/v20-post34-email-auth-qa.yml'
+      - 'scripts/test-v20-post34-email-auth-recovery-20261027.cjs'
+      - 'policies/v20-post34-email-auth-recovery-review-20261027.json'
+      - 'account-session-v20.js'
+      - 'auth-guard.js'
+      - 'scripts/test-auth-guard.cjs'
+      - 'scripts/test-account-session.cjs'
+      - 'policies/cloud-release-20261021.json'
+  pull_request:
+    branches: [qa/v20-block12-recovery-20261022]
+    paths:
+      - '.github/workflows/v20-post34-email-auth-qa.yml'
+      - 'scripts/test-v20-post34-email-auth-recovery-20261027.cjs'
+      - 'policies/v20-post34-email-auth-recovery-review-20261027.json'
+      - 'account-session-v20.js'
+      - 'auth-guard.js'
+      - 'scripts/test-auth-guard.cjs'
+      - 'scripts/test-account-session.cjs'
+      - 'policies/cloud-release-20261021.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-auth-and-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout audited branch
+        uses: actions/checkout@v4
+      - name: Setup Node exact lockfile
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Check login, redirects, recovery and privacy guards (no SMTP)
+        run: node --test scripts/test-v20-post34-email-auth-recovery-20261027.cjs
+      - name: Regress existing callback and identity checks (no SMTP)
+        run: node scripts/test-auth-guard.cjs
+      - name: Regress isolated account session and password recovery flows
+        run: node --test scripts/test-account-session.cjs
+      - name: Deny financial cloud and public signup
+        run: |
+          node -e "const p=require('./policies/cloud-release-20261021.json');if(p.financialCloudApproved||p.publicRegistrationApproved||Object.values(p.checks).some(Boolean))process.exit(1);console.log('PASS: public registrations and financial cloud remain CLOSED')"

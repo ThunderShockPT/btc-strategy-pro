@@ -1,0 +1,68 @@
+name: BTC Strategy Pro V20 - P1.6 isolated encrypted backup and restore QA
+on:
+  push:
+    branches: [audit/v20-strategy-recovery-20261025]
+    paths:
+      - '.github/workflows/v20-post34-backup-restore-qa.yml'
+      - 'scripts/test-v20-post34-backup-restore-privacy-20261027.cjs'
+      - 'policies/v20-post34-backup-restore-privacy-audit-20261027.json'
+      - 'scripts/test-atomic-postgres.cjs'
+      - 'scripts/test-backup-envelope.cjs'
+      - 'scripts/test-account-export.cjs'
+      - 'backend/backup-envelope.cjs'
+      - 'backend/account-portability.cjs'
+  pull_request:
+    branches: [qa/v20-block12-recovery-20261022]
+    paths:
+      - '.github/workflows/v20-post34-backup-restore-qa.yml'
+      - 'scripts/test-v20-post34-backup-restore-privacy-20261027.cjs'
+      - 'policies/v20-post34-backup-restore-privacy-audit-20261027.json'
+      - 'scripts/test-atomic-postgres.cjs'
+      - 'scripts/test-backup-envelope.cjs'
+      - 'scripts/test-account-export.cjs'
+      - 'backend/backup-envelope.cjs'
+      - 'backend/account-portability.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup-restore-disposable-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: qa-only-isolated
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - name: Checkout QA review without touching production
+        uses: actions/checkout@v4
+      - name: Setup Node with pinned lockfile
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install pinned dependencies without scripts
+        run: npm ci --ignore-scripts
+      - name: Run synthetic AES, backup/portability and privacy gates
+        run: |
+          node --test scripts/test-v20-post34-backup-restore-privacy-20261027.cjs
+          node --test scripts/test-backup-envelope.cjs
+          node --test scripts/test-account-export.cjs
+      - name: Run actual pg_dump encrypted pg_restore in a second disposable PostgreSQL DB
+        env:
+          BTCSP_TEST_PG_URL: postgresql://postgres:qa-only-isolated@127.0.0.1:5432/postgres
+          BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: node --test --test-name-pattern="native encrypted pg_dump restores" scripts/test-atomic-postgres.cjs
+      - name: Assert public and real-money production gates remain closed
+        run: |
+          node -e "const p=require('./policies/cloud-release-20261021.json');if(p.financialCloudApproved||p.publicRegistrationApproved||Object.values(p.checks).some(Boolean))process.exit(1);console.log('PASS: no public registrations, cloud financial writes, paid backup or Kraken actions')"

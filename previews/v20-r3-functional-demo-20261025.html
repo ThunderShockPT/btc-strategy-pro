@@ -1,0 +1,659 @@
+<!doctype html><html lang="pt-PT"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>BTC Strategy Pro — R3.4 · Avaliação funcional do motor</title>
+<style>
+:root{color-scheme:dark;--bg:#06131d;--card:#102632;--mut:#aac1cc;--line:#234455;--cyan:#47cfe0;--gold:#ffc77d;--text:#effaff;--red:#fba6aa;--green:#96dfc1}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(ellipse at top left,#184758 0,#06131d 62%);color:var(--text);font-size:14px}main{width:min(1200px,100%);margin:auto;padding:24px 18px 55px}.top{display:flex;justify-content:space-between;flex-wrap:wrap;align-items:center;gap:12px}.eyebrow{font-size:11px;letter-spacing:.15em;color:var(--cyan);font-weight:700}h1{font-size:clamp(24px,3vw,34px);margin:8px 0 6px}p{color:var(--mut);line-height:1.6}.pill{padding:9px 12px;border:1px solid #426271;border-radius:30px;color:#bbd1db;font-size:12px}.notice{margin:19px 0;padding:14px 16px;border:1px solid #78634f;background:#352b26;border-radius:12px;color:#ffe5bc;line-height:1.6}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.panel{border:1px solid var(--line);border-radius:16px;background:rgba(14,37,50,.94);padding:18px;margin-top:12px;min-width:0}.panel h2{margin:0 0 14px;font-size:16px}.form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.field{min-width:0}.field label{display:block;color:#bbd0db;font-size:12px;margin-bottom:7px}.field input,.field select{display:block;width:100%;min-width:0;background:#081b27;color:var(--text);padding:10px;border:1px solid #2b5364;border-radius:9px;font:inherit}.field small{color:#7895a3;font-size:10px}.metric{min-height:94px;overflow-wrap:anywhere;min-width:0}.metric b{display:block;font-size:19px;letter-spacing:-.02em;margin:8px 0 2px}.metric small{display:block;color:#92acbb;font-size:11px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--gold)}.rows{display:grid;gap:9px}.item{background:#071d28;border:1px solid #2b4958;border-radius:10px;padding:10px 12px}.item b{color:var(--cyan)}.item span{color:#c8dae2}table{width:100%;border-collapse:collapse;min-width:720px;font-size:12px}th,td{text-align:right;padding:11px 8px;border-bottom:1px solid #2b4856;font-variant-numeric:tabular-nums}th:first-child,td:first-child{text-align:left}thead th{color:#a6c1ca;font-size:11px;font-weight:600}tbody tr:hover{background:#14323e}.table-scroll{overflow-x:auto;max-width:100%}.state{font-weight:700}.button{background:#1d687b;color:#f2fbff;border:1px solid #2d8a9d;cursor:pointer;border-radius:10px;padding:10px 14px;font-weight:650}.buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.note{font-size:12px;color:#a0b8c5}.footer{margin-top:20px;font-size:12px;color:#83a4b5}#status{white-space:pre-wrap;overflow-wrap:anywhere}#info{margin-top:8px}#errors{display:none}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:490px){main{padding:16px 11px 40px}.grid{grid-template-columns:1fr 1fr;gap:8px}.panel{padding:12px;border-radius:13px}.metric{min-height:87px}.metric b{font-size:16px}.form-grid{gap:10px}.top{display:block}.pill{display:inline-block;margin-top:10px}.notice{margin-top:16px}}
+</style></head><body><main>
+<div class="top"><div><div class="eyebrow">BTC STRATEGY PRO · LABORATÓRIO FINAL R3</div><h1>Compras, margem e riscos de Futures</h1><p>Compara a estratégia original, a V20 e alternativas. Explora também resultados dos testes de risco. Não executa operações.</p></div><span class="pill">BLOCO R3 · ETAPA 4/4</span></div>
+<div class="notice"><strong>Pré-visualização, não execução.</strong> As regras foram observadas em 20/10/2026 e estão desatualizadas na data desta entrega. Não é possível concluir que o plano é seguro ou calculá-lo como uma ordem real. A margem atual e as adições futuras são apresentadas separadamente. O motor financeiro foi testado separadamente em CI (203 testes aprovados), mas não corre neste HTML offline. Os exemplos de risco abaixo são cenários de teste, não cotações oficiais.</div>
+<div class="panel"><h2>1. Configuração para comparar</h2><div class="form-grid">
+<div class="field"><label for="mode">Distribuição das compras</label><select id="mode"><option value="classic-demo">Clássica A–E</option><option value="v20-base-illustrative">V20 concentrada (base)</option><option value="adjustable-preview">Ajustável (simulação)</option></select></div>
+<div class="field"><label for="profile">Perfil / piso de stress</label><select id="profile"><option value="balanced">Equilibrado −20.000 USD</option><option value="safe">Seguro −40.000 USD</option><option value="risky">Arriscado −10.000 USD</option></select></div>
+<div class="field"><label for="price">Preço BTC de referência (USD)</label><input id="price" type="number" value="80000" min="42000" step="1"></div>
+<div class="field"><label for="cycles">Quantidade de ciclos</label><input id="cycles" type="number" value="5" min="1" max="12"></div>
+<div class="field"><label for="capital">Caixa informada (USD)</label><input id="capital" type="number" value="2000" min="0" step="100"></div>
+<div class="field"><label for="nominal">Nominal por ciclo (USD)</label><input id="nominal" type="number" value="1000" min="1" step="100"><small>Não é margem própria</small></div>
+<div class="field"><label for="margin">Margem isolada informada (USD)</label><input id="margin" type="number" value="200" min="0" step="50"><small>Já transferida na corretora</small></div>
+<div class="field"><label for="future">Margem futura planeada (USD)</label><input id="future" type="number" value="300" min="0" step="50"><small>Não está transferida</small></div>
+<div class="field"><label for="gap">Intervalo entre primeiras compras (USD)</label><input id="gap" type="number" value="1000" step="1" min="1" disabled></div>
+<div class="field"><label for="step">Intervalo entre reforços (USD)</label><input id="step" type="number" value="8000" step="1" min="1" disabled></div>
+<div class="field"><label for="reserve">Caixa protegida (USD)</label><input id="reserve" type="number" value="400" min="0" step="50"></div>
+<div class="field"><label for="bound">Limite mínimo da escada (USD)</label><input id="bound" type="number" value="60000" min="1" step="1"><small>Separado do piso de stress</small></div>
+</div><div class="buttons"><button id="reset" class="button">Repor exemplo</button><button id="export" class="button">Exportar CSV de comparação</button></div></div>
+<div class="grid" id="metrics"></div>
+<div class="panel"><h2>2. Regras e bloqueios encontrados</h2><div id="status" class="rows"></div><p id="info" class="note"></p><div id="errors" class="bad"></div></div>
+<div class="panel"><h2>3. Compras futuras propostas (nunca executadas)</h2><div class="table-scroll"><table><thead><tr><th>Ciclo e fase</th><th>BTC preço</th><th>Alocação USD</th><th>Qtd BTC / lote</th><th>Nominal real USD</th><th>Resultado</th></tr></thead><tbody id="table"></tbody></table></div></div>
+
+<style>
+.case-select{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 14px}.case-select button{background:#0c2735;color:#c5e4ec;border:1px solid #396174;border-radius:9px;padding:10px 13px;cursor:pointer;font:inherit;font-size:12px}.case-select button[aria-pressed="true"]{border-color:#5adbe4;color:white;background:#1e596b}.case-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.case-block{background:#071e2a;border:1px solid #2c5361;border-radius:12px;padding:14px;min-width:0}.case-block strong{font-size:19px;color:#eafaff;overflow-wrap:anywhere;display:block;margin-top:6px}.case-block small{color:#9ebdc9;display:block;font-size:11px}.case-lead{line-height:1.6;color:#e5f3f7}.review textarea{width:100%;min-height:92px;resize:vertical;line-height:1.5;background:#061d29;color:#f0fbff;border:1px solid #2d5365;border-radius:10px;padding:12px;font:inherit}.check-row{display:flex;align-items:center;gap:8px;margin:9px 0;color:#cee0e6}.check-row input{accent-color:#4ac9d6}.case-note{margin:14px 0 0;border-left:3px solid #e5b36b;padding:10px 13px;background:#392e27;color:#ffdfb1;font-size:12px;line-height:1.6}@media(max-width:650px){.case-grid{grid-template-columns:1fr}}
+</style>
+<div class="panel" id="risk-cases"><h2>4. Casos confirmados pelo motor V20 em testes</h2>
+<p>Escolhe um cenário para perceber como funciona a margem isolada. Estes números provêm de testes automatizados de uma posição sintética de <b>0,01 BTC LONG a 100.000 USD</b>, com regras fotografadas em 20/10/2026. <b>Não são a tua posição real nem cotações atuais.</b></p>
+<div class="case-select" role="group" aria-label="Cenário de margem">
+<button type="button" data-case="initial" aria-pressed="true">Margem inicial</button>
+<button type="button" data-case="cash" aria-pressed="false">Adicionar à caixa</button>
+<button type="button" data-case="isolated" aria-pressed="false">Reforçar margem isolada</button>
+<button type="button" data-case="late" aria-pressed="false">Reforço demasiado tarde</button>
+</div>
+<div id="case-intro" class="case-lead" aria-live="polite"></div>
+<div id="case-metrics" class="case-grid"></div>
+<div class="case-note">A estimativa de liquidação é apenas o <b>limite de manutenção matemático do modelo local</b>. O preço real de liquidação da Kraken pode ser diferente por funding, custos, critérios da corretora e movimentos rápidos.</div>
+</div>
+<div class="panel review"><h2>5. Avalia antes de continuarmos para o Bloco R4</h2>
+<p>Experimenta trocar o modo de compras e o capital. Confirma também estas três situações e assinala as que verificaste.</p>
+<label class="check-row"><input type="checkbox" id="qa-one"> Encontrei a tabela das compras 20/30/50 e percebo a diferença entre nominal e margem.</label>
+<label class="check-row"><input type="checkbox" id="qa-two"> A estratégia A–E assinala o nível dos 60.000 USD como bloqueado pela regra atual.</label>
+<label class="check-row"><input type="checkbox" id="qa-three"> Entendi que acrescentar dinheiro à caixa não reforça automaticamente a posição isolada.</label>
+<label for="qa-notes">O que gostarias de alterar antes de passar para a renovação visual?</label>
+<textarea id="qa-notes" placeholder="Escreve aqui os problemas encontrados, opções que queres mudar ou sugestões..." ></textarea>
+<div class="buttons"><button class="button" type="button" id="copy-review">Copiar avaliação para enviar no ChatGPT</button><span id="copy-status" class="note" aria-live="polite"></span></div>
+<p class="note">O laboratório funciona offline e não grava carteiras, operações ou decisões. Nenhuma aprovação financeira é assumida só por usares o teste.</p>
+</div>
+<script>
+const cases={
+initial:{intro:'Após comprar 0,01 BTC a 100.000 USD e atribuir 100 USD de margem isolada, o motor calcula o limite de manutenção ilustrativo.',values:[['Posição nominal','1.000 USD'],['Margem atribuída','100 USD'],['Limite matemático de manutenção','95.000 USD']]},
+cash:{intro:'Depositar mais 500 USD na carteira aumenta a caixa total disponível, mas não transfere nada para a posição já aberta.',values:[['Depósito na carteira','+500 USD'],['Aumento da margem isolada','0 USD'],['Limite de manutenção estimado','95.000 USD — sem mudança']]},
+isolated:{intro:'Transferir efetivamente mais 50 USD de caixa para a margem isolada faz o limite matemático descer neste cenário. É um movimento distinto do depósito na carteira.',values:[['Transferência de margem','+50 USD'],['Margem isolada após transferência','150 USD'],['Limite de manutenção estimado','90.000 USD']]},
+late:{intro:'Se o BTC desce de 100.000 USD diretamente para 94.000 USD antes da transferência, o motor assinala a manutenção antes de aceitar o reforço tardio.',values:[['Preço BTC no evento','94.000 USD'],['Limite anterior de manutenção','95.000 USD'],['Reforço tardio','Bloqueado no percurso']]}
+};
+function chooseCase(k){const c=cases[k];document.getElementById('case-intro').textContent=c.intro;document.getElementById('case-metrics').innerHTML=c.values.map(v=>'<div class="case-block"><small>'+v[0]+'</small><strong>'+v[1]+'</strong></div>').join('');document.querySelectorAll('[data-case]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.case===k)));}
+document.querySelectorAll('[data-case]').forEach(b=>b.addEventListener('click',()=>chooseCase(b.dataset.case)));chooseCase('initial');
+document.getElementById('copy-review').addEventListener('click',async()=>{const checks=['qa-one','qa-two','qa-three'].map((id,i)=>((document.getElementById(id).checked?'[x]':'[ ]')+' '+['Compras 20/30/50 e margem','Compra nos 60k bloqueada','Caixa vs margem isolada'][i])).join('\n');const value='BTC Strategy Pro — Avaliação do Bloco R3, Etapa 4/4\n'+checks+'\nAlterações: '+(document.getElementById('qa-notes').value||'Sem notas.')+'\nDecisão financeira definitiva: NÃO APROVADA por este formulário.';try{await navigator.clipboard.writeText(value);document.getElementById('copy-status').textContent='Texto copiado. Podes colar na conversa.';}catch(e){const ta=document.getElementById('qa-notes');ta.value=value;ta.focus();ta.select();document.getElementById('copy-status').textContent='Selecionado na caixa de texto; copia manualmente.';}});
+</script>
+
+<p class="footer">Fonte técnica: módulos V20 KrakenRules.validateOrder/assess; sem preços ao vivo, sem API privada, sem liquidação oficial, sem operações financeiras.</p>
+<script id="rules-json" type="application/json">{
+  "schemaVersion": 1,
+  "version": "kraken-eea-pf-xbtusd-2026-10-21.2",
+  "status": "partial",
+  "reviewedOn": "2026-10-21",
+  "observedAt": "2026-10-20T23:31:04.66Z",
+  "jurisdiction": "EEA",
+  "symbol": "PF_XBTUSD",
+  "base": "BTC",
+  "quote": "USD",
+  "product": "linear-multi-m-perpetual",
+  "marginMode": "isolated",
+  "selectedLeverage": "10",
+  "supportedSchedulePlatforms": [
+    "europa",
+    "europa_crypto"
+  ],
+  "supportedClientTypes": [
+    "retail",
+    "professional"
+  ],
+  "sources": [
+    {
+      "id": "instrument-api",
+      "url": "https://futures.kraken.com/derivatives/api/v3/instruments",
+      "kind": "public-api",
+      "observedAt": "2026-10-20T23:31:04.66Z",
+      "snapshot": "pf-xbtusd-public-20261021.json",
+      "sha256": "01f7393cbc802b065ba7cae5052b74d1c6dff6e19f7cd908d50b23048fda5b62"
+    },
+    {
+      "id": "instrument-schema",
+      "url": "https://docs.kraken.com/api-reference/instrument-details/get-instruments",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "eea-spec",
+      "url": "https://support.kraken.com/pt/articles/perpetual-contract-specifications-for-clients-in-the-eea",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "eea-margin",
+      "url": "https://support.kraken.com/pt/articles/derivatives-margin-schedule-and-maximum-leverage-eea",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "margining",
+      "url": "https://support.kraken.com/pt/articles/4844463246100-margining-liquidations-multi-collateral-derivatives",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "eea-fees",
+      "url": "https://support.kraken.com/pt/articles/fees-for-derivatives-trading-eea",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "fee-schedule",
+      "url": "https://www.kraken.com/features/fee-schedule",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "eea-collateral",
+      "url": "https://support.kraken.com/pt/articles/collateral-currencies-eea",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "equity-protection",
+      "url": "https://support.kraken.com/articles/360022835671-equity-protection-process-derivatives",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    },
+    {
+      "id": "multi-m-fees",
+      "url": "https://support.kraken.com/pt/articles/360048917612-fee-schedule",
+      "kind": "official-docs",
+      "reviewedOn": "2026-10-21"
+    }
+  ],
+  "instrument": {
+    "contractSize": "1",
+    "minQuantity": "0.0001",
+    "quantityStep": "0.0001",
+    "priceTick": "1",
+    "maxQuantity": "1200",
+    "tradeable": true,
+    "suspended": false,
+    "postOnly": false,
+    "sources": [
+      "instrument-api",
+      "instrument-schema",
+      "eea-spec"
+    ]
+  },
+  "margin": {
+    "thresholdUnit": "USD",
+    "thresholdConvention": "lower-inclusive",
+    "valuationBasis": "entry-notional",
+    "valuationStatus": "documented-not-reconciled",
+    "sources": [
+      "instrument-api",
+      "instrument-schema",
+      "eea-margin"
+    ],
+    "schedules": {
+      "europa": {
+        "retail": [
+          {
+            "lowerBoundUSD": "0",
+            "initialRate": "0.1",
+            "maintenanceRate": "0.05"
+          },
+          {
+            "lowerBoundUSD": "30000000",
+            "initialRate": "0.2",
+            "maintenanceRate": "0.1"
+          },
+          {
+            "lowerBoundUSD": "50000000",
+            "initialRate": "0.3",
+            "maintenanceRate": "0.15"
+          },
+          {
+            "lowerBoundUSD": "150000000",
+            "initialRate": "0.5",
+            "maintenanceRate": "0.25"
+          }
+        ],
+        "professional": [
+          {
+            "lowerBoundUSD": "0",
+            "initialRate": "0.1",
+            "maintenanceRate": "0.05"
+          },
+          {
+            "lowerBoundUSD": "30000000",
+            "initialRate": "0.2",
+            "maintenanceRate": "0.1"
+          },
+          {
+            "lowerBoundUSD": "50000000",
+            "initialRate": "0.3",
+            "maintenanceRate": "0.15"
+          },
+          {
+            "lowerBoundUSD": "150000000",
+            "initialRate": "0.5",
+            "maintenanceRate": "0.25"
+          }
+        ]
+      },
+      "europa_crypto": {
+        "retail": [
+          {
+            "lowerBoundUSD": "0",
+            "initialRate": "0.1",
+            "maintenanceRate": "0.05"
+          },
+          {
+            "lowerBoundUSD": "30000000",
+            "initialRate": "0.2",
+            "maintenanceRate": "0.1"
+          },
+          {
+            "lowerBoundUSD": "50000000",
+            "initialRate": "0.3",
+            "maintenanceRate": "0.15"
+          },
+          {
+            "lowerBoundUSD": "150000000",
+            "initialRate": "0.5",
+            "maintenanceRate": "0.25"
+          }
+        ],
+        "professional": [
+          {
+            "lowerBoundUSD": "0",
+            "initialRate": "0.1",
+            "maintenanceRate": "0.05"
+          },
+          {
+            "lowerBoundUSD": "30000000",
+            "initialRate": "0.2",
+            "maintenanceRate": "0.1"
+          },
+          {
+            "lowerBoundUSD": "50000000",
+            "initialRate": "0.3",
+            "maintenanceRate": "0.15"
+          },
+          {
+            "lowerBoundUSD": "150000000",
+            "initialRate": "0.5",
+            "maintenanceRate": "0.25"
+          }
+        ]
+      }
+    }
+  },
+  "funding": {
+    "coefficient": "8",
+    "observedMaxRelativeHourlyRate": "0.005",
+    "accrual": "continuous",
+    "settlement": "hour-end-or-net-position-change",
+    "absoluteRateUnit": "USD-per-BTC-per-hour",
+    "settledIsolatedDebit": "general-wallet",
+    "accountingStatus": "needs-public-example-validation",
+    "sources": [
+      "instrument-api",
+      "eea-spec",
+      "margining"
+    ]
+  },
+  "fees": {
+    "currency": "USD",
+    "feeScheduleUid": "723888f7-0a8e-4183-8648-f920a22339e3",
+    "exampleMakerRate": "0.0002",
+    "exampleTakerRate": "0.0005",
+    "sources": [
+      "instrument-api",
+      "fee-schedule",
+      "eea-fees"
+    ],
+    "manualFeeRateRequired": true
+  },
+  "collateral": {
+    "USD": {
+      "haircut": "0",
+      "conversionRate": null
+    },
+    "EUR": {
+      "haircut": "0",
+      "conversionRate": "0"
+    },
+    "GBP": {
+      "haircut": "0",
+      "conversionRate": "0"
+    },
+    "BTC": {
+      "haircut": "0.01",
+      "conversionRate": "0.002"
+    }
+  },
+  "limitations": [
+    {
+      "code": "MANUAL_CONTEXT_REQUIRED",
+      "blockingFor": "specific-risk-recommendations",
+      "detail": "Choose a documented EEA planning scenario manually; no private API or account link is required."
+    },
+    {
+      "code": "MARGIN_RECONCILIATION_PENDING",
+      "blockingFor": "specific-risk-recommendations",
+      "detail": "Entry-notional basis is documented; reconcile increases, decreases and tier application before liquidation validation."
+    },
+    {
+      "code": "FUNDING_ACCOUNTING_RECONCILIATION_PENDING",
+      "blockingFor": "specific-risk-recommendations",
+      "detail": "Validate the model against public examples and manually recorded funding; no linked account is required."
+    },
+    {
+      "code": "LIQUIDATION_EXECUTION_UNVALIDATED",
+      "blockingFor": "specific-risk-recommendations",
+      "detail": "Partial/full liquidation thresholds, fees and fills require scenario implementation and independent validation."
+    },
+    {
+      "code": "MANUAL_FEES_REQUIRED",
+      "blockingFor": "specific-risk-recommendations",
+      "detail": "Use manually declared fee rates or explicit public-fee scenarios; never imply account-specific verification."
+    }
+  ],
+  "discrepancies": [
+    {
+      "code": "GLOBAL_SCHEDULE_IS_NOT_EEA",
+      "resolution": "Use only explicit platform schedules; never top-level marginLevels or retailMarginLevels as EEA fallback."
+    },
+    {
+      "code": "SPEC_TABLE_100X_LABEL",
+      "resolution": "Public europa schedules and EEA margin page agree on initial 10x; the generic BTC row label is not an EEA rate."
+    },
+    {
+      "code": "FUNDING_CAP_TEXT_ARITHMETIC",
+      "resolution": "Store API hourly cap with units; do not derive the cap from inconsistent prose about an 8-hour equivalent."
+    }
+  ],
+  "applicationPolicy": {
+    "specificRiskRecommendationsEnabled": false,
+    "orderExecutionEnabled": false,
+    "transfersEnabled": false,
+    "reviewMaxAgeSeconds": 86400,
+    "reviewPolicyNote": "Application review window, not a Kraken guarantee or rule validity period. Changes may happen sooner."
+  },
+  "planningContext": "user-declared; no exchange account integration"
+}
+</script>
+<script>/* V20 Block 1: read-only contract metadata. No balances, orders or transfers.
+ * Decimal strings are compared exactly; this is NOT the financial engine. */
+(function(root,factory){
+ 'use strict';
+ const api=factory();
+ if(typeof module==='object'&&module.exports)module.exports=api;
+ else root.BTCKrakenRules=api;
+})(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const SCALE=10n**16n;
+ // Only objects validated and deeply frozen by this module can take the fast path.
+ // Caller-owned objects, including externally frozen objects, are always revalidated.
+ const validatedRules=new WeakSet();
+ class RulesError extends Error {
+  constructor(code){super(code);this.name='RulesError';this.code=code;}
+ }
+ function requireThat(ok,code){if(!ok)throw new RulesError(code);}
+ function units(value){
+  requireThat(typeof value==='string'&&/^(0|[1-9]\d{0,23})(\.\d{1,16})?$/.test(value),'INVALID_DECIMAL');
+  const [whole,fraction='']=value.split('.');
+  return BigInt(whole)*SCALE+BigInt(fraction.padEnd(16,'0'));
+ }
+ function timestamp(value){
+  requireThat(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(value),'INVALID_TIMESTAMP');
+  const t=Date.parse(value);
+  requireThat(Number.isFinite(t)&&new Date(t).toISOString().slice(0,19)===value.slice(0,19),'INVALID_TIMESTAMP');
+  return t;
+ }
+ function freeze(value){
+  if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}
+  return value;
+ }
+ function load(input){
+  if(input&&typeof input==='object'&&validatedRules.has(input))return input;
+  requireThat(input&&input.schemaVersion===1&&input.jurisdiction==='EEA'&&input.symbol==='PF_XBTUSD','UNSUPPORTED_RULESET');
+  requireThat(input.base==='BTC'&&input.quote==='USD'&&input.product==='linear-multi-m-perpetual','UNSUPPORTED_RULESET');
+  requireThat(typeof input.version==='string'&&input.version.length>0&&input.status==='partial','UNSUPPORTED_RULESET');
+  requireThat(input.marginMode==='isolated'&&input.selectedLeverage==='10','UNSUPPORTED_RULESET');
+  timestamp(input.observedAt);
+  const policy=input.applicationPolicy;
+  requireThat(policy&&policy.specificRiskRecommendationsEnabled===false&&policy.orderExecutionEnabled===false&&policy.transfersEnabled===false,'UNSUPPORTED_CAPABILITY');
+  requireThat(Number.isSafeInteger(policy.reviewMaxAgeSeconds)&&policy.reviewMaxAgeSeconds>0&&policy.reviewMaxAgeSeconds<=86400,'INVALID_REVIEW_POLICY');
+  requireThat(Array.isArray(input.sources)&&input.sources.length>0,'MISSING_SOURCES');
+  const sourceIds=new Set();
+  for(const source of input.sources){
+   requireThat(typeof source.id==='string'&&!sourceIds.has(source.id),'INVALID_SOURCE');
+   let url;try{url=new URL(source.url);}catch{throw new RulesError('INVALID_SOURCE');}
+   requireThat(url.protocol==='https:'&&!url.username&&!url.password&&['support.kraken.com','docs.kraken.com','futures.kraken.com','www.kraken.com'].includes(url.hostname),'INVALID_SOURCE');
+   sourceIds.add(source.id);
+  }
+  const instrument=input.instrument, margin=input.margin;
+  requireThat(instrument&&margin,'MISSING_RULES');
+  for(const group of [instrument,margin,input.funding,input.fees]){
+   requireThat(group&&Array.isArray(group.sources)&&group.sources.length>0&&group.sources.every(id=>sourceIds.has(id)),'MISSING_SOURCES');
+  }
+  const min=units(instrument.minQuantity),step=units(instrument.quantityStep),tick=units(instrument.priceTick),max=units(instrument.maxQuantity);
+  requireThat(min>0n&&step>0n&&tick>0n&&max>=min&&min%step===0n,'INVALID_INSTRUMENT');
+  requireThat(['tradeable','suspended','postOnly'].every(key=>typeof instrument[key]==='boolean'),'INVALID_INSTRUMENT');
+  requireThat(margin.thresholdUnit==='USD'&&margin.thresholdConvention==='lower-inclusive'&&margin.valuationBasis==='entry-notional','UNSUPPORTED_MARGIN_BASIS');
+  requireThat(Array.isArray(input.supportedSchedulePlatforms)&&input.supportedSchedulePlatforms.length===2&&new Set(input.supportedSchedulePlatforms).size===2&&input.supportedSchedulePlatforms.every(p=>['europa','europa_crypto'].includes(p)),'UNSUPPORTED_PLATFORM');
+  requireThat(Array.isArray(input.supportedClientTypes)&&input.supportedClientTypes.length===2&&new Set(input.supportedClientTypes).size===2&&input.supportedClientTypes.every(p=>['retail','professional'].includes(p)),'UNSUPPORTED_CLASSIFICATION');
+  for(const platform of input.supportedSchedulePlatforms){
+   for(const kind of input.supportedClientTypes){
+    const levels=margin.schedules?.[platform]?.[kind];
+    requireThat(Array.isArray(levels)&&levels.length>0,'MISSING_PLATFORM_SCHEDULE');
+    let previous=-1n;
+    for(const level of levels){
+     const lower=units(level.lowerBoundUSD),im=units(level.initialRate),mm=units(level.maintenanceRate);
+     requireThat(lower>previous&&(previous!==-1n||lower===0n)&&im>0n&&im<=SCALE&&mm>0n&&mm<=im,'INVALID_MARGIN_SCHEDULE');
+     previous=lower;
+    }
+   }
+  }
+  requireThat(Array.isArray(input.limitations)&&input.limitations.length>0&&input.limitations.every(x=>typeof x.code==='string'&&x.blockingFor==='specific-risk-recommendations'),'MISSING_LIMITATIONS');
+  const loaded=freeze(JSON.parse(JSON.stringify(input)));validatedRules.add(loaded);return loaded;
+ }
+ function selectSchedule(input,platform,clientType){
+  const rules=load(input);
+  requireThat(rules.supportedSchedulePlatforms.includes(platform),'UNSUPPORTED_PLATFORM');
+  requireThat(rules.supportedClientTypes.includes(clientType),'UNSUPPORTED_CLASSIFICATION');
+  return rules.margin.schedules[platform][clientType];
+ }
+ function tierAt(input,platform,clientType,entryNotionalUSD){
+  const levels=selectSchedule(input,platform,clientType),nominal=units(entryNotionalUSD);
+  // Return a published tier, not a computed margin requirement or approval.
+  return levels.reduce((chosen,level)=>units(level.lowerBoundUSD)<=nominal?level:chosen,levels[0]);
+ }
+ function validateOrder(input,{quantityBTC,priceUSD,orderType}){
+  const rules=load(input),instrument=rules.instrument,reasons=[];
+  const q=units(quantityBTC),p=units(priceUSD);
+  if(q<units(instrument.minQuantity))reasons.push('BELOW_MIN_QUANTITY');
+  if(q>units(instrument.maxQuantity))reasons.push('ABOVE_MAX_QUANTITY');
+  if(q%units(instrument.quantityStep)!==0n)reasons.push('INVALID_QUANTITY_STEP');
+  if(p===0n||p%units(instrument.priceTick)!==0n)reasons.push('INVALID_PRICE_TICK');
+  if(!['limit','market'].includes(orderType))reasons.push('UNSUPPORTED_ORDER_TYPE');
+  if(!instrument.tradeable||instrument.suspended)reasons.push('INSTRUMENT_UNAVAILABLE');
+  if(instrument.postOnly&&orderType!=='limit')reasons.push('POST_ONLY');
+  // Metadata validity alone does not prove affordability or executability.
+  return freeze({metadataValid:reasons.length===0,reasons,version:rules.version});
+ }
+ function assess(input,context){
+  const rules=load(input),now=timestamp(context.now),observed=timestamp(rules.observedAt),reasons=[];
+  if(now<observed)reasons.push('RULES_FROM_FUTURE');
+  if(now-observed>=rules.applicationPolicy.reviewMaxAgeSeconds*1000)reasons.push('STALE_RULES');
+  if(context.symbol!==rules.symbol)reasons.push('WRONG_CONTRACT');
+  if(context.jurisdiction!==rules.jurisdiction)reasons.push('WRONG_JURISDICTION');
+  if(context.marginMode!==rules.marginMode)reasons.push('WRONG_MARGIN_MODE');
+  if(context.selectedLeverage!==rules.selectedLeverage)reasons.push('WRONG_SELECTED_LEVERAGE');
+  if(!rules.supportedSchedulePlatforms.includes(context.platform))reasons.push('UNCONFIRMED_PLATFORM');
+  if(!rules.supportedClientTypes.includes(context.clientType))reasons.push('UNCONFIRMED_CLASSIFICATION');
+  if(!Object.hasOwn(rules.collateral,context.collateralCurrency))reasons.push('UNSUPPORTED_COLLATERAL');
+  if(context.collateralCurrency!=='USD')reasons.push('FX_COLLATERAL_ENGINE_PENDING');
+  if(!rules.instrument.tradeable||rules.instrument.suspended)reasons.push('INSTRUMENT_UNAVAILABLE');
+  const scopeReady=reasons.length===0;
+  return freeze({version:rules.version,scopeReady,status:scopeReady?'approximate':'blocked',
+   specificRiskRecommendationsAllowed:false,ordersAllowed:false,transfersAllowed:false,
+   reasons:[...reasons,...rules.limitations.map(x=>x.code)],
+   label:scopeReady?'Simulação aproximada — regras e reconciliação incompletas':'Dados insuficientes ou fora do âmbito — cálculo específico bloqueado'});
+ }
+ return Object.freeze({RulesError,load,selectSchedule,tierAt,validateOrder,assess});
+});
+</script>
+<script>(function(){const module={exports:{}};/* BTC Strategy Pro | R3.1. Comparison-only contract; NO authority to persist/submit trades. */
+'use strict';
+const VERSION = 'r3.1-comparison-schema-1';
+const SCALE = 1000000n;
+const PROFILE_DISTANCE = Object.freeze({safe:'40000',balanced:'20000',risky:'10000'});
+const MODES = Object.freeze(['classic-demo','v20-base-illustrative','adjustable-preview']);
+const INPUT_FIELDS = Object.freeze([
+  'schemaVersion','mode','profile','referencePriceUSD','firstEntryPriceUSD',
+  'riskFloorUSD','buyLadderLowerBoundUSD','cycleFirstEntryGapUSD',
+  'withinCycleReinforcementGapUSD','maxCycles','nominalCycleBudgetUSD',
+  'walletCashUSD','reportedIsolatedMarginUSD','plannedMarginAddsUSD','protectedCashUSD'
+]);
+class ContractError extends Error {constructor(code){super(code);this.name='ContractError';this.code=code;}}
+function requireValue(ok,code){if(!ok)throw new ContractError(code);}
+function money(v,label,positive=false){
+  requireValue(typeof v==='string' && /^(0|[1-9]\d{0,13})(\.\d{1,6})?$/.test(v),'INVALID_'+label);
+  const [a,b='']=v.split('.'); const n=BigInt(a)*SCALE+BigInt((b+'000000').slice(0,6));
+  requireValue(!positive || n>0n,'INVALID_'+label);return n;
+}
+function print(n){requireValue(n>=0n,'NEGATIVE_RESULT');const s=(n/SCALE).toString(),f=(n%SCALE).toString().padStart(6,'0').replace(/0+$/,'');return f?s+'.'+f:s;}
+function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
+function generate(input){
+  requireValue(input && typeof input==='object' && !Array.isArray(input),'INVALID_INPUT');
+  requireValue(Object.keys(input).length===INPUT_FIELDS.length && INPUT_FIELDS.every(k=>Object.hasOwn(input,k)),'INVALID_INPUT_FIELDS');
+  requireValue(input.schemaVersion===1,'UNSUPPORTED_SCHEMA');
+  requireValue(MODES.includes(input.mode),'INVALID_MODE');
+  requireValue(Object.hasOwn(PROFILE_DISTANCE,input.profile),'INVALID_PROFILE');
+  requireValue(Number.isSafeInteger(input.maxCycles) && input.maxCycles>=1 && input.maxCycles<=12,'INVALID_CYCLE_COUNT');
+  const amounts={};for(const k of INPUT_FIELDS.filter(k=>k.endsWith('USD'))) amounts[k]=money(input[k],k.toUpperCase(),!['walletCashUSD','reportedIsolatedMarginUSD','plannedMarginAddsUSD','protectedCashUSD'].includes(k));
+  const {referencePriceUSD:ref,firstEntryPriceUSD:first,riskFloorUSD:floor,buyLadderLowerBoundUSD:lower}=amounts;
+  requireValue(ref>floor && ref>=first && first>floor,'INVALID_PRICE_REFERENCE_OR_FLOOR');
+  requireValue(lower>=floor && lower<=first,'INVALID_LADDER_LOWER_BOUND');
+  const nominal=amounts.nominalCycleBudgetUSD;
+  const minRef=money(PROFILE_DISTANCE[input.profile],'PROFILE_DISTANCE');
+  const refFloor=ref>minRef?ref-minRef:null;
+  let cycleGap=amounts.cycleFirstEntryGapUSD,step=amounts.withinCycleReinforcementGapUSD;
+  if(input.mode==='classic-demo'){
+    requireValue(cycleGap===money('1000','CYCLE_GAP') && step===money('8000','STAGE_GAP'),'CLASSIC_PRESET_IS_IMMUTABLE');
+  }else if(input.mode==='v20-base-illustrative'){
+    // Only the base percentages, never a full replacement of the volatility-aware V20 engine.
+    requireValue(cycleGap===(ref*3n+999n)/1000n && step===(ref*15n+999n)/1000n,'V20_BASE_PRESET_IS_IMMUTABLE');
+  }
+  const weights=[2n,3n,5n],levels=[],blockers=[];
+  for(let i=0;i<input.maxCycles;i++){
+    for(let j=0;j<3;j++){
+      const p=first-BigInt(i)*cycleGap-BigInt(j)*step;
+      requireValue(p>0n,'NONPOSITIVE_ENTRY_PRICE');
+      const belowFloor=p<=floor,belowLadder=p<lower;
+      if(belowFloor)blockers.push({code:'ENTRY_AT_OR_BELOW_RISK_FLOOR',cycle:i+1,stage:j+1});
+      if(belowLadder)blockers.push({code:'ENTRY_BELOW_LADDER_BOUND',cycle:i+1,stage:j+1});
+      levels.push({cycle:i+1,stage:j+1,weightPercent:Number(weights[j])*10,
+        entryPriceUSD:print(p),nominalAllocationUSD:print(nominal*weights[j]/10n),
+        atOrBelowRiskFloor:belowFloor,belowLadderBound:belowLadder});
+    }
+  }
+  const sums={walletCashUSD:print(amounts.walletCashUSD),reportedIsolatedMarginUSD:print(amounts.reportedIsolatedMarginUSD),plannedMarginAddsUSD:print(amounts.plannedMarginAddsUSD),protectedCashUSD:print(amounts.protectedCashUSD)};
+  if(amounts.protectedCashUSD>amounts.walletCashUSD)blockers.push({code:'PROTECTED_RESERVE_EXCEEDS_REPORTED_WALLET'});
+  // Do not double-count the future margin addition as actually deposited isolated collateral.
+  const profileReferenceFloor=refFloor===null?null:print(refFloor);
+  return freeze({schemaVersion:1,contractVersion:VERSION,status:'comparison-only',canApply:false,
+    mayWriteLedger:false,maySubmitOrders:false,mayCallExchange:false,
+    mode:input.mode,profile:input.profile,referencePriceUSD:print(ref),
+    riskFloorUSD:print(floor),profileReferenceFloorUSD:profileReferenceFloor,
+    riskFloorDiffersFromProfileReference:refFloor!==null && refFloor!==floor,
+    buyLadderLowerBoundUSD:print(lower),cycleFirstEntryGapUSD:print(cycleGap),
+    withinCycleReinforcementGapUSD:print(step),maxCycles:input.maxCycles,
+    nominalCycleBudgetUSD:print(nominal),funds:sums,levels,blockers,
+    warnings:[
+      'These are hypothetical unfilled levels, not actual purchases or orders.',
+      'Reported isolated margin excludes future planned transfers; no wallet funds are automatically margin.',
+      'No Kraken tick/lot validation, live mark price, funding, fees or liquidation has been evaluated.',
+      ...(input.mode==='v20-base-illustrative'?['V20 base percentages omit the higher volatility-driven spacing possible in the actual V20 engine.']:[]),
+      ...(refFloor===null?['Reference price is too low to derive the profile distance without an invalid floor.']:[])
+    ]});
+}
+module.exports=Object.freeze({VERSION,MODES,PROFILE_DISTANCE,ContractError,generate});
+
+window.BTCStrategyComparisonContract=module.exports;})();</script>
+<script>/* R3.2 BTC Strategy Pro — read-only bridge to the ACTUAL V20 Kraken rule validator.
+ * Does NOT use an account, modify the ledger, place trades, or silently assume future margin transfers.
+ */
+(function(root,factory){
+ if(typeof module==='object'&&module.exports)module.exports=factory(require('./strategy-comparison-contract.cjs'),require('../kraken-rules.js'));
+ else root.BTCStrategyPreviewBridge=factory(root.BTCStrategyComparisonContract,root.BTCKrakenRules);
+})(typeof globalThis!=='undefined'?globalThis:this,function(Compare,Rules){
+ 'use strict';
+ const SCALE=1000000n,VERSION='r3.2-preview-bridge-1';
+ const isDecimal=s=>typeof s==='string'&&/^(0|[1-9]\d{0,16})(\.\d{1,6})?$/.test(s);
+ function units(value){if(!isDecimal(value))throw new Error('UNSUPPORTED_PREVIEW_DECIMAL');const [a,b='']=value.split('.');return BigInt(a)*SCALE+BigInt((b+'000000').slice(0,6));}
+ function decimal(n){if(n<0n)throw new Error('NEGATIVE_DERIVED_AMOUNT');const a=String(n/SCALE),b=String(n%SCALE).padStart(6,'0').replace(/0+$/,'');return b?a+'.'+b:a;}
+ function freeze(v){if(v&&typeof v==='object'){Object.values(v).forEach(freeze);Object.freeze(v);}return v;}
+ function run({request,rules:rawRules,context,riskEngine=null}){
+   const model=Compare.generate(request);
+   const rules=Rules.load(rawRules);
+   if(!context||typeof context!=='object'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(context.asOf))throw new Error('VALIDATION_TIME_REQUIRED');
+   const assessment=Rules.assess(rules,{now:context.asOf,symbol:'PF_XBTUSD',jurisdiction:'EEA',marginMode:'isolated',selectedLeverage:'10',platform:context.platform,clientType:context.clientType,collateralCurrency:'USD'});
+   const minQuantity=units(rules.instrument.minQuantity),step=units(rules.instrument.quantityStep);
+   if(step<=0n||minQuantity<=0n)throw new Error('INVALID_RULE_LOT');
+   const orders=[];let sumQty=0n,sumNominal=0n,sumAlloc=0n;
+   for(const level of model.levels){
+     const nominal=units(level.nominalAllocationUSD),price=units(level.entryPriceUSD);
+     const requestedQty=nominal*SCALE/price;
+     const quantity=requestedQty/step*step;
+     const realNominal=quantity*price/SCALE;
+     const valid=Rules.validateOrder(rules,{quantityBTC:decimal(quantity),priceUSD:decimal(price),orderType:'limit'});
+     const issues=[...valid.reasons];
+     if(level.atOrBelowRiskFloor)issues.push('AT_OR_BELOW_RISK_FLOOR');
+     if(level.belowLadderBound)issues.push('BELOW_LADDER_LOWER_BOUND');
+     if(quantity===0n||quantity<minQuantity)issues.push('LOT_BELOW_MINIMUM');
+     // Exact notional must not exceed 20/30/50 allocation; the rounding difference remains unspent.
+     if(realNominal>nominal)throw new Error('PREVIEW_QUANTITY_OVERRUN');
+     orders.push({cycle:level.cycle,stage:level.stage,entryPriceUSD:level.entryPriceUSD,allocationPercent:level.weightPercent,
+        targetNominalUSD:level.nominalAllocationUSD,quantityBTC:decimal(quantity),executableNominalUSD:decimal(realNominal),unspentNominalUSD:decimal(nominal-realNominal),
+        metadataValid:valid.metadataValid,blocked:issues.length>0,issues});
+     sumAlloc+=nominal;sumNominal+=realNominal;sumQty+=quantity;
+   }
+   const reasons=[...new Set([...model.blockers.map(v=>v.code),...orders.flatMap(v=>v.issues),...assessment.reasons])];
+   const quantities={targetNominalUSD:decimal(sumAlloc),executableNominalUSD:decimal(sumNominal),executableQuantityBTC:decimal(sumQty),unspentNominalUSD:decimal(sumAlloc-sumNominal)};
+   // The full financial engine has dependencies (decimal.js) and is NOT substituted by a home-grown liquidation formula.
+   let risk={status:'not-evaluated',reason:'RISK_ENGINE_NOT_PROVIDED',result:null,officialLiquidation:false};
+   if(!assessment.scopeReady){risk={status:'blocked',reason:'STALE_OR_OUT_OF_SCOPE_KRAKEN_RULES',result:null,officialLiquidation:false};}
+   else if(orders.some(o=>o.blocked)){risk={status:'blocked',reason:'INVALID_PRICE_OR_LOT_LADDER',result:null,officialLiquidation:false};}
+   else if(riskEngine&&typeof riskEngine.requiredMarginForFloor==='function'){
+     // Calls EXACT V20 risk implementation, where dependency is available; no JSON mutation and no transfer.
+     try{
+       const result=riskEngine.requiredMarginForFloor({quantityBTC:quantities.executableQuantityBTC,basisUSD:quantities.executableNominalUSD,
+          floorUSD:model.riskFloorUSD,bufferUSD:'0',markPriceUSD:model.referencePriceUSD,rules,
+          platform:context.platform,clientType:context.clientType});
+       risk={status:'v20-estimate-under-synthetic-all-fills',reason:null,result,officialLiquidation:false};
+     }catch(e){risk={status:'blocked',reason:'V20_RISK_ENGINE_ERROR',code:String(e.code||e.message).slice(0,160),result:null,officialLiquidation:false};}
+   }
+   return freeze({schemaVersion:1,bridgeVersion:VERSION,sourceContractVersion:model.contractVersion,
+      sourceRulesVersion:rules.version,sourceRulesObservedAt:rules.observedAt,validatedAt:context.asOf,
+      status:'comparison-only',canApply:false,mayWriteLedger:false,maySubmitOrders:false,mayCallExchange:false,
+      needsUserApproval:true,ruleAssessment:assessment,ladder:model,orders,totals:quantities,risk,
+      warnings:['Snapshot Kraken rule metadata may be stale; this is NOT a trade recommendation or Kraken quotation.',
+       'Hypothetical quantities show minimum-lot rounding. Orders have NOT been sent to an exchange.',
+       'All-fill aggregate risk is not pathwise liquidation analysis; gaps, fees, funding and actual transfer timing are not modeled here.',
+       'Planned margin increases have not been transferred and do not count as isolated collateral.']});
+ }
+ return Object.freeze({VERSION,run});
+});
+</script>
+<script>
+const $=id=>document.getElementById(id),ids=['mode','profile','price','cycles','capital','nominal','margin','future','gap','step','reserve','bound'];
+const src=JSON.parse($('rules-json').textContent);let final=null;
+function cleanNumber(id){const v=$(id).value;if(!/^\d+(\.\d{1,6})?$/.test(v))throw Error('Valor inválido no campo: '+id);return v;}
+function profileDist(){return ({safe:40000,balanced:20000,risky:10000})[$('profile').value]}
+function updateGaps(){const mode=$('mode').value;const price=Number($('price').value);
+ $('gap').disabled=mode!=='adjustable-preview';$('step').disabled=mode!=='adjustable-preview';
+ if(mode==='classic-demo'){$('gap').value='1000';$('step').value='8000'}
+ if(mode==='v20-base-illustrative'){$('gap').value=String(Math.ceil(price*.003));$('step').value=String(Math.ceil(price*.015))}
+}
+let oldFloor=60000;
+function render(){try{
+ const ref=Number(cleanNumber('price')),floor=ref-profileDist();if(floor<=0)throw Error('Preço de referência insuficiente para a distância deste perfil');
+ const mode=$('mode').value;
+ const request={schemaVersion:1,mode,profile:$('profile').value,referencePriceUSD:cleanNumber('price'),firstEntryPriceUSD:cleanNumber('price'),riskFloorUSD:String(floor),buyLadderLowerBoundUSD:cleanNumber('bound'),cycleFirstEntryGapUSD:cleanNumber('gap'),withinCycleReinforcementGapUSD:cleanNumber('step'),maxCycles:Number(cleanNumber('cycles')),nominalCycleBudgetUSD:cleanNumber('nominal'),walletCashUSD:cleanNumber('capital'),reportedIsolatedMarginUSD:cleanNumber('margin'),plannedMarginAddsUSD:cleanNumber('future'),protectedCashUSD:cleanNumber('reserve')};
+ const x=BTCStrategyPreviewBridge.run({request,rules:src,context:{asOf:'2026-10-25T12:48:00Z',platform:'europa',clientType:'retail'}});
+ final=x;
+ const blocked=x.orders.filter(z=>z.blocked).length;
+ $('metrics').innerHTML=[['Piso de stress',floor.toLocaleString('pt-PT')+' USD','Não é o preço de liquidação'],['Compras',x.orders.length,'3 compras por ciclo · 20/30/50'],['Compras bloqueadas',blocked,x.ruleAssessment.scopeReady?'Pelas regras de preços e lotes':'Lotes ou níveis, sem validação financeira'],['BTC nominal executável',Number(x.totals.executableNominalUSD).toLocaleString('pt-PT',{maximumFractionDigits:2})+' USD','Soma hipotética arredondada a lotes'],['Margem atribuída',Number(x.ladder.funds.reportedIsolatedMarginUSD).toLocaleString('pt-PT')+' USD','Montante informado como já atribuído'],['Validação financeira',x.risk.status==='blocked'?'Bloqueada':'Não efetuada',x.risk.reason]].map(t=>'<div class="panel metric"><small>'+t[0]+'</small><b>'+t[1]+'</b><small>'+t[2]+'</small></div>').join('');
+ let problems=x.orders.filter(o=>o.blocked).slice(0,12).map(o=>'Ciclo '+o.cycle+' / Compra '+o.stage+': '+o.issues.join(', '));
+ $('status').innerHTML=[`<div class="item bad"><b>Regras antigas:</b> ${x.ruleAssessment.reasons.includes('STALE_RULES')?'STALE_RULES — é obrigatória nova validação.':'Rever âmbito e limitações da Kraken.'}</div>`,...problems.map(t=>`<div class="item">${t}</div>`),`<div class="item"><b>Estado da margem:</b> ${x.risk.reason}. Não são transferidas verbas automaticamente.</div>`].join('');
+ $('info').textContent='Regra consultada: '+x.sourceRulesVersion+' · Observada em '+x.sourceRulesObservedAt+' · Cotação do BTC: apenas o valor manual. Os preços e lotes não provam a viabilidade de margem.';
+ $('table').innerHTML=x.orders.map(o=>`<tr><td>Ciclo ${o.cycle} · ${o.stage}ª</td><td>${o.entryPriceUSD}</td><td>${o.targetNominalUSD}</td><td>${o.quantityBTC}</td><td>${o.executableNominalUSD}</td><td class="state ${o.blocked?'bad':'good'}">${o.blocked?'BLOQUEADO':'Lote válido*'}</td></tr>`).join('');
+ $('errors').style.display='none';
+ }catch(e){final=null;$('errors').style.display='block';$('errors').textContent=e.code||e.message;$('table').innerHTML='';$('metrics').innerHTML='';$('status').textContent='A pré-visualização não pode ser gerada com estes valores. Corrige o campo indicado.';}}
+ids.forEach(id=>$(id).addEventListener('input',()=>{if(id==='profile'||id==='price'){$('bound').value=String(Number($('price').value)-profileDist());oldFloor=Number($('bound').value)}if(id==='mode'||id==='price')updateGaps();render()}));
+$('reset').addEventListener('click',()=>{for(const [k,v] of Object.entries({mode:'classic-demo',profile:'balanced',price:'80000',cycles:'5',capital:'2000',nominal:'1000',margin:'200',future:'300',gap:'1000',step:'8000',reserve:'400',bound:'60000'}))$(k).value=v;updateGaps();render()});
+$('export').addEventListener('click',()=>{if(!final)return;const rows=[['Ciclo','Fase','Preço USD','Nominal alvo USD','Quantidade BTC','Nominal real USD','Estado'],...final.orders.map(o=>[o.cycle,o.stage,o.entryPriceUSD,o.targetNominalUSD,o.quantityBTC,o.executableNominalUSD,o.blocked?'BLOQUEADO':'METADADOS VALIDOS'])];const csv='\uFEFF'+rows.map(r=>r.join(';')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='btc_r3_2_ordens_hipoteticas.csv';a.click();URL.revokeObjectURL(a.href)});
+render();
+</script></main></body></html>

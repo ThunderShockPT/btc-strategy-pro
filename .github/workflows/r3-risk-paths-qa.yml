@@ -1,0 +1,207 @@
+name: BTC Strategy Pro - R3.3 isolated risk paths QA
+on:
+  push:
+    branches:
+      - audit/v20-strategy-recovery-20261025
+    paths:
+      - '.github/workflows/r3-risk-paths-qa.yml'
+      - 'scripts/test-r3-risk-paths-20261025.cjs'
+      - 'scripts/test-r3-end-to-end-20261025.cjs'
+      - 'scripts/test-r5-authenticated-dashboard-20261025.cjs'
+      - 'scripts/test-r5-session-wallet-bridge-20261025.cjs'
+      - 'five-menu-journal-v20.js'
+      - 'unified-five-menus-v20.js'
+      - 'scripts/test-r5-unified-five-menus-20261025.cjs'
+      - 'five-menu-integrated-runtime-v20.js'
+      - 'financial-alerts-v20.js'
+      - 'financial-alerts-view-v20.js'
+      - 'onboarding-guide-v20.js'
+      - 'guided-tutorial-v20.js'
+      - 'guided-tutorial-view-v20.js'
+      - 'scripts/test-b13-onboarding-20261025.cjs'
+      - 'scripts/test-b13-guided-tutorial-20261025.cjs'
+      - 'previews/v20-b13-onboarding-bloco8-qa-20261025.html'
+      - 'scripts/test-b13-tutorial-browser-20261025.cjs'
+      - 'scripts/test-b13-integrated-browser-20261025.cjs'
+      - 'scripts/test-b14-kraken-documentation-20261025.cjs'
+      - 'architecture/b14-financial-reconciliation.cjs'
+      - 'scripts/test-b14-financial-reconciliation-20261025.cjs'
+      - 'scripts/test-b14-financial-adversarial-20261025.cjs'
+      - 'previews/v20-b15-integrated-bloco8-qa-20261025.html'
+      - 'scripts/test-b15-integrated-demo-browser-20261025.cjs'
+      - 'scripts/test-b15-purchase-alerts-browser-20261026.cjs'
+      - 'scripts/test-b15-navigation-visual-browser-20261026.cjs'
+      - 'scripts/test-v20-final-architecture-consent-20261026.cjs'
+      - 'scripts/test-v20-post34-supabase-security-audit-20261026.cjs'
+      - 'scripts/v20-post34-supabase-readonly-audit.sql'
+      - 'policies/v20-post34-supabase-security-audit-20261026.json'
+      - 'policies/v20-model-c-architecture-owner-consent-20261026.json'
+      - 'docs/V20_34_ETAPAS_AUDITORIA_FECHO_TECNICO_20261026.json'
+      - 'scripts/test-b15-account-recovery-browser-20261025.cjs'
+      - 'scripts/build-b15-mobile-pwa-20261025.cjs'
+      - 'scripts/test-b15-mobile-pwa-browser-20261025.cjs'
+      - 'scripts/check-b15-release-readiness-20261025.cjs'
+      - 'scripts/test-b15-release-readiness-20261025.cjs'
+      - 'scripts/build-b15-release-candidate-20261025.cjs'
+      - 'policies/v20-b15-release-evidence-20261025.json'
+      - 'policies/cloud-release-20261021.json'
+      - 'previews/b153/**'
+      - 'scripts/generate_icons.py'
+      - 'scripts/test-backup-envelope.cjs'
+      - 'scripts/test-atomic-store.cjs'
+      - 'backend/backup-envelope.cjs'
+      - 'backend/atomic-store.cjs'
+      - 'previews/v20-b13-alerts-bloco8-qa-20261025.html'
+      - 'scripts/test-b13-alerts-browser-20261025.cjs'
+      - 'scripts/test-b13-alerts-20261025.cjs'
+      - 'scripts/test-r5-integrated-runtime-20261025.cjs'
+      - 'scripts/test-r5-unified-browser-20261025.cjs'
+      - 'previews/v20-r5-unified-five-menus-qa-20261025.html'
+      - 'scripts/test-r5-journal-five-menu-20261025.cjs'
+      - 'account-five-menu-bridge-v20.js'
+      - 'five-menu-financial-view-v20.js'
+      - 'scripts/test-r5-five-menu-bindings-20261025.cjs'
+      - 'authenticated-dashboard-v20.js'
+      - 'architecture/**'
+      - 'scripts/test-next-buy-capacity-20261025.cjs'
+      - 'docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md'
+  pull_request:
+    branches:
+      - qa/v20-block12-recovery-20261022
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  r3-risk-paths:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: qa-only-isolated
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - name: Install exact locked packages (no install scripts)
+        run: npm ci --ignore-scripts
+      - name: Verify real engine and test syntax
+        run: |
+          node -e "const v=require('decimal.js/package.json').version; console.log('decimal.js version',v); if(v!=='10.6.0') process.exit(1)"
+          node --check scripts/test-r3-risk-paths-20261025.cjs
+      - name: Run 14 new real-engine risk paths
+        run: node --test scripts/test-r3-risk-paths-20261025.cjs
+      - name: Owner review - future buying power after earlier buys
+        run: node --test scripts/test-next-buy-capacity-20261025.cjs
+      - name: R3.4 integrated preview to V20 risk acceptance
+        run: node --test scripts/test-r3-end-to-end-20261025.cjs
+      - name: V20 finance regressions
+        run: |
+          node --test scripts/test-cycle-planner.cjs
+          node --test scripts/test-position-risk.cjs
+          node --test scripts/test-temporal-simulator.cjs
+          node --test scripts/test-kraken-rules.cjs
+      - name: R5.1 authenticated five-menu single-source tests
+        run: node --test scripts/test-r5-authenticated-dashboard-20261025.cjs
+      - name: R5.2 verified login and wallet switching tests
+        run: node --test scripts/test-r5-session-wallet-bridge-20261025.cjs
+      - name: R5.2 five-menu private data bindings
+        run: node --test scripts/test-r5-five-menu-bindings-20261025.cjs
+      - name: Bloco 13.1 alerts without trading or private data leaks
+        run: node --test scripts/test-b13-alerts-20261025.cjs
+      - name: Bloco 13.2 original onboarding plus supplementary learning regressions
+        run: |
+          node --test scripts/test-wallet-onboarding.cjs
+          node --test scripts/test-b13-onboarding-20261025.cjs
+          node --test scripts/test-b13-guided-tutorial-20261025.cjs
+      - name: R5.5 private QA real V20 session-to-journal runtime
+        run: node --test scripts/test-r5-integrated-runtime-20261025.cjs
+      - name: R5.4 unified five-menu shared V20 snapshot tests
+        run: node --test scripts/test-r5-unified-five-menus-20261025.cjs
+      - name: R5.3 journal explicit review and real V20 corrections
+        run: |
+          node --test scripts/test-r5-journal-five-menu-20261025.cjs
+          node --test scripts/test-execution-workflow.cjs
+          node --test scripts/test-corrections.cjs
+          node --test scripts/test-persistence-contract.cjs
+      - name: R5.3 authenticated API regressions (ephemeral PGlite)
+        run: node --test scripts/test-authenticated-api.cjs
+      - name: R5.3 concurrent PostgreSQL atomic checks (QA service only)
+        env:
+          BTCSP_TEST_PG_URL: postgresql://postgres:qa-only-isolated@127.0.0.1:5432/postgres
+          BTCSP_TEST_PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: node --test scripts/test-atomic-postgres.cjs
+      - name: R5.4 install isolated Chromium browser
+        run: npx playwright install chromium --with-deps
+      - name: R5.4 six-screen real UI regression
+        run: node --test scripts/test-r5-unified-browser-20261025.cjs
+      - name: Bloco 13.1 six-screen alerts UI regression
+        run: node --test scripts/test-b13-alerts-browser-20261025.cjs
+      - name: Bloco 13.2 six-screen tutorial, quiz and cash-lesson regression
+        run: node --test scripts/test-b13-tutorial-browser-20261025.cjs
+      - name: Bloco 15.3 build isolated V20 Android PWA QA package
+        run: node scripts/build-b15-mobile-pwa-20261025.cjs
+      - name: Bloco 15.3 Android-like UI and offline service worker browser tests
+        run: node --test scripts/test-b15-mobile-pwa-browser-20261025.cjs
+      - name: Bloco 15.3 downloadable manual Galaxy S25 QA package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-strategy-v20-b153-pwa-qa
+          path: previews/b153/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Bloco 15.2 backup envelope and atomic rollback regression
+        run: node --test scripts/test-backup-envelope.cjs scripts/test-atomic-store.cjs
+      - name: Bloco 15.2 premium account isolation and fail-closed recovery six screens
+        run: node --test scripts/test-b15-account-recovery-browser-20261025.cjs
+      - name: Bloco 15.1 six-screen complete Demo with alerts tutorial wallet and original visual
+        run: node --test scripts/test-b15-integrated-demo-browser-20261025.cjs
+      - name: Bloco 15 S25 purchase modal confirmation and educational alerts QA
+        run: node --test scripts/test-b15-purchase-alerts-browser-20261026.cjs
+      - name: Bloco 15 restore distinct screens five menus and preserve buying and alerts
+        run: node --test scripts/test-b15-navigation-visual-browser-20261026.cjs
+      - name: Bloco 14.3 adversarial gaps funding failed margin and liquidation model
+        run: node --test scripts/test-b14-financial-adversarial-20261025.cjs
+      - name: Bloco 14.2 independent wallet and isolated-margin reconciliation
+        run: node --test scripts/test-b14-financial-reconciliation-20261025.cjs
+      - name: Bloco 14.1 EEA Kraken rules evidence and staleness guard
+        run: node --test scripts/test-b14-kraken-documentation-20261025.cjs
+      - name: Bloco 13.3 integration of alerts tutorial five menus and logout in six widths
+        run: node --test scripts/test-b13-integrated-browser-20261025.cjs
+      - name: Recovery contract regressions
+        run: |
+          node --test scripts/test-r3-strategy-contract-20261025.cjs
+          node --test scripts/test-r3-preview-bridge-20261025.cjs
+      - name: R1.4 R2.4 owner architecture-only approval and 34-stage final audit
+        run: node --test scripts/test-v20-final-architecture-consent-20261026.cjs
+      - name: Post-34 P1.1 read-only Supabase security evidence and no-production gates
+        run: node --test scripts/test-v20-post34-supabase-security-audit-20261026.cjs
+      - name: Bloco 15.4 release readiness negative gates (QA only)
+        run: |
+          node --test scripts/test-b15-release-readiness-20261025.cjs
+          node scripts/check-b15-release-readiness-20261025.cjs --mode=qa-review
+      - name: Bloco 15.4 generate QA-only checksummed candidate manifest
+        run: node scripts/build-b15-release-candidate-20261025.cjs
+      - name: Bloco 15.4 downloadable release review package - never deploy
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-strategy-v20-b154-review-only
+          path: |
+            previews/b153/
+            docs/V20_B15_ETAPA4_GATE_FINAL_20261025.md
+            policies/v20-b15-release-evidence-20261025.json
+          if-no-files-found: error
+          retention-days: 14

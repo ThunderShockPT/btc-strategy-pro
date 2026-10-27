@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "btcsp-v20-post34-edge-function-review.1",
+  "snapshotDate": "2026-10-26",
+  "projectRef": "oftzqqjbwonngubihrsd",
+  "scope": "READ_ONLY_SOURCE_REVIEW_NO_LIVE_REQUESTS",
+  "methodology": "Supabase list_edge_functions/get_edge_function: inspected all five deployed source entrypoints and configuration; cross-checked local backend auth guards; did NOT probe endpoints or modify remote data",
+  "edgeFunctions": [
+    {
+      "slug": "btcsp-v20-api",
+      "deployedVersion": 1,
+      "sha256": "4ea8831287421327386f5e56897085805bbceccf2014cdb37fcb7d5d6e8eabe9",
+      "platformVerifyJwt": false,
+      "classification": "PRODUCTION_API_CLOUD_DISABLED",
+      "sourceChecks": [
+        "GET /api/v20/health public nonfinancial state",
+        "Origin allowlist and method/routing restrictions",
+        "Financial cloud gate denies state/prepare/commit while policy checks false",
+        "When enabled, Bearer format, Supabase auth/v1/user and session_id verification, confirmed owner checks and DB-scoped assertSession"
+      ],
+      "currentlySupportsRealTrading": false,
+      "securityConclusion": "Source supports fail-closed on all financial routes with currently closed policy; no live pen-test executed"
+    },
+    {
+      "slug": "btcsp-v20-runtime-qa",
+      "deployedVersion": 20,
+      "sha256": "b9c486be141274b098e34a710b42d9df5e0eee9eb03b19550dd515e17538d797",
+      "platformVerifyJwt": false,
+      "classification": "RETIRED_CLOSED_STUB",
+      "sourceChecks": [
+        "Entire handler returns HTTP 503 and code QA_COMPLETE_CLOSED",
+        "Cache-Control no-store"
+      ],
+      "currentlySupportsRealTrading": false,
+      "securityConclusion": "No business endpoints remain implemented in deployed 111-character entrypoint"
+    },
+    {
+      "slug": "btcsp-v20-account-qa",
+      "deployedVersion": 42,
+      "sha256": "d7817752ca22866b69280a91044aa72b9d5d15b7be9b556e3fd04f63dd1ff83e",
+      "platformVerifyJwt": false,
+      "classification": "EPHEMERAL_QA_EXPIRED",
+      "sourceChecks": [
+        "Expiry hardcoded 2026-10-25T09:57:44.973Z, expired at snapshot",
+        "Before privileged routes: constant-time SHA-256 capability validation and fixed QA run scope",
+        "Account IDs/project IDs restricted to fixed two test users",
+        "Bootstrap and finish routes accept only capability, not standard Bearer; expiration blocks bootstrap",
+        "Other test routes require scoped JWT, app-level auth/v1/user verification, strict limited route whitelist",
+        "QA code constructs a temporary permissive policy for isolated fixtures, not authorized for production"
+      ],
+      "currentlySupportsRealTrading": false,
+      "securityConclusion": "Expired ephemeral QA interface; must not reuse its test-only policy or secrets in real account service"
+    },
+    {
+      "slug": "btcsp-v20-private-provision",
+      "deployedVersion": 11,
+      "sha256": "aca85daf2add508706e42c893110bb17c422ac8673e94d9ac98a60410af1098c",
+      "platformVerifyJwt": false,
+      "classification": "RETIRED_CLOSED_STUB",
+      "sourceChecks": [
+        "Entire handler returns HTTP 503 and code PRIVATE_PROVISION_CLOSED",
+        "Cache-Control no-store"
+      ],
+      "currentlySupportsRealTrading": false,
+      "securityConclusion": "No user provisioning remains in deployed 115-character handler"
+    },
+    {
+      "slug": "btcsp-v20-private-test",
+      "deployedVersion": 12,
+      "sha256": "04ebb5b7594276b6c9aee8ac4e5df50319d8ba22d0b8860ac4a93efe7f842bd8",
+      "platformVerifyJwt": false,
+      "classification": "RESTRICTED_TEST_API_ACTIVE",
+      "sourceChecks": [
+        "Server-side allowlist of test owner(s), no general public role access",
+        "Session is verified by Supabase auth/v1/user and auth.sessions via app-level auth guard",
+        "In every transaction, verified test scope and raw_app_meta_data marker must match operator scope",
+        "Test derived HMAC key uses backend secret and fixed domain separation; no secret shared to frontend",
+        "Restrictive Origin and method validation; health is nonfinancial",
+        "Response marks X-BTCSP-Production-Approved:false"
+      ],
+      "currentlySupportsRealTrading": false,
+      "securityConclusion": "Meaningful application-level access checks; do not assume safe against all unauthenticated and cross-tenant requests until controlled dynamic tests"
+    }
+  ],
+  "crossCuttingFindings": [
+    {
+      "id": "JWT_PLATFORM_OFF",
+      "severity": "WARNING",
+      "detail": "5/5 deployed functions have verify_jwt=false; app-level Bearer/CORS/owner guards on active routes do not replace end-to-end adversarial checks"
+    },
+    {
+      "id": "PRIVATE_TEST_ACTIVE",
+      "severity": "REVIEW_BEFORE_BETA",
+      "detail": "Private test API is active on main Supabase project and may rely on privileged server key; isolate/decommission only after owner-approved safe transition; avoid blind deletion"
+    },
+    {
+      "id": "TEST_ONLY_POLICY",
+      "severity": "WARNING",
+      "detail": "Expired QA function creates its own temporary enabled gates for isolated test fixture, distinct from production policy; never copy to prod"
+    },
+    {
+      "id": "UNKNOWN_RUNTIME_TEST",
+      "severity": "BLOCKER",
+      "detail": "No authenticated two-account cross-owner requests, invalid-token probes, compromised password tests, CSRF/CORS live browser probes or restore tests performed"
+    }
+  ],
+  "policyGuards": {
+    "financialCloudApproved": false,
+    "publicRegistrationApproved": false,
+    "goNoGo": "NO_GO",
+    "pr35Draft": true,
+    "realKrakenOrdersAllowed": false
+  },
+  "stage": {
+    "id": "P1.2",
+    "total": 8,
+    "status": "CODE_REVIEW_COMPLETE_DYNAMIC_SECURITY_TESTS_STILL_PENDING_IN_P1.4",
+    "next": "P1.3"
+  },
+  "authDoc": "https://supabase.com/docs/guides/functions/auth-headers"
+}

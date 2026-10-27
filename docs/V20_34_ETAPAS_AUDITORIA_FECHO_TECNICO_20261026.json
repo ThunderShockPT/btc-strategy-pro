@@ -1,0 +1,290 @@
+{
+  "schemaVersion": "btcsp-v20-34-stage-audit.1",
+  "auditDate": "2026-10-26",
+  "plan": "docs/V20_PLANO_FIXO_9_BLOCOS_34_ETAPAS_20261025.md",
+  "auditScope": "IMPLEMENTED_TECHNICAL_STAGES_AND_ARCHITECTURE_ONLY_NOT_PRODUCTION",
+  "blocks": [
+    {
+      "id": "13",
+      "stages": 3,
+      "technicallyComplete": 3
+    },
+    {
+      "id": "14",
+      "stages": 3,
+      "technicallyComplete": 3
+    },
+    {
+      "id": "15",
+      "stages": 4,
+      "technicallyComplete": 4
+    },
+    {
+      "id": "R0",
+      "stages": 3,
+      "technicallyComplete": 3
+    },
+    {
+      "id": "R1",
+      "stages": 4,
+      "technicallyComplete": 4
+    },
+    {
+      "id": "R2",
+      "stages": 4,
+      "technicallyComplete": 4
+    },
+    {
+      "id": "R3",
+      "stages": 4,
+      "technicallyComplete": 4
+    },
+    {
+      "id": "R4",
+      "stages": 4,
+      "technicallyComplete": 4
+    },
+    {
+      "id": "R5",
+      "stages": 5,
+      "technicallyComplete": 5
+    }
+  ],
+  "stages": [
+    {
+      "id": "R0.1",
+      "title": "Inventário inicial e proteção do projeto",
+      "evidence": "docs/V20_RECUPERACAO_ESTRATEGIA_R0_R1_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R0.2",
+      "title": "Verificação de integridade e referências",
+      "evidence": "docs/V20_RECUPERACAO_ESTRATEGIA_R0_R1_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R0.3",
+      "title": "Checkpoint e isolamento da recuperação",
+      "evidence": "docs/V20_RECUPERACAO_ESTRATEGIA_R0_R1_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R1.1",
+      "title": "Recuperação dos testes da grelha clássica A–E",
+      "evidence": "docs/V20_R1_ETAPA4_REVIEW_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R1.2",
+      "title": "Comparador interativo da estratégia",
+      "evidence": "docs/V20_R1_ETAPA2_COMPARADOR_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R1.3",
+      "title": "Capacidade de caixa, margem, lote e piso",
+      "evidence": "docs/V20_R1_ETAPA3_CAIXA_MARGEM_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R1.4",
+      "title": "Revisão e aceitação da arquitetura pelo proprietário",
+      "evidence": "docs/V20_R1_R2_FECHO_DECISAO_20261026.md",
+      "status": "OWNER_ACCEPTED_ARCHITECTURE_ONLY"
+    },
+    {
+      "id": "R2.1",
+      "title": "Inventário de estudos históricos",
+      "evidence": "docs/V20_R2_ETAPA1_INVENTARIO_ESTUDOS_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R2.2",
+      "title": "Reprodução dos históricos",
+      "evidence": "docs/V20_R2_ETAPA2_REPRODUCAO_HISTORICA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R2.3",
+      "title": "Matriz comparativa e stress de cenários",
+      "evidence": "docs/V20_R2_ETAPA3_COMPARACAO_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R2.4",
+      "title": "Síntese e decisão de direção arquitetural",
+      "evidence": "docs/V20_R2_ETAPA4_CONCLUSOES_20261025.md",
+      "status": "OWNER_ACCEPTED_ARCHITECTURE_ONLY"
+    },
+    {
+      "id": "R3.1",
+      "title": "Contrato arquitetural e testes do motor",
+      "evidence": "docs/V20_R3_ETAPA1_ARQUITETURA_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R3.2",
+      "title": "Regras de níveis, lotes e ordens simuladas",
+      "evidence": "docs/V20_R3_ETAPA2_VALIDACAO_DE_ORDENS_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R3.3",
+      "title": "Ensaios de risco e estados adversos",
+      "evidence": "docs/V20_R3_ETAPA3_ENSAIOS_RISCO_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R3.4",
+      "title": "Fecho técnico do motor isolado",
+      "evidence": "docs/V20_R3_ETAPA4_FECHO_TECNICO_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R4.1",
+      "title": "Recuperação fiel do visual Bloco 8",
+      "evidence": "docs/V20_R4_ETAPA1_RECUPERACAO_VISUAL_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R4.2",
+      "title": "Integração visual com o motor de demonstração",
+      "evidence": "docs/V20_R4_ETAPA2_MOTOR_REAL_CAIXA_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R4.3",
+      "title": "Navegação pelos cinco menus",
+      "evidence": "docs/V20_R4_ETAPA3_CINCO_MENUS_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R4.4",
+      "title": "Auditoria visual e funcional da Demo",
+      "evidence": "docs/V20_R4_ETAPA4_AUDITORIA_FINAL_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R5.1",
+      "title": "Ponto único de leitura autenticada em QA",
+      "evidence": "docs/V20_R5_ETAPA1_FONTE_UNICA_AUTENTICADA_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R5.2",
+      "title": "Sessões e carteiras em QA isolado",
+      "evidence": "docs/V20_R5_ETAPA2_AUTENTICACAO_CARTEIRAS_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R5.3",
+      "title": "Diário auditável e correções manuais",
+      "evidence": "docs/V20_R5_ETAPA3_DIARIO_AUDITAVEL_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R5.4",
+      "title": "Dados coerentes nos cinco menus",
+      "evidence": "docs/V20_R5_ETAPA4_MENUS_UNIFICADOS_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "R5.5",
+      "title": "Integração final de QA isolado",
+      "evidence": "docs/V20_R5_ETAPA5_INTEGRACAO_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "13.1",
+      "title": "Alertas financeiros educativos",
+      "evidence": "docs/V20_B13_ETAPA1_ALERTAS_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "13.2",
+      "title": "Tutorial interativo e onboarding",
+      "evidence": "docs/V20_B13_ETAPA2_TUTORIAL_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "13.3",
+      "title": "Integração de alertas e tutorial",
+      "evidence": "docs/V20_B13_ETAPA3_INTEGRACAO_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "14.1",
+      "title": "Auditoria documental Kraken EEE",
+      "evidence": "docs/V20_B14_ETAPA1_AUDITORIA_KRAKEN_EEE_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "14.2",
+      "title": "Reconciliação matemática independente",
+      "evidence": "docs/V20_B14_ETAPA2_RECONCILIACAO_MATEMATICA_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "14.3",
+      "title": "Testes adversos do motor",
+      "evidence": "docs/V20_B14_ETAPA3_QA_FINANCEIRA_ADVERSA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "15.1",
+      "title": "Integração da Demo premium e 5 menus",
+      "evidence": "docs/V20_B15_ETAPA1_QA_INTEGRADA_DEMO_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "15.2",
+      "title": "Segurança, recuperação e rollback em QA",
+      "evidence": "docs/V20_B15_ETAPA2_SEGURANCA_BACKUP_ROLLBACK_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "15.3",
+      "title": "Teste da PWA Android e offline",
+      "evidence": "docs/V20_B15_ETAPA3_PWA_ANDROID_QA_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    },
+    {
+      "id": "15.4",
+      "title": "Gates de lançamento e revisão da Beta",
+      "evidence": "docs/V20_B15_ETAPA4_GATE_FINAL_20261025.md",
+      "status": "QA_TECHNICALLY_DELIVERED"
+    }
+  ],
+  "summary": {
+    "plannedStages": 34,
+    "technicallyDeliveredStages": 34,
+    "percentage": 100,
+    "productArchitectureAccepted": true,
+    "realMoneyTradingApproved": false,
+    "publicReleaseApproved": false,
+    "productionReadiness": "NO_GO"
+  },
+  "signoff": "policies/v20-model-c-architecture-owner-consent-20261026.json",
+  "lastFullCI": {
+    "verifiedRun": 40395394838,
+    "passed": 664,
+    "failed": 0,
+    "note": "CI count before owner-consent guard tests added"
+  },
+  "humanFieldEvidence": {
+    "netlifyDemoVisualRetested": true,
+    "galaxyS25PwaInstalledAndOpened": true,
+    "galaxyS25OfflineTestedBeforeLatestUIChanges": true,
+    "latestPhysicalRetestOfEveryScreen": false,
+    "verifiedLiveAccountData": false,
+    "productionBackupAndRestore": false
+  },
+  "launchBlockers": [
+    "Financial and cloud flags remain false",
+    "Actual registration and SMTP/security controls unverified",
+    "Kraken 10x isolated liquidation and exchange rules for real funds not approved",
+    "Restore/retention/RLS/abuse/privacy in production unverified",
+    "Final human S25 physical retest post-UI updates not independently verified"
+  ]
+}

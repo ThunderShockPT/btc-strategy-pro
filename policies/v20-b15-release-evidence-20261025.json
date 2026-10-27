@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "v20-b15-release-evidence.1",
+  "project": "BTC Strategy Pro V20",
+  "auditBranch": "audit/v20-strategy-recovery-20261025",
+  "sourceReference": {
+    "publicVersion": "V19.1",
+    "releaseBranch": "main",
+    "stagingBranch": "audit/v20-strategy-recovery-20261025",
+    "pullRequest": 35,
+    "doNotMergeAutomatically": true
+  },
+  "lastVerifiedAutomatedQA": {
+    "runId": 40239210208,
+    "commit": "60d8a1d66b5bbb33446eaf5f86fc9685771148cc",
+    "tests": 640,
+    "passed": 640,
+    "failed": 0,
+    "runConclusion": "success",
+    "androidLike": true,
+    "physicalAndroidDevice": false,
+    "artifactId": 12616286167,
+    "artifactName": "btc-strategy-v20-b153-pwa-qa"
+  },
+  "ownerApprovals": {
+    "strategyModelR14": false,
+    "strategyCriteriaR24": false,
+    "visualParityOriginalDemo": false,
+    "galaxyS25PhysicalInstallOffline": false,
+    "limitedDemoHttpsPreview": false,
+    "actualPublicRegistration": false,
+    "actualFinancialCloud": false,
+    "publicRelease": false
+  },
+  "releaseEvidence": {
+    "secureHttpsPreviewTested": false,
+    "productionBackupRestoreDrill": false,
+    "productionBackupKeysAndRetention": false,
+    "verifiedAccountLoginRecoveryEmail": false,
+    "ownerDataRLSIsolation": false,
+    "antiAbuseRateLimits": false,
+    "privacyAndDataRemoval": false,
+    "currentKrakenEEARulesConfirmed": false,
+    "isolatedLiquidationModelApproved": false,
+    "rollbackExecutedInStaging": false
+  },
+  "intendedMode": "QA_ONLY_DO_NOT_DEPLOY",
+  "notes": "Flag false significa por validar, nao reprovacao tecnica. O CI sintetico nao substitui testes humanos nem permissiona funcionalidades financeiras."
+}

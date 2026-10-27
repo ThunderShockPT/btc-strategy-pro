@@ -1,0 +1,155 @@
+{
+  "kind": "SOURCE_DERIVED_SUMMARY_NOT_ORIGINAL_XLSX",
+  "snapshot_date": "2026-10-25",
+  "origin_file": "BTC_Comparacao_Anual_Bybit_vs_Kraken_Futures.xlsx",
+  "origin_sha256": "30c41be687c82e8de6b512db83f8eb377467a0e5b77a948e0eeffdae6fb8d23f",
+  "ranges": {
+    "comparison": "COMPARAÇÃO!A6:O9",
+    "risk_events": "RISCO E LIQUIDAÇÃO!A5:H12",
+    "parameters": "PARÂMETROS!A5:C12"
+  },
+  "parameters": {
+    "Kraken taker por lado": "0.0005",
+    "Bybit taxa atual por lado": "0.0025",
+    "Bybit taxa histórica pré-05/10": "0.001",
+    "Bybit taxa diária de juros": "0.0003",
+    "Parcela de empréstimo": "0.9",
+    "Capital da conta (USD)": "1500"
+  },
+  "comparison": [
+    {
+      "label": "9 conjuntos | TP +2k/+10k/+12k",
+      "cycles": 9,
+      "buys": 107,
+      "sells": 70,
+      "grossUSD": "3342.68",
+      "turnoverUSD": "59540",
+      "bybitBorrowCostAssumedUSD": "420.99",
+      "krakenFundingClaimedUSD": "41.97",
+      "bybitBaseNetUSD": "2772.84",
+      "bybitHistoricalNetUSD": "2855.47",
+      "krakenTakerNetUSD": "3270.94"
+    },
+    {
+      "label": "9 conjuntos | TP +2k/+3,5k/+5k",
+      "cycles": 9,
+      "buys": 190,
+      "sells": 137,
+      "grossUSD": "2198.45",
+      "turnoverUSD": "94800",
+      "bybitBorrowCostAssumedUSD": "334.28",
+      "krakenFundingClaimedUSD": "49.91",
+      "bybitBaseNetUSD": "1627.17",
+      "bybitHistoricalNetUSD": "1762.70",
+      "krakenTakerNetUSD": "2101.14"
+    },
+    {
+      "label": "6 conjuntos | TP +2k/+10k/+12k",
+      "cycles": 6,
+      "buys": 72,
+      "sells": 46,
+      "grossUSD": "2275.37",
+      "turnoverUSD": "40280",
+      "bybitBorrowCostAssumedUSD": "296.88",
+      "krakenFundingClaimedUSD": "29.17",
+      "bybitBaseNetUSD": "1877.79",
+      "bybitHistoricalNetUSD": "1931.54",
+      "krakenTakerNetUSD": "2226.06"
+    },
+    {
+      "label": "10 rápidos | TP +2k/+2,5k/+3,5k",
+      "cycles": 10,
+      "buys": 168,
+      "sells": 105,
+      "grossUSD": "1305.27",
+      "turnoverUSD": "83456",
+      "bybitBorrowCostAssumedUSD": "542.42",
+      "krakenFundingClaimedUSD": "85.68",
+      "bybitBaseNetUSD": "554.21",
+      "bybitHistoricalNetUSD": "673.36",
+      "krakenTakerNetUSD": "1177.862"
+    }
+  ],
+  "risk_events": [
+    {
+      "label": "9 base (2/10/12k)",
+      "platform": "Kraken Perp",
+      "capitalUSD": "1500",
+      "margin": "Isolado 10x",
+      "firstLiquidation": "01/02/2026 23:30",
+      "btcAtEventUSD": "75730",
+      "reportedPnlUntilEventUSD": "-72.31"
+    },
+    {
+      "label": "9 base (2/10/12k)",
+      "platform": "Kraken Perp",
+      "capitalUSD": "1500",
+      "margin": "Cross 10x",
+      "firstLiquidation": "Não observado",
+      "btcAtEventUSD": "—",
+      "reportedPnlUntilEventUSD": "3270.93"
+    },
+    {
+      "label": "9 base (2/10/12k)",
+      "platform": "Bybit Spot Margin",
+      "capitalUSD": "1500",
+      "margin": "Cross",
+      "firstLiquidation": "Não observado",
+      "btcAtEventUSD": "—",
+      "reportedPnlUntilEventUSD": "2855.47"
+    },
+    {
+      "label": "9 venda curta (2/3,5/5k)",
+      "platform": "Kraken Perp",
+      "capitalUSD": "1500",
+      "margin": "Isolado 10x",
+      "firstLiquidation": "01/02/2026 23:30",
+      "btcAtEventUSD": "75730",
+      "reportedPnlUntilEventUSD": "-72.31"
+    },
+    {
+      "label": "10 rápidos (2/2,5/3,5k)",
+      "platform": "Kraken Perp",
+      "capitalUSD": "1500",
+      "margin": "Isolado 10x",
+      "firstLiquidation": "31/01/2026 18:30",
+      "btcAtEventUSD": "77000",
+      "reportedPnlUntilEventUSD": "-36.72"
+    },
+    {
+      "label": "10 rápidos (2/2,5/3,5k)",
+      "platform": "Kraken Perp",
+      "capitalUSD": "1500",
+      "margin": "Cross 10x",
+      "firstLiquidation": "05/02/2026 19:30",
+      "btcAtEventUSD": "65100",
+      "reportedPnlUntilEventUSD": "-1169.02"
+    },
+    {
+      "label": "10 rápidos (2/2,5/3,5k)",
+      "platform": "Kraken Perp",
+      "capitalUSD": "2500",
+      "margin": "Cross 10x",
+      "firstLiquidation": "Não observado",
+      "btcAtEventUSD": "—",
+      "reportedPnlUntilEventUSD": "1177.85"
+    },
+    {
+      "label": "10 rápidos (2/2,5/3,5k)",
+      "platform": "Bybit Spot Margin",
+      "capitalUSD": "2500",
+      "margin": "Cross",
+      "firstLiquidation": "05/06/2026 18:30",
+      "btcAtEventUSD": "59096",
+      "reportedPnlUntilEventUSD": "-2215.87"
+    }
+  ],
+  "limitations": [
+    "SIMULATED_ARCHIVED_WORKBOOK_OUTPUTS",
+    "NOT_INDEPENDENT_HISTORICAL_REPLAY",
+    "NO_RAW_OHLC_CANDLES",
+    "NO_RAW_KRAKEN_MARK_SERIES",
+    "NO_RAW_FUNDING_SERIES",
+    "LIQUIDATION_EVENT_TIMING_NOT_RECALCULATED"
+  ]
+}

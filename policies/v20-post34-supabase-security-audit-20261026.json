@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "btcsp-v20-post34-supabase-security-review.1",
+  "snapshotDate": "2026-10-26",
+  "project": {
+    "id": "oftzqqjbwonngubihrsd",
+    "name": "BTC Strategy Pro",
+    "environment": "EXISTING_SUPABASE_PROJECT_READ_ONLY_AUDIT",
+    "status": "ACTIVE_HEALTHY",
+    "postgresMajor": 17
+  },
+  "provenance": {
+    "methods": [
+      "get_project",
+      "list_tables",
+      "get_advisors_security",
+      "get_advisors_performance",
+      "execute_sql_SELECT_pg_catalog_and_information_schema",
+      "list_edge_functions",
+      "get_edge_function_SOURCE_INSPECTION"
+    ],
+    "noWriteOps": true,
+    "actualAuthenticatedCrossTenantRlsTest": false,
+    "actualPasswordResetTest": false,
+    "actualEncryptedRestoreTest": false
+  },
+  "catalog": {
+    "tables": 14,
+    "publicTables": 8,
+    "publicRlsEnabledCount": 8,
+    "privateSchema": "btcsp_private",
+    "privateTables": 6,
+    "privateRlsEnabledCount": 6,
+    "privateTablesWithNoPolicies": 6,
+    "privateSchemaAnonUsage": false,
+    "privateSchemaAuthenticatedUsage": false,
+    "anonDirectTableGrants": 0,
+    "publicDataTablesReadOnlyByOwner": [
+      "btcsp_calculation_runs",
+      "btcsp_financial_events",
+      "btcsp_legacy_imports",
+      "btcsp_plan_versions",
+      "btcsp_preference_versions",
+      "btcsp_tutorial_receipts"
+    ],
+    "legacyProjectCrudTablesWithOwnerRls": [
+      "projects",
+      "project_snapshots"
+    ],
+    "exposedViewsInReviewedSchemas": 0,
+    "publicSecurityDefinerFunctions": 0,
+    "reviewedSqlFunctions": 6,
+    "anonymousTriggerFunctionExecuteGrant": "public.btcsp_touch_updated_at",
+    "requiresHumanGrantAndFunctionReview": true
+  },
+  "edgeFunctions": {
+    "activeCount": 5,
+    "verifyJwtDisabledCount": 5,
+    "names": [
+      "btcsp-v20-api",
+      "btcsp-v20-runtime-qa",
+      "btcsp-v20-account-qa",
+      "btcsp-v20-private-provision",
+      "btcsp-v20-private-test"
+    ],
+    "reasonNotToConcludeUnauthenticatedAccess": "verify_jwt=false only disables platform JWT verification; application-level verification may still exist, inspect every path and test against invalid identity",
+    "inspectedApplicationAuth": [
+      "btcsp-v20-api",
+      "btcsp-v20-account-qa"
+    ],
+    "inspectedApplicationAuthFindings": "Bearer validation, request admission and Supabase auth/v1/user session verification are present in inspected source; this is NOT proof all routes and modes reject unauthenticated users.",
+    "remainingFunctionAuditRequired": [
+      "btcsp-v20-runtime-qa",
+      "btcsp-v20-private-provision",
+      "btcsp-v20-private-test"
+    ],
+    "backendCloudWriteGateVisible": true,
+    "productionAuthSafetyUnverified": true
+  },
+  "advisors": {
+    "security": [
+      {
+        "name": "auth_leaked_password_protection",
+        "severity": "WARN",
+        "count": 1,
+        "status": "REQUIRES_OWNER_OR_ADMIN_REVIEW",
+        "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+      },
+      {
+        "name": "rls_enabled_no_policy",
+        "severity": "INFO",
+        "count": 6,
+        "status": "PRIVATE_SCHEMA_DENY_BY_DEFAULT_EXPECTED_VERIFY_SERVER_ONLY",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+      }
+    ],
+    "performance": [
+      {
+        "name": "unindexed_foreign_keys",
+        "severity": "INFO",
+        "count": 9,
+        "status": "ASSESS_PLANS_BEFORE_ANY_PRODUCTION_MIGRATION",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys"
+      },
+      {
+        "name": "unused_index",
+        "severity": "INFO",
+        "count": 3,
+        "status": "DO_NOT_REMOVE_ON_USAGE_METRICS_ALONE",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index"
+      }
+    ]
+  },
+  "release": {
+    "expectedCloudPolicy": "policies/cloud-release-20261021.json",
+    "expectedFinanceCloudApproved": false,
+    "expectedPublicRegistrationApproved": false,
+    "expectedReleaseMode": "QA_ONLY_DO_NOT_DEPLOY",
+    "publicDeployApproved": false,
+    "userAuthorizedNewRegistrations": false,
+    "userAuthorizedLiveKraken": false,
+    "stage": "P1.1_SAFETY_AUDIT_ONLY",
+    "productionGoNoGo": "NO_GO"
+  },
+  "tasks": [
+    {
+      "id": "P1.2",
+      "name": "Read-only deep code review of all five Edge Functions and session guards",
+      "status": "PENDING",
+      "blocksRelease": true
+    },
+    {
+      "id": "P1.3",
+      "name": "Enable leaked-password checks only with approved account-level change, then verify advisors",
+      "status": "PENDING",
+      "blocksRelease": true
+    },
+    {
+      "id": "P1.4",
+      "name": "Run isolated two-account RLS and Auth acceptance tests, no changes to real user data",
+      "status": "PENDING",
+      "blocksRelease": true
+    },
+    {
+      "id": "P1.5",
+      "name": "Verify SMTP email confirmation, password recovery and redirect allowlist",
+      "status": "PENDING",
+      "blocksRelease": true
+    },
+    {
+      "id": "P1.6",
+      "name": "Encrypted export/restore drill on isolated database and check retention and privacy",
+      "status": "PENDING",
+      "blocksRelease": true
+    },
+    {
+      "id": "P1.7",
+      "name": "Independent Kraken EEA margin, maintenance/funding and liquidation review",
+      "status": "PENDING",
+      "blocksRelease": true
+    },
+    {
+      "id": "P1.8",
+      "name": "Release rehearsal with rollback and explicit separate owner production approval",
+      "status": "PENDING",
+      "blocksRelease": true
+    }
+  ]
+}
